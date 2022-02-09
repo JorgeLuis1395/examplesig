@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="http://servicios.bomberosquito.gob.ec:8080/PersonasWS/PersonasWS?wsdl" uri="wsdl/servicios.bomberosquito.gob.ec_8080/PersonasWS/PersonasWS.wsdl"/>
+    <system systemId="http://201.183.235.48:8080/PersonasWS/PersonasWS?WSDL" uri="wsdl/201.183.235.48_8080/PersonasWS/PersonasWS.wsdl"/>
+    <system systemId="http://201.183.235.48:8080/PersonasWS/PersonasWS?xsd=1" uri="wsdl/201.183.235.48_8080/PersonasWS/PersonasWS.xsd_1.xsd"/>
+    <system systemId="http://servicios.bomberosquito.gob.ec:8080/PersonasWS/PersonasWS?xsd=1" uri="wsdl/servicios.bomberosquito.gob.ec_8080/PersonasWS/PersonasWS.xsd_1.xsd"/>
+</catalog>

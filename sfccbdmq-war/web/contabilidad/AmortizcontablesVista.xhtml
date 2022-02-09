@@ -1,0 +1,438 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{amortizContabSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+
+                    <h:panelGrid columns="1" width="100%">
+                        <h:outputLabel value="Activo :"/>
+                        <h:selectBooleanCheckbox value="#{amortizContabSfccbdmq.activos}"/>
+                        <h:outputLabel value="Descripción:"/>
+                        <h:inputTextarea cols="60" rows="6" value="#{amortizContabSfccbdmq.motivo}" title="Descripción" />
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="5" width="50%">
+                        <h:outputLabel value="Fecha:"/>
+                        <h:outputLabel value="Desde:"/>
+                        <ace:dateTimeEntry navigator="true"  value="#{amortizContabSfccbdmq.desde}" 
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="hasta:"/>
+                        <ace:dateTimeEntry navigator="true"  value="#{amortizContabSfccbdmq.hasta}" 
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{amortizContabSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{amortizContabSfccbdmq.crear()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="@all"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{amortizContabSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{amortizContabSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <!--                    <h:panelGrid styleClass="centeredPanelGrid">
+                                            
+                                        </h:panelGrid>-->
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{amortizContabSfccbdmq.amortizcontables}"
+                                       var="item"
+                                       lazy="true"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       binding="#{amortizContabSfccbdmq.formulario.fila}">
+
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{amortizContabSfccbdmq.modificar(item)}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{amortizContabSfccbdmq.contabilizar(item)}" value="Contabilizar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{amortizContabSfccbdmq.eliminar(item)}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="Fecha" style="text-align: left">
+                                <h:outputText  value="#{item.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Descripción" style="text-align: left">
+                                <h:outputText  value="#{item.motivo}"/>
+                            </ace:column>  
+                            <ace:column  headerText="Cta débito" style="text-align: left">
+                                <h:outputText  value="#{item.ctadebito}"/>
+                            </ace:column>
+
+                            <ace:column  headerText="Nombre" style="text-align: left">
+                                <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(item.ctadebito).nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Cta crédito" style="text-align: left">
+                                <h:outputText  value="#{item.ctacredito}"/>
+                            </ace:column>
+
+                            <ace:column  headerText="Nombre" style="text-align: left">
+                                <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(item.ctacredito).nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Número de días" style="text-align: left">
+                                <h:outputText  value="#{item.dias}"/>
+                            </ace:column>
+                            <ace:column  headerText="Fecha Finalizacón"  style="text-align: right">
+                                <h:outputText  value="#{item.finalizado}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Valor"  style="text-align: right">
+                                <h:outputText  value="#{amortizContabSfccbdmq.traerTotal(item)}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+
+                    <ace:dialog 
+                        header="#{amortizContabSfccbdmq.perfil.menu.texto}"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{amortizContabSfccbdmq.formulario.mostrar}"
+                        visible="#{amortizContabSfccbdmq.formulario.mostrar}">
+                        <h:panelGroup>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Proveedor:" />
+                                <h:outputLabel value="#{amortizContabSfccbdmq.obligacion.proveedor.empresa.toString()}" />
+                                <h:outputLabel value="Concepto:" />
+                                <h:outputLabel value="#{amortizContabSfccbdmq.obligacion.concepto}" />
+                                <h:outputLabel value="Tipo doc:" />
+                                <h:outputLabel value="#{amortizContabSfccbdmq.obligacion.tipodocumento.nombre}" />
+                                <h:outputLabel value="Número :" />
+                                <h:outputLabel value="#{amortizContabSfccbdmq.obligacion.documento}" />
+                                <h:outputLabel value="Fecha :" />
+                                <h:outputLabel value="#{amortizContabSfccbdmq.obligacion.fechaemision}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputLabel>
+                                <h:outputLabel value="Valor :" />
+                                <h:outputLabel value="#{amortizContabSfccbdmq.traerValor}" >
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputLabel>
+                            </h:panelGrid>
+                            <h:panelGrid columns="1" rendered="#{amortizContabSfccbdmq.detalles.size()==0}">
+                                <ace:autoCompleteEntry 
+                                    value="#{amortizContabSfccbdmq.amortizacion.ctadebito}"
+                                    rows="10" width="300"
+                                    filterMatchMode="none"
+                                    listVar="cuentasAutocompletarCuenta"
+                                    listValue="#{cuentasSfccbdmq.listadoCuentas}"
+                                    filterBy="#{cuentasAutocompletarCuenta.codigo}"
+                                    textChangeListener="#{cuentasSfccbdmq.cuentaChangeEventHandler}"
+                                    label="Cuenta Gasto :"
+                                    labelPosition="left">
+                                    <f:facet name="row">
+                                        <h:panelGrid columns="2" width="100%"  style="text-align: left;font-size: xx-small">
+                                            <h:outputText value="#{cuentasAutocompletarCuenta.codigo}" />
+                                            <h:outputText value="#{cuentasAutocompletarCuenta.nombre}" />
+                                        </h:panelGrid>
+                                    </f:facet>
+                                </ace:autoCompleteEntry>
+
+                                <ace:autoCompleteEntry 
+                                    value="#{amortizContabSfccbdmq.amortizacion.ctacredito}"
+                                    rows="10" width="300"
+                                    filterMatchMode="none"
+                                    listVar="cuentasAutocompletarCuenta"
+                                    listValue="#{cuentasSfccbdmq.listadoCuentas}"
+                                    filterBy="#{cuentasAutocompletarCuenta.codigo}"
+                                    textChangeListener="#{cuentasSfccbdmq.cuentaChangeEventHandler}"
+                                    label="Cuenta Amortización :"
+                                    labelPosition="left">
+                                    <f:facet name="row">
+                                        <h:panelGrid columns="2" width="100%"  style="text-align: left;font-size: xx-small">
+                                            <h:outputText value="#{cuentasAutocompletarCuenta.codigo}" />
+                                            <h:outputText value="#{cuentasAutocompletarCuenta.nombre}" />
+                                        </h:panelGrid>
+                                    </f:facet>
+                                </ace:autoCompleteEntry>
+
+
+                            </h:panelGrid>
+
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Nombre Cuenta Gasto:" />
+                                <h:outputLabel value="#{cuentasSfccbdmq.traerNombre(amortizContabSfccbdmq.amortizacion.ctadebito)}" />
+                                <h:outputLabel value="Nombre Cuenta Amortización:" />
+                                <h:outputLabel value="#{cuentasSfccbdmq.traerNombre(amortizContabSfccbdmq.amortizacion.ctacredito)}" />
+                                <h:outputLabel value="Desde:"/>
+                                <ace:dateTimeEntry navigator="true"  value="#{amortizContabSfccbdmq.amortizacion.fecha}" 
+                                                   popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                   disabled="#{amortizContabSfccbdmq.detalles.size()>0}"
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </ace:dateTimeEntry>
+                                <h:outputLabel value="Número de días:"/>
+                                <h:inputText value="#{amortizContabSfccbdmq.amortizacion.dias}" disabled="#{amortizContabSfccbdmq.detalles.size()>0}"/>
+                                <h:outputLabel value="Valor :"/>
+                                <h:inputText value="#{amortizContabSfccbdmq.valor}"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="1">
+                                <h:outputLabel value="Descripción:" for="nombre" />
+                                <h:inputTextarea cols="60" rows="6" id="nombre" value="#{amortizContabSfccbdmq.amortizacion.motivo}" title="Descripción" />
+                                <ace:dataTable id="tabla1" 
+                                               value="#{amortizContabSfccbdmq.detalles}"
+                                               var="itemDetalle"
+                                               lazy="false"
+                                               paginator="true"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="15,20,25,50,100"
+                                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="15"
+                                               binding="#{amortizContabSfccbdmq.formularioDetalle.fila}">
+
+                                    <ace:column style="text-align: left">
+                                        <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                            <ace:menuItem action="#{amortizContabSfccbdmq.modificaDetalle(itemDetalle)}"  
+                                                          disabled="#{itemDetalle.contabilizado!=null}"
+                                                          value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                        </ace:menuButton>
+                                    </ace:column> 
+                                    <ace:column  headerText="Fecha" style="text-align: left">
+                                        <h:outputText  value="#{itemDetalle.fecha}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Fecha Contab" style="text-align: left">
+                                        <h:outputText  value="#{itemDetalle.contabilizado}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </ace:column>
+
+                                    <ace:column  headerText="Valor" style="text-align: left">
+                                        <h:outputText  value="#{itemDetalle.valor}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <f:facet name="footer">Valor Total <h:outputText value="#{amortizContabSfccbdmq.totalRenglones}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </f:facet>
+                                </ace:dataTable>
+                            </h:panelGrid>
+
+                        </h:panelGroup>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{amortizContabSfccbdmq.formulario.nuevo}" 
+                                              action="#{amortizContabSfccbdmq.insertar()}"/>
+    <!--                            <ace:menuItem value="Grabar sin tabla" icon="ui-icon ui-icon-disk" rendered="#{amortizContabSfccbdmq.formulario.nuevo}" 
+                                              action="#{amortizContabSfccbdmq.insertarSinTabla()}"/>-->
+                                <ace:menuItem value="Calcular Amortización" icon="ui-icon ui-icon-disk" 
+                                              rendered="#{amortizContabSfccbdmq.detalles.size()==0}" 
+                                              action="#{amortizContabSfccbdmq.crearAmortizacion()}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{amortizContabSfccbdmq.grabar()}" 
+                                              rendered="#{amortizContabSfccbdmq.formulario.modificar}" />
+                                <ace:menuItem value="Borrar Tabla" icon="ui-icon ui-icon-close" 
+                                              action="#{amortizContabSfccbdmq.borrarTabla()}" 
+                                              rendered="#{amortizContabSfccbdmq.detalles.size()>0}"/>
+                                <ace:menuItem action="#{amortizContabSfccbdmq.borrar()}" 
+                                              value="Esta seguro de Borrar el registro?" 
+                                              rendered="#{amortizContabSfccbdmq.formulario.borrar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{amortizContabSfccbdmq.formulario.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                            <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                        </h:panelGrid>
+                    </ace:dialog>
+                    <ace:dialog 
+                        header="Modificar Amortización"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{amortizContabSfccbdmq.formularioDetalle.mostrar}"
+                        visible="#{amortizContabSfccbdmq.formularioDetalle.mostrar}">
+                        <h:panelGroup>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Valor :"/>
+                                <h:inputText value="#{amortizContabSfccbdmq.detalle.valor}" title="Número" />
+                                <h:outputLabel value="Fecha:"/>
+                                <ace:dateTimeEntry navigator="true"  value="#{amortizContabSfccbdmq.detalle.fecha}" 
+                                                   popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </ace:dateTimeEntry>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{amortizContabSfccbdmq.grabarDetalle()}" 
+                                              rendered="#{amortizContabSfccbdmq.formularioDetalle.modificar}" />
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{amortizContabSfccbdmq.formularioDetalle.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                            <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                        </h:panelGrid>
+                    </ace:dialog>
+                    <ui:include src="listadoObligacionesAmortiz.xhtml" />
+                    <ace:dialog 
+                        header="#{amortizContabSfccbdmq.perfil.menu.texto}"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{amortizContabSfccbdmq.formularioContabilizar.mostrar}"
+                        visible="#{amortizContabSfccbdmq.formularioContabilizar.mostrar}">
+                        <h:panelGroup>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Proveedor:" />
+                                <h:outputLabel value="#{amortizContabSfccbdmq.obligacion.proveedor.empresa.toString()}" />
+                                <h:outputLabel value="Concepto:" />
+                                <h:outputLabel value="#{amortizContabSfccbdmq.obligacion.concepto}" />
+                                <h:outputLabel value="Tipo doc:" />
+                                <h:outputLabel value="#{amortizContabSfccbdmq.obligacion.tipodocumento.nombre}" />
+                                <h:outputLabel value="Número :" />
+                                <h:outputLabel value="#{amortizContabSfccbdmq.obligacion.documento}" />
+                                <h:outputLabel value="Fecha :" />
+                                <h:outputLabel value="#{amortizContabSfccbdmq.obligacion.fechaemision}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputLabel>
+                                <h:outputLabel value="Valor :" />
+                                <h:outputLabel value="#{obligacionesSfccbdmq.traerValor(amortizContabSfccbdmq.obligacion)}" >
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputLabel>
+                            </h:panelGrid>
+                            <h:panelGrid columns="1">
+                                <h:outputLabel value="Descripción:"/>
+                                <h:outputLabel value="#{amortizContabSfccbdmq.amortizacion.motivo}" />
+                            </h:panelGrid>
+
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Tipo de Asiento :" />
+                                <h:selectOneMenu  value="#{amortizContabSfccbdmq.cabecera.tipo}">
+                                    <f:selectItems value="#{amortizContabSfccbdmq.comboTipoasientoContab}"/>
+                                </h:selectOneMenu>
+                                <h:outputLabel value="Mes de contabilización:"/>
+                                <h:outputLabel value="#{amortizContabSfccbdmq.detalle.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputLabel>
+                            </h:panelGrid>
+                            <h:panelGrid columns="1">
+                                <h:outputLabel value="Referencia:" />
+                                <h:inputTextarea cols="60" rows="6" value="#{amortizContabSfccbdmq.cabecera.descripcion}" title="Descripción" />
+                                <ace:dataTable id="tablaContab" 
+                                               value="#{amortizContabSfccbdmq.renglones}"
+                                               var="itemRenglones"
+                                               lazy="false"
+                                               paginator="true"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="15,20,25,50,100"
+                                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="15"
+                                               binding="#{amortizContabSfccbdmq.formularioContabilizar.fila}">
+                                    <ace:column  headerText="Cuenta"  style="text-align: left">
+                                        <h:outputText  value="#{itemRenglones.cuenta}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Nombre"  style="text-align: left">
+                                        <h:outputText  value="#{cuentasSfccbdmq.traerNombre(itemRenglones.cuenta)}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Auxiliar"  style="text-align: left">
+                                        <h:outputText  value="#{proveedoresSfccbdmq.taerRuc(itemRenglones.auxiliar).toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Referencia"  style="text-align: left">
+                                        <h:outputText  value="#{itemRenglones.referencia}"/>
+                                    </ace:column>
+
+                                    <ace:column  headerText="Débitos" style="text-align: right">
+                                        <h:outputText  value="#{itemRenglones.valor}" rendered="#{asientosSfccbdmq.isCredito(itemRenglones.valor)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Créditos" style="text-align: right">
+                                        <h:outputText  value="#{itemRenglones.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemRenglones.valor)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+
+                        </h:panelGroup>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                              action="#{amortizContabSfccbdmq.grabarContabilizar()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{amortizContabSfccbdmq.formularioContabilizar.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                            <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                        </h:panelGrid>
+                    </ace:dialog>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

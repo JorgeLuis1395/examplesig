@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{permisosBodegasEmpleadosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <ace:panel header="Parámetros de Búsqueda">
+                        <ui:include src="../BuscarEmpleado.xhtml"/>
+
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search" 
+                                              action="#{permisosBodegasEmpleadosSfccbdmq.buscar()}"/>
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" 
+                                              action="#{permisosBodegasEmpleadosSfccbdmq.crear()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <ace:messages/>
+                    </ace:panel> 
+
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{permisosBodegasEmpleadosSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{permisosBodegasEmpleadosSfccbdmq.formulario.pantalla}" 
+                                          target="licencias" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="licencias" 
+                                       value="#{permisosBodegasEmpleadosSfccbdmq.permisos}"
+                                       var="item"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,50"
+                                       paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       binding="#{permisosBodegasEmpleadosSfccbdmq.formulario.fila}">
+
+                            <ace:column  style="text-align: left">
+                                <ace:menuButton  effect="slide" effectDuration="200" value="...">
+                                    <ace:menuItem value="Editar" icon="ui-icon ui-icon-pencil" 
+                                                  action="#{permisosBodegasEmpleadosSfccbdmq.modificar(item)}" 
+                                                  />
+                                    <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" 
+                                                  action="#{permisosBodegasEmpleadosSfccbdmq.eliminar(item)}" 
+                                                  />
+                                </ace:menuButton>
+                            </ace:column>
+                            <ace:column  headerText="Bodega" style="text-align: left">
+                                <h:outputText  value="#{item.bodega.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Ingreso" style="text-align: left">
+                                <h:outputText  value="SI" rendered="#{item.ingreso}"/>
+                                <h:outputText  value="NO" rendered="#{!item.ingreso}"/>
+                            </ace:column>
+                            <ace:column  headerText="Recepción Ingreso" style="text-align: left">
+                                <h:outputText  value="SI" rendered="#{item.recepcion}"/>
+                                <h:outputText  value="NO" rendered="#{!item.recepcion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Revisión Ingreso" style="text-align: left">
+                                <h:outputText  value="SI" rendered="#{item.revision}"/>
+                                <h:outputText  value="NO" rendered="#{!item.revision}"/>
+                            </ace:column>
+                            <ace:column  headerText="Aprobación Ingreso" style="text-align: left">
+                                <h:outputText  value="SI" rendered="#{item.aprobacion}"/>
+                                <h:outputText  value="NO" rendered="#{!item.aprobacion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Registro Egreso" style="text-align: left">
+                                <h:outputText  value="SI" rendered="#{item.registro}"/>
+                                <h:outputText  value="NO" rendered="#{!item.registro}"/>
+                            </ace:column>
+                            <ace:column  headerText="Despacho Egreso" style="text-align: left">
+                                <h:outputText  value="SI" rendered="#{item.despacho}"/>
+                                <h:outputText  value="NO" rendered="#{!item.despacho}"/>
+                            </ace:column>
+                            <ace:column  headerText="Ingreso transferencia" style="text-align: left">
+                                <h:outputText  value="SI" rendered="#{item.ingresot}"/>
+                                <h:outputText  value="NO" rendered="#{!item.ingresot}"/>
+                            </ace:column>
+                            <ace:column  headerText="Aprobacion Ingreso Transferencia" style="text-align: left">
+                                <h:outputText  value="SI" rendered="#{item.aprobacionIngreso}"/>
+                                <h:outputText  value="NO" rendered="#{!item.aprobacionIngreso}"/>
+                            </ace:column>
+                            <ace:column  headerText="Aprobacion Recepción transferencia" style="text-align: left">
+                                <h:outputText  value="SI" rendered="#{item.aprobacionRecepcion}"/>
+                                <h:outputText  value="NO" rendered="#{!item.aprobacionRecepcion}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+
+                    <ace:dialog 
+                        header="#{permisosBodegasEmpleadosSfccbdmq.permiso.usuario.entidad.toString()}"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        rendered="#{permisosBodegasEmpleadosSfccbdmq.formulario.mostrar}"
+                        visible="#{permisosBodegasEmpleadosSfccbdmq.formulario.mostrar}">
+
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Bodega:" for="bodega" />
+                            <h:selectOneMenu id="bodega" value="#{permisosBodegasEmpleadosSfccbdmq.permiso.bodega}" title="Bodega" disabled="#{!permisosBodegasEmpleadosSfccbdmq.formulario.nuevo}">
+                                <f:selectItems value="#{permisosBodegasEmpleadosSfccbdmq.comboBodegas}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>     
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Ingreso:" for="ingreso" />
+                            <h:selectBooleanCheckbox id="ingreso" value="#{permisosBodegasEmpleadosSfccbdmq.permiso.ingreso}"  title="Ingreso" />
+                            <h:outputLabel value="Recepcion Ingreso:" for="recepcion" />
+                            <h:selectBooleanCheckbox id="recepcion" value="#{permisosBodegasEmpleadosSfccbdmq.permiso.recepcion}" title="Recepcion" />
+                            <h:outputLabel value="Revision Ingreso:" for="revision" />
+                            <h:selectBooleanCheckbox id="revision" value="#{permisosBodegasEmpleadosSfccbdmq.permiso.revision}" title="Revision" />
+                            <h:outputLabel value="Aprobacion Ingreso:" for="aprobacion" />
+                            <h:selectBooleanCheckbox id="aprobacion" value="#{permisosBodegasEmpleadosSfccbdmq.permiso.aprobacion}" title="Aprobacion" />
+                            <h:outputLabel value="Registro Egreso:" for="registro" />
+                            <h:selectBooleanCheckbox  id="registro" value="#{permisosBodegasEmpleadosSfccbdmq.permiso.registro}" title="Registro" />
+                            <h:outputLabel value="Despacho Egreso:" for="despacho" />
+                            <h:selectBooleanCheckbox  id="despacho" value="#{permisosBodegasEmpleadosSfccbdmq.permiso.despacho}" title="Despacho" />
+                            <h:outputLabel value="Ingreso transferencia:" for="ingresot" />
+                            <h:selectBooleanCheckbox id="ingresot" value="#{permisosBodegasEmpleadosSfccbdmq.permiso.ingresot}" title="Ingresot" />
+                            <h:outputLabel value="Aprobacion Ingreso Transferencia:" for="aprobacionIngreso" />
+                            <h:selectBooleanCheckbox id="aprobacionIngreso" value="#{permisosBodegasEmpleadosSfccbdmq.permiso.aprobacionIngreso}" title="AprobacionIngreso" />
+                            <h:outputLabel value="Aprobacion Recepcion Transferencia:" for="aprobacionRecepcion" />
+                            <h:selectBooleanCheckbox id="aprobacionRecepcion" value="#{permisosBodegasEmpleadosSfccbdmq.permiso.aprobacionRecepcion}" title="AprobacionRecepcion" />
+
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="1">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"
+                                              action="#{permisosBodegasEmpleadosSfccbdmq.grabar()}"
+                                              rendered="#{permisosBodegasEmpleadosSfccbdmq.formulario.modificar}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"
+                                              action="#{permisosBodegasEmpleadosSfccbdmq.insertar()}"
+                                              rendered="#{permisosBodegasEmpleadosSfccbdmq.formulario.nuevo}"/>
+                                <ace:menuItem value="Esta seguro de borrar?"
+                                              action="#{permisosBodegasEmpleadosSfccbdmq.borrar()}"
+                                              rendered="#{permisosBodegasEmpleadosSfccbdmq.formulario.borrar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  
+                                              action="#{permisosBodegasEmpleadosSfccbdmq.cancelar()}" />
+                            </ace:menuBar>
+                        </h:panelGrid>
+                    </ace:dialog>
+
+                </ace:panel>
+
+                <!--fin insertar vacaciones-->
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{cambiaContratosEmpleado.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <ui:include src="../BuscarEmpleado.xhtml"/>
+                    <h:panelGrid columns="2" rendered="#{!cambiaContratosEmpleado.formulario.mostrar}">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{cambiaContratosEmpleado.nuevo()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <ace:messages/>
+                    <!--</ace:panel>--> 
+                </ace:panel>
+                <ace:panel 
+                    header="Registro"
+                    closable="false"
+                    toggleable="false"
+                    rendered="#{cambiaContratosEmpleado.formulario.mostrar}">
+                    <h:panelGrid width="100%" columns="2">
+                        <ace:tabSet style="clear:both;" clientSide="true">
+                            <ace:tabPane >
+                                <f:facet name="label">Inf. General</f:facet>
+                                <h:panelGrid columns="2">
+                                    <h:outputLabel value="Contrato Anterior:" />
+                                    <h:outputLabel value="#{cambiaContratosEmpleado.contratoAnterior.tipocontrato.nombre}"/>
+                                </h:panelGrid>
+                                <h:panelGrid columns="2">
+                                    <h:outputLabel value="Contrato:" />
+                                    <h:selectOneMenu value="#{cambiaContratosEmpleado.contrato.tipocontrato}">
+                                        <f:selectItems value="#{tipoContrato.comboTiposContrato}"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Motivo:" />
+                                    <h:inputTextarea cols="60" rows="4" value="#{cambiaContratosEmpleado.contrato.motivo}" 
+                                                       title="Motivo" />
+                                    <h:outputLabel value="Desde:"/>
+                                    <ace:dateTimeEntry navigator="true"  value="#{cambiaContratosEmpleado.contrato.desde}" id="dos"
+                                                       popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                       pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </ace:dateTimeEntry>
+                                </h:panelGrid>
+                            </ace:tabPane>
+                            <ace:tabPane label="Adjuntos">
+                                <ui:include src="../mostrarImagenes.xhtml" />
+                            </ace:tabPane>
+                        </ace:tabSet>
+                        <ace:dataTable id="historial" 
+                                       value="#{cambiaContratosEmpleado.listaHistorial}"
+                                       var="historial"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,50"
+
+                                       paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="5"
+                                       binding="#{cambiaContratosEmpleado.formulario.fila}">
+
+
+                            <ace:column  headerText="Motivo"  style="text-align: left">
+                                <h:outputText value="#{historial.motivo}"/>
+                            </ace:column>
+                            <ace:column  headerText="Tipo" style="text-align: left">
+                                <h:outputText  value="#{historial.tipocontrato.nombre}"/>
+                            </ace:column>
+                            
+                            
+                            <ace:column  headerText="Desde" style="text-align: left">
+                                <h:outputText  value="#{historial.desde}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Hasta" style="text-align: left">
+                                <h:outputText  value="#{historial.hasta}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{cambiaContratosEmpleado.insertar()}" rendered="#{cambiaContratosEmpleado.formulario.nuevo}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{cambiaContratosEmpleado.formulario.cancelar()}" />
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

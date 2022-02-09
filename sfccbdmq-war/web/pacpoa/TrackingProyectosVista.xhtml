@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel header="Historial - Parámetros de Búsqueda">
+                    <h:panelGrid columns="6">                         
+<!--                        <h:outputLabel value="Fecha inicial:" />
+                        <ace:dateTimeEntry navigator="true" value="#{trackingsProyectosPoa.desde}" 
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Fecha final:" />
+                        <ace:dateTimeEntry navigator="true" value="#{trackingsProyectosPoa.hasta}" 
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry> -->
+
+
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{trackingsProyectosPoa.buscar()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:messages/>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="false" >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{trackingsProyectosPoa.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{trackingsProyectosPoa.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       paginatorAlwaysVisible="true"
+                                       value="#{trackingsProyectosPoa.listaTrackings}"
+                                       var="item"
+                                       lazy="true"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="10,15,50,100"
+                                       currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="100" >
+                            <ace:column headerText="Fecha Inicio" style="text-align: left" >
+                                <h:outputText value="#{item.fechainicio}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column headerText="Fecha Publicación" style="text-align: left" >
+                                <h:outputText value="#{item.fechapublicacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column headerText="Fecha Desierto" style="text-align: left" >
+                                <h:outputText value="#{item.fechadesierto}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Proyecto" style="text-align: left">
+                                <h:outputText  value="#{item.proyecto.toString()}" style="white-space: pre-wrap" rendered="#{item.proyecto ne null}"/>
+                            </ace:column>
+                              <ace:column  headerText="Usuario" style="text-align: left">
+                                  <h:outputText  value="#{item.usuario}" style="white-space: pre-wrap"/>
+                            </ace:column>
+                            <ace:column  headerText="Observaciones" style="text-align: left">
+                                <h:outputText  value="#{item.observaciones}" style="white-space: pre-wrap"/>
+                            </ace:column>
+
+
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

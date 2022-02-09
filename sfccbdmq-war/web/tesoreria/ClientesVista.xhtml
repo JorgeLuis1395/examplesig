@@ -1,0 +1,210 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{clientesSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="4" width="100%">
+                        <h:outputLabel value="R.U.C :"/>
+                        <h:inputText value="#{clientesSfccbdmq.ruc}"/>
+                        <h:outputLabel value="Nombre :"/>
+                        <h:inputText value="#{clientesSfccbdmq.nombre}"/>
+                        <h:outputLabel value="Razón Social :"/>
+                        <h:inputText value="#{clientesSfccbdmq.razon}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{clientesSfccbdmq.nuevo()}" />
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{clientesSfccbdmq.buscar()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                   for="panel"
+                                   blockUI="panel"
+                                   autoCenter="true"
+                                   activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Bùsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{clientesSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{clientesSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{clientesSfccbdmq.empresas}"
+                                       var="item"
+                                       paginator="true"
+                                       lazy="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       >
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{clientesSfccbdmq.modifica(item)}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{clientesSfccbdmq.elimina(item)}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="Código"  style="text-align: left">
+                                <h:outputText  value="#{item.id}"/>
+                            </ace:column>
+                            <ace:column  headerText="R.U.C" style="text-align: left">
+                                <h:outputText  value="#{item.ruc}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nombre" style="text-align: left">
+                                <h:outputText  value="#{item.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Razón Social"  style="text-align: left">
+                                <h:outputText  value="#{item.nombrecomercial}"/>
+                            </ace:column>
+                            <ace:column  headerText="Dirección"  style="text-align: left">
+                                <h:outputText  value="#{item.direccion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Teléfono"  style="text-align: left">
+                                <h:outputText  value="#{item.telefono1.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="E-mail"  style="text-align: left">
+                                <h:outputText  value="#{item.email}"/>
+                            </ace:column>
+                            <ace:column  headerText="Celular"  style="text-align: left">
+                                <h:outputText  value="#{item.telefono2.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Teléfono 2" style="text-align: left">
+                                <h:outputText  value="#{item.telefono2.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Cuenta x Pagar" style="text-align: left">
+                                <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(item.clientes.cuentaingresos).nombre}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{clientesSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{clientesSfccbdmq.formulario.mostrar}"
+                    visible="#{clientesSfccbdmq.formulario.mostrar}">
+                    <h:panelGrid columns="4">
+                        <h:outputLabel value="Ruc:" for="ruc" />
+                        <h:inputText id="ruc" value="#{clientesSfccbdmq.empresa.ruc}" title="Ruc" disabled="#{!clientesSfccbdmq.formulario.nuevo}">
+                            <f:validator  validatorId="org.auxiliares.sfccbdmq.ValidadorRuc"/>
+                        </h:inputText>
+                        <h:outputLabel value="Nombre:" for="nombre" />
+                        <h:inputText id="nombre" value="#{clientesSfccbdmq.empresa.nombre}" title="Nombre" />
+                        <h:outputLabel value="Razón Social:" for="nombrecomercial" />
+                        <h:inputText id="nombrecomercial" value="#{clientesSfccbdmq.empresa.nombrecomercial}" title="Razón Social" />
+                        <h:outputLabel value="E-mail:" for="email" />
+                        <h:inputText id="email" value="#{clientesSfccbdmq.empresa.email}" title="email" >
+                            <f:validator  validatorId="org.auxiliares.sfccbdmq.ValidadorEmail"/>
+                        </h:inputText>
+                        <h:outputLabel value="Página Web:" for="web" />
+                        <h:inputText id="web" value="#{clientesSfccbdmq.empresa.web}" title="Web" />
+                        <h:outputLabel value="Persona natural:" for="personanatural" />
+                        <h:selectBooleanCheckbox id="personanatural" value="#{clientesSfccbdmq.empresa.personanatural}" title="Personanatural" />
+                        <h:outputLabel value="Contribuyente Especial:" for="especial" />
+                        <h:selectBooleanCheckbox id="especial" value="#{clientesSfccbdmq.empresa.especial}" title="Contribuyente Especial" />
+                        <h:outputLabel value="Cuenta por cobrar:"/>
+                        <!--<h:inputText value="#{clientesSfccbdmq.cliente.cuentaingresos}" />-->
+                        <h:selectOneMenu  value="#{clientesSfccbdmq.cuenta}" title="Tipo de asiento">
+                            <f:selectItems value="#{clientesSfccbdmq.comboCuentas113}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="6">
+                        <h:outputLabel value="Teléfono:" />
+
+                        <h:inputText value="#{clientesSfccbdmq.telefono1.numero}"/>
+                        <h:outputLabel value="Ext:"  />             
+                        <h:inputText value="#{clientesSfccbdmq.telefono1.extencion}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Celular:"  />             
+                        <h:inputText value="#{clientesSfccbdmq.telefono2.numero}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1">
+                        <h:outputLabel value="Dirección :"  />             
+                        <h:inputTextarea cols="60" rows="10" value="#{clientesSfccbdmq.cliente.direccion}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="6">
+                        <h:outputLabel value="Teléfono 2 "/>
+
+                        <h:inputText value="#{clientesSfccbdmq.telefono3.numero}"/>
+                        <h:outputLabel value="Ext:"  />             
+                        <h:inputText value="#{clientesSfccbdmq.telefono3.extencion}"/>
+                    </h:panelGrid>
+
+
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{clientesSfccbdmq.formulario.nuevo}" 
+                                          action="#{clientesSfccbdmq.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{clientesSfccbdmq.grabar()}" 
+                                          rendered="#{clientesSfccbdmq.formulario.modificar}" />
+                            <ace:menuItem action="#{clientesSfccbdmq.eliminar()}" 
+                                          value="Esta seguro de Borrar el registro?" 
+                                          rendered="#{clientesSfccbdmq.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{clientesSfccbdmq.formulario.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5ed7ac5b-b658-45ec-8ef2-f37db0823462">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="empresa" class="java.lang.String"/>
+	<parameter name="expresado" class="java.lang.String"/>
+	<parameter name="usuario" class="java.lang.String"/>
+	<parameter name="nombrelogo" class="java.lang.String"/>
+	<parameter name="filtro" class="java.lang.String"/>
+	<field name="certificacion.fecha" class="java.util.Date"/>
+	<field name="certificacion.id" class="java.lang.Integer"/>
+	<field name="certificacion.motivo" class="java.lang.String"/>
+	<field name="certificacion.numerodocumeto" class="java.lang.Integer"/>
+	<field name="asignacion.proyecto.codigo" class="java.lang.String"/>
+	<field name="asignacion.proyecto.nombre" class="java.lang.String"/>
+	<field name="asignacion.clasificador.codigo" class="java.lang.String"/>
+	<field name="asignacion.clasificador.nombre" class="java.lang.String"/>
+	<field name="valor" class="java.math.BigDecimal"/>
+	<variable name="valor_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="96" splitType="Stretch">
+			<textField>
+				<reportElement x="455" y="1" width="100" height="20" uuid="be4efd86-8397-4427-8f9b-a77a1d62aaa9"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{usuario}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="455" y="19" width="100" height="20" uuid="3b2780d4-1cbf-4176-a9ad-5dd6b897615d"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="0" y="1" width="106" height="54" uuid="9c23d9b5-3711-4f8c-840c-311604cf5ee3"/>
+				<imageExpression><![CDATA[$P{nombrelogo}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="106" y="39" width="449" height="36" uuid="3cea40ae-6b3b-4f7a-9fdc-5a7927620344"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{empresa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="107" y="1" width="290" height="20" uuid="c872ed68-eecb-4b60-8363-ef36fe797463"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$P{expresado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="107" y="75" width="448" height="20" uuid="4e8c964d-2ee7-44c6-810c-62d5f07f56cc"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{filtro}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="24" splitType="Stretch">
+			<frame>
+				<reportElement x="-1" y="-1" width="556" height="20" uuid="04afe41b-93fb-48bd-bb1b-f7d0f8c787b9"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<staticText>
+					<reportElement x="0" y="0" width="28" height="10" uuid="6a09fd70-edca-42cf-9703-6488be05458f"/>
+					<textElement>
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Fecha]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="183" y="0" width="18" height="10" uuid="89112ee6-dd5c-45a9-9aa4-355e95a0c6b8"/>
+					<textElement>
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Doc]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="366" y="0" width="61" height="10" uuid="9d81a401-0b6a-4330-b9be-1abefadc4a6b"/>
+					<textElement>
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Clasificador]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="494" y="0" width="61" height="10" uuid="cb811804-9c21-49e7-bd7e-a95a5643bdc0"/>
+					<textElement textAlignment="Right">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Valor]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="28" y="0" width="18" height="10" uuid="2fe7d529-886a-41a9-98f9-5222b2d323b1"/>
+					<textElement>
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[No]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="46" y="0" width="137" height="10" uuid="c9b870d4-357c-4828-a19c-dd6c434a6757"/>
+					<textElement>
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Motivo]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="201" y="0" width="61" height="10" uuid="3abb9818-b137-4592-a019-a29d593796a9"/>
+					<textElement>
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Proyecto]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="45" height="20" uuid="58dbb11b-2051-4825-8c5d-c28a3950deb0"/>
+				<textElement>
+					<font size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{certificacion.fecha}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="45" y="0" width="28" height="20" uuid="9cc9b2c7-03d4-4b09-be1f-6e4c57167d90"/>
+				<textElement>
+					<font size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{certificacion.id}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="73" y="0" width="115" height="20" uuid="2a5bfb58-0001-4e4c-b81f-4478d7321b22"/>
+				<textElement>
+					<font size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{certificacion.motivo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="188" y="0" width="18" height="20" uuid="6635fcc1-c192-4c13-a423-8ae1cd40b1f1"/>
+				<textElement>
+					<font size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{certificacion.numerodocumeto}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="206" y="0" width="61" height="20" uuid="9b0cefa2-e0c7-4aec-a829-da9fd35b6277"/>
+				<textElement>
+					<font size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{asignacion.proyecto.codigo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="267" y="0" width="104" height="20" uuid="9208c1bb-6fd0-4842-9480-8deb6355a5ad"/>
+				<textElement>
+					<font size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{asignacion.proyecto.nombre}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="371" y="0" width="31" height="20" uuid="305cf59b-87f3-4acd-a407-9c4177dd22df"/>
+				<textElement>
+					<font size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{asignacion.clasificador.codigo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="402" y="0" width="91" height="20" uuid="4ac787d4-8b08-4c9d-add5-982b35c68666"/>
+				<textElement>
+					<font size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{asignacion.clasificador.nombre}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###,##0.00" isBlankWhenNull="true">
+				<reportElement x="494" y="0" width="61" height="20" uuid="a138755e-7daa-441f-bc04-a7087b2bc17b"/>
+				<textElement textAlignment="Right">
+					<font size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="21" splitType="Stretch">
+			<textField evaluationTime="Report">
+				<reportElement x="509" y="0" width="40" height="20" uuid="8ba67908-8ab3-4d3e-ae11-096394a7295e"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="429" y="0" width="80" height="20" uuid="fc97fca4-9f59-41e8-b1d1-21475223c036"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página  "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch">
+			<textField pattern="###,##0.00">
+				<reportElement x="455" y="0" width="100" height="20" uuid="25bd3e0c-8740-441b-81da-4f538780c2cd"/>
+				<textElement textAlignment="Right">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="355" y="0" width="100" height="20" uuid="aa689d53-3636-42f8-b816-eb1b496bd301"/>
+				<textElement textAlignment="Right">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total :]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

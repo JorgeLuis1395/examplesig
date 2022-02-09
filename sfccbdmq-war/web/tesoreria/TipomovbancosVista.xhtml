@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{tipoMovBancosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{tipoMovBancosSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{tipoMovBancosSfccbdmq.crear()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+
+
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="@all"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{tipoMovBancosSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{tipoMovBancosSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <!--                    <h:panelGrid styleClass="centeredPanelGrid">
+                                            
+                                        </h:panelGrid>-->
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{tipoMovBancosSfccbdmq.tipomovbancos}"
+                                       var="item"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       binding="#{tipoMovBancosSfccbdmq.formulario.fila}">
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <!--<ace:menuItem action="#{tipoMovBancosSfccbdmq.crearAnticipo(item)}" value="Nuevo Anticipo" icon="ui-icon ui-icon-document" rendered="#{item.padre==null}"/>-->
+                                    <ace:menuItem action="#{tipoMovBancosSfccbdmq.modificar(item)}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{tipoMovBancosSfccbdmq.eliminar(item)}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="Descripción" style="text-align: left">
+                                <h:outputText  value="#{item.descripcion}"/>
+                            </ace:column>  
+                            <ace:column  headerText="Tipo"  style="text-align: left">
+                                <h:outputText  rendered="#{item.tipo=='ANTP'}" value="Anticipo Proveedores"/>
+                                <h:outputText  rendered="#{item.tipo=='ANTE'}" value="Anticipo Empleados"/>
+                                <h:outputText  rendered="#{item.tipo=='OBL'}" value="Obligación"/>
+                                <h:outputText  rendered="#{item.tipo=='ING'}" value="Ingresos"/>
+                                <h:outputText  rendered="#{item.tipo=='OTR'}" value="Otros"/>
+                                <h:outputText  rendered="#{item.tipo=='CAJA'}" value="Cajas Chicas"/>
+                                <h:outputText  rendered="#{item.tipo=='VIAT'}" value="Víaticos"/>
+                                <h:outputText  rendered="#{item.tipo=='REB'}" value="Rebotes"/>
+                            </ace:column>
+                            <ace:column  headerText="Tipo de Asiento" style="text-align: left">
+                                <h:outputText  value="#{item.tipoasiento.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Spi" style="text-align: left">
+                                <h:outputText  value="#{item.spi}"/>
+                            </ace:column>
+                            <ace:column  headerText="Ingreso" style="text-align: left">
+                                <h:outputText  value="#{item.ingreso}"/>
+                            </ace:column>
+                            <ace:column  headerText="Fecha"  style="text-align: right">
+                                <h:outputText  value="#{item.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+
+                    <ace:dialog 
+                        header="#{tipoMovBancosSfccbdmq.perfil.menu.texto}"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{tipoMovBancosSfccbdmq.formulario.mostrar}"
+                        visible="#{tipoMovBancosSfccbdmq.formulario.mostrar}">
+                        <h:panelGroup>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Tipo de Movimiento:"/>
+                                <h:selectOneMenu  value="#{tipoMovBancosSfccbdmq.tipomov.tipo}" title="Tipo de asiento">
+                                    <f:selectItems value="#{tipoMovBancosSfccbdmq.comboTipo}"/>
+                                    <!-- TODO: update below reference to list of available items-->
+                                    <!--                                <f:selectItem  itemLabel="Anticipos" itemValue="ANT"/>
+                                                                    <f:selectItem  itemLabel="Obligaciones" itemValue="OBL"/>
+                                                                    <f:selectItem  itemLabel="Otros" itemValue="OTR"/>-->
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                            </h:panelGrid>
+                            <h:panelGrid columns="1" rendered="#{tipoMovBancosSfccbdmq.pideCuenta}">
+                                <ui:include src="../BuscarCuentas.xhtml" />
+                            </h:panelGrid>
+                            <h:panelGrid columns="1">
+                                <h:outputLabel value="Descripción:" for="nombre" />
+                                <h:inputTextarea cols="60" rows="6" id="nombre" value="#{tipoMovBancosSfccbdmq.tipomov.descripcion}" title="Descripción" />
+
+                            </h:panelGrid>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Tipo de asiento:" for="tasiento" />
+                                <h:selectOneMenu id="tasiento" value="#{tipoMovBancosSfccbdmq.tipomov.tipoasiento}" title="Tasiento" >
+                                    <!-- TODO: update below reference to list of available items-->
+                                    <f:selectItems value="#{tipoAsientoSfccbdmq.comboTipoasiento}"/>
+                                </h:selectOneMenu>
+                                <h:outputLabel value="Incluye en el SPI:"/>
+                                <h:selectBooleanCheckbox value="#{tipoMovBancosSfccbdmq.tipomov.spi}"/>
+                                <h:outputLabel value="Ingreso/Egreso:"/>
+                                <h:selectBooleanCheckbox value="#{tipoMovBancosSfccbdmq.tipomov.ingreso}"/>
+                                <h:outputLabel value="Genera comprobante de ingreso:"/>
+                                <h:selectBooleanCheckbox value="#{tipoMovBancosSfccbdmq.tipomov.generacomprobante}"/>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{tipoMovBancosSfccbdmq.formulario.nuevo}" 
+                                              action="#{tipoMovBancosSfccbdmq.insertar()}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{tipoMovBancosSfccbdmq.grabar()}" 
+                                              rendered="#{tipoMovBancosSfccbdmq.formulario.modificar}" />
+                                <ace:menuItem action="#{tipoMovBancosSfccbdmq.borrar()}" 
+                                              value="Esta seguro de Borrar el registro?" 
+                                              rendered="#{tipoMovBancosSfccbdmq.formulario.borrar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{tipoMovBancosSfccbdmq.formulario.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                            <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                        </h:panelGrid>
+                    </ace:dialog>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

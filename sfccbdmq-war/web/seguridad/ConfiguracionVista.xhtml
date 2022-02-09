@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : PrincipalVista
+    Created on : 28/08/2011, 11:31:00 AM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+
+    </h:head>
+    <h:body  >
+        <h:form id="forma">
+            <ui:composition template="../plantillas/plantillaModulos.xhtml">
+                <!-- Aqui va todo el codigo de la pagina -->
+                <ui:define name="content">
+                    <ace:panel id="panel"
+                               header="Configuracion"
+                               closable="false"
+                               toggleable="true"
+                               >
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Nombre de Empresa:" for="nombre" />
+                            <h:inputTextarea cols="60" rows="3" id="nombre" value="#{configuracionSfccbdmq.configuracion.nombre}" title="Nombre de Empresa"/>
+                            <h:outputLabel value="Dirección Matriz:"/>
+                            <h:inputTextarea cols="60" rows="3" value="#{configuracionSfccbdmq.configuracion.direccion}" />
+                            <h:outputLabel value="Ruc:" for="ruc" />
+                            <h:inputText id="ruc" value="#{configuracionSfccbdmq.configuracion.ruc}" title="Ruc" >
+                                <f:validator  validatorId="org.auxiliares.sfccbdmq.ValidadorRuc"/>
+                            </h:inputText>
+                            <h:outputLabel value="Contribuyente Especial:"/>
+                            <h:inputText value="#{configuracionSfccbdmq.configuracion.especial}" />
+                            <h:outputLabel value="Periodo inicial:" for="pinicial" />
+                            <ace:dateTimeEntry navigator="true"  value="#{configuracionSfccbdmq.configuracion.pinicial}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+
+                            <h:outputLabel value="Periodo final:" for="pfinal" />
+                            <ace:dateTimeEntry navigator="true"  value="#{configuracionSfccbdmq.configuracion.pfinal}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+
+                            <h:outputLabel value="Periodo vigente:" for="pvigente" />
+                            <ace:dateTimeEntry navigator="true"  value="#{configuracionSfccbdmq.configuracion.pvigente}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Código del SRI para impuesto a la renta:" />
+                            <h:inputText  value="#{configuracionSfccbdmq.configuracion.renta}" />
+                            <h:outputLabel value="Valores expresados en:" />
+                            <h:inputText  value="#{configuracionSfccbdmq.configuracion.expresado}" />
+                            <h:outputLabel value="Nombre del gerente:" />
+                            <h:inputText  value="#{configuracionSfccbdmq.configuracion.nombregerente}" />
+                            <h:outputLabel value="SMV:" />
+                            <h:inputText  value="#{configuracionSfccbdmq.configuracion.smv}" />
+                            <h:outputLabel value="Directorio del SRI para grabar los xml:" />
+                            <h:inputTextarea cols="60" rows="3" value="#{configuracionSfccbdmq.configuracion.directorio}" />
+                            <h:outputLabel value="URL SRI:"/>
+                            <h:inputTextarea cols="60" rows="3" value="#{configuracionSfccbdmq.configuracion.urlsri}" />
+                            <h:outputLabel value="Ambiente del SRI para impuesto a la renta:" />
+                            <h:selectOneMenu  value="#{configuracionSfccbdmq.configuracion.ambiente}" title="Tipo de asiento de cierre" >
+                                <f:selectItem itemLabel="Pruebas" itemValue="1"/>
+                                <f:selectItem itemLabel="Producción" itemValue="2"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Cuenta de resultados:" for="ctaresultado" />
+                            <h:inputText id="ctaresultado" value="#{configuracionSfccbdmq.configuracion.ctaresultado}" title="Cuenta de resultados" />
+                            <h:outputLabel value="Cta.resultados acumulados:" for="ctareacumulados" />
+                            <h:inputText id="ctareacumulados" value="#{configuracionSfccbdmq.configuracion.ctareacumulados}" title="Cta.resultados acumulados" />
+                            <h:outputLabel value="Tipo de asiento de cierre:" for="tacierre" />
+                            <h:selectOneMenu id="tacierre" value="#{configuracionSfccbdmq.configuracion.tacierre}" title="Tipo de asiento de cierre" >
+                                <!-- TODO: update below reference to list of available items-->
+                                <f:selectItems value="#{tipoAsientoSfccbdmq.comboTipoasiento}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Tipo de asiento apertura:" for="taapertura" />
+                            <h:selectOneMenu id="taapertura" value="#{configuracionSfccbdmq.configuracion.taapertura}" title="Tipo de asiento apertura" >
+                                <!-- TODO: update below reference to list of available items-->
+                                <f:selectItems value="#{tipoAsientoSfccbdmq.comboTipoasiento}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Tipo de asiento depreciaciones:"/>
+                            <h:selectOneMenu value="#{configuracionSfccbdmq.configuracion.tadepreciacion}" title="Tipo de asiento depreciaciones" >
+                                <!-- TODO: update below reference to list of available items-->
+                                <f:selectItems value="#{tipoAsientoSfccbdmq.comboTipoasiento}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Clave:" for="clave" />
+                            <h:inputText id="clave" value="#{configuracionSfccbdmq.configuracion.clave}" title="Clave" />
+                            <!--                            <h:outputLabel value="Clave nueva:" />
+                                                        <h:inputSecret  value="#{configuracionSfccbdmq.claveNueva}"/>
+                                                        <h:outputLabel value="Retipee Clave Nueva:" />
+                                                        <h:inputSecret  value="#{configuracionSfccbdmq.claveNuevaReescrita}" />-->
+                            <h:outputLabel value="Día de inicio de cálculo de nómina:" />
+                            <h:inputText  value="#{configuracionSfccbdmq.configuracion.inicionomina}" />
+                            <h:outputLabel value="Día de fin de cálculo de nómina:" />
+                            <h:inputText  value="#{configuracionSfccbdmq.configuracion.finnomina}" />
+                            <h:outputText value="Genera nómina " />
+                            <h:selectBooleanCheckbox value="#{configuracionSfccbdmq.configuracion.generandoNomina}">
+                                <ace:ajax execute="@all"/>
+                            </h:selectBooleanCheckbox>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{configuracionSfccbdmq.grabar()}"/>
+                            </ace:menuBar>
+                            <ace:messages/>     
+                        </h:panelGrid>
+                    </ace:panel>
+                </ui:define>
+                <!-- Fin -->
+            </ui:composition>
+        </h:form>
+    </h:body>
+
+</html>

@@ -1,0 +1,361 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{contratosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+
+
+                    <h:panelGrid columns="1" width="100%">
+                        <ui:include src="../BuscarProveedor.xhtml" />
+                        <ace:menuBar autoSubmenuDisplay="true" >
+
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{contratosSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{contratosSfccbdmq.crear()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Bùsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{contratosSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{contratosSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <!--                    <h:panelGrid styleClass="centeredPanelGrid">
+                                            
+                                        </h:panelGrid>-->
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{contratosSfccbdmq.contratos}"
+                                       var="item"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       binding="#{contratosSfccbdmq.formulario.fila}">
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{contratosSfccbdmq.modificar(item)}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{contratosSfccbdmq.imprimir(item)}" value="Imrpimir" icon="ui-icon ui-icon-print"/>
+                                    <ace:menuItem action="#{contratosSfccbdmq.cerrar(item)}" value="Cerrar" icon="ui-icon ui-icon-check"/>
+                                    <ace:menuItem action="#{contratosSfccbdmq.eliminar(item)}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="Número"  style="text-align: left">
+                                <h:outputText  value="#{item.numero}"/>
+                            </ace:column>
+                            <ace:column  headerText="Título"  style="text-align: left">
+                                <h:outputText  value="#{item.titulo}"/>
+                            </ace:column>     
+                            <ace:column  headerText="Fecha de Inicio"  style="text-align: left">
+                                <h:outputText  value="#{item.inicio}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>  
+                            <ace:column  headerText="Fecha de Fin"  style="text-align: left">
+                                <h:outputText  value="#{item.fin}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>  
+                            <ace:column  headerText="Fecha de Firma"  style="text-align: left">
+                                <h:outputText  value="#{item.firma}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>  
+                            <ace:column  headerText="Fecha de Anticipo" style="text-align: left">
+                                <h:outputText  value="#{item.fechaanticipo}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>  
+                            <ace:column  headerText="F. Pago" style="text-align: left">
+                                <h:outputText  value="#{item.fpago.nombre}"/>
+                            </ace:column>   
+                            <ace:column  headerText="Forma de pago"  style="text-align: left">
+                                <h:outputText  value="#{item.formapago}"/>
+                            </ace:column>  
+                            <ace:column  headerText="Es obra?"  style="text-align: left">
+                                <h:outputText  value="#{item.obra}"/>
+                            </ace:column>  
+                            <ace:column  headerText="Valor"  style="text-align: right">
+                                <h:outputText  value="#{item.valor}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>  
+                            <ace:column  headerText="Anticipo" style="text-align: right">
+                                <h:outputText  value="#{item.anticipo}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>  
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{contratosSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{contratosSfccbdmq.formulario.mostrar}"
+                    visible="#{contratosSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <ace:tabSet style="clear:both;" clientSide="true">
+                            <ace:tabPane>
+                                <f:facet name="label">Objeto</f:facet>
+                                <h:inputTextarea cols="80" rows="8" id="objeto" value="#{contratosSfccbdmq.contrato.objeto}" title="Objeto" />
+                            </ace:tabPane>
+                            <ace:tabPane>
+                                <f:facet name="label">Inf. General</f:facet>
+                                <h:panelGrid columns="2">
+                                    <h:outputLabel value="Número:" for="numero" />
+                                    <h:inputText id="numero" value="#{contratosSfccbdmq.contrato.numero}" title="Numero" disabled="#{!contratosSfccbdmq.formulario.nuevo}" >
+                                        <!--<f:validateLength maximum="15" minimum="9"/>--> 
+                                    </h:inputText>
+                                    <h:outputLabel value="Título:" for="titulo" />
+                                    <h:inputText id="titulo" value="#{contratosSfccbdmq.contrato.titulo}" title="Titulo" size="20"/>
+                                    <!--<h:outputLabel value="Administrador:" for="administrador" />-->
+                                    <h:outputLabel value="Fecha de Firma:" />
+                                    <ace:dateTimeEntry navigator="true"  value="#{contratosSfccbdmq.contrato.firma}" 
+                                                       popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                       pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </ace:dateTimeEntry>
+                                    <h:outputLabel value="Tiene Anticipo?:"/>
+                                    <h:selectBooleanCheckbox value="#{contratosSfccbdmq.tieneAnticipo}">
+                                        <ace:ajax execute="@all"/>
+                                    </h:selectBooleanCheckbox>
+                                    <h:outputLabel value="Es Obra?:"/>
+                                    <h:selectBooleanCheckbox value="#{contratosSfccbdmq.contrato.obra}"/>
+                                </h:panelGrid>
+                                <h:panelGrid columns="2" rendered="#{contratosSfccbdmq.tieneAnticipo}">
+                                    <h:outputLabel value="Fecha de Anticipo:" />
+                                    <ace:dateTimeEntry navigator="true"  value="#{contratosSfccbdmq.contrato.fechaanticipo}" 
+                                                       popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                       pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </ace:dateTimeEntry>
+                                    <h:outputLabel value="Valor Anticipo:" />
+                                    <h:inputText  value="#{contratosSfccbdmq.contrato.anticipo}" />
+                                </h:panelGrid>
+                                <h:panelGrid columns="2">
+                                    <h:outputLabel value="Fecha de Inicio:" />
+                                    <ace:dateTimeEntry navigator="true" id="fecha" value="#{contratosSfccbdmq.contrato.inicio}" 
+                                                       popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                       pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </ace:dateTimeEntry>
+                                    <h:outputLabel value="Conteo de días desde la firma?:"/>
+                                    <h:selectBooleanCheckbox value="#{contratosSfccbdmq.contrato.esfirma}">
+                                        <ace:ajax execute="@all"/>
+                                    </h:selectBooleanCheckbox>
+                                    <h:outputLabel value="Número de Días:" />
+                                    <h:inputText  value="#{contratosSfccbdmq.contrato.numeroDias}" title="Número Días"  valueChangeListener="#{contratosSfccbdmq.cambiaDias}">
+                                        <ace:ajax execute="@all"/>
+                                    </h:inputText>
+                                    <h:outputLabel value="Fecha de Fin:" />
+                                    <h:outputLabel  value="#{contratosSfccbdmq.contrato.fin}" >
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputLabel>
+<!--                                    <ace:dateTimeEntry navigator="true"  value="#{contratosSfccbdmq.contrato.fin}" 
+                                                       popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                       pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </ace:dateTimeEntry>-->
+
+                                    <h:outputLabel value="Valor:" for="valor" />
+                                    <h:inputText id="valor" value="#{contratosSfccbdmq.contrato.valor}" title="Valor" />
+                                </h:panelGrid>
+                            </ace:tabPane>
+                            <ace:tabPane>
+                                <f:facet name="label">Forma de Pago</f:facet>
+                                <h:panelGrid columns="1">
+                                    <h:selectOneMenu id="tipocta" value="#{contratosSfccbdmq.contrato.fpago}" title="Tipo de Cuenta" >
+                                        <!-- TODO: update below reference to list of available items-->
+                                        <f:selectItems value="#{codigosSfccbdmq.comboFormaPagoContrato}"/>
+                                    </h:selectOneMenu>
+                                    <h:inputTextarea cols="80" rows="8" value="#{contratosSfccbdmq.contrato.formapago}" title="Forma de Pago" />
+                                </h:panelGrid>
+                            </ace:tabPane>
+                            <ace:tabPane>
+                                <f:facet name="label">Administrador</f:facet>
+                                <ui:include src="../BuscarUsuario.xhtml"/>
+                            </ace:tabPane>
+                            <ace:tabPane label="Adjuntos">
+                                <ui:include src="../mostrarImagenes.xhtml" />
+                            </ace:tabPane>
+                        </ace:tabSet>    
+
+
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{contratosSfccbdmq.formulario.nuevo}" 
+                                          action="#{contratosSfccbdmq.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{contratosSfccbdmq.grabar()}" 
+                                          rendered="#{contratosSfccbdmq.formulario.modificar}" />
+                            <ace:menuItem action="#{contratosSfccbdmq.borrar()}" 
+                                          value="Esta seguro de Borrar el registro?" 
+                                          rendered="#{contratosSfccbdmq.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{contratosSfccbdmq.formulario.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                        <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                    </h:panelGrid>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{contratosSfccbdmq.formularioImprimir.mostrar}"
+                    visible="#{contratosSfccbdmq.formularioImprimir.mostrar}">
+                    <h:commandButton  value="Imprimir">
+                        <!--<h:outputText id="printBoth" value="Imprimir"/>-->
+                        <ace:printer for="panelImprimir"/>
+                    </h:commandButton>
+                    <h:panelGroup id="panelImprimir">
+                        <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                            <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+                            <h:panelGrid   columns="2" style="text-align: right" width="20%">
+                                <h:outputText value="Usuario :"/>
+                                <h:outputText value="#{parametrosSfccbdmq.logueado.userid}"/>
+                                <h:outputText value="Fecha :"/>
+                                <h:outputText value="#{parametrosSfccbdmq.fechaActual}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                                </h:outputText>
+                            </h:panelGrid>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Objeto :"/>
+                            <h:outputLabel value="#{contratosSfccbdmq.contrato.objeto}"/>
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" style="text-align: left" width="100%">
+                            <h:outputText  value="Còdigo Proveedor:"/>
+                            <h:outputText  value=" #{contratosSfccbdmq.contrato.proveedor.codigo}"/>
+                            <h:outputText  value="Nombre:"/>
+                            <h:outputText  value=" #{contratosSfccbdmq.contrato.proveedor.empresa.nombre}"/>
+                            <h:outputText  value="Razon Social:"/>
+                            <h:outputText  value="#{contratosSfccbdmq.contrato.proveedor.empresa.nombrecomercial}"/>
+                            <h:outputText value="R.U.C.:"/>
+                            <h:outputText  value="#{contratosSfccbdmq.contrato.proveedor.empresa.ruc}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Número:"/>
+                            <h:outputText value="#{contratosSfccbdmq.contrato.numero}" />
+                            <h:outputText value="Título:" />
+                            <h:outputText value="#{contratosSfccbdmq.contrato.titulo}"/>
+                            <h:outputText value="Administrador:"/>
+                            <h:outputText value="#{contratosSfccbdmq.contrato.administrador.toString()}"/>
+                            <h:outputText value="Fecha de Firma:" />
+                            <h:outputText value="#{contratosSfccbdmq.contrato.firma}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                            <h:outputText value="Tiene Anticipo?:"/>
+                            <h:outputText value="SI:" rendered="#{contratosSfccbdmq.tieneAnticipo}"/>
+                            <h:outputText value="NO:" rendered="#{!contratosSfccbdmq.tieneAnticipo}"/>
+                            <h:outputText value="Es Obra?:"/>
+                            <h:outputText value="SI:" rendered="#{contratosSfccbdmq.contrato.obra}"/>
+                            <h:outputText value="NO:" rendered="#{!contratosSfccbdmq.contrato.obra}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" rendered="#{contratosSfccbdmq.tieneAnticipo}">
+                            <h:outputText value="Fecha de Anticipo:" />
+                            <h:outputText value="#{contratosSfccbdmq.contrato.fechaanticipo}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                            <h:outputText value="Valor Anticipo:" />
+                            <h:outputText  value="#{contratosSfccbdmq.contrato.anticipo}" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Fecha de Inicio:" />
+                            <h:outputText value="#{contratosSfccbdmq.contrato.inicio}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                            <h:outputText value="Conteo de días desde la firma?:"/>
+                            <h:outputText value="SI:" rendered="#{contratosSfccbdmq.contrato.esfirma}"/>
+                            <h:outputText value="NO:" rendered="#{!contratosSfccbdmq.contrato.esfirma}"/>
+                            <h:outputLabel value="Número de Días:" />
+                            <h:outputText  value="#{contratosSfccbdmq.contrato.numeroDias}" title="Número Días"/>
+                            <h:outputText value="Fecha de Fin:" />
+                            <h:outputText  value="#{contratosSfccbdmq.contrato.fin}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                            <h:outputText value="Valor:"/>
+                            <h:outputText value="#{contratosSfccbdmq.contrato.valor}" title="Valor" >
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputText value="Forma de Pago"/>
+                            <h:outputText value="#{contratosSfccbdmq.contrato.fpago.toString()}"/>
+                            
+                        </h:panelGrid>
+
+
+
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{contratosSfccbdmq.formularioImprimir.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                        <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                    </h:panelGrid>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

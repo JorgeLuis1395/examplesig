@@ -1,0 +1,187 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                
+                <ace:panel id="panel"
+                           header="#{reporteCedulaNivelesPoa.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="4" width="100%">
+                        <h:outputLabel value="Al:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{reporteCedulaNivelesPoa.hasta}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Ingresos :"/>
+                        <h:selectBooleanCheckbox value="#{reporteCedulaNivelesPoa.ingresos}" >
+                            <ace:ajax execute="@all"/>
+                            </h:selectBooleanCheckbox>
+<!--                        <h:outputLabel value="Estructura de Arbol? :"/>
+                        <h:selectBooleanCheckbox value="#{reporteCedulaNivelesPoa.fuente}"  />
+                        <h:outputLabel value="Mensual?:"/>
+                        <h:selectBooleanCheckbox value="#{reporteCedulaNivelesPoa.mensual}"/>-->
+                        <h:outputLabel value="Fuente:" for="fuente" />
+                        <h:selectOneMenu id="fuente" value="#{reporteCedulaNivelesPoa.fuenteFinanciamiento}">
+                            <f:selectItems value="#{consultasPoa.comboFuenteFinanciamiento}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Dígito a buscar :"/>
+                        <h:inputText value="#{reporteCedulaNivelesPoa.digito}" size="2" id="digito">
+                            <f:validateLength maximum="1" minimum="1"/>
+                        </h:inputText>
+                    </h:panelGrid>
+                    <h:panelGrid columns="5">
+                        <!--                        <h:outputLabel value="Fecha :"  />
+                                                <h:outputLabel value="Desde:"/>
+                                                <ace:dateTimeEntry navigator="true" value="#{reporteCedulaNivelesPoa.desde}"
+                                                                   popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                </ace:dateTimeEntry>-->
+
+
+                    </h:panelGrid> 
+
+                    <h:panelGrid columns="1" width="100%">
+
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteCedulaNivelesPoa.buscar()}"/>
+
+                        </ace:menuBar>
+                        <ace:dynamicResource fileName="Cedula.pdf" id="pdf-buttonCedula" label="Generar PDF"
+                                            mimeType="application/pdf" 
+                                            rendered="#{reporteCedulaNivelesPoa.reporte!=null}"
+                                            resource="#{reporteCedulaNivelesPoa.reporte}" 
+                                            style="" type="button"/>
+                        <ace:messages/>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{reporteCedulaNivelesPoa.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{reporteCedulaNivelesPoa.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <!--                    <h:panelGrid columns="4" styleClass="centeredPanelGrid">
+                                            <h:commandButton  value="Imprimir">
+                                                <ace:printer for="panelImprimir"/>
+                                            </h:commandButton>
+                                        </h:panelGrid>-->
+                </ace:panel>
+
+                <ace:panel id="panelImprimir" style="display: block">
+<!--                    <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+                    <h:panelGrid width="100%" columns="4">
+                        <h:outputLabel value="Desde:"/>
+                        <h:outputLabel value="#{reporteCedulaNivelesPoa.desde}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputLabel>
+
+                        <h:outputLabel value="Al:"/>
+                        <h:outputLabel value="#{reporteCedulaNivelesPoa.hasta}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputLabel>
+                    </h:panelGrid>-->
+                    <h:panelGrid width="100%" style="display: block">
+                        <ace:dataTable id="tabla"
+                                       value="#{reporteCedulaNivelesPoa.asignaciones}"
+                                       var="item"
+                                       scrollHeight="200"
+                                       scrollable="true"
+                                       style="display: block">
+                            <f:facet name="header">#{reporteCedulaNivelesPoa.titulo}</f:facet>
+
+                            <ace:column  headerText="Partida" style="text-align: left" id="codigo">
+                                <h:outputText  value="#{item.codigo}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nombre"  style="text-align: left">
+                                <h:outputText  value="#{item.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Asignación" style="text-align: right" 
+                                         rendered="#{!reporteCedulaNivelesPoa.mensual}">
+                                <h:outputText  value="#{item.asignacion}"  >
+                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Reformas" style="text-align: right">
+                                <h:outputText  value="#{item.reforma}"  >
+                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Asignación Codificada (a)" style="text-align: right" 
+                                         rendered="#{!reporteCedulaNivelesPoa.mensual}">
+                                <h:outputText  value="#{item.codificado}"  >
+                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Certificación (b)" style="text-align: right" rendered="#{!reporteCedulaNivelesPoa.ingresos}">
+                                <h:outputText  value="#{item.certificacion}"  >
+                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Saldo certificación (a-b)" style="text-align: right" rendered="#{!reporteCedulaNivelesPoa.mensual and !reporteCedulaNivelesPoa.ingresos}">
+                                <h:outputText  value="#{item.certificado}"  >
+                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Compromisos (d)" style="text-align: right" rendered="#{!reporteCedulaNivelesPoa.ingresos}">
+                                <h:outputText  value="#{item.compromiso}"  >
+                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Saldo Compromiso (a-d)" style="text-align: right" rendered="#{!reporteCedulaNivelesPoa.mensual and !reporteCedulaNivelesPoa.ingresos}">
+                                <h:outputText  value="#{item.comprometido}"  >
+                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="#{reporteCedulaNivelesPoa.titulo4}" style="text-align: right">
+                                <h:outputText  value="#{item.ejecutado}"  >
+                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="#{reporteCedulaNivelesPoa.titulo3}" style="text-align: right" rendered="#{!reporteCedulaNivelesPoa.mensual}">
+                                <h:outputText  value="#{item.saldoEjecutado}"  >
+                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

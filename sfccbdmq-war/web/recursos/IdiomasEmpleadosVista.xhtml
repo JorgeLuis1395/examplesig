@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+        
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{idiomasEmpleado.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <ace:panel header="Parámetros de Búsqueda">
+                        <ui:include src="../BuscarEmpleado.xhtml"/>
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{idiomasEmpleado.buscar()}"/>
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{idiomasEmpleado.nuevo()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <ace:messages/>
+                    </ace:panel> 
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="false"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{idiomasEmpleado.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{idiomasEmpleado.formulario.pantalla}" 
+                                          target="idiomas" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="idiomas" 
+                                       value="#{idiomasEmpleado.listaIdiomas}"
+                                       var="idioma"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,50"
+
+                                       paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="5"
+                                       binding="#{idiomasEmpleado.formulario.fila}">
+
+                            <ace:column  style="text-align: left" rendered="#{!idiomasEmpleado.formulario.borrar}" >
+                                <ace:menuButton  effect="slide" effectDuration="200" value="...">
+                                    <ace:menuItem value="Editar" icon="ui-icon ui-icon-pencil" action="#{idiomasEmpleado.modifica(idioma)}"  />
+                                    <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{idiomasEmpleado.borra(idioma)}"  />
+                                </ace:menuButton>
+                            </ace:column>
+                            <ace:column  headerText="Idioma" style="text-align: left">
+                                <h:outputText value="#{idioma.idioma}"/>
+                            </ace:column>
+                            <ace:column  headerText='%Escrito'   style="text-align: left">
+                                <h:outputText  value="#{idioma.escrito}"/>
+                            </ace:column>
+                            <ace:column  headerText='%Hablado'   style="text-align: left">
+                                <h:outputText  value="#{idioma.hablado}"/>
+                            </ace:column>
+
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="Formación Específica"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{idiomasEmpleado.formulario.mostrar}"
+                    visible="#{idiomasEmpleado.formulario.mostrar}">
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane >
+                            <f:facet name="label">Inf. General</f:facet>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Idioma:" for="idioma" />
+                                <h:inputText id="idioma" value="#{idiomasEmpleado.idiome.idioma}" 
+                                               title="Idioma" />
+                                <h:outputLabel value="Porcentaje Hablado:" for="hablado" />
+                                <h:inputText id="hablado" value="#{idiomasEmpleado.idiome.hablado}" title="hablado" />
+                                <h:outputLabel value="Porcentaje Escrito:" for="escrito" />
+                                <h:inputText id="escrito" value="#{idiomasEmpleado.idiome.escrito}" title="escrito" />
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane label="Adjuntos">
+                            <ui:include src="../mostrarImagenes.xhtml" />
+                        </ace:tabPane>
+                    </ace:tabSet>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{idiomasEmpleado.insertar()}" rendered="#{idiomasEmpleado.formulario.nuevo}" />
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{idiomasEmpleado.grabar()}" rendered="#{idiomasEmpleado.formulario.modificar}" />
+                        <ace:menuItem value="Está Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{idiomasEmpleado.eliminar()}" rendered="#{idiomasEmpleado.formulario.borrar}" />
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{idiomasEmpleado.formulario.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{resumenDiarioSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="4" width="100%">
+                        <h:outputLabel value="Desde:"/>
+                        <ace:dateTimeEntry navigator="true"  value="#{resumenDiarioSfccbdmq.desde}" id="dos"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Hasta:"/>
+                        <ace:dateTimeEntry navigator="true"  value="#{resumenDiarioSfccbdmq.hasta}" id="tres"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" width="100%">
+
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{resumenDiarioSfccbdmq.buscar()}"/>
+                        </ace:menuBar>
+                        <ace:dynamicResource fileName="ResumenDiarios.pdf" id="pdf-buttonxx" label="Generar PDF"
+                                             mimeType="application/pdf" 
+                                             rendered="#{resumenDiarioSfccbdmq.recurso!=null}"
+                                             resource="#{resumenDiarioSfccbdmq.recurso}" 
+                                             style="" type="button"/>
+                        <ace:messages/>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{resumenDiarioSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{resumenDiarioSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <!--                    <h:panelGrid styleClass="centeredPanelGrid">
+                                            
+                                        </h:panelGrid>-->
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{resumenDiarioSfccbdmq.listaAsientos}"
+                                       var="item"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="30"
+                                       scrollHeight="600"
+                                       scrollable="true"
+                                       >
+                            <f:facet name="header">Resúmen</f:facet>
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+
+                            <ace:column  headerText="Tipo" style="text-align: left">
+                                <h:outputText  value="#{item.titulo1}"/>
+                            </ace:column>
+                            <ace:column  headerText="Cantidad" style="text-align: right">
+                                <h:outputText  value="#{item.errores}"/>
+                            </ace:column>
+                            <ace:column  headerText="Valor" style="text-align: right">
+                                <h:outputText  value="#{item.total}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

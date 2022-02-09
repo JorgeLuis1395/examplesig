@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{cargoxorganigrama.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"  >
+                    <h:panelGroup>
+
+                        <h:panelGrid >
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Nombre del Proceso: " />
+                                <ace:autoCompleteEntry  listValue="#{cargoxorganigrama.listadoOrganigrama}" 
+                                                        listVar="orgTi" 
+                                                        rows="8" 
+                                                        value="#{cargoxorganigrama.nomOrganigrama}" 
+                                                        valueChangeListener="#{cargoxorganigrama.cambiaOrganigrama}" 
+                                                        filterBy="#{orgTi.nombre}"
+                                                        textChangeListener="#{cargoxorganigrama.organigramaChangeEventHandler}"
+                                                        width="400"
+                                                        >
+                                    <f:facet name="row">
+                                        <h:panelGrid  columns="2"  width="100%" columnClasses="tipo" style="text-align: left;font-size: xx-small">
+                                            <h:outputText value="#{orgTi.nombre}"/>
+                                            <h:outputText value="#{orgTi.codigo}"/>
+                                        </h:panelGrid>
+                                    </f:facet>
+
+                                </ace:autoCompleteEntry>
+
+                            </h:panelGrid>
+                            <ace:panel rendered="#{cargoxorganigrama.organigramaL!=null}">
+                                <h:panelGrid columns="2" width="25%">
+                                    <h:outputLabel value="Código:" for="codigoOrg" />
+                                    <h:outputLabel id="codigoOrg" value="#{cargoxorganigrama.organigramaL.codigo}"  />
+                                    <h:outputLabel value="Nombre:" for="nombreOrg" />
+                                    <h:outputLabel id="nombreOrg" value="#{cargoxorganigrama.organigramaL.nombre}" />
+                                    <!--                                    </h:panelGrid>-->
+                                </h:panelGrid>
+                            </ace:panel>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Puesto : " />
+                                <h:inputText value="#{cargoxorganigrama.nomCargoB}"/>
+                              
+                            </h:panelGrid>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{cargoxorganigrama.buscar()}"/>
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{cargoxorganigrama.nuevo()}"/>
+                                <ace:menuItem value="Imprimir" icon="ui-icon ui-icon-print" action="#{cargoxorganigrama.imprimir()}" rendered="#{cargoxorganigrama.listaCarxOrg.size()>0}" />
+                                <ace:menuItem value="Hoja Elect." icon="ui-icon ui-icon-calculator" action="#{cargoxorganigrama.exportar()}" rendered="#{cargoxorganigrama.listaCarxOrg.size()>0}" />
+                            </ace:menuBar>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <ace:messages/>
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{cargoxorganigrama.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{cargoxorganigrama.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{cargoxorganigrama.listaCarxOrg}"
+                                       var="item"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,50,all"
+                                       paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       binding="#{cargoxorganigrama.formulario.fila}">
+                            <ace:row condition="group" groupBy="#{item.organigrama}" pos="before" styleClass="grupo">
+                                <ace:column style="text-align: center" colspan="10">
+                                    <h:outputText value="#{item.organigrama.codigo} - #{item.organigrama.nombre}" />
+                                </ace:column>
+                            </ace:row>                            
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{cargoxorganigrama.modificar()}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{cargoxorganigrama.eliminar()}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column>
+                            <ace:column  headerText="Código" style="text-align: left">
+                                <h:outputText  value="#{item.codigo}"/>
+<!--                                <h:outputText  value="#{item.cargo.id}">
+                                    <f:convertNumber pattern="0000"/>
+                                </h:outputText>-->
+                            </ace:column>
+                            <ace:column  headerText="Cargo" style="text-align: left">
+                                <h:outputText  value="#{item.cargo.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Plazas" style="text-align: left">
+                                <h:outputText  value="#{item.plazas}"/>
+                            </ace:column>
+                            <ace:column  headerText="Vacantes" style="text-align: left">
+                                <h:outputText  value="#{cargoxorganigrama.getcontadorVacantes(item)}"/>
+                            </ace:column>
+                            <ace:column  headerText="Reporta" style="text-align: left">
+                                <h:outputText  value="#{item.reporta.cargo.nombre}"/>
+                            </ace:column>
+                            <ace:column headerText="Director de Proceso" style="text-align: left">
+                                <h:graphicImage url="../resources/images/si.png" rendered="#{item.jefeproceso}"/>
+                                <h:graphicImage url="../resources/images/no.png" rendered="#{!item.jefeproceso}"/>
+                            </ace:column> 
+                            <ace:column headerText="Operativo" style="text-align: left">
+                                <h:graphicImage url="../resources/images/si.png" rendered="#{item.operativo}"/>
+                                <h:graphicImage url="../resources/images/no.png" rendered="#{!item.operativo}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Descripción" style="text-align: left">
+                                <h:outputText  value="#{item.descripcion}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="Organigrama: #{cargoxorganigrama.carXorg.organigrama.nombre}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{cargoxorganigrama.formulario.mostrar}"
+                    visible="#{cargoxorganigrama.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Puesto : " />
+                            <ace:autoCompleteEntry  listValue="#{cargoxorganigrama.listadoCargos}" 
+                                                    listVar="org" 
+                                                    rows="8" 
+                                                    value="#{cargoxorganigrama.nomCargo}" 
+                                                    valueChangeListener="#{cargoxorganigrama.cambiaCargo}" 
+                                                    filterBy="#{org.nombre}"
+                                                    textChangeListener="#{cargoxorganigrama.cargoChangeEventHandler}"
+                                                    width="400"
+                                                    >
+                                <f:facet name="row">
+                                    <h:panelGrid  columns="2"  width="100%" columnClasses="tipo" style="text-align: left;font-size: xx-small">
+                                        <h:outputText value="#{org.nombre}"/>
+                                        <h:outputText value="#{org.codigo}"/>
+                                    </h:panelGrid>
+                                </f:facet>
+
+                            </ace:autoCompleteEntry>
+
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="2" width="100%" >
+                            <h:outputLabel value="Código:" for="codigoCar" />
+                            <h:inputText id="codigoCar" value="#{cargoxorganigrama.carXorg.codigo}"  />
+                            <!--                            <h:outputLabel value="Código:" for="codigoCar" />
+                                                        <h:outputLabel id="codigoCar" value="#{cargoxorganigrama.cargoL.codigo}"  />-->
+                            <h:outputLabel value="Nombre:" for="nombreCar" />
+                            <h:outputLabel id="nombreCar" value="#{cargoxorganigrama.cargoL.nombre}" />
+                            <h:outputLabel value="Descripción:" for="descripcionCar" />
+                            <h:outputLabel id="descripcionCar" value="#{cargoxorganigrama.cargoL.descripcion}" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+
+                            <h:outputLabel value="Reporta a:"  />
+                            <h:selectOneMenu value="#{cargoxorganigrama.superior}">
+                                <f:selectItems value="#{cargoxorganigrama.comboOrganigramaSuperior}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Con puesto de :"  />
+                            <h:selectOneMenu value="#{cargoxorganigrama.cargoRep}">
+                                <f:selectItems value="#{cargoxorganigrama.comboCargosSuperior}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Es Director de Proceso? :"  />
+                            <ace:checkboxButton value="#{cargoxorganigrama.carXorg.jefeproceso}"/>
+                            <h:outputLabel value="Es Operativo? :"  />
+                            <ace:checkboxButton value="#{cargoxorganigrama.carXorg.operativo}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <!--                            <h:outputLabel value="Modalidad de Contratación:" for="tipContrato" />
+                                                        <h:selectOneMenu value="#{cargoxorganigrama.carXorg.tipocontrato}" >
+                                                            <f:selectItems value="#{tipoContrato.comboTiposContrato}" />
+                                                        </h:selectOneMenu>-->
+                            <h:outputLabel value="Plazas:" for="plazas" />
+                            <h:inputText id="plazas" value="#{cargoxorganigrama.carXorg.plazas}" title="Plaza" />
+                            <h:outputLabel value="Descripción:" for="descripcion" />
+                            <h:inputTextarea id="descripcion" value="#{cargoxorganigrama.carXorg.descripcion}" title="Descripcion" cols="30" rows="3" style="width: 100%" />
+                            <h:outputLabel value="Copia conceptos de nómina? :"  />
+                            <ace:checkboxButton value="#{cargoxorganigrama.copiaConceptos}"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{cargoxorganigrama.formulario.nuevo}" 
+                                          action="#{cargoxorganigrama.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{cargoxorganigrama.grabar()}" 
+                                          rendered="#{cargoxorganigrama.formulario.modificar}" />
+                            <ace:menuItem action="#{cargoxorganigrama.borrar()}" 
+                                          value="¿Está seguro de Borrar el registro?" 
+                                          icon="ui-icon ui-icon-trash"
+                                          rendered="#{cargoxorganigrama.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{cargoxorganigrama.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+                <ace:dialog 
+                    header="#{cargoxorganigrama.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{cargoxorganigrama.formularioImprimir.mostrar}"
+                    visible="#{cargoxorganigrama.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="#{cargoxorganigrama.nombreArchivo}" id="pdf-botonMayor" label="#{cargoxorganigrama.tipoArchivo}"
+                                             mimeType="#{cargoxorganigrama.tipoMime}" resource="#{cargoxorganigrama.reporte}" 
+                                             style="" type="button"/>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{cargoxorganigrama.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+        
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{experienciasEmpleado.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <ace:panel header="Parámetros de Búsqueda">
+                        <ui:include src="../BuscarEmpleado.xhtml"/>
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{experienciasEmpleado.buscar()}"/>
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{experienciasEmpleado.nuevo()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <ace:messages/>
+                    </ace:panel> 
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="false"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{experienciasEmpleado.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{experienciasEmpleado.formulario.pantalla}" 
+                                          target="experiencias" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="experiencias" 
+                                       value="#{experienciasEmpleado.listaExperiencias}"
+                                       var="experiencia"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,50"
+
+                                       paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="5"
+                                       binding="#{experienciasEmpleado.formulario.fila}">
+
+                            <ace:column  style="text-align: left" >
+                                <ace:menuButton  effect="slide" effectDuration="200" value="..." rendered="#{experiencia.validado==null}" >
+                                    <ace:menuItem value="Editar" icon="ui-icon ui-icon-pencil" action="#{experienciasEmpleado.modifica(experiencia)}"  rendered="#{experiencia.validado==null}"/>
+                                    <ace:menuItem value="Verificar" icon="ui-icon ui-icon-check" action="#{experienciasEmpleado.verifica(experiencia)}"  />
+                                    <ace:menuItem value="Negar" icon="ui-icon ui-icon-close" action="#{experienciasEmpleado.niega(experiencia)}"  />
+                                    <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{experienciasEmpleado.borra(experiencia)}"  rendered="#{experiencia.validado==null}"/>
+                                </ace:menuButton>
+                            </ace:column>
+                            <ace:column  headerText="Empresa" style="text-align: left">
+                                <h:outputText value="#{experiencia.empresa}"/>
+                            </ace:column>
+                            <ace:column  headerText='Cargo'   style="text-align: left">
+                                <h:outputText  value="#{experiencia.cargo}"/>
+                            </ace:column>
+                            <ace:column  headerText='Desde-Hasta'   style="text-align: left">
+                                <h:outputText  value="#{experiencia.desde}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>-
+                                <h:outputText  value="#{experiencia.hasta}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Informante" style="text-align: left">
+                                <h:outputText value="#{experiencia.noombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Cargo Informante" style="text-align: left">
+                                <h:outputText value="#{experiencia.cargocontacto}"/>
+                            </ace:column>
+                            <ace:column headerText="Descripción" style="text-align: left"  >
+                                <h:outputText  value="#{experiencia.descripcion}"  />
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="Formación Específica"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{experienciasEmpleado.formulario.mostrar}"
+                    visible="#{experienciasEmpleado.formulario.mostrar}">
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane >
+                            <f:facet name="label">Inf. General</f:facet>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Empresa:" for="empresa" />
+                                <h:inputText id="empresa" value="#{experienciasEmpleado.experiencia.empresa}" 
+                                               title="Empresa" />
+                                <h:outputLabel value="Cargo:" for="cargo" />
+                                <h:inputText id="cargo" value="#{experienciasEmpleado.experiencia.cargo}" title="Cargo" />
+                                <h:outputLabel value="Desde:" for="desde" />
+                                <ace:dateTimeEntry navigator="true" value="#{experienciasEmpleado.experiencia.desde}" 
+                                                   popupIcon="ui-icon ui-icon-calendar"    renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                </ace:dateTimeEntry>    
+                                <h:outputLabel value="Hasta:" for="desde" />
+                                <ace:dateTimeEntry navigator="true" value="#{experienciasEmpleado.experiencia.hasta}" 
+                                                   popupIcon="ui-icon ui-icon-calendar"  renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                </ace:dateTimeEntry>  
+                                <h:outputLabel value="Nombre de Informante:" for="infor" />
+                                <h:inputText id="infor" value="#{experienciasEmpleado.experiencia.noombre}" title="Infor" />
+                                <h:outputLabel value="Teléfono de Informante:" for="telf" />
+                                <h:inputText id="telf" value="#{experienciasEmpleado.experiencia.nrcontacto}" title="Telf" />
+                                <h:outputLabel value="Cargo Informante:" for="cargoi" />
+                                <h:inputText id="cargoi" value="#{experienciasEmpleado.experiencia.cargocontacto}" title="Cargoi" />
+                                <h:outputLabel value="Descripción:" for="desc" />
+                                <h:inputTextarea cols="16"  rows="5" id="desc" value="#{experienciasEmpleado.experiencia.descripcion}" title="Descripción" />
+                            </h:panelGrid>    
+                             
+                        </ace:tabPane>
+                        <ace:tabPane label="Adjuntos">
+                            <ui:include src="../mostrarImagenes.xhtml" />
+                        </ace:tabPane>
+                    </ace:tabSet>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{experienciasEmpleado.insertar()}" rendered="#{experienciasEmpleado.formulario.nuevo}" />
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{experienciasEmpleado.grabar()}" rendered="#{experienciasEmpleado.formulario.modificar}" />
+                        <ace:menuItem value="Está Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{experienciasEmpleado.eliminar()}" rendered="#{experienciasEmpleado.formulario.borrar}" />
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{experienciasEmpleado.formulario.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

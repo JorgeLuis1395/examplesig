@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+    <ace:panel id="panelImprimir" style="display:block;">
+        <h:panelGrid width="90%">
+            <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+            <h:panelGrid  width="30%" columns="2" style="text-align: left">
+                <h:outputText value="usuario :"/>
+                <h:outputText value="#{parametrosSfccbdmq.logueado.userid}"/>
+                <h:outputText value="Fecha :"/>
+                <h:outputText value="#{parametrosSfccbdmq.fechaActual}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                </h:outputText>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="1" style="text-align: center">
+                <h3>Reformas Presupuesto año #{reformasSfccbdmq.cabeceraReforma.anio}</h3>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                <h:outputLabel value="Número de control :" />
+                <h:outputLabel value="#{reformasSfccbdmq.cabeceraReforma.id}"/>
+                <h:outputLabel value="Tipo :" />
+                <h:outputLabel value="#{reformasSfccbdmq.cabeceraReforma.tipo.toString()}"/>
+
+                <h:outputLabel value="Fecha :" />
+                <h:outputLabel value="#{reformasSfccbdmq.cabeceraReforma.fecha}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputLabel>
+            </h:panelGrid>
+
+            <h:panelGrid  width="90%" columns="1" style="text-align: left">
+                <p><strong>Concepto : </strong>#{reformasSfccbdmq.cabeceraReforma.motivo}</p>
+            </h:panelGrid>
+            <h:panelGrid columns="1" width="100%">
+
+                <ace:dataTable 
+                    value="#{reformasSfccbdmq.reformas}"
+                    var="itemDetalles"
+                    paginator="false"
+                    lazy="false"
+                    resizableColumns="true"
+                    rowIndexVar="row"
+                    paginatorPosition="both"
+                    rowsPerPageTemplate="5,10,15,30,50,100"
+                    paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    binding="#{reformasSfccbdmq.formularioImprimir.fila}">
+                    <f:facet name="header">Cuentas</f:facet>
+                    <ace:column  headerText="Fuente" style="text-align: left">
+                        <h:outputText  value="#{itemDetalles.asignacion.fuente.nombre}"/>
+                    </ace:column>
+                     <ace:column  headerText="Partida"  style="text-align: left">
+                        <h:outputText  value="#{itemDetalles.asignacion.clasificador.toString()}"/>
+                    </ace:column>
+                    <ace:column  headerText="Producto" style="text-align: left">
+                        <h:outputText  value="#{itemDetalles.asignacion.proyecto.toString()}"/>
+                    </ace:column>
+                   
+                    <ace:column  headerText="Codificado" style="text-align: right">
+                        <!--<h:outputText  value="#{itemDetalles.asignacion.valor+reformasSfccbdmq.totalReformasImp}">-->
+                        <h:outputText  value="#{itemDetalles.totalAisgnacion}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+
+                    <ace:column  headerText="Reforma" style="text-align: right">
+                        <h:outputText  value="#{itemDetalles.totalReforma}">
+                        <!--<h:outputText  value="#{itemDetalles.valor}">-->
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Total" style="text-align: right">
+                        <h:outputText  value="#{itemDetalles.totalTotal}">
+<!--                        <h:outputText  value="#{itemDetalles.asignacion.valor+
+                                                (reformasSfccbdmq.totalReformasImp -reformasSfccbdmq.totalCertificacionesImp ) 
+                                                +itemDetalles.valor}">-->
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+
+                </ace:dataTable>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="2">
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="f.----------------------------" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="Responsable"  >
+                </h:outputLabel>
+            </h:panelGrid>
+        </h:panelGrid>
+
+    </ace:panel>
+</html>

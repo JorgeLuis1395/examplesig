@@ -1,0 +1,332 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition template="../plantillas/plantillaPersonal.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+<!--            <ui:define name="content">
+                <ace:panel header="Transferencia de Bienes">    
+                    <h:outputLabel value="Usuario del bien: "/>
+                    <h:selectOneMenu  value="#{tranferenciaBienes.empleado}"> 
+                        <f:selectItems value="#{tranferenciaBienes.comboCustodioBienes}"/>
+                    </h:selectOneMenu>
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar Transferencias en Tránsito" icon="ui-icon ui-icon-search"  action="#{tranferenciaBienes.buscar()}"/>
+                            <ace:menuItem value="Tranferencia de bienes" icon="ui-icon ui-icon-document"  action="#{tranferenciaBienes.crear()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:panel>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:dataTable 
+                            id="tabla"
+                            paginatorAlwaysVisible="true"
+                            value="#{tranferenciaBienes.listaSolicitudes}"
+                            var="item"
+                            paginator="true"
+                            lazy="false"
+                            resizableColumns="true"
+                            rowIndexVar="row"
+                            paginatorPosition="both"
+                            rowsPerPageTemplate="5,10,15,30,50,100,all"
+                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            rows="15">
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{tranferenciaBienes.modificar(item)}" 
+                                                  value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{tranferenciaBienes.documentos(item)}" 
+                                                  value="Documentos" icon="ui-icon ui-icon-document"/>
+                                    <ace:menuItem action="#{tranferenciaBienes.eliminar(item)}" 
+                                                  value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                    <ace:menuItem action="#{tranferenciaBienes.reporteActa(item)}" 
+                                                  value="Imprimir" icon="ui-icon ui-icon-print"/>
+                                </ace:menuButton>
+                            </ace:column>
+                            <ace:column  headerText="N°" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Fecha de Solicitud" style="text-align: left">
+                                <h:outputText  value="#{item.fechasolicitud}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Usuario del bien" style="text-align: left">
+                                <h:outputText  value="#{consultasPoa.traerNombreEntidad(item.usuariosolicitante)}"/>
+                            </ace:column>
+                            <ace:column  headerText="Usuario a transferir" style="text-align: left">
+                                <h:outputText  value="#{consultasPoa.traerNombreEntidad(item.usuariotranferir)}"/>
+                            </ace:column>
+                            <ace:column  headerText="Bodega Central" style="text-align: left">
+                                <h:outputText  value="#{item.bodega?'SI':!item.bodega?'NO':''}"/>
+                            </ace:column>
+                            <ace:column  headerText="Estado" style="text-align: left">
+                                <h:outputText  value="#{item.estado eq 0?'Solicitado':item.estado eq 1?'Aprobado':'Negado'}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+
+                <ace:dialog 
+                    header="Transferencia de Bienes"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{tranferenciaBienes.formulario.mostrar}"
+                    visible="#{tranferenciaBienes.formulario.mostrar}">
+                    <h:panelGrid>
+                        <h:panelGrid>
+                            <h3>"Todos los Bienes eléctricos, electrónicos y automotrices se recibirán previo informe técnico del área respectiva."</h3>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" rendered="#{!tranferenciaBienes.formulario.borrar}">
+                            <h:outputLabel value="Bodega Central: "/>
+                            <ace:checkboxButton value="#{tranferenciaBienes.solicitud.bodega}">
+                                <ace:ajax execute="@all"/>
+                            </ace:checkboxButton>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" rendered="#{!tranferenciaBienes.formulario.borrar and !tranferenciaBienes.solicitud.bodega}">
+                                                        <h:outputFormat value=" Nuevo Usuario a Transferir" style="font-weight:bold; font-style: italic" escape="true" />
+                            <h:outputFormat value=" Nuevo Usuario a Transferir" />
+                                                        <h:outputLabel value="Usuario Actual"/>
+                            <ui:include src="../BuscarEmpleado.xhtml"/>
+                        </h:panelGrid>
+                        <h:outputFormat value="IMPORTANTE: Para la transferencia de Bienes eléctricos, electrónicos y automotrices es obligatoria la presentación del informe técnico del área respectiva."
+                                        style="font-style: italic; 
+                                        text-decoration: red;
+                                        color: #FFFFFF;
+                                        background-color: #FE2E2E; 
+                                        background-image: none; 
+                                        font-family: Verdana, Arial, Helvetica, sans-serif; 
+                                        font-size: 12px; 
+                                        font-weight: bold;" />                            
+                        <h:panelGrid columns="2" rendered="#{!tranferenciaBienes.formulario.borrar}">
+                            <h:commandButton action="#{tranferenciaBienes.seleccionar()}" value="Seleccionar Todo"/>
+                            <h:commandButton action="#{tranferenciaBienes.quitar()}" value="Quitar Todo"/>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              rendered="#{tranferenciaBienes.formulario.nuevo}" 
+                                              action="#{tranferenciaBienes.insertar()}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{tranferenciaBienes.grabar()}" 
+                                              rendered="#{tranferenciaBienes.formulario.modificar}"/>
+                                <ace:menuItem action="#{tranferenciaBienes.borrar()}" 
+                                              value="¿Está seguro de Borrar el registro?" 
+                                              icon="ui-icon ui-icon-trash" 
+                                              rendered="#{tranferenciaBienes.formulario.borrar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{tranferenciaBienes.salir()}"/>
+                            </ace:menuBar>
+
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="2" width="100%" style="text-align: left">
+                            <ace:dataTable 
+                                id="tablaf"
+                                value="#{tranferenciaBienes.listaConstataciones}"
+                                var="item"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="both">                                
+                                <ace:column  headerText="N°" style="text-align: right">
+                                    <h:outputText value="#{row+1}"/>
+                                </ace:column> 
+                                <ace:column  headerText="Código del bien" style="text-align: left"
+                                             filterBy="#{item.codigobien}" filterMatchMode="contains">
+                                    <h:outputText  value="#{item.codigobien}"/>
+                                </ace:column>
+                                <ace:column  headerText="Código" style="text-align: left"
+                                             filterBy="#{item.codigo}" filterMatchMode="contains">
+                                    <h:outputText  value="#{item.codigo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Descripción" style="text-align: left"
+                                             filterBy="#{item.descripcion}" filterMatchMode="contains">
+                                    <h:outputText  value="#{item.descripcion}"/>
+                                </ace:column>
+                                <ace:column  headerText="Serie" style="text-align: left"
+                                             filterBy="#{item.nroserie}" filterMatchMode="contains">
+                                    <h:outputText  value="#{item.nroserie}"/>
+                                </ace:column>
+                                <ace:column  headerText="Color" style="text-align: left">
+                                    <h:outputText  value="#{item.color}"/>
+                                </ace:column>
+                                <ace:column  headerText="Estado del bien" style="text-align: left">
+                                    <h:outputText  value="#{item.estadobien}"/>
+                                </ace:column>
+                                <ace:column  headerText="Edificio" style="text-align: left">
+                                    <h:outputText  value="#{item.nombreEdificio}"/>
+                                </ace:column>
+                                <ace:column  headerText="Oficina" style="text-align: left">
+                                    <h:outputText  value="#{item.nombreOficina}"/>
+                                </ace:column>
+                                <ace:column  headerText="Observaciones" style="text-align: left">
+                                    <h:outputText  value="#{item.observacion}"/>
+                                </ace:column>
+                                <ace:column  headerText="Constatado" style="text-align: left" >
+                                    <h:outputText  value="#{item.constatado eq null ?'Sobrante':item.constatado?'Constatado':'No Constatado'}"/>
+                                </ace:column>
+                                <ace:column  headerText=" A Transferir" style="text-align: left" >
+                                    <ace:checkboxButton value="#{item.seleccionado}" disabled="#{tranferenciaBienes.formulario.borrar}">
+                                        <ace:ajax execute="@all"/>
+                                    </ace:checkboxButton>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                    <ace:messages />
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          rendered="#{tranferenciaBienes.formulario.nuevo}" 
+                                          action="#{tranferenciaBienes.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{tranferenciaBienes.grabar()}" 
+                                          rendered="#{tranferenciaBienes.formulario.modificar}"/>
+                            <ace:menuItem action="#{tranferenciaBienes.borrar()}" 
+                                          value="¿Está seguro de Borrar el registro?" 
+                                          icon="ui-icon ui-icon-trash" 
+                                          rendered="#{tranferenciaBienes.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{tranferenciaBienes.salir()}"/>
+                        </ace:menuBar>
+
+                    </h:panelGrid>
+                </ace:dialog>
+
+                <ace:dialog 
+                    header="Documentos"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{tranferenciaBienes.formularioDocumento.mostrar}"
+                    visible="#{tranferenciaBienes.formularioDocumento.mostrar}">
+                    <h:panelGrid>
+                        <h:panelGrid columns="3" >
+                            <ace:fileEntry 
+                                relativePath="/files/"
+                                maxFileCount="10"
+                                maxFileCountMessage="Alerta se pueden Subir hasta 10 archivos."
+                                fileEntryListener="#{imagenesSfccbdmq.imagenListener}"
+                                maxFileSize="10242880"
+                                maxFileSizeMessage="El Tamaño del Archivo Maximo 10 MB."
+                                maxTotalSize="102428800"
+                                maxTotalSizeMessage="EL Tamaño Total de Los Archivos Subídos es demasiado grande."
+                                requiredMessage="El archivo/s es/son requeridos para enviar esta forma."
+                                useOriginalFilename="true"
+                                useSessionSubdir="true"
+                                label="Archivo Subido con Éxito"/>
+                            <h:commandButton  type="submit" value="Subir Archivos"/>
+                        </h:panelGrid>
+                        <ace:dataTable value="#{imagenesSfccbdmq.imagenes}" 
+                                       var="documentosol"
+                                       style="width: 99%;"
+                                       paginator="true"
+                                       paginatorAlwaysVisible="true"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10"
+                                       currentPageReportTemplate="Documento {startRecord}/{totalRecords} Página {currentPage}/{totalPages}"
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="10"
+                                       rowIndexVar="row"> 
+                            <ace:column style="text-align: left" headerText="Acciones">                             
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" 
+                                                  action="#{imagenesSfccbdmq.borrarImagen(documentosol)}" 
+                                                  helpText="Borrar"/>
+                                </ace:menuBar>
+                            </ace:column>
+                            <ace:column headerText="Nombre Documento" style="text-align: left" >
+                                <h:outputText value="#{documentosol.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Doc. Digital" style="text-align: left">
+                                <h:commandLink value="Ver Documento"  action="#{imagenesSfccbdmq.verImagen(documentosol)}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                    <ace:messages />
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{tranferenciaBienes.formularioDocumento.cancelar()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                </ace:dialog>
+
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="false"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{tranferenciaBienes.formularioActa.mostrar}"
+                    visible="#{tranferenciaBienes.formularioActa.mostrar}">
+                    <h:panelGroup>    
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dynamicResource 
+                                fileName="Solicitud de Transferencia.pdf"                                            
+                                attachment="true"                                             
+                                label="Descargar archivo"
+                                mimeType="application/pdf"
+                                resource="#{tranferenciaBienes.reportepdf}" 
+                                type="button" rendered="#{tranferenciaBienes.reportepdf ne null}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{tranferenciaBienes.formularioActa.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages style="white-space: pre-wrap"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>  
+                <ace:dialog header="Descargar documento" modal="false" closable="false" 
+                            visible="#{imagenesSfccbdmq.formularioAdjunto.mostrar}" 
+                            rendered="#{imagenesSfccbdmq.formularioAdjunto.mostrar}">
+                    <h:panelGrid columns="2" width="100%">
+
+                        <h:panelGrid columns="2"> 
+
+                            <h:outputText value="Archivo:" styleClass="bold"/>
+                            <h:outputText value="#{imagenesSfccbdmq.adjunto.nombre}"/>
+                            <ace:dynamicResource fileName="#{imagenesSfccbdmq.adjunto.nombre}" 
+                                                 attachment="false" 
+                                                 label="Descargar documento"
+                                                 resource="#{imagenesSfccbdmq.archivoAnexo}" 
+                                                 type="button"/>
+                            <h:outputText value=" "/>
+                            <ace:menuBar>
+                                <ace:menuItem value="Cerrar" icon="ui-icon ui-icon-close" 
+                                              action="#{imagenesSfccbdmq.formularioAdjunto.cancelar()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                    <ace:messages/>
+                </ace:dialog>
+
+            </ui:define>-->
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

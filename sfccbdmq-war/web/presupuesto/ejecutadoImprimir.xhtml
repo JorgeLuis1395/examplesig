@@ -1,0 +1,260 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <ace:dialog 
+        header="Devengado Presupuesto"
+        closable="false"
+        modal="true"
+        draggable="false"
+        showEffect="clip"
+        hideEffect="fade"
+        rendered="#{calulosPresupuesto.formularioEjecutado.mostrar}"
+        visible="#{calulosPresupuesto.formularioEjecutado.mostrar}">
+        <!--<ace:panel style="display:block;" rendered="#{calulosPresupuesto.formularioEjecutado.mostrar}">-->
+
+        <h:panelGrid width="100%" columns="1" rendered="#{calulosPresupuesto.listadoEjecutados.size()>0}">
+            <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                <h:outputLabel  value="Exportar a:"/>
+                <h:selectOneRadio  value="#{calulosPresupuesto.formularioEjecutado.pantalla}" required="true">
+                    <f:ajax disabled="false"/>
+                    <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                    <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                    <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                    <f:selectItem itemValue="xml" itemLabel="XML"/>
+                </h:selectOneRadio>
+                <ace:dataExporter id="dataExporterDevE" 
+                                  label="Exportar Archivo" 
+                                  type="#{calulosPresupuesto.formularioEjecutado.pantalla}" 
+                                  target="tablaE" fileName="datos"/>
+            </h:panelGrid>
+            <ace:dataTable id="tablaE" 
+                           value="#{calulosPresupuesto.listadoEjecutados}"
+                           var="itemE"
+                           paginator="true"
+                           lazy="false"
+                           resizableColumns="true"
+                           rowIndexVar="row"
+                           paginatorPosition="both"
+                           rowsPerPageTemplate="15,20,25,50,100,all"
+                           currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                           rows="15"
+                           >
+                <ace:column  headerText="Origen" style="text-align: left" >
+                    <h:outputText  value="#{itemE.origen}"/>
+                </ace:column>
+                <ace:column  headerText="Compromiso" style="text-align: left" >
+                    <h:outputText  value="#{itemE.compromisoMotivo}"/>
+                </ace:column>
+                <ace:column  headerText="Id Comp." style="text-align: left" >
+                    <h:outputText  value="#{itemE.compromisoId}"/>
+                </ace:column>
+
+                <ace:column  headerText="Fecha" style="text-align: left">
+                    <h:outputText  value="#{itemE.fechaEjecutado}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </ace:column>
+                <ace:column  headerText="Proyecto" style="text-align: left" >
+                    <h:outputText  value="#{itemE.codigoProyecto}"/>
+                </ace:column>  
+                <ace:column  headerText="Fuente"  style="text-align: left" >
+                    <h:outputText  value="#{itemE.fuenteNombre}">
+                    </h:outputText>
+                </ace:column>
+
+                <ace:column  headerText="Valor"  style="text-align: right" >
+                    <h:outputText  value="#{itemE.valorDevengadoEjecutado}">
+                        <f:convertNumber pattern="###,###,##0.00"/>
+                    </h:outputText>
+                </ace:column>
+            </ace:dataTable>
+            <ace:menuBar>
+                <ace:menuItem value="Cerrar" icon="ui-icon ui-icon-close" action="#{calulosPresupuesto.formularioEjecutado.cancelar()}"/>
+            </ace:menuBar>
+        </h:panelGrid>
+        <h:panelGrid width="100%" columns="1" rendered="#{calulosPresupuesto.listadoEjecutadosDetalle.size()>0}">
+            <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                <h:outputLabel  value="Exportar a:"/>
+                <h:selectOneRadio  value="#{calulosPresupuesto.formularioEjecutado.pantalla}" required="true">
+                    <f:ajax disabled="false"/>
+                    <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                    <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                    <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                    <f:selectItem itemValue="xml" itemLabel="XML"/>
+                </h:selectOneRadio>
+                <ace:dataExporter id="dataExporterDevD" 
+                                  label="Exportar Archivo" 
+                                  type="#{calulosPresupuesto.formularioEjecutado.pantalla}" 
+                                  target="tablaD" fileName="datos"/>
+            </h:panelGrid>
+            <ace:dataTable id="tablaD" 
+                           value="#{calulosPresupuesto.listadoEjecutadosDetalle}"
+                           var="itemD"
+                           paginator="true"
+                           lazy="false"
+                           resizableColumns="true"
+                           rowIndexVar="row"
+                           paginatorPosition="both"
+                           rowsPerPageTemplate="15,20,25,50,100,all"
+                           currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                           rows="15"
+                           >
+                <ace:column  headerText="Compromiso" style="text-align: left" >
+                    <h:outputText  value="#{itemD.compromiso.numerocomp}"/>
+                </ace:column>
+                <ace:column  headerText="Id Comp." style="text-align: left" >
+                    <h:outputText  value="#{itemD.compromiso.id}"/>
+                </ace:column>
+
+                <ace:column  headerText="Fecha" style="text-align: left">
+                    <h:outputText  value="#{itemD.fecha}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </ace:column>
+                <ace:column  headerText="Proyecto" style="text-align: left" >
+                    <h:outputText  value="#{itemD.asignacion.proyecto.codigo}"/>
+                </ace:column>  
+                <ace:column  headerText="Fuente"  style="text-align: left" >
+                    <h:outputText  value="#{itemD.asignacion.fuente.codigo}">
+                    </h:outputText>
+                </ace:column>
+
+                <ace:column  headerText="Valor"  style="text-align: right" >
+                    <h:outputText  value="#{itemD.valorEjecutado}">
+                        <f:convertNumber pattern="###,###,##0.00"/>
+                    </h:outputText>
+                </ace:column>
+            </ace:dataTable>
+            <ace:menuBar>
+                <ace:menuItem value="Cerrar" icon="ui-icon ui-icon-close" action="#{calulosPresupuesto.formularioEjecutado.cancelar()}"/>
+            </ace:menuBar>
+        </h:panelGrid>
+        <h:panelGrid width="100%" columns="1" rendered="#{calulosPresupuesto.listadoEjecutadosRoles.size()>0}">
+            <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                <h:outputLabel  value="Exportar a:"/>
+                <h:selectOneRadio  value="#{calulosPresupuesto.formularioEjecutado.pantalla}" required="true">
+                    <f:ajax disabled="false"/>
+                    <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                    <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                    <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                    <f:selectItem itemValue="xml" itemLabel="XML"/>
+                </h:selectOneRadio>
+                <ace:dataExporter id="dataExporterDevER" 
+                                  label="Exportar Archivo" 
+                                  type="#{calulosPresupuesto.formularioEjecutado.pantalla}" 
+                                  target="tablaE" fileName="datos"/>
+            </h:panelGrid>
+            <ace:dataTable id="tablaER" 
+                           value="#{calulosPresupuesto.listadoEjecutadosRoles}"
+                           var="itemE"
+                           paginator="true"
+                           lazy="false"
+                           resizableColumns="true"
+                           rowIndexVar="row"
+                           paginatorPosition="both"
+                           rowsPerPageTemplate="15,20,25,50,100,all"
+                           currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                           rows="15"
+                           >
+                <ace:column  headerText="Fecha" style="text-align: left">
+                    <h:outputText  value="#{itemE.fechaEjecucion}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </ace:column>
+                <ace:column  headerText="Proyecto" style="text-align: left" >
+                    <h:outputText  value="#{itemE.codigo}"/>
+                </ace:column>  
+                <ace:column  headerText="Valor"  style="text-align: right" >
+                    <h:outputText  value="#{itemE.valorKardex}">
+                        <f:convertNumber pattern="###,###,##0.00"/>
+                    </h:outputText>
+                </ace:column>
+            </ace:dataTable>
+            <ace:menuBar>
+                <ace:menuItem value="Cerrar" icon="ui-icon ui-icon-close" action="#{calulosPresupuesto.formularioEjecutado.cancelar()}"/>
+            </ace:menuBar>
+        </h:panelGrid>
+        <h:panelGrid width="100%" columns="1" rendered="#{calulosPresupuesto.listadoEjecutadoIngresosVista.size()>0}">
+            <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                <h:outputLabel  value="Exportar a:"/>
+                <h:selectOneRadio  value="#{calulosPresupuesto.formularioEjecutado.pantalla}" required="true">
+                    <f:ajax disabled="false"/>
+                    <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                    <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                    <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                    <f:selectItem itemValue="xml" itemLabel="XML"/>
+                </h:selectOneRadio>
+                <ace:dataExporter id="dataExporterIngE" 
+                                  label="Exportar Archivo" 
+                                  type="#{calulosPresupuesto.formularioEjecutado.pantalla}" 
+                                  target="tablaDevengadoIngresosE" fileName="datos"/>
+            </h:panelGrid>
+            <ace:dataTable id="tablaDevengadoIngresosE" 
+                           value="#{calulosPresupuesto.listadoEjecutadoIngresosVista}"
+                           var="itemIngresoE"
+                           paginator="true"
+                           lazy="false"
+                           resizableColumns="true"
+                           rowIndexVar="row"
+                           paginatorPosition="both"
+                           rowsPerPageTemplate="15,20,25,50,100,all"
+                           currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                           rows="15"
+                           >
+                <ace:column  headerText="Origen" style="text-align: left" >
+                    <h:outputText  value="#{itemIngresoE.tipo}"/>
+                </ace:column>
+                <ace:column  headerText="Número" style="text-align: left" >
+                    <h:outputText  value="#{itemIngresoE.numero}"/>
+                </ace:column>
+                <ace:column  headerText="Cliente" style="text-align: left" >
+                    <h:outputText  value="#{itemIngresoE.empresa}"/>
+                </ace:column>
+                <ace:column  headerText="Observaciones" style="text-align: left" >
+                    <h:outputText  value="#{itemIngresoE.observacion}"/>
+                </ace:column>
+                <ace:column  headerText="Fecha" style="text-align: left">
+                    <h:outputText  value="#{itemIngresoE.fecha}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </ace:column>
+                <ace:column  headerText="Proyecto" style="text-align: left" >
+                    <h:outputText  value="#{itemIngresoE.proyecto}"/>
+                </ace:column>  
+                <ace:column  headerText="Fuente"  style="text-align: left" >
+                    <h:outputText  value="#{itemIngresoE.fuente}">
+                    </h:outputText>
+                </ace:column>
+
+                <ace:column  headerText="Valor"  style="text-align: right" >
+                    <h:outputText  value="#{itemIngresoE.valor}">
+                        <f:convertNumber pattern="###,###,##0.00"/>
+                    </h:outputText>
+                </ace:column>
+            </ace:dataTable>
+            <ace:menuBar>
+                <ace:menuItem value="Cerrar" icon="ui-icon ui-icon-close" action="#{calulosPresupuesto.formularioEjecutado.cancelar()}"/>
+            </ace:menuBar>
+        </h:panelGrid>
+        <!--</ace:panel>-->
+    </ace:dialog>
+    <!--imprimir-->
+
+
+    <!-- Fin -->
+</html>

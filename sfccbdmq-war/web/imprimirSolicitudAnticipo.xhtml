@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+    <ace:panel id="panelImprimir" style="display:block;">
+        <h:panelGrid width="100%">
+            <h:panelGrid  width="100%" columns="1" style="text-align: center;font-size: small"  >
+                <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+                <h3><strong>EMPRESA PÚBLICA METROPOLITANA DE LOGÍSTICA PARA LA SEGURIDAD Y LA CONVIVENCIA CIUDADANA</strong></h3>
+                <h3><strong>EP SEGURIDAD</strong></h3>
+                <h3><strong>UATH</strong></h3>
+            </h:panelGrid>
+            <h:panelGrid  width="100%" columns="1" style="text-align: right">
+                <h3>No: #{reportePrestamos.prestamo.id}</h3>
+            </h:panelGrid>
+            <h:panelGrid  width="100%" columns="1" style="text-align: center">
+                <h:panelGrid  width="100%" columns="1" style="text-align: left"  >
+                    SOLICITUD PARA LA CONCESION DE ANTICIPOS
+                </h:panelGrid>
+            </h:panelGrid>
+
+            <h:panelGrid  width="100%" columns="2" style="text-align: left">
+                <h:outputLabel value="Quito, " />
+                <h:outputLabel value="#{reportePrestamos.prestamo.fechasolicitud}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputLabel>
+            </h:panelGrid>
+            <h:panelGrid  width="100%" columns="1" style="text-align: left">
+                <h:outputLabel value="Señor(a), " />
+                <h:outputLabel value="Señor(a), " />
+                <h:outputLabel value="GERENTE GENERAL" style="font-weight: bold"/>
+                <h:outputLabel value="Presente," />
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <h:outputLabel value="Demi consideración:" />
+            </h:panelGrid>
+            <h:panelGrid  width="100%" columns="1" style="text-align: justify">
+                <h:outputLabel value="Yo , #{reportePrestamos.prestamo.empleado.entidad.toString()} que desempeño el cargo de #{reportePrestamos.prestamo.empleado.cargoactual.cargo.toString()}" />
+                <h:outputLabel value="de la Dirección  #{reportePrestamos.prestamo.empleado.cargoactual.organigrama.toString()} majo la modalidad #{reportePrestamos.prestamo.empleado.tipocontrato.toString()}" />
+                <h:outputLabel value="me permito solicitar a usted su autorización, para que me conceda un anticipo de USD $  #{reportePrestamos.prestamo.empleado.cargoactual.organigrama.toString()} majo la modalidad #{reportePrestamos.prestamo.valor}" />
+                <h:outputLabel value="que será utilizado para cubrir una situación de emergencia y de ser posible requiero que sea descontado en #{reportePrestamos.tiempo} meses." />
+                <h:outputLabel value="De ser atendido mi pedido,autorizo a que este anticipo  sea descontado de mis haberes." />
+                <h:outputLabel value="Por la atención, que se digne dar a la presnete, anticipo mi agradecimiento." />
+            </h:panelGrid>
+            <h:panelGrid  width="100%" columns="1" style="text-align: center">
+                <h:outputLabel value="Atentamente," />
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <h:outputLabel value="----------------------------" />
+                <h:outputLabel value="#{reportePrestamos.prestamo.empleado.entidad.toString()}" />
+                <h:outputLabel value="CC. #{reportePrestamos.prestamo.empleado.entidad.pin}" />
+            </h:panelGrid>
+            <br/>
+            <br/>
+            <br/>
+            <h:panelGrid  width="100%" columns="5">
+                <h:outputLabel value="f.----------------------------" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="f.----------------------------" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="f.----------------------------" />
+                <h:outputLabel value="Certificado por"  />
+                <h:outputLabel value="" />
+                <h:outputLabel value="Autorizado por"  />
+                <h:outputLabel value="" />
+                <h:outputLabel value="Aprobado por"  />
+
+            </h:panelGrid>
+
+        </h:panelGrid>
+
+    </ace:panel>
+</html>

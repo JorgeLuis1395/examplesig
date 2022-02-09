@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <ui:define name="content">
+                <h:panelGrid width="100%">
+                    <ace:panel id="panel"
+                               header="#{contabilizarGarantias.perfil.menu.texto}"
+                               closable="false"
+                               toggleable="false"  >
+                        <ui:include src="../BuscarProveedor.xhtml" />
+                        <h:panelGrid columns="8">
+                            
+                            
+
+                            <h:outputLabel value="Contabilizado :" />
+                            <ace:checkboxButton value="#{contabilizarGarantias.contabilizado}"/>
+                            <h:outputLabel value="Fecha de :" />
+                            <h:selectOneMenu value="#{contabilizarGarantias.tipoFecha}" id="ecivilbusqueda" >
+                                <f:selectItem itemLabel="Inicio" itemValue="o.desde"/>
+                                <f:selectItem itemLabel="Vencimiento" itemValue="o.vencimiento"/>
+
+                            </h:selectOneMenu>
+
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{contabilizarGarantias.desde}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{contabilizarGarantias.hasta}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid> 
+
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{contabilizarGarantias.buscar()}"/>
+                            </ace:menuBar>
+
+                        </h:panelGrid>
+                        <ace:messages />
+                       <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{contabilizarGarantias.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{contabilizarGarantias.formulario.pantalla}" 
+                                              target="tablaEmpleados" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%" style="margin-bottom: 20px;">
+
+                            <ace:dataTable id="tablaEmpleados"
+                                           value="#{contabilizarGarantias.listadoGarantias}"
+                                           var="item"
+                                           lazy="true"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="10,15,30,50"
+                                           currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="30"
+                                           style="width: 100%;"
+                                           >
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{contabilizarGarantias.contabiliza()}" value="Contabilizar" icon="ui-icon ui-icon-document" rendered="#{item.fincanciera and item.contabilizacion==null}"/>
+                                        <ace:menuItem action="#{contabilizarGarantias.baja()}" value="Baja" icon="ui-icon ui-icon-trash" rendered="#{item.cancelacion==null and item.contabcancelacion==null}"/>
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column  headerText="Contrato Número"  style="text-align: left">
+                                    <h:outputText  value="#{item.contrato.numero}"/>
+                                </ace:column>
+                                <ace:column  headerText="Título"  style="text-align: left">
+                                    <h:outputText  value="#{item.contrato.titulo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Proveedor"  style="text-align: left">
+                                    <h:outputText  value="#{item.contrato.proveedor.empresa.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Fecha de Inicio"  style="text-align: left">
+                                    <h:outputText  value="#{item.contrato.inicio}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>  
+                                <ace:column  headerText="Fecha de Fin"  style="text-align: left">
+                                    <h:outputText  value="#{item.contrato.fin}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>  
+                                <ace:column  headerText="Fecha de Firma"  style="text-align: left">
+                                    <h:outputText  value="#{item.contrato.firma}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>  
+                                <ace:column  headerText="Fecha de Anticipo" style="text-align: left">
+                                    <h:outputText  value="#{item.contrato.fechaanticipo}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>  
+                                <ace:column  headerText="F. Pago" style="text-align: left">
+                                    <h:outputText  value="#{item.contrato.fpago.nombre}"/>
+                                </ace:column>   
+                                <ace:column  headerText="Es obra?"  style="text-align: left">
+                                    <h:graphicImage url="../resources/images/si.png" rendered="#{item.contrato.obra}"/>
+                                    <h:graphicImage url="../resources/images/no.png" rendered="#{!item.contrato.obra}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Valor" style="text-align: right">
+                                    <h:outputText  value="#{item.contrato.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>  
+                                <ace:column  headerText="Anticipo" style="text-align: right">
+                                    <h:outputText  value="#{item.contrato.anticipo}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column> 
+                                <ace:column  headerText="Tipo garantía" style="text-align: left">
+                                    <h:outputText  value="#{item.tipo.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Descripción" style="text-align: left">
+                                    <h:outputText  value="#{item.objeto}"/>
+                                </ace:column>
+                                <ace:column  headerText="Número" style="text-align: left">
+                                    <h:outputText  value="#{item.numero}"/>
+                                </ace:column>
+                                <ace:column  headerText="Fecha de inicio" style="text-align: left">
+                                    <h:outputText  value="#{item.desde}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>  
+                                <ace:column  headerText="Fecha de Vencimiento " style="text-align: left">
+                                    <h:outputText  value="#{item.vencimiento}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>  
+                                <ace:column  headerText="Valor"  style="text-align: right">
+                                    <h:outputText  value="#{item.monto}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>  
+                                <ace:column  headerText="Renovación de  "  style="text-align: left">
+                                    <h:outputText  value="#{item.renovacion.toString()}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Es de Anticipo?"  style="text-align: left">
+                                    <h:graphicImage url="../resources/images/si.png" rendered="#{item.anticipo}"/>
+                                    <h:graphicImage url="../resources/images/no.png" rendered="#{!item.anticipo}"/>
+                                </ace:column>  
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:panel>
+                    <!--</ace:dialog>-->
+                </h:panelGrid>
+                <!--Poner  con include ya que vista demasiado Cargada;-->
+                <ace:dialog 
+                    header="Pre-visualizar Asiento"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{contabilizarGarantias.formulario.mostrar}"
+                    visible="#{contabilizarGarantias.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid  width="90%" columns="1" style="text-align: center">
+                            <h3>Garantía: #{contabilizarGarantias.garantia.tipo.nombre}</h3>
+                        </h:panelGrid>
+                        <h:panelGrid  width="90%" columns="1" style="text-align: right">
+                            <h3>Valor : #{contabilizarGarantias.valorStr}</h3>
+                        </h:panelGrid>
+                        <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                            <h:outputLabel value="No de Contrato :" />
+                            <h:outputLabel value="#{contabilizarGarantias.garantia.contrato.numero}"/>
+                            <h:outputLabel value="Proveedor :" />
+                            <h:outputLabel value="#{contabilizarGarantias.garantia.contrato.proveedor.empresa.toString()}"/>
+                            <h:outputLabel value="Fecha de emisión:" />
+                            <h:outputLabel value="#{contabilizarGarantias.garantia.desde}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputLabel>
+                            <h:outputLabel value="Fecha de vencimiento:" />
+                            <h:outputLabel value="#{contabilizarGarantias.garantia.vencimiento}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputLabel>
+                            <h:outputLabel value="Fecha de contabilización:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{contabilizarGarantias.fechaContabiliza}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+
+                        <h:panelGrid  width="90%" columns="1" style="text-align: left">
+                            <h:outputLabel value="Objeto:" />
+                            <p>#{contabilizarGarantias.garantia.objeto}</p>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable 
+                                value="#{contabilizarGarantias.renglones}"
+                                var="itemGarantias"
+                                paginator="false"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="both"
+                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                >
+                                <f:facet name="header">Contabilización</f:facet>
+                                <ace:column  headerText="Cuenta"  style="text-align: left">
+                                    <h:outputText  value="#{itemGarantias.cuenta}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nombre"  style="text-align: left">
+                                    <h:outputText  value="#{cuentasSfccbdmq.traerNombre(itemGarantias.cuenta)}"/>
+                                </ace:column>
+                                <ace:column  headerText="Auxiliar"  style="text-align: left">
+                                    <h:outputText  value="#{parametrosSfccbdmq.traerAuxiliar(itemGarantias.auxiliar).toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Referencia"  style="text-align: left">
+                                    <h:outputText  value="#{itemGarantias.referencia}"/>
+                                </ace:column>
+
+                                <ace:column  headerText="Débitos" style="text-align: right">
+                                    <h:outputText  value="#{itemGarantias.valor}" rendered="#{asientosSfccbdmq.isCredito(itemGarantias.valor)}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Créditos" style="text-align: right">
+                                    <h:outputText  value="#{itemGarantias.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemGarantias.valor)}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+
+                            </ace:dataTable>
+                            <ace:dataTable 
+                                value="#{contabilizarGarantias.renglonesPadre}"
+                                var="itemPadres"
+                                paginator="false"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="both"
+                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rendered="#{contabilizarGarantias.renglonesPadre.size()>0}">
+                                <f:facet name="header">Contabilización Garantía Principal</f:facet>
+                                <ace:column  headerText="Cuenta"  style="text-align: left">
+                                    <h:outputText  value="#{itemPadres.cuenta}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nombre"  style="text-align: left">
+                                    <h:outputText  value="#{cuentasSfccbdmq.traerNombre(itemPadres.cuenta)}"/>
+                                </ace:column>
+                                <ace:column  headerText="Auxiliar"  style="text-align: left">
+                                    <h:outputText  value="#{parametrosSfccbdmq.traerAuxiliar(itemPadres.auxiliar).toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Referencia"  style="text-align: left">
+                                    <h:outputText  value="#{itemPadres.referencia}"/>
+                                </ace:column>
+
+                                <ace:column  headerText="Débitos" style="text-align: right">
+                                    <h:outputText  value="#{itemPadres.valor}" rendered="#{asientosSfccbdmq.isCredito(itemPadres.valor)}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Créditos" style="text-align: right">
+                                    <h:outputText  value="#{itemPadres.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemPadres.valor)}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+
+                            </ace:dataTable>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{contabilizarGarantias.contabilizar()}" rendered="#{contabilizarGarantias.formulario.modificar}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{contabilizarGarantias.cancelar()}" rendered="#{contabilizarGarantias.formulario.nuevo}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{contabilizarGarantias.formulario.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{contabilizarGarantias.formularioImprimir.mostrar}"
+                    visible="#{contabilizarGarantias.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="1">
+                            <h:commandButton  value="Imprimir">
+                                <!--<h:outputText id="printBoth" value="Imprimir"/>-->
+                                <ace:printer for="panelImprimir"/>
+                            </h:commandButton>
+                        </h:panelGrid>
+                        <ui:include src="imprimirGarantia.xhtml" />
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{contabilizarGarantias.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

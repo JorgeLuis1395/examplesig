@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+
+
+    <h:panelGrid width="100%">
+        <ace:dataTable id="tablaOA" 
+                       value="#{ingresosActivosSfccbdmq.obligaciones}"
+                       var="itemObligacionesActivos"
+                       paginator="true"
+                       lazy="false"
+                       resizableColumns="true"
+                       rowIndexVar="row"
+                       paginatorPosition="top"
+                       rowsPerPageTemplate="15,20,25,50,100"
+                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                       rows="15"
+                       >
+            <ace:column  headerText="Registro" style="text-align: right">
+                <h:outputText value="#{row+1}"/>
+            </ace:column>
+            <ace:column style="text-align: left">
+                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                    <ace:menuItem action="#{ingresosActivosSfccbdmq.eliminarObligacion()}" value="Seleccionar" icon="ui-icon ui-icon-trash"/>
+                </ace:menuButton>
+            </ace:column>
+            <ace:column  headerText="Concepto" style="text-align: left">
+                <h:outputText  value="#{itemObligacionesActivos.obligacion.concepto}"/>
+            </ace:column>
+            <ace:column  headerText="Proveedor" style="text-align: left">
+                <h:outputText  value="#{itemObligacionesActivos.obligacion.proveedor.empresa.toString()}"/>
+            </ace:column>
+            <ace:column  headerText="Tipo de Documento" style="text-align: left">
+                <h:outputText  value="#{itemObligacionesActivos.obligacion.tipodocumento.nombre}"/>
+            </ace:column>
+            <ace:column  headerText="Número" style="text-align: left">
+                <h:outputText  value="#{itemObligacionesActivos.obligacion.documento}"/>
+            </ace:column>
+            <ace:column  headerText="Contrato" style="text-align: left">
+                <h:outputText  value="#{itemObligacionesActivos.obligacion.contrato.toString()}"/>
+            </ace:column>
+
+        </ace:dataTable>
+    </h:panelGrid>  
+</html>

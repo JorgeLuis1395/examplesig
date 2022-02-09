@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{estadoEjecucionSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="4" width="50%">
+                        <h:outputLabel value="Año :"/>
+                        <h:inputText value="#{estadoEjecucionSfccbdmq.anio}" id="anio"/>
+
+                    </h:panelGrid>
+                    <h:panelGrid columns="5">
+                        <!--<h:outputLabel value="Fecha :"  />-->
+                        <!--                        <h:outputLabel value="Desde:"/>
+                                                <ace:dateTimeEntry navigator="true" value="#{estadoEjecucionSfccbdmq.desde}"
+                                                                   popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                </ace:dateTimeEntry>-->
+                        <h:outputLabel value="Al :"/>
+                        <ace:dateTimeEntry navigator="true" value="#{estadoEjecucionSfccbdmq.hasta}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+
+                    </h:panelGrid> 
+
+                    <h:panelGrid columns="1" width="100%">
+
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{estadoEjecucionSfccbdmq.buscar()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="panel"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="4" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{estadoEjecucionSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{estadoEjecucionSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                        <!--                        <h:commandButton  value="Imprimir">
+                                                                                    <h:outputText id="printBoth" value="Imprimir"/>
+                                                    <ace:printer for="panelImprimir"/>
+                                                </h:commandButton>-->
+                        <ace:dynamicResource fileName="Ejecucion.pdf" id="pdf-buttonxx" label="Generar PDF"
+                                             mimeType="application/pdf" 
+                                             rendered="#{estadoEjecucionSfccbdmq.reporte!=null}"
+                                             resource="#{estadoEjecucionSfccbdmq.reporte}" 
+                                             style="" type="button"/>
+                    </h:panelGrid>
+                </ace:panel>
+
+                <ace:panel id="panelImprimir" style="display: block">
+                    <h:panelGrid width="100%" columns="1" style="display: block">
+                        <!--                        <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+                                                <h:panelGrid width="100%" columns="4">
+                                                    <h:outputLabel value="Desde:"/>
+                                                    <h:outputLabel value="#{estadoEjecucionSfccbdmq.desde}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                    </h:outputLabel>
+                        
+                                                    <h:outputLabel value="Al :"/>
+                                                    <h:outputLabel value="#{estadoEjecucionSfccbdmq.hasta}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                    </h:outputLabel>
+                                                </h:panelGrid>-->
+                        <h:panelGrid width="100%" style="display: block">
+
+                            <ace:dataTable id="tabla" 
+                                           value="#{estadoEjecucionSfccbdmq.asignaciones}"
+                                           var="item"
+                                           paginator="false"
+                                           lazy="false"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="5,10,15,30,50,100"
+                                           paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           binding="#{estadoEjecucionSfccbdmq.formulario.fila}"
+                                           style="width: 100%"
+                                           scrollHeight="600"
+                                           scrollable="true">
+                                <!--                            <ace:column  headerText="Registro" style="text-align: right">
+                                                                <h:outputText value="#{row+1}"/>
+                                                            </ace:column>-->
+                                <ace:column  headerText="Grupo" style="text-align: left" id="codigo"  styleClass="#{item.fuente}">
+                                    <h:outputText  value="#{item.codigo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Concepto"  style="text-align: left" id="nombre" styleClass="#{item.fuente}">
+                                    <h:outputText  value="#{item.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Codificado" style="text-align: right" styleClass="#{item.fuente}">
+                                    <h:outputText  value="#{item.codificado}">
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Devengado" style="text-align: right" styleClass="#{item.fuente}">
+                                    <h:outputText  value="#{item.ejecutado}">
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Diferencia" style="text-align: right" styleClass="#{item.fuente}">
+                                    <h:outputText  value="#{item.valor}">
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </ace:panel>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

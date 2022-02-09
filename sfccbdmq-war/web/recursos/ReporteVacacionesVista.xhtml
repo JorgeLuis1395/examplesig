@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <h:panelGrid width="100%">
+                    <ace:panel id="panel"
+                               header="#{reporteVacacionesEmpleadoSfcCBDMQ.perfil.menu.texto}"
+                               closable="false"
+                               toggleable="false"  >
+                        <ui:include src="../BuscarEmpleado.xhtml"/>
+                        <ace:messages />
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteVacacionesEmpleadoSfcCBDMQ.buscar()}"/>
+                        </ace:menuBar>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="panel"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{reporteVacacionesEmpleadoSfcCBDMQ.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{reporteVacacionesEmpleadoSfcCBDMQ.formulario.pantalla}" 
+                                              target="tablaEmpleados" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%" style="margin-bottom: 20px;">
+
+                            <ace:dataTable id="tablaEmpleados"
+                                           value="#{reporteVacacionesEmpleadoSfcCBDMQ.listaVacaciones}"
+                                           var="item"
+                                           lazy="false"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="10,15,30,50"
+                                           currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="30"
+                                           style="width: 100%;"
+                                           binding="#{reporteVacacionesEmpleadoSfcCBDMQ.formulario.fila}"
+                                           scrollHeight="600"
+                                           scrollable="true">
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{reporteVacacionesEmpleadoSfcCBDMQ.ver()}" value="Ver" icon="ui-icon ui-icon-search"/>
+                                    </ace:menuButton>
+                                </ace:column>
+                                <ace:column  headerText="Mes "  style="text-align: left">
+                                    <h:outputText value="#{item.mes}">
+                                        <f:convertNumber pattern="00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Año"  style="text-align: left">
+                                    <h:outputText value="#{item.anio}">
+                                        <f:convertNumber pattern="00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Ganado "  style="text-align: left">
+                                    <h:outputText value="#{reporteVacacionesEmpleadoSfcCBDMQ.ganado}"/>
+                                </ace:column>
+<!--                                <ace:column  headerText="Ganado Fin de semana"  style="text-align: left">
+                                    <h:outputText value="#{reporteVacacionesEmpleadoSfcCBDMQ.ganadofs}"/>
+                                </ace:column>-->
+                                <ace:column  headerText="Proporcional"  style="text-align: left">
+                                    <h:outputText value="#{reporteVacacionesEmpleadoSfcCBDMQ.proporcional}"/>
+                                </ace:column>
+                                <ace:column  headerText="Utilizado"  style="text-align: left">
+                                    <h:outputText value="#{reporteVacacionesEmpleadoSfcCBDMQ.utilizado}"/>
+                                </ace:column>
+<!--                                <ace:column  headerText="Utilizado Fin de semana"  style="text-align: left">
+                                    <h:outputText value="#{reporteVacacionesEmpleadoSfcCBDMQ.utilizadofs}"/>
+                                </ace:column>-->
+
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:panel>
+                    <!--</ace:dialog>-->
+                </h:panelGrid>
+                <ace:dialog 
+                    header="#{reporteVacacionesEmpleadoSfcCBDMQ.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteVacacionesEmpleadoSfcCBDMQ.formulario.mostrar}"
+                    visible="#{reporteVacacionesEmpleadoSfcCBDMQ.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid width="100%" >
+                            <ace:dataTable id="tablaHijos" 
+                                           paginatorAlwaysVisible="true"
+                                           value="#{reporteVacacionesEmpleadoSfcCBDMQ.listaLicencia}"
+                                           var="itemHijosFuera"
+                                           paginator="true"
+                                           lazy="false"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="5,10,15,50,all"
+                                           paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="5"
+                                           >
+                                <f:facet name="header">Solicitudes</f:facet>
+                                <ace:column  headerText="No"  style="text-align: left">
+                                    <h:outputText  value="#{itemHijosFuera.numero}"/>
+                                </ace:column>
+                                <ace:column  headerText="Obs."  style="text-align: left">
+                                    <h:outputText  value="#{itemHijosFuera.observaciones}"/>
+                                </ace:column>
+                                <ace:column  headerText="Obs. Legalización"  style="text-align: left">
+                                    <h:outputText  value="#{itemHijosFuera.obslegalizacion}"/>
+                                </ace:column>
+                                <ace:column  headerText="Tipo"  style="text-align: left">
+                                    <h:outputText  value="#{itemHijosFuera.tipo.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Fecha"  style="text-align: right">
+                                    <h:outputText  value="#{itemHijosFuera.desde}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Retorno"  style="text-align: right">
+                                    <h:outputText  value="#{itemHijosFuera.fretorno}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="H. salida"  style="text-align: right">
+                                    <h:outputText  value="#{itemHijosFuera.inicio}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="H. salida"  style="text-align: right">
+                                    <h:outputText  value="#{itemHijosFuera.fin}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Cargo a vacaciones"  style="text-align: left">
+                                    <h:outputText  value="#{reporteVacacionesEmpleadoSfcCBDMQ.getCargoVacaciones(itemHijosFuera)}"/>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{reporteVacacionesEmpleadoSfcCBDMQ.formulario.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+                <!--Poner  con include ya que vista demasiado Cargada;-->
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

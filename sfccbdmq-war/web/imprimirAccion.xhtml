@@ -1,0 +1,296 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ace:panel id="panelImprimir" style="display:block;">
+        <h:panelGrid width="100%"  >
+            <h:panelGrid  width="100%" columns="1" style="text-align: center;"  >
+                <img src="../resources/images/logo.png"  alt="logo"/>
+                <p><strong>#{configuracionSfccbdmq.configuracion.nombre}</strong></p>
+            </h:panelGrid>
+            <!--            <h:panelGrid  width="100%" columns="1" style="text-align: center" border="1" cellpadding="0" cellspacing="0">
+                            <h:panelGrid  width="100%" columns="1" style="text-align: left"  >
+                                EL GERENTE GENERAL DE LA EMPRESA PUBLICA DE LOGÍSTICA PARA LA SEGURIDAD Y LA CONVIVENCIA CIUDADANA,
+                                EP SEGURIDAD: EN USO DE SUS FACULTADES QUE LE CONFIERE LA LEY ORGANICA DE EMPRESAS PÚBLICAS EXPIDE LA SIGUIENTE 
+                                ACCIÓN DE PERSONAL:
+                            </h:panelGrid>
+                        </h:panelGrid>-->
+            <!--            <h:panelGrid  width="100%" columns="2" style="text-align: right">
+                            <h:outputText value="Usuario :"/>
+                            <h:outputText value="#{parametrosSfccbdmq.logueado.userid}"/>
+                            <h:outputText value="Fecha :"/>
+                            <h:outputText value="#{parametrosSfccbdmq.fechaActual}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                            </h:outputText>
+                        </h:panelGrid>-->
+            <h:panelGrid  width="100%" columns="2" style="text-align: left"  border="1" cellpadding="0" cellspacing="0">
+                <h:panelGrid  width="100%" columns="1" style="text-align: left" >
+                    <h:outputText value="Acción de personal  No: " style="font-weight: bold"/>
+                    <h:outputText value="#{reporteAcciones.cargo.id}"/>
+                </h:panelGrid>
+                <h:panelGrid  width="100%" columns="1" style="text-align: left" >
+                    <h:outputText value="Fecha : " style="font-weight: bold"/>
+                    <h:outputText value="#{reporteAcciones.cargo.fecha}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </h:panelGrid>
+                <!--                <h:panelGrid  width="100%" columns="1" style="text-align: left" >
+                                    <h:outputText value="Con ordenanza Metropolitana No.0309, del 16 de abril del "/>
+                                    <h:outputText value="2010, el concejo Metropolitano expide la Ordenanza"/>
+                                    <h:outputText value="Metropolitana de Creación de Empresas Públicas"/>
+                                    <h:outputText value="Metropolitanas"/>
+                                </h:panelGrid>-->
+            </h:panelGrid>
+            <h:panelGrid  width="100%" columns="1" style="text-align: center" border="1" cellpadding="0" cellspacing="0">
+                <h:panelGrid  width="100%" columns="1" style="text-align: center" >
+                    <h:outputText value="APELLIDOS Y NOMBRES" style="font-weight: bold"/>
+                    <h:outputText value="#{reporteAcciones.cargo.empleado.entidad.toString()}" style="font-weight: bold"/>
+                </h:panelGrid>
+            </h:panelGrid>
+            <h:panelGrid  width="100%" columns="3" style="text-align: left"  border="1" cellpadding="0" cellspacing="0">
+                <h:panelGrid  width="50%" columns="1" style="text-align: right" >
+                    <h:outputText value="No. Cédula de Ciudadanía" style="font-weight: bold"/>
+                    <h:outputText value="#{reporteAcciones.cargo.empleado.entidad.pin}"/>
+                </h:panelGrid>
+<!--                <h:panelGrid  width="50%" columns="1" style="text-align: right">
+                    <h:outputText value="No. Afiliación al IESS" style="font-weight: bold"/>
+                    <h:outputText value=""/>
+                </h:panelGrid>-->
+                <h:panelGrid  width="50%" columns="1" style="text-align: right">
+                    <h:outputText value="RIGE A PARTIR DE" style="font-weight: bold"/>
+                    <h:outputLabel value="#{reporteAcciones.cargo.desde}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputLabel>
+                </h:panelGrid>
+                <h:panelGrid  width="50%" columns="1" style="text-align: right">
+                    <h:outputText value="HASTA :" style="font-weight: bold"/>
+                    <h:outputLabel value="#{reporteAcciones.cargo.hasta}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputLabel>
+                </h:panelGrid>
+            </h:panelGrid>
+
+            <!--            <h:panelDivider dividerPosition="50"
+                                          orientation="vertical" 
+                                          style="width: 100%;">
+                            <f:facet name="first">
+                                <h:dataTable var="itemAcciones" value="#{reporteAcciones.tipos}" style="font-size: xx-small">
+                                    <f:facet name="header">Acciones</f:facet>
+                                    <h:column>
+                                        <h:graphicImage url="../resources/images/si.png" rendered="#{itemAcciones.seleccionado}" width="16" height="16"/>
+                                        <h:graphicImage url="../resources/images/no.png" rendered="#{!itemAcciones.seleccionado}" width="16" height="16"/>
+            
+                                        <h:selectBooleanCheckbox value="#{itemAcciones.seleccionado}" disabled="true"/>
+                                        <h:outputText value="#{itemAcciones.nombre}"/>
+                                    </h:column>
+                                </h:dataTable>
+                            </f:facet>
+                            <f:facet name="second">
+                                <h:panelGrid  width="100%" columns="1" style="text-align: left">
+                                <ace:panel  header ="EXPLICACIÓN:">
+                                    <p>#{reporteAcciones.cargo.motivo}</p>
+                                </ace:panel>
+                                    <h:outputLabel value="EXPLICACIÓN:" style="font-weight: bold"/>
+                                    <p>#{reporteAcciones.cargo.motivo}</p>
+                                </h:panelGrid>
+                            </f:facet>
+                        </h:panelDivider>-->
+            <h:panelGrid  width="100%" columns="2" style="text-align: left" 
+                          cellpadding="0" cellspacing="0" border="1">
+                <h:panelGrid  width="100%" columns="1" style="text-align: left;">
+                    <h:panelGrid columns="4">
+                        <c:forEach var="itemAcciones" items="#{reporteAcciones.tipos}">
+
+                            <h:graphicImage url="../resources/images/si.png" rendered="#{itemAcciones.seleccionado}" width="16" height="16"/>
+                            <h:graphicImage url="../resources/images/no.png" rendered="#{!itemAcciones.seleccionado}" width="16" height="16"/>
+                            <h:outputText value="#{itemAcciones.nombre}"/>
+
+                        </c:forEach>
+                    </h:panelGrid>
+<!--                    <h:dataTable var="itemAcciones" value="#{reporteAcciones.tipos}" style="font-size: xx-small">
+                   <f:facet name="header">Acciones</f:facet>
+                   <h:column>
+                       <h:graphicImage url="../resources/images/si.png" rendered="#{itemAcciones.seleccionado}" width="16" height="16"/>
+                       <h:graphicImage url="../resources/images/no.png" rendered="#{!itemAcciones.seleccionado}" width="16" height="16"/>
+
+                       <h:selectBooleanCheckbox value="#{itemAcciones.seleccionado}" disabled="true"/>
+                       <h:outputText value="#{itemAcciones.nombre}"/>
+                   </h:column>
+               </h:dataTable>-->
+                </h:panelGrid>
+                <h:panelGrid  width="100%" columns="1" style="text-align: left">
+                    <h:outputLabel value="EXPLICACIÓN:" style="font-weight: bold"/>
+                    <p>#{reporteAcciones.cargo.motivo}</p>
+                </h:panelGrid>
+            </h:panelGrid>
+            <h:panelGrid  width="100%" columns="2" style="text-align: left">
+                <ace:panel  header ="Situación Actual">
+                    <h:panelGrid  width="100%" columns="2" style="text-align: left">
+                        <h:outputLabel value="Dirección:" style="font-weight: bold"/>
+                        <h:outputLabel value="#{reporteAcciones.cargo.empleado.cargoactual.organigrama.superior.nombre}" rendered="#{reporteAcciones.mostrar}"/>
+                        <h:outputLabel value="" rendered="#{!reporteAcciones.mostrar}"/>
+                        <h:outputLabel value="Cargo:" style="font-weight: bold"/>
+                        <h:outputLabel value="#{reporteAcciones.cargo.empleado.cargoactual.cargo.nombre}" rendered="#{reporteAcciones.mostrar}"/>
+                        <h:outputLabel value="" rendered="#{!reporteAcciones.mostrar}"/>
+                        <h:outputLabel value="Lugar de Trabajo :" style="font-weight: bold"/>
+                        <h:outputLabel value="Quito" rendered="#{reporteAcciones.mostrar}"/>
+                        <h:outputLabel value="" rendered="#{!reporteAcciones.mostrar}"/>
+                        <h:outputLabel value="Grado:" style="font-weight: bold"/>
+                        <h:outputLabel value="#{reporteAcciones.cargo.empleado.cargoactual.cargo.escalasalarial.codigo}" rendered="#{reporteAcciones.mostrar}"/>
+                        <h:outputLabel value="" rendered="#{!reporteAcciones.mostrar}"/>
+                        <h:outputLabel value="Remuneración Unificada:" style="font-weight: bold"/>
+                        <h:outputLabel value="#{reporteAcciones.cargo.empleado.cargoactual.cargo.escalasalarial.sueldobase}" rendered="#{reporteAcciones.mostrar}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputLabel>
+                        <h:outputLabel value="" rendered="#{!reporteAcciones.mostrar}"/>
+                        <h:outputLabel value="Partida presupuestaria:" style="font-weight: bold" />
+                        <h:outputLabel value="#{reporteAcciones.cargo.partidaindividual}"/>
+                        <h:outputLabel value="" rendered="#{!reporteAcciones.mostrar}"/>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:panel  header="Situación Propuesta">
+                    <h:panelGrid  width="100%" columns="2" style="text-align: left">
+                        <h:outputLabel value="Dirección:" style="font-weight: bold"/>
+                        <h:outputLabel value="#{reporteAcciones.cargo.cargo.organigrama.superior.nombre}"/>
+                        <h:outputLabel value="Cargo:" style="font-weight: bold"/>
+                        <h:outputLabel value="#{reporteAcciones.cargo.cargo.cargo.nombre}"/>
+                        <h:outputLabel value="Lugar de Trabajo :" style="font-weight: bold"/>
+                        <h:outputLabel value="Quito"/>
+                        <h:outputLabel value="Grado:" style="font-weight: bold"/>
+                        <h:outputLabel value="#{reporteAcciones.cargo.cargo.cargo.escalasalarial.codigo}"/>
+                        <h:outputLabel value="Remuneración Unificada:" style="font-weight: bold"/>
+                        <h:outputLabel value="#{reporteAcciones.cargo.sueldobase}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputLabel>
+                        <h:outputLabel value="Partida presupuestaria:" style="font-weight: bold"/>
+                        <h:outputLabel value="#{reporteAcciones.cargo.empleado.partidaindividual}"/>
+                    </h:panelGrid>
+                </ace:panel>
+            </h:panelGrid>
+
+
+
+
+            <h:panelGrid  width="100%" columns="1"  cellpadding="0" cellspacing="0" border="1" style="text-align: center">
+                <h:panelGrid  width="100%" columns="1" >
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <h:outputLabel value="----------------------------" style="text-align: center"/>
+                    <h:outputLabel value="DR MARIO SUNTAXI QUEZADA"  />
+                    <h:outputLabel value="DIRECTOR DE TALENTO HUMANO (E)"  />
+                </h:panelGrid>
+
+            </h:panelGrid>
+
+        </h:panelGrid>
+        <p class="saltodepagina" />
+        <h:panelGrid  width="100%" columns="4"  cellpadding="0" cellspacing="0" border="0" style="text-align: left">
+            <h:outputLabel value="PUESTO CAUCIONADO" style="text-align: center"/>
+            <h:outputLabel value="__________________________________________" />
+            <h:outputLabel value="FECHA :"  />
+            <h:outputLabel value="___________________"  />
+        </h:panelGrid>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <!--        <h:panelGrid  width="100%" columns="4"  cellpadding="0" cellspacing="0" border="0" style="text-align: left">
+                    <h:outputLabel value="LA PERSONA REMPLAZARÁ A" style="text-align: center"/>
+                    <h:outputLabel value="__________________________________________" />
+                    <h:outputLabel value="EN EL PUESTO DE :"  />
+                    <h:outputLabel value="___________________"  />
+                </h:panelGrid>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <h:panelGrid  width="100%" columns="2"  cellpadding="0" cellspacing="0" border="0" style="text-align: left">
+                    <h:outputLabel value="QUIEN CESÓ FUNCIONES POR :"  />
+                    <h:outputLabel value="______________________________________________________________________________________"  />
+                </h:panelGrid>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <h:panelGrid  width="100%" columns="4"  cellpadding="0" cellspacing="0" border="0" style="text-align: left">
+                    <h:outputLabel value="ACCION DE PERSONAL REGISTRADA CON No. :"  />
+                    <h:outputLabel value="_________________________________"  />
+                    <h:outputLabel value="FECHA :"  />
+                    <h:outputLabel value="_________________________________"  />
+                </h:panelGrid>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>-->
+        <h:panelGrid  width="100%" columns="1"   style="text-align: left">
+            <strong>POSESIÓN DEL CARGO </strong>
+        </h:panelGrid>    
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <h:panelGrid  width="100%" columns="4"  cellpadding="0" cellspacing="0" border="0" style="text-align: left">
+            <h:outputLabel value="YO " style="text-align: center"/>
+            <h:outputLabel value="__________________________________________" />
+            <h:outputLabel value="CON CEDULA DE CIUDADANIA No: "  />
+            <h:outputLabel value="__________________________________________"  />
+        </h:panelGrid>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <h:panelGrid  width="100%" columns="1"  cellpadding="0" cellspacing="0" border="0" style="text-align: left">
+            <h:outputLabel value="JURO LEALTAD AL ESTADO ECUATORIANO "  />
+        </h:panelGrid>
+        <br/>
+        <br/>
+        <br/>
+        <h:panelGrid  width="40%" columns="2"  cellpadding="0" cellspacing="0" border="0" style="text-align: left">
+            <h:outputLabel value="LUGAR " style="text-align: center"/>
+            <h:outputLabel value="__________________________________________" />
+        </h:panelGrid>
+        <br/>
+        <br/>
+        <br/>
+        <h:panelGrid  width="40%" columns="2"  cellpadding="0" cellspacing="0" border="0" style="text-align: left">
+            <h:outputLabel value="FECHA " style="text-align: center"/>
+            <h:outputLabel value="__________________________________________" />
+        </h:panelGrid>
+
+        <br/>
+        <br/>
+        <br/>
+        <h:panelGrid  width="100%" columns="4"  cellpadding="0" cellspacing="0" border="0" style="text-align: left">
+
+            <h:outputLabel value="f" />
+            <h:outputLabel value="__________________________________________" />
+            <h:outputLabel value="f" />
+            <h:outputLabel value="__________________________________________" />
+
+            <h:outputLabel value="" />
+            <h:outputLabel value="SERVIDOR/A" />
+            <h:outputLabel value="" />
+            <h:outputLabel value="UNIDAD DE TALENTO HUMADO" />
+        </h:panelGrid>
+
+    </ace:panel>
+</html>

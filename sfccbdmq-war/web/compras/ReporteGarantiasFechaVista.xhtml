@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <h:panelGrid width="100%">
+                    <ace:panel id="panel"
+                               header="#{reporteGarantiasFechas.perfil.menu.texto}"
+                               closable="false"
+                               toggleable="false"  >
+                        <ui:include src="../BuscarProveedor.xhtml" />
+                        <h:panelGrid columns="6">
+                            <h:outputLabel value="Fecha de :" />
+                            <h:selectOneMenu value="#{reporteGarantiasFechas.tipoFecha}" id="ecivilbusqueda" >
+                                <f:selectItem itemLabel="Vencimiento" itemValue="o.vencimiento"/>
+                                <f:selectItem itemLabel="Inicio" itemValue="o.desde"/>
+                            </h:selectOneMenu>
+
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{reporteGarantiasFechas.desde}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{reporteGarantiasFechas.hasta}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid> 
+
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Aseguradora:" for="aseguradora"/>
+                            <h:selectOneMenu value="#{reporteGarantiasFechas.aseguradora}" title="Aseguradora">
+                                <f:selectItems value="#{codigosSfccbdmq.comboAseguradoras}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteGarantiasFechas.buscar()}"/>
+                            </ace:menuBar>
+
+                        </h:panelGrid>
+                        <ace:messages />
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="panel"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{reporteGarantiasFechas.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{reporteGarantiasFechas.formulario.pantalla}" 
+                                              target="tablaEmpleados" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%" style="margin-bottom: 20px;">
+
+                            <ace:dataTable id="tablaEmpleados"
+                                           value="#{reporteGarantiasFechas.listadoGarantias}"
+                                           var="item"
+                                           lazy="true"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="10,15,30,50,all"
+                                           currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="30"
+                                           style="width: 100%;"
+                                           scrollHeight="600"
+                                           scrollable="true">
+                                <ace:column  headerText="Aseguradora" style="text-align: left">
+                                    <h:outputText  value="#{item.aseguradora.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Contrato Número"  style="text-align: left">
+                                    <h:outputText  value="#{item.contrato.numero}"/>
+                                </ace:column>
+                                <ace:column  headerText="Título"  style="text-align: left">
+                                    <h:outputText  value="#{item.contrato.titulo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Proveedor"  style="text-align: left">
+                                    <h:outputText  value="#{item.contrato.proveedor.empresa.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Fecha de Inicio"  style="text-align: left">
+                                    <h:outputText  value="#{item.contrato.inicio}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>  
+                                <ace:column  headerText="Fecha de Fin"  style="text-align: left">
+                                    <h:outputText  value="#{item.contrato.fin}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>  
+                                <ace:column  headerText="Fecha de Firma"  style="text-align: left">
+                                    <h:outputText  value="#{item.contrato.firma}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>  
+                                <ace:column  headerText="Fecha de Anticipo" style="text-align: left">
+                                    <h:outputText  value="#{item.contrato.fechaanticipo}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>  
+                                <ace:column  headerText="F. Pago" style="text-align: left">
+                                    <h:outputText  value="#{item.contrato.fpago.nombre}"/>
+                                </ace:column>   
+                                <ace:column  headerText="Es obra?"  style="text-align: left">
+                                    <h:graphicImage url="../resources/images/si.png" rendered="#{item.contrato.obra}"/>
+                                    <h:graphicImage url="../resources/images/no.png" rendered="#{!item.contrato.obra}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Valor" style="text-align: right">
+                                    <h:outputText  value="#{item.contrato.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>  
+                                <ace:column  headerText="Anticipo" style="text-align: right">
+                                    <h:outputText  value="#{item.contrato.anticipo}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column> 
+                                <ace:column  headerText="Tipo garantía" style="text-align: left">
+                                    <h:outputText  value="#{item.tipo.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Descripción" style="text-align: left">
+                                    <h:outputText  value="#{item.objeto}"/>
+                                </ace:column>
+                                <ace:column  headerText="Número" style="text-align: left">
+                                    <h:outputText  value="#{item.numero}"/>
+                                </ace:column>
+                                <ace:column  headerText="Fecha de inicio" style="text-align: left">
+                                    <h:outputText  value="#{item.desde}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>  
+                                <ace:column  headerText="Fecha de Vencimiento " style="text-align: left">
+                                    <h:outputText  value="#{item.vencimiento}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>  
+                                <ace:column  headerText="Valor"  style="text-align: right">
+                                    <h:outputText  value="#{item.monto}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>  
+                                <ace:column  headerText="Renovación de  "  style="text-align: left">
+                                    <h:outputText  value="#{item.renovacion.toString()}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Es de Anticipo?"  style="text-align: left">
+                                    <h:graphicImage url="../resources/images/si.png" rendered="#{item.anticipo}"/>
+                                    <h:graphicImage url="../resources/images/no.png" rendered="#{!item.anticipo}"/>
+                                </ace:column> 
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:panel>
+                    <!--</ace:dialog>-->
+                </h:panelGrid>
+                <!--Poner  con include ya que vista demasiado Cargada;-->
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+    <h:panelGrid columns="2">
+        <ace:menuBar autoSubmenuDisplay="true" >
+            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{familiasEmpleado.nuevo()}"/>
+            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" action="#{familiasEmpleado.formularioPrincipal.cancelar()}"/>
+        </ace:menuBar>
+    </h:panelGrid>
+    <ace:messages/>
+
+    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+        <h:outputLabel  value="Exportar a:"/>
+        <h:selectOneRadio  value="#{familiasEmpleado.formulario.pantalla}" required="true">
+            <f:ajax disabled="false"/>
+            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+            <f:selectItem itemValue="xml" itemLabel="XML"/>
+        </h:selectOneRadio>
+        <ace:dataExporter  
+            label="Exportar Archivo" 
+            type="#{familiasEmpleado.formulario.pantalla}" 
+            target="estudios" fileName="datos"/>
+    </h:panelGrid>
+    <h:panelGrid width="100%">
+        <ace:dataTable id="familias" 
+                       value="#{familiasEmpleado.listaFamilias}"
+                       var="familiaItem"
+                       paginator="true"
+                       resizableColumns="true"
+                       rowIndexVar="row"
+                       paginatorPosition="both"
+                       rowsPerPageTemplate="5,10,15,50"
+
+                       paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                       rows="5"
+                       binding="#{familiasEmpleado.formulario.fila}">
+
+            <ace:column  style="text-align: left" rendered="#{!familiasEmpleado.formulario.borrar}" >
+                <ace:menuButton  effect="slide" effectDuration="200" value="...">
+                    <ace:menuItem value="Editar" icon="ui-icon ui-icon-pencil" action="#{familiasEmpleado.modifica(familiaItem)}"  />
+                    <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{familiasEmpleado.borra(familiaItem)}"  />
+                </ace:menuButton>
+            </ace:column>
+            <ace:column  headerText="Cédula"  style="text-align: left">
+                <h:outputText value="#{familiaItem.cedula}"/>
+            </ace:column>
+            <ace:column  headerText="Apellidos y Nombres"  style="text-align: left">
+                <h:outputText value="#{familiaItem.apellidos}"/>
+            </ace:column>
+            <ace:column  headerText="Nombres"  style="text-align: left">
+                <h:outputText value="#{familiaItem.nombres}"/>
+            </ace:column>
+            <ace:column  headerText="Email"  style="text-align: left">
+                <h:outputText value="#{familiaItem.email}"/>
+            </ace:column>
+
+            <ace:column  headerText="Estado Civil"  style="text-align: left">
+                <h:outputText value="#{familiaItem.estadocivil.nombre}"/>
+            </ace:column>
+            <ace:column  headerText="Género"  style="text-align: left">
+                <h:outputText value="#{familiaItem.genero.nombre}"/>
+            </ace:column>
+            <ace:column  headerText="Grupo Sanguineo"  style="text-align: left">
+                <h:outputText value="#{familiaItem.gruposanguineo.nombre}"/>
+            </ace:column>
+            <ace:column  headerText="Parentesco"  style="text-align: left">
+                <h:outputText value="#{familiaItem.parentesco.nombre}"/>
+            </ace:column>
+            <ace:column  headerText="Discapacidad"  style="text-align: left">
+                <h:outputText value="#{familiaItem.detallediscapacidad}"/>
+            </ace:column>
+            <ace:column  headerText="Fecha Nacimiento"  style="text-align: left">
+                <h:outputText  value="#{familiaItem.fechanacimiento}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputText>
+            </ace:column>
+            <ace:column  headerText="Banco"  style="text-align: left">
+                <h:outputText  value="#{familiaItem.banco.nombre}"/>
+            </ace:column>
+            <ace:column  headerText="Tipo Cta."  style="text-align: left">
+                <h:outputText  value="#{familiaItem.tipocta.nombre}"/>
+            </ace:column>
+            <ace:column  headerText="Numero Cta."  style="text-align: left">
+                <h:outputText  value="#{familiaItem.ctabancaria}"/>
+            </ace:column>
+            <ace:column  headerText="Valor" style="text-align: right">
+                <h:outputText  value="#{familiaItem.valor}">
+                    <f:convertNumber pattern="###,###,#00.00"/>
+                </h:outputText>
+            </ace:column>
+            <ace:column  headerText="Concepto"  style="text-align: left">
+                <h:outputText  value="#{familiaItem.concepto.nombre}"/>
+            </ace:column>
+
+
+        </ace:dataTable>
+    </h:panelGrid>
+</html>

@@ -1,0 +1,487 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{cargarActivosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <!--                    <ace:tabSet style="clear:both;">
+                                            <ace:tabPane >
+                                                <f:facet name="label">Inf. General</f:facet>-->
+                    <h:panelGrid columns="2" width="100%">
+                        <h:outputLabel value=" Grupo Contable:" for="clasificacion" />
+                        <h:selectOneMenu id="clasificacion" value="#{cargarActivosSfccbdmq.activo.clasificacion}"
+                                         title=" Grupo Contable">
+                            <f:selectItems value="#{codigosSfccbdmq.comboClasificacionActivos}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Estado Actual:" />
+                        <h:selectOneMenu  value="#{cargarActivosSfccbdmq.activo.estado}" title="Estado">
+                            <f:selectItems value="#{codigosSfccbdmq.comboEstadoActivos}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Fecha Ingreso:"/>
+                        <ace:dateTimeEntry navigator="true"  value="#{cargarActivosSfccbdmq.activo.fechaingreso}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <!--                        <h:outputLabel value="Grupo:" />
+                                                <h:selectOneMenu  value="#{cargarActivosSfccbdmq.grupo}" title="Grupo" id="grupo">
+                                                    <f:selectItems value="#{cargarActivosSfccbdmq.comboGrupoEspacio}"/>
+                                                    <ace:ajax execute="@all"/>
+                                                </h:selectOneMenu>
+                                                <h:outputLabel value="Sub Grupo:" />
+                                                <h:selectOneMenu  value="#{cargarActivosSfccbdmq.activo.subgrupo}" title="Sub Grupo" id="subgrupo">
+                                                    <f:selectItems value="#{cargarActivosSfccbdmq.comboSubGrupo}"/>
+                                                </h:selectOneMenu>-->
+                        <h:outputLabel value="Edificio:" />
+                        <h:selectOneMenu  value="#{oficinasSfccbdmq.edificio}" title="Edificio">
+                            <f:selectItems value="#{edificiosSfccbdmq.comboEdificioEspacio}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Oficina:" />
+                        <h:selectOneMenu  value="#{cargarActivosSfccbdmq.activo.localizacion}" title="Edificio" id="oficina1">
+                            <f:selectItems value="#{oficinasSfccbdmq.comboOficinaEspacio}"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" width="100%">
+                        <h:outputLabel value="Tipo de Alta:"/>
+                        <h:selectOneMenu value="#{cargarActivosSfccbdmq.activo.alta}" title="Tipo de Alta">
+                            <f:selectItems value="#{tipoMovActivosSfccbdmq.comboTipoIngresosEspacio}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%" rendered="#{cargarActivosSfccbdmq.activo.alta.tipo==0}">
+                        <ui:include src="../BuscarProveedor.xhtml" />
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" rendered="#{cargarActivosSfccbdmq.activo.alta.tipo==0}">
+                        <h:outputLabel value="Contrato:" />
+                        <h:selectOneMenu  value="#{cargarActivosSfccbdmq.contrato}" title="Grupo">
+                            <f:selectItems value="#{contratosSfccbdmq.comboContratos}"/>                                
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Tipo de Compra:" />
+                        <h:selectOneMenu  value="#{cargarActivosSfccbdmq.tipoCompra}" >
+                            <f:selectItem itemLabel="---Seleccione Uno----" itemValue="3"/>
+                            <f:selectItem itemLabel="Interna" itemValue="0"/>
+                            <f:selectItem itemLabel="Exterior" itemValue="1"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="6" width="100%" rendered="#{cargarActivosSfccbdmq.activo.alta.tipo==0}">
+                        <h:outputLabel value="No factura:" />
+                        <!--<h:inputText  value="#{cargarActivosSfccbdmq.activo.factura}" title="No factura" />-->
+                        <h:inputText  value="#{cargarActivosSfccbdmq.f1}" maxlength="3" size="3" rendered="#{cargarActivosSfccbdmq.tipoCompra eq 0}"/>-
+                        <h:inputText  value="#{cargarActivosSfccbdmq.f2}" maxlength="3" size="3" rendered="#{cargarActivosSfccbdmq.tipoCompra eq 0}"/>-
+                        <h:inputText  value="#{cargarActivosSfccbdmq.f3}"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="2" >
+                        <ace:fileEntry 
+                            relativePath="/files/"
+                            maxFileCount="10"
+                            maxFileCountMessage="Alerta se pueden Subir hasta 10 archivos."
+                            fileEntryListener="#{cargarActivosSfccbdmq.multimediaListener}"
+                            maxFileSize="10242880"
+                            maxFileSizeMessage="El Tamaño del Archivo Maximo 10 MB."
+                            maxTotalSize="102428800"
+                            maxTotalSizeMessage="EL Tamaño Total de Los Archivos Subídos es demasiado grande."
+                            requiredMessage="El archivo/s es/son requeridos para enviar esta forma."
+                            useOriginalFilename="true"
+                            useSessionSubdir="true"
+                            label="Archivo Subido con Éxito"/>
+                        <h:commandButton  type="submit" value="Subir Archivos"/>
+                    </h:panelGrid>
+
+                    <!--</ace:tabSet>-->
+                    <h:panelGrid columns="4" width="30%">
+                        <h:outputLabel value="Separador de campos :"/>
+                        <h:inputText value="#{cargarActivosSfccbdmq.separador}"  size="3"/>
+
+                    </h:panelGrid>
+                    <h:panelGrid columns="3" width="100%">
+                        <h:outputLabel value="Archivo a Subir:" />
+                        <ace:fileEntry id="file-entry" 
+                                       maxFileCount="1" 
+                                       maxFileCountMessage="Máximo un archivo" 
+                                       fileEntryListener="#{cargarActivosSfccbdmq.archivoListener}" 
+                                       maxFileSize="6291456" 
+                                       maxFileSizeMessage="Tamaño muy grande." 
+                                       maxTotalSize="18874368" 
+                                       maxTotalSizeMessage="Total del tamaño muy grande." 
+                                       useOriginalFilename="true" 
+                                       useSessionSubdir="true"/>
+                        <h:commandButton type="submit" value="Cargar datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{cargarActivosSfccbdmq.insertar()}"/>
+
+                        </ace:menuBar>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="panel"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+                    </h:panelGrid>
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane>
+                            <f:facet name="label">Detalle Activos</f:facet>
+                            <h:panelGrid width="100%">
+                                <h:panelGrid width="100%" >
+                                    <ace:dataTable id="tabla" 
+                                                   value="#{cargarActivosSfccbdmq.listaActivoControl}"
+                                                   var="item"
+                                                   paginator="true"
+                                                   rowIndexVar="row"
+                                                   paginatorPosition="top"
+                                                   rowsPerPageTemplate="15,20,25,50,100"
+                                                   currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                                   paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                   rows="50"
+                                                   >
+                                        <f:facet name="header">BIEN DE CONTROL</f:facet> 
+                                        <ace:column  headerText="N°"  style="text-align: left">
+                                            <h:outputText  value="#{row+1}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Nombre"  style="text-align: left">
+                                            <h:outputText  value="#{item.nombre}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Descripción"  style="text-align: left">
+                                            <h:outputText  value="#{item.descripcion}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Cod. Marca"  style="text-align: left">
+                                            <h:outputText  value="#{item.activomarca.codigo}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Modelo"  style="text-align: left">
+                                            <h:outputText  value="#{item.modelo}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Grupo"  style="text-align: left">
+                                            <h:outputText  value="#{item.grupo.nombre}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Sub Grupo"  style="text-align: left">
+                                            <h:outputText  value="#{item.subgrupo.nombre}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="No Serie"  style="text-align: left">
+                                            <h:outputText  value="#{item.numeroserie}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Color"  style="text-align: left">
+                                            <h:outputText  value="#{item.color}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Código barras"  style="text-align: left">
+                                            <h:outputText  value="#{item.barras}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Iva"  style="text-align: right">
+                                            <h:outputText  value="#{item.iva}">
+                                                <f:convertNumber pattern="###,###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Subtotal"  style="text-align: right">
+                                            <h:outputText  value="#{item.valorAltaSinIva}">
+                                                <f:convertNumber pattern="###,###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <!--                                        <ace:column  headerText="Total"  style="text-align: right">
+                                                                                    <h:outputText  value="#{item.valoralta + (item.valoralta * item.iva)}">
+                                                                                    <h:outputText  value="#{item.iva == null ?(item.valoralta):(item.iva == 0.00?(item.valoralta):(item.valoralta + (item.valoralta * item.iva)))}">
+                                                                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                                                                    </h:outputText>
+                                                                                </ace:column>-->
+                                        <ace:column  headerText="Valor Alta"  style="text-align: right">
+                                            <h:outputText  value="#{item.valoralta}">
+                                                <f:convertNumber pattern="###,###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Observaciones"  style="text-align: left">
+                                            <h:outputText  value="#{item.observaciones}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Chasis"  style="text-align: left">
+                                            <h:outputText  value="#{item.marca}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Motor"  style="text-align: left">
+                                            <h:outputText  value="#{item.dimensiones}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Placa"  style="text-align: left">
+                                            <h:outputText  value="#{item.caracteristicas}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Tipo Auxiliar"  style="text-align: left">
+                                            <h:outputText  value="#{item.tipoauxiliar}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Nominativo"  style="text-align: left">
+                                            <h:outputText  value="#{item.nominativo}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Factura"  style="text-align: left">
+                                            <h:outputText  value="#{item.factura}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Imagen"  style="text-align: left">
+                                            <h:outputText  value="#{item.nombreImagen}"/>
+                                        </ace:column>
+                                    </ace:dataTable>
+                                    <h:panelGrid columns="2">
+                                        <h:outputText  value="Total Bien de Control: "/>
+                                        <h:outputText  value="#{cargarActivosSfccbdmq.totalControl}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </h:panelGrid>
+                                </h:panelGrid>
+                                <h:panelGrid width="100%" >
+                                    <ace:dataTable id="tablaFijo" 
+                                                   value="#{cargarActivosSfccbdmq.listaActivoFijo}"
+                                                   var="itemActivo"
+                                                   paginator="true"
+                                                   rowIndexVar="row"
+                                                   paginatorPosition="top"
+                                                   rowsPerPageTemplate="15,20,25,50,100"
+                                                   currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                                   paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                   rows="50"
+                                                   >
+                                        <f:facet name="header">ACTIVO FIJO</f:facet> 
+                                        <ace:column  headerText="N°"  style="text-align: left">
+                                            <h:outputText  value="#{row+1}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Nombre"  style="text-align: left">
+                                            <h:outputText  value="#{itemActivo.nombre}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Descripción"  style="text-align: left">
+                                            <h:outputText  value="#{itemActivo.descripcion}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Cod. Marca"  style="text-align: left">
+                                            <h:outputText  value="#{itemActivo.activomarca.codigo}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Modelo"  style="text-align: left">
+                                            <h:outputText  value="#{itemActivo.modelo}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Grupo"  style="text-align: left">
+                                            <h:outputText  value="#{itemActivo.grupo.nombre}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Sub Grupo"  style="text-align: left">
+                                            <h:outputText  value="#{itemActivo.subgrupo.nombre}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="No Serie"  style="text-align: left">
+                                            <h:outputText  value="#{itemActivo.numeroserie}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Color"  style="text-align: left">
+                                            <h:outputText  value="#{itemActivo.color}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Código barras"  style="text-align: left">
+                                            <h:outputText  value="#{itemActivo.barras}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Iva"  style="text-align: right">
+                                            <h:outputText  value="#{itemActivo.iva}">
+                                                <f:convertNumber pattern="###,###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Subtotal"  style="text-align: right">
+                                            <h:outputText  value="#{itemActivo.valorAltaSinIva}">
+                                                <f:convertNumber pattern="###,###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <!--                                        <ace:column  headerText="Total"  style="text-align: right">
+                                                                                    <h:outputText  value="#{itemActivo.valoralta + (itemActivo.valoralta * itemActivo.iva)}">
+                                                                                    <h:outputText  value="#{itemActivo.iva == null ?(itemActivo.valoralta):(itemActivo.iva == 0.00?(itemActivo.valoralta):(itemActivo.valoralta + (itemActivo.valoralta * itemActivo.iva)))}">
+                                                                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                                                                    </h:outputText>
+                                                                                </ace:column>-->
+                                        <ace:column  headerText="Valor Alta"  style="text-align: right">
+                                            <h:outputText  value="#{itemActivo.valoralta}">
+                                                <f:convertNumber pattern="###,###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Observaciones"  style="text-align: left">
+                                            <h:outputText  value="#{itemActivo.observaciones}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Chasis"  style="text-align: left">
+                                            <h:outputText  value="#{itemActivo.marca}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Motor"  style="text-align: left">
+                                            <h:outputText  value="#{itemActivo.dimensiones}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Placa"  style="text-align: left">
+                                            <h:outputText  value="#{itemActivo.caracteristicas}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Tipo Auxiliar"  style="text-align: left">
+                                            <h:outputText  value="#{itemActivo.tipoauxiliar}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Nominativo"  style="text-align: left">
+                                            <h:outputText  value="#{itemActivo.nominativo}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Factura"  style="text-align: left">
+                                            <h:outputText  value="#{itemActivo.factura}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Imagen"  style="text-align: left">
+                                            <h:outputText  value="#{itemActivo.nombreImagen}"/>
+                                        </ace:column>
+                                    </ace:dataTable>
+                                    <h:panelGrid columns="2">
+                                        <h:outputText  value="Total Activo Fijo: "/>
+                                        <h:outputText  value="#{cargarActivosSfccbdmq.totalActivo}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                        <h:outputText  value="Total: "/>
+                                        <h:outputText  value="#{cargarActivosSfccbdmq.totalActivo + cargarActivosSfccbdmq.totalControl}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </h:panelGrid>
+                                </h:panelGrid>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane>
+                            <f:facet name="label">Errores</f:facet>
+                            <h:panelGrid width="100%">
+                                <ace:dataTable id="tablaErrores" 
+                                               value="#{cargarActivosSfccbdmq.errores}"
+                                               var="error"
+                                               paginator="true"
+                                               lazy="false"
+                                               resizableColumns="true"
+                                               rowIndexVar="row2"
+                                               paginatorPosition="top"
+                                               rowsPerPageTemplate="5,10,15,30,50,100"
+                                               paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="10"
+                                               >
+                                    <ace:column  headerText="Error" style="text-align: left">
+                                        <h:outputText  value="#{error}">
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane>
+                            <f:facet name="label">Documentos</f:facet>
+                            <h:panelGrid width="100%">
+                                <ace:dataTable id="tablaDocumentos1" 
+                                               value="#{cargarActivosSfccbdmq.listaImagenes}" 
+                                               var="documentosol"
+                                               paginator="true"
+                                               lazy="false"
+                                               resizableColumns="true"
+                                               rowIndexVar="row2"
+                                               paginatorPosition="top"
+                                               rowsPerPageTemplate="5,10,15,30,50,100"
+                                               paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="10"
+                                               >
+                                    <f:facet name="label">Imagenes</f:facet>
+                                    <ace:column style="text-align: left" headerText="Acciones">                             
+                                        <ace:menuBar autoSubmenuDisplay="true" >
+                                            <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" 
+                                                          action="#{cargarActivosSfccbdmq.borrarDocumento(documentosol)}" 
+                                                          helpText="Borrar" 
+                                                          />
+                                        </ace:menuBar>
+                                    </ace:column>
+                                    <ace:column headerText="Nombre Documento" style="text-align: left" >
+                                        <h:outputText value="#{documentosol.nombre}"/>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                            <!--                            <h:panelGrid width="100%">
+                                                            <ace:dataTable id="tablaDocumentos2" 
+                                                                           value="#{cargarActivosSfccbdmq.listaImagenesAntes}" 
+                                                                           var="imageAntes"
+                                                                           paginator="true"
+                                                                           lazy="false"
+                                                                           resizableColumns="true"
+                                                                           rowIndexVar="row2"
+                                                                           paginatorPosition="top"
+                                                                           rowsPerPageTemplate="5,10,15,30,50,100"
+                                                                           paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                                           rows="10"
+                                                                           >
+                                                                <f:facet name="label">Imagenes Guardadas</f:facet>
+                                                                <ace:column headerText="Nombre Documento" style="text-align: left" >
+                                                                    <h:outputText value="#{imageAntes.nombre}"/>
+                                                                </ace:column>
+                                                            </ace:dataTable>
+                                                        </h:panelGrid>-->
+                        </ace:tabPane>
+                    </ace:tabSet>
+                    <ace:dialog 
+                        header="Imprimir"
+                        closable="false"
+                        modal="true"
+                        draggable="false"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{cargarActivosSfccbdmq.formularioImprimir.mostrar}"
+                        visible="#{cargarActivosSfccbdmq.formularioImprimir.mostrar}">
+                        <h:panelGroup>    
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:dynamicResource 
+                                    fileName="#{cargarActivosSfccbdmq.nombrepdf}"                                            
+                                    attachment="true"                                             
+                                    label="Descargar archivo"
+                                    mimeType="application/pdf"
+                                    resource="#{cargarActivosSfccbdmq.reportepdf}" 
+                                    type="button" rendered="#{cargarActivosSfccbdmq.reportepdf ne null}"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{cargarActivosSfccbdmq.salir()}"/>
+                                </ace:menuBar>
+                                <ace:messages style="white-space: pre-wrap"/>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                    <!--Imprimir acta de ingreso-->
+                    <ace:dialog 
+                        header="Imprimir Ingreso de Bienes"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{actasActivosSfccbdmq.formularioImprimirIngreso.mostrar}"
+                        visible="#{actasActivosSfccbdmq.formularioImprimirIngreso.mostrar}">
+                        <h:panelGroup>
+                            <h:panelGrid columns="1">
+                                <h:commandButton  value="Imprimir">
+                                    <!--<h:outputText id="printBoth" value="Imprimir"/>-->
+                                    <ace:printer for="panelImprimir4"/>
+                                </h:commandButton>
+                            </h:panelGrid>
+                            <ui:include src="imprimirIngreso.xhtml" />
+
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{actasActivosSfccbdmq.formularioImprimirIngreso.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                </ace:panel>
+                <!--edicion del activo-->
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

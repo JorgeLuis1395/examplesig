@@ -1,0 +1,449 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+
+                <ace:panel id="panel"
+                           header="#{reporteFondosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="2" width="100%">
+                        <ui:include src="../BuscarEmpleado.xhtml"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="6">
+                        <h:outputLabel value="Fecha de :" />
+                        <h:selectOneMenu value="#{reporteFondosSfccbdmq.tipoFecha}" id="ecivilbusqueda" >
+                            <f:selectItem itemLabel="Fondo" itemValue="o.fecha"/>
+                            <f:selectItem itemLabel="Pago" itemValue="o.kardexbanco.fechamov"/>
+                        </h:selectOneMenu>
+
+                        <h:outputLabel value="Desde:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{reporteFondosSfccbdmq.desde}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Hasta:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{reporteFondosSfccbdmq.hasta}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Pagado: " />
+                        <h:selectOneMenu  value="#{reporteFondosSfccbdmq.pago}" >
+                            <f:selectItem itemLabel="---Seleccione Uno----" itemValue="3"/>
+                            <f:selectItem itemLabel="NO" itemValue="0"/>
+                            <f:selectItem itemLabel="SI" itemValue="1"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Observaciones" />
+                        <h:inputTextarea cols="60" rows="8" value="#{reporteFondosSfccbdmq.egreso}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteFondosSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Imprimir Pago" icon="ui-icon ui-icon-print"  action="#{reporteFondosSfccbdmq.imprimirKardex()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{reporteFondosSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{reporteFondosSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                </ace:panel>
+
+                <ace:panel id="panelImprimir" style="display: block">
+                    <ace:dataTable id="tabla"
+                                   value="#{reporteFondosSfccbdmq.listaFondos}"
+                                   var="item"
+                                   lazy="false"
+                                   paginator="true"
+                                   resizableColumns="true"
+                                   rowIndexVar="row"
+                                   paginatorPosition="both"
+                                   rowsPerPageTemplate="10,15,30,50,100,200,500"
+                                   currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                   paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                   rows="30"
+                                   selectionMode="simple"
+                                   style="width: 100%;"
+                                   binding="#{origen}"
+                                   scrollHeight="600"
+                                   scrollable="true">
+                        <ace:column style="text-align: left">
+                            <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                <ace:menuItem action="#{reporteFondosSfccbdmq.detalle(item)}" value="Detalles" icon="ui-icon ui-icon-pencil"/>
+                                <ace:menuItem action="#{reporteFondosSfccbdmq.imprimirGasto(item)}" value="Imprimir Liquidacion" icon="ui-icon ui-icon-print"/>
+                            </ace:menuButton>
+                        </ace:column> 
+                        <ace:column  headerText="Registro" style="text-align: right">
+                            <h:outputText value="#{row+1}"/>
+                        </ace:column>
+                        <ace:column  headerText="Fecha"  style="text-align: left">
+                            <h:outputText  value="#{item.fecha}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Usuario"  style="text-align: left">
+                            <h:outputText  value="#{item.empleado.toString()}"/>
+                        </ace:column>
+                        <ace:column  headerText="Departamento"  style="text-align: left">
+                            <h:outputText  value="#{item.departamento.toString()}"/>
+                        </ace:column>
+                        <ace:column  headerText="Observacion"  style="text-align: left">
+                            <h:outputText  value="#{item.observaciones}"/>
+                        </ace:column>
+                        <ace:column  headerText="Cerrado"  style="text-align: left">
+                            <h:outputText  value="#{item.cerrado ?'SI':'NO'}"/>
+                        </ace:column>
+                        <ace:column  headerText="Valor" style="text-align: right">
+                            <h:outputText  value="#{item.valor}">
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Valor Utilizado" style="text-align: right">
+                            <h:outputText  value="#{reporteFondosSfccbdmq.traerTotal(item)}">
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Parcial"  style="text-align: left">
+                            <h:outputText  value="#{reporteFondosSfccbdmq.traerParcial(item)}"/>
+                        </ace:column>
+                        <ace:column  headerText="N° Liquidación" style="text-align: left">
+                            <h:outputText  value="#{reporteFondosSfccbdmq.traerLiquidacion(item)}"/>
+                        </ace:column>
+                        <ace:column  headerText="Fecha" style="text-align: left">
+                            <h:outputText  value="#{reporteFondosSfccbdmq.traerFechaLiquidacion(item)}"/>
+                        </ace:column>
+                        <ace:column  headerText="Valor" style="text-align: right">
+                            <h:outputText  value="#{reporteFondosSfccbdmq.traerValorLiquidacion(item)}">
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                        </ace:column>
+                    </ace:dataTable>
+                </ace:panel>
+
+                <ace:dialog 
+                    header="Detalle de Fondos"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteFondosSfccbdmq.formulario.mostrar}"
+                    visible="#{reporteFondosSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <ace:tabSet style="clear:both;" >
+                            <ace:tabPane label="Información General">
+                                <h:panelGrid width="100%">
+                                    <ace:dataTable id="detalle" 
+                                                   value="#{reporteFondosSfccbdmq.listaValesFondos}"
+                                                   var="itemVales"
+                                                   paginator="true"
+                                                   resizableColumns="true"
+                                                   rowIndexVar="row"
+                                                   paginatorPosition="both"
+                                                   rowsPerPageTemplate="5,10,15,50"
+                                                   paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                   rows="5"
+                                                   binding="#{reporteFondosSfccbdmq.formulario.fila}">
+                                        <ace:column  headerText="Fecha Mov"  style="text-align: left">
+                                            <h:outputText  value="#{itemVales.fecha}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Solicitante"  style="text-align: left">
+                                            <h:outputText  value="#{itemVales.solicitante.toString()}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Proveedor"  style="text-align: left">
+                                            <h:outputText  value="#{itemVales.proveedor.empresa.toString()}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Valor" style="text-align: right">
+                                            <h:outputText  value="#{itemVales.valor}">
+                                                <f:convertNumber pattern="###,###,#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Nro. Factura"  style="text-align: left">
+                                            <h:outputText  value="#{valesFondoSfccbdmq.traeNroFactura(itemVales)}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Base Imponible Cero" style="text-align: right">
+                                            <h:outputText  value="#{itemVales.baseimponiblecero}">
+                                                <f:convertNumber pattern="###,###,#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Base Imponible" style="text-align: right">
+                                            <h:outputText  value="#{itemVales.baseimponible}">
+                                                <f:convertNumber pattern="###,###,#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Valor IVA" style="text-align: right">
+                                            <h:outputText  value="#{itemVales.iva}">
+                                                <f:convertNumber pattern="###,###,#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Total Documento" style="text-align: right">
+                                            <h:outputText  value="#{itemVales.baseimponiblecero+itemVales.baseimponible+itemVales.iva}">
+                                                <f:convertNumber pattern="###,###,#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Estado"  style="text-align: left">
+                                            <h:outputText  value="INGRESADO" rendered="#{itemVales.estado==0}"/>
+                                            <h:outputText  value="SOLICITA REEMBOLSO" rendered="#{itemVales.estado==1}"/>
+                                            <h:outputText  value="LISTO PARA CONTABILIDAD" rendered="#{itemVales.estado==2}"/>
+                                            <h:outputText  value="LISTO PARA REEMBOLSO" rendered="#{itemVales.estado==4}"/>
+                                            <h:outputText  value="NEGADO REEMBOLSO" rendered="#{itemVales.estado==3}"/>
+                                            <h:outputText  value="FINALIZADO" rendered="#{itemVales.estado==6}"/>
+                                        </ace:column>
+                                    </ace:dataTable>
+                                </h:panelGrid>
+                            </ace:tabPane>
+
+                            <ace:tabPane label="Fondos Anterior">
+                                <ace:dataTable id="tablaAnterior"
+                                               value="#{reporteFondosSfccbdmq.listaFondosParcial}"
+                                               var="itemAnterior"
+                                               lazy="false"
+                                               paginator="true"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="10,15,30,50,100,200,500"
+                                               currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="30"
+                                               selectionMode="simple"
+                                               style="width: 100%;"
+                                               binding="#{origen2}">
+                                    <ace:column style="text-align: left">
+                                        <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                            <ace:menuItem action="#{reporteFondosSfccbdmq.detalle2(itemAnterior)}" value="Detalles" icon="ui-icon ui-icon-pencil"/>
+                                            <ace:menuItem action="#{reporteFondosSfccbdmq.imprimirGasto(itemAnterior)}" value="Imprimir Liquidacion" icon="ui-icon ui-icon-print"/>
+                                        </ace:menuButton>
+                                    </ace:column> 
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Fecha"  style="text-align: left">
+                                        <h:outputText  value="#{itemAnterior.fecha}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Usuario"  style="text-align: left">
+                                        <h:outputText  value="#{itemAnterior.empleado.toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Departamento"  style="text-align: left">
+                                        <h:outputText  value="#{itemAnterior.departamento.toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Observacion"  style="text-align: left">
+                                        <h:outputText  value="#{itemAnterior.observaciones}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Cerrado"  style="text-align: left">
+                                        <h:outputText  value="#{itemAnterior.cerrado ?'SI':'NO'}"/>
+                                    </ace:column>
+                                    <!--                                    <ace:column  headerText="Valor" style="text-align: right">
+                                                                            <h:outputText  value="#{itemAnterior.valor}">
+                                                                                <f:convertNumber pattern="###,###,#00.00"/>
+                                                                            </h:outputText>
+                                                                        </ace:column>-->
+                                    <ace:column  headerText="Valor Utilizado" style="text-align: right">
+                                        <h:outputText  value="#{reporteFondosSfccbdmq.traerTotal(itemAnterior)}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="N° Liquidación" style="text-align: left">
+                                        <h:outputText  value="#{reporteFondosSfccbdmq.traerLiquidacion(itemAnterior)}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Fecha" style="text-align: left">
+                                        <h:outputText  value="#{reporteFondosSfccbdmq.traerFechaLiquidacion(itemAnterior)}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Valor" style="text-align: right">
+                                        <h:outputText  value="#{reporteFondosSfccbdmq.traerValorLiquidacion(itemAnterior)}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </ace:tabPane>
+                        </ace:tabSet>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteFondosSfccbdmq.formulario.cancelar()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Detalle de Fondos"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteFondosSfccbdmq.formularioNuevo.mostrar}"
+                    visible="#{reporteFondosSfccbdmq.formularioNuevo.mostrar}">
+                    <h:panelGroup>
+                        <ace:tabPane label="Información General">
+                            <h:panelGrid width="100%">
+                                <ace:dataTable id="detalle2" 
+                                               value="#{reporteFondosSfccbdmq.listaValesFondos2}"
+                                               var="itemVales2"
+                                               paginator="true"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="5,10,15,50"
+                                               paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="5"
+                                               binding="#{reporteFondosSfccbdmq.formularioNuevo.fila}">
+                                    <ace:column  headerText="Fecha Mov"  style="text-align: left">
+                                        <h:outputText  value="#{itemVales2.fecha}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Solicitante"  style="text-align: left">
+                                        <h:outputText  value="#{itemVales2.solicitante.toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Proveedor"  style="text-align: left">
+                                        <h:outputText  value="#{itemVales2.proveedor.empresa.toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Valor" style="text-align: right">
+                                        <h:outputText  value="#{itemVales2.valor}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Nro. Factura"  style="text-align: left">
+                                        <h:outputText  value="#{valesFondoSfccbdmq.traeNroFactura(itemVales2)}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Base Imponible Cero" style="text-align: right">
+                                        <h:outputText  value="#{itemVales2.baseimponiblecero}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Base Imponible" style="text-align: right">
+                                        <h:outputText  value="#{itemVales2.baseimponible}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Valor IVA" style="text-align: right">
+                                        <h:outputText  value="#{itemVales2.iva}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Total Documento" style="text-align: right">
+                                        <h:outputText  value="#{itemVales2.baseimponiblecero+itemVales2.baseimponible+itemVales2.iva}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Estado"  style="text-align: left">
+                                        <h:outputText  value="INGRESADO" rendered="#{itemVales2.estado==0}"/>
+                                        <h:outputText  value="SOLICITA REEMBOLSO" rendered="#{itemVales2.estado==1}"/>
+                                        <h:outputText  value="LISTO PARA CONTABILIDAD" rendered="#{itemVales2.estado==2}"/>
+                                        <h:outputText  value="LISTO PARA REEMBOLSO" rendered="#{itemVales2.estado==4}"/>
+                                        <h:outputText  value="NEGADO REEMBOLSO" rendered="#{itemVales2.estado==3}"/>
+                                        <h:outputText  value="FINALIZADO" rendered="#{itemVales2.estado==6}"/>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteFondosSfccbdmq.formularioNuevo.cancelar()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+
+                    </h:panelGroup>
+                </ace:dialog>
+
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteFondosSfccbdmq.formularioReportes.mostrar}"
+                    visible="#{reporteFondosSfccbdmq.formularioReportes.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="Egreso.pdf" id="pdf-button" label="Generar PDF"
+                                             mimeType="application/pdf" 
+                                             rendered="#{reporteFondosSfccbdmq.reporteKardex!=null}"
+                                             resource="#{reporteFondosSfccbdmq.reporteKardex}" 
+                                             style="" type="button"/>
+                        <ace:dynamicResource fileName="Propuesta.pdf"  label="Generar Propuesta"
+                                             mimeType="application/pdf" 
+                                             rendered="#{reporteFondosSfccbdmq.reportePropuesta!=null}"
+                                             resource="#{reporteFondosSfccbdmq.reportePropuesta}" 
+                                             style="" type="button"/>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteFondosSfccbdmq.formularioReportes.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteFondosSfccbdmq.formularioImpresion.mostrar}"
+                    visible="#{reporteFondosSfccbdmq.formularioImpresion.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="Liquidacion.pdf" id="pdf-button1" label="Generar PDF"
+                                             mimeType="application/pdf" resource="#{reporteFondosSfccbdmq.reporte}" 
+                                             style="" type="button" rendered="#{reporteFondosSfccbdmq.reporte!=null}"/>
+                        <ace:dynamicResource fileName="LiquidacionCompras.xls" id="xls-button" label="Imprimir Liquidación de Compras"
+                                             mimeType="application/pdf" resource="#{reporteFondosSfccbdmq.reporteComp}" 
+                                             style="" type="button" rendered="#{reporteFondosSfccbdmq.reporteComp!=null}"/>
+                        <ace:dynamicResource fileName="Compromiso.pdf" id="pdf-button2" label="Imprimir Compromiso"
+                                             mimeType="application/pdf" resource="#{reporteFondosSfccbdmq.reporteCompromiso}" 
+                                             style="" type="button" rendered="#{reporteFondosSfccbdmq.reporteCompromiso!=null}"/>
+                        <!--<ui:include src="imprimirMovimientoBanco.xhtml" />-->
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteFondosSfccbdmq.formularioImpresion.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

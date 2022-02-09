@@ -1,0 +1,651 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!--Aqui va todo el codigo de la pagina--> 
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="Reporte de Impuestos Proveedores"
+                           closable="false"
+                           toggleable="false"  >
+                    <ace:panel header="Parámetros de Búsqueda">
+                        <h:panelGrid columns="4" width="100%">
+
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{reporteImpuestosProveedoresSfccbdmq.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{reporteImpuestosProveedoresSfccbdmq.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteImpuestosProveedoresSfccbdmq.buscar()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <h:panelGrid columns="3">
+                            <ace:dynamicResource  fileName="Reembolsos.xls" id="pdf-boton1" label="Reembolsos XLS"
+                                                  mimeType="application/xls" resource="#{reporteImpuestosProveedoresSfccbdmq.reporte}" 
+                                                  style="" type="button" rendered="#{reporteImpuestosProveedoresSfccbdmq.reporte ne null}"/>
+                            <ace:dynamicResource  fileName="Ventas.xls" id="pdf-boton2" label="Ventas XLS"
+                                                  mimeType="application/xls" resource="#{reporteImpuestosProveedoresSfccbdmq.reporte2}" 
+                                                  style="" type="button" rendered="#{reporteImpuestosProveedoresSfccbdmq.reporte2 ne null}"/>
+                            <ace:dynamicResource  fileName="Compras.xls" id="pdf-boton3" label="Compras XLS"
+                                                  mimeType="application/xls" resource="#{reporteImpuestosProveedoresSfccbdmq.reporte3}" 
+                                                  style="" type="button" rendered="#{reporteImpuestosProveedoresSfccbdmq.reporte3 ne null}"/>
+                        </h:panelGrid>
+                        <ace:messages/>
+                    </ace:panel> 
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                   for="panel"
+                                   blockUI="panel"
+                                   autoCenter="true"
+                                   activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="false">
+                    <h:panelGrid width="100%">
+                        <ace:tabSet>
+                            <!--Reembolsos-->
+                            <ace:tabPane >
+                                <f:facet name="label">Reembolsos</f:facet>
+                                <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                    <h:outputLabel  value="Exportar a:"/>
+                                    <h:selectOneRadio  value="#{reporteImpuestosProveedoresSfccbdmq.formulario.pantalla}" required="true">
+                                        <f:ajax disabled="false"/>
+                                        <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                        <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                        <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                        <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                    </h:selectOneRadio>
+                                    <ace:dataExporter id="dataExporter1" 
+                                                      label="Exportar Archivo" 
+                                                      type="#{reporteImpuestosProveedoresSfccbdmq.formulario.pantalla}" 
+                                                      target="tabla1" fileName="datos"/>
+                                </h:panelGrid>
+                                <ace:dataTable id="tabla1" 
+                                               value="#{reporteImpuestosProveedoresSfccbdmq.lista1}"
+                                               var="item"
+                                               rowIndexVar="row"
+                                               scrollHeight="600"
+                                               scrollable="true">
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="ref"  style="text-align: left">
+                                        <h:outputText value="#{item.ref}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="cempresa"  style="text-align: left">
+                                        <h:outputText value="#{item.cempresa}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="fechaemi"  style="text-align: left">
+                                        <h:outputText value="#{item.fechaemi}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="fechareg"  style="text-align: left">
+                                        <h:outputText value="#{item.fechareg}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="tipoide"  style="text-align: left">
+                                        <h:outputText value="#{item.tipoide}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="cproveedor"  style="text-align: left">
+                                        <h:outputText value="#{item.cproveedor}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="proveedor"  style="text-align: left">
+                                        <h:outputText value="#{item.proveedor}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="numeroide"  style="text-align: left">
+                                        <h:outputText value="#{item.numeroide}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="cdocumento"  style="text-align: left">
+                                        <h:outputText value="#{item.cdocumento}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="serie"  style="text-align: left">
+                                        <h:outputText value="#{item.serie}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="autsri"  style="text-align: left">
+                                        <h:outputText value="#{item.autsri}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="secuencia"  style="text-align: left">
+                                        <h:outputText value="#{item.secuencia}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="rtipoide"  style="text-align: left">
+                                        <h:outputText value="#{item.rtipoide}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="rnumeroide"  style="text-align: left">
+                                        <h:outputText value="#{item.rnumeroide}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="rcdocument"  style="text-align: left">
+                                        <h:outputText value="#{item.rcdocument}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="rserie"  style="text-align: left">
+                                        <h:outputText value="#{item.rserie}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="rsecuencia"  style="text-align: left">
+                                        <h:outputText value="#{item.rsecuencia}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="rautsri"  style="text-align: left">
+                                        <h:outputText value="#{item.rautsri}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="rfechaemi"  style="text-align: left">
+                                        <h:outputText value="#{item.rfechaemi}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="rbasimpng" style="text-align: right">
+                                        <h:outputText  value="#{item.rbasimpng}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="rbasimpsg" style="text-align: right">
+                                        <h:outputText  value="#{item.rbasimpsg}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="rvaliva" style="text-align: right">
+                                        <h:outputText  value="#{item.rvaliva}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="rbasimpno" style="text-align: right">
+                                        <h:outputText  value="#{item.rbasimpno}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="rvalice" style="text-align: right">
+                                        <h:outputText  value="#{item.rvalice}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="rbasimpex" style="text-align: right">
+                                        <h:outputText  value="#{item.rbasimpex}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </ace:tabPane>
+                            <!--Ventas-->
+                            <ace:tabPane >
+                                <f:facet name="label">Ventas</f:facet>
+                                <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                    <h:outputLabel  value="Exportar a:"/>
+                                    <h:selectOneRadio  value="#{reporteImpuestosProveedoresSfccbdmq.formulario.pantalla}" required="true">
+                                        <f:ajax disabled="false"/>
+                                        <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                        <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                        <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                        <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                    </h:selectOneRadio>
+                                    <ace:dataExporter id="dataExporter2" 
+                                                      label="Exportar Archivo" 
+                                                      type="#{reporteImpuestosProveedoresSfccbdmq.formulario.pantalla}" 
+                                                      target="tabla2" fileName="datos"/>
+                                </h:panelGrid>
+                                <ace:dataTable id ="tabla2"
+                                               value="#{reporteImpuestosProveedoresSfccbdmq.lista2}"
+                                               var="item2"
+                                               rowIndexVar="row"
+                                               scrollHeight="600"
+                                               scrollable="true">
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="cempresa"  style="text-align: left">
+                                        <h:outputText value="#{item2.cempresa}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="numeroide"  style="text-align: left">
+                                        <h:outputText value="#{item2.numeroide}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="cliente"  style="text-align: left">
+                                        <h:outputText value="#{item2.proveedor}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="tipoide"  style="text-align: left">
+                                        <h:outputText value="#{item2.tipoide}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="relacionad"  style="text-align: right">
+                                        <h:outputText  value="1" rendered="#{item2.relacionad}"/>
+                                        <h:outputText  value="0" rendered="#{!item2.relacionad}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="tipoclie"  style="text-align: left">
+                                        <h:outputText value="#{item2.tipoclie}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="fechaemi"  style="text-align: left">
+                                        <h:outputText value="#{item2.fechaemi}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="cdocumento"  style="text-align: left">
+                                        <h:outputText value="#{item2.cdocumento}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="bas_nobj" style="text-align: right">
+                                        <h:outputText  value="#{item2.rbasimpex}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="basimpng" style="text-align: right">
+                                        <h:outputText  value="#{item2.rbasimpng}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="basimpsg" style="text-align: right">
+                                        <h:outputText  value="#{item2.rbasimpsg}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="poriva" style="text-align: right">
+                                        <h:outputText  value="#{item2.rvaliva}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="valiva" style="text-align: right">
+                                        <h:outputText  value="#{item2.rbasimpno}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="valice" style="text-align: right">
+                                        <h:outputText  value="#{item2.rvalice}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="documentos"  style="text-align: left">
+                                        <h:outputText value="#{item2.rcdocument}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="tipo"  style="text-align: left">
+                                        <h:outputText value="#{item2.rtipoide}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="serie"  style="text-align: left">
+                                        <h:outputText value="#{item2.rserie}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="nventa"  style="text-align: left">
+                                        <h:outputText value="#{item2.rsecuencia}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="ret_ir" style="text-align: right">
+                                        <h:outputText  value="#{item2.ret_ir}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="ret_iva" style="text-align: right">
+                                        <h:outputText  value="#{item2.ret_iva}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="liquida"  style="text-align: left">
+                                        <h:outputText value="#{item2.liquida}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="retser"  style="text-align: left">
+                                        <h:outputText value="#{item2.ref}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="retsec"  style="text-align: left">
+                                        <h:outputText value="#{item2.serie}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="retaut"  style="text-align: left">
+                                        <h:outputText value="#{item2.cproveedor}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="retfec"  style="text-align: left">
+                                        <h:outputText value="#{item2.autsri}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="compsolida"  style="text-align: left">
+                                        <h:outputText value="#{item2.compsolida}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="compdinele"  style="text-align: left">
+                                        <h:outputText value="#{item2.compdinele}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="docelectro"  style="text-align: left">
+                                        <h:outputText  value="1" rendered="#{item2.docelectro}"/>
+                                        <h:outputText  value="0" rendered="#{!item2.docelectro}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="anulada"  style="text-align: left">
+                                        <h:outputText  value="1" rendered="#{item2.anulada}"/>
+                                        <h:outputText  value="0" rendered="#{!item2.anulada}"/>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </ace:tabPane>
+                            <!--Compras-->
+                            <ace:tabPane >
+                                <f:facet name="label">Compras</f:facet>
+                                <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                    <h:outputLabel  value="Exportar a:"/>
+                                    <h:selectOneRadio  value="#{reporteImpuestosProveedoresSfccbdmq.formulario.pantalla}" required="true">
+                                        <f:ajax disabled="false"/>
+                                        <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                        <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                        <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                        <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                    </h:selectOneRadio>
+                                    <ace:dataExporter id="dataExporter3" 
+                                                      label="Exportar Archivo" 
+                                                      type="#{reporteImpuestosProveedoresSfccbdmq.formulario.pantalla}" 
+                                                      target="tabla3" fileName="datos"/>
+                                </h:panelGrid>
+                                <ace:dataTable id="tabla3" 
+                                               value="#{reporteImpuestosProveedoresSfccbdmq.lista3}"
+                                               var="item3"
+                                               rowIndexVar="row"
+                                               scrollHeight="600"
+                                               scrollable="true">
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="numeroide"  style="text-align: left">
+                                        <h:outputText value="#{item3.numeroide}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="proveedor"  style="text-align: left">
+                                        <h:outputText value="#{item3.proveedor}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="cempresa"  style="text-align: left">
+                                        <h:outputText value="#{item3.cempresa}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Relacionada"  style="text-align: left">
+                                        <h:outputText value="#{item3.relacionado}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="TipoProveed"  style="text-align: left">
+                                        <h:outputText value="#{item3.tipoProveedor}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="fechaemision"  style="text-align: left">
+                                        <h:outputText value="#{item3.fechaemi}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="fecharegristro "  style="text-align: left">
+                                        <h:outputText value="#{item3.fechareg}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="cdocumento"  style="text-align: left">
+                                        <h:outputText value="#{item3.cdocumento}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="serie"  style="text-align: left">
+                                        <h:outputText value="#{item3.serie}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="secuencia"  style="text-align: left">
+                                        <h:outputText value="#{item3.secuencia}"/>
+                                    </ace:column>
+                                    
+                                    <ace:column  headerText="autsri"  style="text-align: left">
+                                        <h:outputText value="#{item3.autsri}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="fechavencimientofactura"  style="text-align: left">
+                                        <h:outputText value="#{item3.fechavencimientofactura}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="ideiva"  style="text-align: left">
+                                        <h:outputText value="#{item3.ideiva}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="deviva"  style="text-align: left">
+                                        <h:outputText value="#{item3.deviva}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="conceptfac"  style="text-align: left">
+                                        <h:outputText value="#{item3.conceptfac}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="poriva" style="text-align: right">
+                                        <h:outputText  value="#{item3.poriva}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="basimpng" style="text-align: right">
+                                        <h:outputText  value="#{item3.rbasimpng}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="basimpsg" style="text-align: right">
+                                        <h:outputText  value="#{item3.rbasimpsg}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="valiva" style="text-align: right">
+                                        <h:outputText  value="#{item3.rvaliva}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="basimpno" style="text-align: right">
+                                        <h:outputText  value="#{item3.rbasimpno}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    
+                                    <ace:column  headerText="basimpex" style="text-align: right">
+                                        <h:outputText  value="#{item3.rbasimpex}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>  
+                                    <ace:column  headerText="valice" style="text-align: right">
+                                        <h:outputText  value="#{item3.rvalice}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>                              
+                                    <ace:column  headerText="retiva10" style="text-align: right">
+                                        <h:outputText  value="#{item3.retiva10}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>                                    
+                                    <ace:column  headerText="retiva20" style="text-align: right">
+                                        <h:outputText  value="#{item3.retiva20}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>                                    
+                                    <ace:column  headerText="retiva30" style="text-align: right">
+                                        <h:outputText  value="#{item3.retiva30}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>                                    
+                                    <ace:column  headerText="retiva50" style="text-align: right">
+                                        <h:outputText  value="#{item3.retiva50}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>                                    
+                                    <ace:column  headerText="retiva70" style="text-align: right">
+                                        <h:outputText  value="#{item3.retiva70}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>                                    
+                                    <ace:column  headerText="retiva100" style="text-align: right">
+                                        <h:outputText  value="#{item3.retiva100}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>  
+                                    <ace:column  headerText="codret"  style="text-align: left">
+                                        <h:outputText value="#{item3.codret}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="basret" style="text-align: right">
+                                        <h:outputText  value="#{item3.basret}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    
+                                    <ace:column  headerText="porret" style="text-align: right">
+                                        <h:outputText  value="#{item3.porret}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>   
+                                    <ace:column  headerText="valret" style="text-align: right">
+                                        <h:outputText  value="#{item3.valret}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>   
+                                    <ace:column  headerText="FecPagoDIV"  style="text-align: left">
+                                        <h:outputText value="0"/>
+                                    </ace:column>
+                                    <ace:column  headerText="IRAsociDIV"  style="text-align: left">
+                                        <h:outputText value="0"/>
+                                    </ace:column>
+                                    <ace:column  headerText="AñoGenUtil"  style="text-align: left">
+                                        <h:outputText value="0"/>
+                                    </ace:column>
+                                    <ace:column  headerText="CanCajBan"  style="text-align: left">
+                                        <h:outputText value="0"/>
+                                    </ace:column>
+                                    <ace:column  headerText="PreCajBan"  style="text-align: left">
+                                        <h:outputText value="0"/>
+                                    </ace:column>
+                                    <ace:column  headerText="retser"  style="text-align: left">
+                                        <h:outputText value="#{item3.retser}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="nretencion"  style="text-align: left">
+                                        <h:outputText value="#{item3.nretencion}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="retaut"  style="text-align: left">
+                                        <h:outputText value="#{item3.retaut}"/>
+                                    </ace:column>
+                                    
+                                    <ace:column  headerText="periodofec"  style="text-align: left">
+                                        <h:outputText value="#{item3.periodofec}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="CompModif"  style="text-align: left">
+                                        <!--<h:outputText value="#{item3.cempresa}"/>-->
+                                    </ace:column>
+                                    <ace:column  headerText="SerieModif"  style="text-align: left">
+                                        <!--<h:outputText value="#{item3.cempresa}"/>-->
+                                    </ace:column>
+                                    <ace:column  headerText="SecuencModif"  style="text-align: left">
+                                        <!--<h:outputText value="#{item3.cempresa}"/>-->
+                                    </ace:column>
+                                    <ace:column  headerText="AutModif"  style="text-align: left">
+                                        <!--<h:outputText value="#{item3.cempresa}"/>-->
+                                    </ace:column>
+                                    <ace:column  headerText="CompPago"  style="text-align: left">
+                                        <!--<h:outputText value="#{item3.cempresa}"/>-->
+                                    </ace:column>
+                                    <ace:column  headerText="Liquidar"  style="text-align: left">
+                                        <h:outputText value="#{item3.liquidar}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="TipoPagoSRI"  style="text-align: left">
+                                        <h:outputText value="#{item3.tipoPagoSRI}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Pais"  style="text-align: left">
+                                        <!--<h:outputText value="#{item3.cempresa}"/>-->
+                                    </ace:column>
+                                    <ace:column  headerText="RegFisPre"  style="text-align: left">
+                                        <!--<h:outputText value="#{item3.cempresa}"/>-->
+                                    </ace:column>
+                                    
+                                    <ace:column  headerText="Convenio"  style="text-align: left">
+                                        <!--<h:outputText value="#{item3.cempresa}"/>-->
+                                    </ace:column>
+                                    <ace:column  headerText="RetNormaLeg"  style="text-align: left">
+                                        <!--<h:outputText value="#{item3.cempresa}"/>-->
+                                    </ace:column>
+                                    <ace:column  headerText="paglocext"  style="text-align: left">
+                                        <h:outputText value="#{item3.paglocext}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="regfispre" style="text-align: right">
+                                        <h:outputText  value="#{item3.regfispre}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>   
+                                    <ace:column  headerText="aplconvdob" style="text-align: right">
+                                        <h:outputText  value="#{item3.aplconvdob}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>   
+                                    <ace:column  headerText="pesretnleg" style="text-align: right">
+                                        <h:outputText  value="#{item3.pesretnleg}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>   
+                                    <ace:column  headerText="FormaPagoSRI"  style="text-align: left">
+                                        <h:outputText value="#{item3.denopago}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="compsolida" style="text-align: right">
+                                        <h:outputText  value="#{item3.compsolida}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column> 
+<!--                                    <ace:column  headerText="ref"  style="text-align: left">
+                                        <h:outputText value="#{item3.ref}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="reforg"  style="text-align: left">
+                                        <h:outputText value="#{item3.reforg}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="refnum"  style="text-align: left">
+                                        <h:outputText value="#{item3.refnum}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="tipoasi"  style="text-align: left">
+                                        <h:outputText value="#{item3.tipoasi}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="nasiento"  style="text-align: left">
+                                        <h:outputText value="#{item3.nasiento}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="cproveedor"  style="text-align: left">
+                                        <h:outputText value="#{item3.cproveedor}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="auxiliar"  style="text-align: left">
+                                        <h:outputText value="#{item3.auxiliar}"/>
+                                    </ace:column>   
+                                    <ace:column  headerText="paisefecpa"  style="text-align: left">
+                                        <h:outputText value="#{item3.paisefecpa}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="tiporegi"  style="text-align: left">
+                                        <h:outputText value="#{item3.tiporegi}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="paisefpgge"  style="text-align: left">
+                                        <h:outputText value="#{item3.paisefpgge}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="paisefpgpf"  style="text-align: left">
+                                        <h:outputText value="#{item3.paisefpgpf}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="conceptret"  style="text-align: left">
+                                        <h:outputText value="#{item3.conceptret}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="facturas"  style="text-align: left">
+                                        <h:outputText value="#{item3.facturas}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="docelectro"  style="text-align: left">
+                                        <h:outputText value="#{item3.docelectror}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="ambiente"  style="text-align: left">
+                                        <h:outputText value="#{item3.ambiente}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="estado"  style="text-align: left">
+                                        <h:outputText value="#{item3.estado}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="tpemision"  style="text-align: left">
+                                        <h:outputText value="#{item3.tpemision}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="clacceso"  style="text-align: left">
+                                        <h:outputText value="#{item3.clacceso}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="fechaaut"  style="text-align: left">
+                                        <h:outputText value="#{item3.fechaaut}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="rusugre"  style="text-align: left">
+                                        <h:outputText value="#{item3.rusugre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="rfecagr"  style="text-align: left">
+                                        <h:outputText value="#{item3.rfecagr}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="rusumod"  style="text-align: left">
+                                        <h:outputText value="#{item3.rusumod}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="rfecmod"  style="text-align: left">
+                                        <h:outputText value="#{item3.rfecmod}"/>
+                                    </ace:column>-->
+                                </ace:dataTable>
+                            </ace:tabPane>
+                        </ace:tabSet>
+                    </h:panelGrid>
+                </ace:panel>
+            </ui:define>
+            <!--Fin--> 
+        </ui:composition>
+    </h:body>
+</html>

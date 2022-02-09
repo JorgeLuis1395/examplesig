@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <ace:dialog header="Dato" modal="true" closable="false" 
+                visible="#{cabecerasEmpleados.formulariocabecera.mostrar}" 
+                rendered="#{cabecerasEmpleados.formulariocabecera.mostrar}">
+        <ace:tabSet clientSide="true">
+            <ace:tabPane label="Info. Dato">  
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="Texto:"/>
+                    <h:inputText  value="#{cabecerasEmpleados.cabecera.texto}" />
+                    <h:outputLabel value="Puede usarse en familiares?:"/>
+                    <h:selectBooleanCheckbox  value="#{cabecerasEmpleados.cabecera.datoimpresion}" />
+                    <h:outputLabel value="Grupo:"/> 
+                    <h:selectOneMenu value="#{cabecerasEmpleados.cabecera.idgrupo}">
+                        <f:selectItems value="#{cabecerasEmpleados.comboCabecera}"/>
+                    </h:selectOneMenu>   
+                    <h:outputLabel value="Tipo de Dato:"/> 
+                    <h:selectOneMenu value="#{cabecerasEmpleados.cabecera.tipodato}"  disabled="#{!cabecerasEmpleados.formulariocabecera.nuevo}">
+                        <f:selectItem  itemLabel="---" itemValue='-1'/>
+                        <f:selectItem itemLabel="Lista para Escojer" itemValue='0'/>
+                        <f:selectItem itemLabel="Numérico" itemValue='1'/>
+                        <f:selectItem itemLabel="Texto" itemValue='2'/>
+                        <f:selectItem itemLabel="Fecha" itemValue='3'/>
+                        <f:selectItem itemLabel="Códigos" itemValue='4'/>
+                        <ace:ajax execute="@all"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="Valor mínimo:" rendered="#{cabecerasEmpleados.cabecera.tipodato==1}"/>
+                    <h:inputText  value="#{cabecerasEmpleados.cabecera.minimo}" rendered="#{cabecerasEmpleados.cabecera.tipodato==1}"/>
+                    <h:outputLabel value="Valor máximo:" rendered="#{cabecerasEmpleados.cabecera.tipodato==1}"/>
+                    <h:inputText  value="#{cabecerasEmpleados.cabecera.maximo}" rendered="#{cabecerasEmpleados.cabecera.tipodato==1}"/>
+                    <h:outputLabel value="Catálogo:" rendered="#{cabecerasEmpleados.cabecera.tipodato==4}"/>
+                    <h:selectOneMenu value="#{cabecerasEmpleados.cabecera.codigo}" rendered="#{cabecerasEmpleados.cabecera.tipodato==4}">
+                        <f:selectItems value="#{maestrosSfccbdmq.comboMaestroStrEspacio}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="Explicación:"/>
+                    <h:inputTextarea cols="40" rows="3" value="#{cabecerasEmpleados.cabecera.ayuda}" />
+                </h:panelGrid>
+            </ace:tabPane> 
+
+            <ace:tabPane label="Rango de Datos">
+                <h:panelGrid columns="2">
+                    <ace:menuBar autoSubmenuDisplay="true" >               
+                        <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-disk" 
+                                      action="#{cabecerasEmpleados.insertarRangoCabecera()}"/>  
+                    </ace:menuBar>
+                </h:panelGrid> 
+                <ace:dataTable 
+                    id="tablarangos"
+                    value="#{cabecerasEmpleados.listatcabeceras}"
+                    var="rango"
+                    resizableColumns="true"
+                    lazy="false"
+                    rowIndexVar="row"
+                    style="width: 99%;"
+                    binding="#{cabecerasEmpleados.formulariorangocabecera.fila}">
+                    <ace:column style="text-align: left">
+                        <ace:menuButton  effect="slide" effectDuration="200" value="..." >
+                            <ace:menuItem action="#{cabecerasEmpleados.modificarangcabecera()}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                            <ace:menuItem action="#{cabecerasEmpleados.eliminarangcabecera()}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                        </ace:menuButton>
+                    </ace:column>
+                    <ace:column headerText="Nro.">
+                        <h:outputText value="#{row+1}"/>
+                    </ace:column>
+                    <ace:column headerText="Texto" style="text-align: left" >
+                        <h:outputText value="#{rango.texto}"/>
+                    </ace:column>
+                </ace:dataTable>  
+            </ace:tabPane>
+        </ace:tabSet>
+
+        <h:panelGrid columns="2">  
+            <ace:menuBar autoSubmenuDisplay="true" >
+                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                              rendered="#{cabecerasEmpleados.formulariocabecera.nuevo}" 
+                              action="#{cabecerasEmpleados.insertarcab()}"/>
+                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                              action="#{cabecerasEmpleados.grabarcab()}" 
+                              rendered="#{cabecerasEmpleados.formulariocabecera.modificar}" />
+                <ace:menuItem action="#{cabecerasEmpleados.borrarcab()}" 
+                              value="Está seguro de Borrar el registro?" 
+                              rendered="#{cabecerasEmpleados.formulariocabecera.borrar}"
+                              icon="ui-icon ui-icon-trash"/>
+                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                              action="#{cabecerasEmpleados.formulariocabecera.cancelar()}"/>
+            </ace:menuBar>
+
+        </h:panelGrid>
+        <ace:messages/>
+    </ace:dialog>
+
+
+    <ace:dialog header="Valor"
+                modal="true" closable="false" 
+                visible="#{cabecerasEmpleados.formulariorangocabecera.mostrar}" 
+                rendered="#{cabecerasEmpleados.formulariorangocabecera.mostrar}" >
+        <h:panelGrid columns="2">
+            <h:outputLabel value="Texto:"/> 
+            <h:inputText value="#{cabecerasEmpleados.rangocab.texto}" />
+        </h:panelGrid>  
+        <h:panelGrid columns="2">
+            <ace:menuBar autoSubmenuDisplay="true" >               
+                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                              rendered="#{cabecerasEmpleados.formulariorangocabecera.nuevo}" 
+                              action="#{cabecerasEmpleados.insertarrangocabecera()}"/>  
+                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                              action="#{cabecerasEmpleados.grabarangocabecera()}" 
+                              rendered="#{cabecerasEmpleados.formulariorangocabecera.modificar}" />                         
+                <ace:menuItem action="#{cabecerasEmpleados.borrarangocabecera()}" 
+                              value="Está seguro de Borrar el registro?" 
+                              rendered="#{cabecerasEmpleados.formulariorangocabecera.borrar}"
+                              icon="ui-icon ui-icon-trash"/>
+                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                              action="#{cabecerasEmpleados.formulariorangocabecera.cancelar()}" immediate="true"/> 
+            </ace:menuBar>
+        </h:panelGrid>
+        <ace:messages/>
+    </ace:dialog>
+
+</html>
+

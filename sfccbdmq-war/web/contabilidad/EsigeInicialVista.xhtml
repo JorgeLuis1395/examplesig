@@ -1,0 +1,173 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{esigeInicialSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="2" width="100%">
+                        <h:outputLabel value="Mes :"/>
+                        <h:outputLabel value="#{esigeInicialSfccbdmq.mes}"/>
+
+                        <h:outputLabel value="Año :"/>
+                        <h:inputText value="#{esigeInicialSfccbdmq.anio}" size="5" id="digito">
+                            <f:validateLength maximum="4" minimum="4"/>
+                        </h:inputText>
+                    </h:panelGrid>
+
+
+                    <h:panelGrid columns="1" width="100%">
+
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{esigeInicialSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Generar" icon="ui-icon ui-icon-folder-open"  action="#{esigeInicialSfccbdmq.generarArchivo()}" rendered="#{esigeInicialSfccbdmq.balance.size()>0}"/>
+
+                        </ace:menuBar>
+                        <ace:messages/>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="panel"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{esigeInicialSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{esigeInicialSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"
+                                          includeHeaders="false"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="4" styleClass="centeredPanelGrid">
+                        <h:commandButton  value="Imprimir">
+                            <ace:printer for="panelImprimir"/>
+                        </h:commandButton>
+                    </h:panelGrid>
+                </ace:panel>
+
+                <ace:panel id="panelImprimir" style="display: block">
+                    <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+                    <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                        <h:outputText value="#{configuracionSfccbdmq.configuracion.nombre}"/>
+                        <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                            <h:outputText value="Usuario :"/>
+                            <h:outputText value="#{parametrosSfccbdmq.logueado.userid}"/>
+                            <h:outputText value="Fecha :"/>
+                            <h:outputText value="#{parametrosSfccbdmq.fechaActual}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                            </h:outputText>
+                        </h:panelGrid>
+                        <h:outputText value="Valores expresados en #{configuracionSfccbdmq.configuracion.expresado}"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%" columns="4">
+                        <h:outputLabel value="Mes :"/>
+                        <h:outputLabel value="#{esigeInicialSfccbdmq.mes}"/>
+                        <h:outputLabel value="Año :"/>
+                        <h:outputLabel value="#{esigeInicialSfccbdmq.anio}"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%" style="display: block">
+                        <ace:dataTable id="tabla"
+                                       value="#{esigeInicialSfccbdmq.balance}"
+                                       var="item"
+                                       style="display: block;width: 100%"
+                                       scrollHeight="600"
+                                       scrollable="true">
+                            <ace:columnGroup  type="header">
+                                <ace:row>
+                                    <ace:column  rowspan="2" headerText="PERIODO"/>
+                                    <ace:column  rowspan="2" headerText="MAYOR"/>
+                                    <ace:column  rowspan="2" headerText="NIVEL 1"/>
+                                    <ace:column  rowspan="2" headerText="NIVEL 2"/>
+                                    <ace:column  colspan="2" headerText="SALDO INICIAL"/>
+
+                                </ace:row>
+                                <ace:row>
+                                    <ace:column  headerText="Deudor"/>
+                                    <ace:column  headerText="Acreedor"/>
+
+                                </ace:row>
+                            </ace:columnGroup>
+                            <ace:column  style="text-align: left">
+                                <h:outputText  value="#{item.periodo}"/>
+                            </ace:column>
+                            <ace:column    style="text-align: left">
+                                <h:outputText  value="#{item.mayor}"/>
+                            </ace:column>
+                            <ace:column    style="text-align: left">
+                                <h:outputText  value="#{item.nivel1}"/>
+                            </ace:column>
+                            <ace:column    style="text-align: left">
+                                <h:outputText  value="#{item.nivel2}"/>
+                            </ace:column>
+                            <ace:column  style="text-align: right">
+                                <h:outputText  value="#{item.inicialDeudor}"  >
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  style="text-align: right">
+                                <h:outputText  value="#{item.inicialAcreedor}"  >
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="Generar Archivo"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{esigeInicialSfccbdmq.formularioReporte.mostrar}"
+                    visible="#{esigeInicialSfccbdmq.formularioReporte.mostrar}">
+                    <h:panelGrid columns="2"> 
+                        <h:outputText value="Archivo:" styleClass="bold"/>
+                        <h:outputText value="ESIGEF.TXT"/>
+                        <ace:dynamicResource fileName="ESIGEF.TXT" 
+                                             attachment="false" 
+                                             label="Descargar documento"
+                                             resource="#{esigeInicialSfccbdmq.recursoTxt}" 
+                                             type="button"/>
+                        <h:outputText value=" "/>
+                        <ace:menuBar>
+                            <ace:menuItem value="Cerrar" icon="ui-icon ui-icon-close" 
+                                          action="#{esigeInicialSfccbdmq.formularioReporte.cancelar()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

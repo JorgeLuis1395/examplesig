@@ -1,0 +1,207 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{cargarAsignaciones.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="4" width="30%">
+                        <h:outputLabel value="Separador de campos :"/>
+                        <h:inputText value="#{cargarAsignaciones.separador}" size="3">
+                            <ace:ajax execute="@all"/>
+                        </h:inputText>
+                        <h:outputLabel value="Año :"/>
+                        <h:inputText value="#{cargarAsignaciones.anioCarga}" >
+                            <ace:ajax execute="@all"/>
+                        </h:inputText>
+                        <h:outputLabel value="Archivo a Subir:" />
+                    </h:panelGrid>
+                    <h:panelGrid columns="3" width="100%">
+                        <ace:fileEntry id="file-entry" 
+
+                                       maxFileCount="1" 
+                                       maxFileCountMessage="Máximo un archivo" 
+                                       fileEntryListener="#{cargarAsignaciones.archivoListener}" 
+                                       maxFileSize="6291456" 
+                                       maxFileSizeMessage="Tamaño muy grande." 
+                                       maxTotalSize="18874368" 
+                                       maxTotalSizeMessage="Total del tamaño muy grande." 
+                                       useOriginalFilename="true" 
+                                       useSessionSubdir="true"/>
+                        <h:commandButton type="submit" value="Cargar datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{cargarAsignaciones.insertar()}"/>
+                            <ace:menuItem value="Ver errores" icon="ui-icon ui-icon-tag" 
+                                          action="#{cargarAsignaciones.verErrores()}" rendered="#{cargarAsignaciones.errores.size()>0}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Partidas encontradas"
+                    closable="false"
+                    toggleable="true"
+                    >
+                   
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane>
+                            <f:facet name="label">Totales</f:facet>
+                            <h:panelGrid width="100%">
+                                <ace:dataTable id="tablaTotales" 
+                                               value="#{cargarAsignaciones.totales}"
+                                               var="itemTotales"
+                                               paginator="true"
+                                               lazy="false"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="15,20,25,50,100"
+                                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="15"
+                                               >
+                                    <!--<f:facet name="header">Totales</f:facet>-->
+                                    <ace:column  headerText="Fuente"  style="text-align: left">
+                                        <h:outputText  value="#{itemTotales.fuente.nombre}" rendered="#{itemTotales.fuente!=null}"/>  
+                                        <h:outputText  value="#{itemTotales.total}" rendered="#{itemTotales.fuente==null}"/>  
+                                    </ace:column>
+                                    <ace:column  headerText="Ingresos" style="text-align: right">
+                                        <h:outputText  value="#{itemTotales.ingresos}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Egresos" style="text-align: right">
+                                        <h:outputText  value="#{itemTotales.egresos}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Total" style="text-align: right">
+                                        <h:outputText  value="#{itemTotales.ingresos-itemTotales.egresos}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane>
+                            <f:facet name="label">Registros</f:facet>
+                            <h:panelGrid width="100%">
+                                <ace:dataTable id="tabla" 
+                                               value="#{cargarAsignaciones.asignaciones}"
+                                               var="item"
+                                               paginator="true"
+                                               lazy="false"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="5,10,15,30,50,100"
+                                               paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="30"
+                                               >
+                                    <!--<f:facet name="header">Registros</f:facet>-->
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+
+                                    <ace:column  headerText="Clasificador" style="text-align: left">
+                                        <h:outputText  value="#{item.clasificador.codigo} - #{item.clasificador.nombre}"/>  
+                                        <!--<h:outputText  value="#{item.clasificador.nombre}"/>-->
+                                    </ace:column>
+                                    <ace:column  headerText="Proyecto" style="text-align: left">
+                                        <h:outputText  value="#{item.proyecto.codigo} - #{item.proyecto.nombre}"/>  
+                                    </ace:column>
+                                    <ace:column  headerText="Fuente" style="text-align: left">
+                                        <h:outputText  value="#{item.fuente.nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Valor" style="text-align: right">
+                                        <h:outputText  value="#{item.valor}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                    </ace:tabSet>
+                </ace:panel>
+                <ace:dialog 
+                    header="Errores"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{cargarAsignaciones.formularioErrores.mostrar}"
+                    visible="#{cargarAsignaciones.formularioErrores.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="1">
+                            <ace:dataTable id="tablaErrores" 
+                                           value="#{cargarAsignaciones.errores}"
+                                           var="error"
+                                           paginator="true"
+                                           lazy="false"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="5,10,15,30,50,100"
+                                           paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="10"
+                                           >
+                                <ace:column  headerText="Error" style="text-align: left">
+                                    <h:outputText  value="#{error}">
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+
+                        </h:panelGrid>
+
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{cargarAsignaciones.formularioErrores.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                            <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

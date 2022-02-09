@@ -1,0 +1,240 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+
+    </h:head>
+    <h:body>
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel1"
+                           header="Plantillas"
+                           closable="false"
+                           toggleable="true"
+                           rendered="#{!plantillasSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Tipo :" />
+                            <h:selectOneMenu value="#{plantillasSfccbdmq.tipo}">
+                                <f:selectItems value="#{codigosSfccbdmq.comboPlantillas}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{plantillasSfccbdmq.crearCabecera()}" />
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{plantillasSfccbdmq.buscar()}"/>
+                            </ace:menuBar>
+                            
+                            <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{plantillasSfccbdmq.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{plantillasSfccbdmq.formulario.pantalla}" 
+                                              target="tabla" fileName="datos"/>
+                        </h:panelGrid>
+                            
+                            
+                            <ace:submitMonitor id="submitMonitorPanel"
+                                               for="panel1"
+                                               blockUI="@all"
+                                               autoCenter="true"
+                                               activeLabel="Un Momento por favor"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable id="tabla" 
+                                               paginatorAlwaysVisible="true"
+                                               value="#{plantillasSfccbdmq.listaPlantillas}"
+                                               var="item"
+                                               paginator="true"
+                                               lazy="false"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="15,20,25,50,100"
+                                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="15"
+                                               binding="#{plantillasSfccbdmq.formulario.fila}">
+                                    <ace:column style="text-align: left">
+                                        <ace:menuButton id="menuButton2" effect="slide" effectDuration="200" value="..." >
+                                            <ace:menuItem action="#{plantillasSfccbdmq.modificar()}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                            <ace:menuItem action="#{plantillasSfccbdmq.eliminar()}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                        </ace:menuButton>
+                                    </ace:column> 
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Tipo"  style="text-align: left">
+                                        <h:outputText  value="#{item.tipo.nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Código" style="text-align: left">
+                                        <h:outputText  value="#{item.codigo}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Cantidad"  style="text-align: left">
+                                        <h:outputText  value="#{item.cantidad}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Cantidad Inv."  style="text-align: left">
+                                        <h:outputText  value="#{item.cantidadinv}"/>
+                                    </ace:column>
+                                </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:panel>
+                <ace:panel id="panel"
+                           header="Mantenimiento Plantillas"
+                           closable="false"
+                           toggleable="true"
+                           rendered="#{plantillasSfccbdmq.formulario.mostrar}">          
+
+                    <ace:submitMonitor id="submitMonitorPanel1"
+                                       for="panel"
+                                       blockUI="@all"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <h:panelGrid columns="2" width="30%">
+                        <h:outputLabel value="Separador de campos :"/>
+                        <h:inputText value="#{plantillasSfccbdmq.separador}"  size="3">
+                            <ace:ajax execute="@all"/>
+                        </h:inputText>
+                        <h:outputLabel value="Archivo a Subir:" />
+                    </h:panelGrid>
+                    <h:panelGrid columns="3" width="30%">
+                        <ace:fileEntry id="file-entry" 
+
+                                       maxFileCount="1" 
+                                       maxFileCountMessage="Máximo un archivo" 
+                                       fileEntryListener="#{plantillasSfccbdmq.archivoListener}" 
+                                       maxFileSize="6291456" 
+                                       maxFileSizeMessage="Tamaño muy grande." 
+                                       maxTotalSize="18874368" 
+                                       maxTotalSizeMessage="Total del tamaño muy grande." 
+                                       useOriginalFilename="true" 
+                                       useSessionSubdir="true"/>
+                        <h:commandButton type="submit" value="Cargar datos"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"
+                                          action="#{plantillasSfccbdmq.insertar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{plantillasSfccbdmq.salir()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+
+
+                    <ace:tabSet style="clear:both; width: 100%" >
+                        <ace:tabPane label="Registros">
+                            <h:panelGrid width="100%">
+                                <ace:dataTable id="tablaSubir" 
+                                               paginatorAlwaysVisible="true"
+                                               value="#{plantillasSfccbdmq.listaPlantillasSubir}"
+                                               var="itemSubir"
+                                               paginator="true"
+                                               lazy="false"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="15,20,25,50,100"
+                                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="15">
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Tipo"  style="text-align: left">
+                                        <h:outputText  value="#{itemSubir.tipo.nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Código" style="text-align: left">
+                                        <h:outputText  value="#{itemSubir.codigo}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Cantidad"  style="text-align: left">
+                                        <h:outputText  value="#{itemSubir.cantidad}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Cantidad Inv."  style="text-align: left">
+                                        <h:outputText  value="#{itemSubir.cantidadinv}"/>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+
+                        <ace:tabPane label="Errores de Carga">
+                            <ace:dataTable id="tablaErrores" 
+                                           value="#{plantillasSfccbdmq.errores}"
+                                           var="error"
+                                           paginator="true"
+                                           lazy="false"
+                                           resizableColumns="true"
+                                           rowIndexVar="row2"
+                                           paginatorPosition="top"
+                                           paginatorAlwaysVisible="true"
+                                           rowsPerPageTemplate="5,10,15,30,50,100"
+                                           paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="10"
+                                           style="width: 100%">
+                                <ace:column  headerText="Error" style="text-align: left">
+                                    <h:outputText  value="#{error}">
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </ace:tabPane>
+                    </ace:tabSet>
+                </ace:panel>
+                <ace:dialog 
+                    header="Plantillas"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{plantillasSfccbdmq.formularioEditar.mostrar}"
+                    visible="#{plantillasSfccbdmq.formularioEditar.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2" width="100%">
+                            <h:outputLabel value="Suministro: " for="Nombre" />
+                            <h:inputText value="#{plantillasSfccbdmq.plantilla.codigo}" id="Nombre"/>
+                            <h:outputLabel value="Cantidad: " for="Cantidad" />
+                            <h:inputText value="#{plantillasSfccbdmq.plantilla.cantidad}" id="Cantidad"/>
+                            <h:outputLabel value="Cantidad Inv. : " for="Cantidad" />
+                            <h:inputText value="#{plantillasSfccbdmq.plantilla.cantidadinv}" id="Cantidadinv"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{plantillasSfccbdmq.grabar()}" 
+                                              rendered="#{plantillasSfccbdmq.formularioEditar.modificar}" />
+                                <ace:menuItem action="#{plantillasSfccbdmq.borrar()}" 
+                                              value="Esta seguro de Borrar el registro?" 
+                                              rendered="#{plantillasSfccbdmq.formularioEditar.borrar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{plantillasSfccbdmq.formularioEditar.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

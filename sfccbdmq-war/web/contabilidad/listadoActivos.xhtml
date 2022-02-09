@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+    <h:panelGrid width="100%" >
+        <ace:dataTable id="tablaActivos" 
+                       value="#{obligacionesSfccbdmq.listaActivos}"
+                       var="item"
+                       paginator="true"
+                       lazy="true"
+                       resizableColumns="true"
+                       rowIndexVar="row"
+                       paginatorPosition="both"
+                       rowsPerPageTemplate="15,20,25,50,100"
+                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                       rows="15"
+                       binding="#{obligacionesSfccbdmq.formularioActivos.fila}">
+            <f:facet name="header">Valor Total de activos : 
+                <h:outputText value="#{obligacionesSfccbdmq.valorTotalActivos}">
+                    <f:convertNumber pattern="###,##0.00"/>
+                </h:outputText>
+            </f:facet>
+            <ace:column  headerText="Fecha Ingreso"  style="text-align: right">
+                <h:outputText  value="#{item.fechaingreso}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputText>
+            </ace:column>
+            <ace:column  headerText="C. Costo"  style="text-align: left">
+                <h:outputText  value="#{ccostoSfccbdmq.traerNombre( item.ccosto)}"/>
+            </ace:column>  
+            <ace:column  headerText="Grupo"  style="text-align: left">
+                <h:outputText  value="#{item.grupo.nombre}"/>
+            </ace:column>  
+            <ace:column  headerText=" Grupo Contable"  style="text-align: left">
+                <h:outputText  value="#{item.clasificacion.nombre}"/>
+            </ace:column>  
+            <ace:column  headerText="Código"  style="text-align: left">
+                <h:outputText  value="#{item.codigo}"/>
+            </ace:column>
+            <ace:column  headerText="Nombre"  style="text-align: left">
+                <h:outputText  value="#{item.nombre}"/>
+            </ace:column>
+            <ace:column  headerText="Descripción"  style="text-align: left">
+                <h:outputText  value="#{item.descripcion}"/>
+            </ace:column>
+            <ace:column  headerText="Marca"  style="text-align: left">
+                <h:outputText  value="#{item.marca}"/>
+            </ace:column>
+            <ace:column  headerText="Modelo"  style="text-align: left">
+                <h:outputText  value="#{item.modelo}"/>
+            </ace:column>
+            <ace:column  headerText="No Serie"  style="text-align: left">
+                <h:outputText  value="#{item.numeroserie}"/>
+            </ace:column>
+            <ace:column  headerText="Código Alterno"  style="text-align: left">
+                <h:outputText  value="#{item.alterno}"/>
+            </ace:column>
+            <ace:column  headerText="Estado"  style="text-align: left">
+                <h:outputText  value="#{item.estado.nombre}"/>
+            </ace:column>  
+            <ace:column  headerText="Código de barras"  style="text-align: left">
+                <h:outputText  value="#{item.barras}"/>
+            </ace:column>
+            <ace:column  headerText="Valor Alta"  style="text-align: right">
+                <h:outputText  value="#{item.valoralta}">
+                    <f:convertNumber pattern="###,###,##0.00"/>
+                </h:outputText>
+            </ace:column>
+        </ace:dataTable>
+    </h:panelGrid>
+</html>

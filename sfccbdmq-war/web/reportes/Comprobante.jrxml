@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="421" orientation="Landscape" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="0576977b-fde5-406b-b28e-d076186b47a7">
+	<property name="ireport.zoom" value="1.6105100000000039"/>
+	<property name="ireport.x" value="323"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="sres" class="java.lang.String"/>
+	<parameter name="ruc" class="java.lang.String"/>
+	<parameter name="direccion" class="java.lang.String"/>
+	<parameter name="fecha" class="java.lang.String"/>
+	<parameter name="tipo" class="java.lang.String"/>
+	<parameter name="numero" class="java.lang.String"/>
+	<parameter name="total" class="java.lang.Float"/>
+	<field name="efiscal" class="java.lang.String"/>
+	<field name="base" class="java.lang.String"/>
+	<field name="codigo" class="java.lang.String"/>
+	<field name="tipo" class="java.lang.String"/>
+	<field name="porcentaje" class="java.lang.String"/>
+	<field name="valor" class="java.lang.Float"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="50"/>
+	</title>
+	<pageHeader>
+		<band height="86" splitType="Stretch">
+			<textField>
+				<reportElement x="71" y="52" width="172" height="14" uuid="d0b496f1-09d2-43f8-8921-b00c38e871d8"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ruc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="71" y="72" width="172" height="14" uuid="48b49168-53cb-48d4-86b7-b6e7cff294ab"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{direccion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="387" y="52" width="155" height="14" uuid="722ff561-b29a-4fda-a66a-5cb33f719a42"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{tipo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="387" y="72" width="155" height="14" uuid="2f04a304-5a5e-4856-9afa-647a1d998b97"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{numero}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="71" y="32" width="172" height="14" uuid="7ccf2872-4408-4091-83ed-79a136b95341"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{sres}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="387" y="32" width="155" height="14" uuid="bd203e7f-cdb6-4df6-96d8-f08cef68d22b"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fecha}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="33"/>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="31" y="3" width="74" height="14" uuid="17e7bdc6-575a-4855-89e4-eedd394fd970"/>
+				<textElement>
+					<font size="9"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{efiscal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="105" y="3" width="88" height="14" uuid="8f5a9157-68b3-43ed-9ac8-dafcdc388cda"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{base}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="3" width="71" height="14" uuid="4921d258-77f0-4c8d-9908-9970e14fa338"/>
+				<textElement>
+					<font size="9"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="266" y="3" width="89" height="14" uuid="cb0e4447-4c59-4a74-a292-a88801ae21ca"/>
+				<textElement>
+					<font size="9"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="357" y="3" width="90" height="14" uuid="790c2a38-b49e-4795-b131-07f373af9ac4"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{porcentaje}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="449" y="3" width="61" height="14" uuid="80a38849-eb3c-471b-a8e6-e1b7bdac889e"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{valor}==null)?"":new java.text.DecimalFormat("#,##0.00").format($F{valor})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="27" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="73" splitType="Stretch">
+			<textField>
+				<reportElement x="449" y="58" width="61" height="14" uuid="51856d0c-86b9-4a99-80ad-09742f1fe365"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{total}==null)?"":new java.text.DecimalFormat("#,##0.00").format($P{total})]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

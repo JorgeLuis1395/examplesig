@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{recomendacionesEmpleado.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <ace:panel header="Parámetros de Búsqueda">
+                        <ui:include src="../BuscarEmpleado.xhtml"/>
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{recomendacionesEmpleado.buscar()}"/>
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{recomendacionesEmpleado.nuevo()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <ace:messages/>
+                    </ace:panel> 
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="false"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{recomendacionesEmpleado.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{recomendacionesEmpleado.formulario.pantalla}" 
+                                          target="recomendacions" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="recomendacions" 
+                                       value="#{recomendacionesEmpleado.listaRecomendaciones}"
+                                       var="recomendacion"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,50"
+
+                                       paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="5"
+                                       binding="#{recomendacionesEmpleado.formulario.fila}">
+
+                            <ace:column  style="text-align: left" >
+                                <ace:menuButton  effect="slide" effectDuration="200" value="..." rendered="#{recomendacion==null}">
+                                    <ace:menuItem value="Editar" icon="ui-icon ui-icon-pencil" action="#{recomendacionesEmpleado.modifica(recomendacion)}"  />
+                                    <ace:menuItem value="Verificar" icon="ui-icon ui-icon-check" action="#{recomendacionesEmpleado.verifica(recomendacion)}"  />
+                                    <ace:menuItem value="Negar" icon="ui-icon ui-icon-close" action="#{recomendacionesEmpleado.niega(recomendacion)}"  />
+                                    <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{recomendacionesEmpleado.borra(recomendacion)}"  />
+                                </ace:menuButton>
+                            </ace:column>
+
+
+                            <ace:column  headerText="Nombre" style="text-align: left">
+                                <h:outputText value="#{recomendacion.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Empresa" style="text-align: left">
+                                <h:outputText value="#{recomendacion.empresa}"/>
+                            </ace:column>
+                            <ace:column  headerText='Cargo'   style="text-align: left">
+                                <h:outputText  value="#{recomendacion.cargo}"/>
+                            </ace:column>
+                            <ace:column  headerText='Teléfono'   style="text-align: left">
+                                <h:outputText  value="#{recomendacion.telefono}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{recomendacionesEmpleado.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{recomendacionesEmpleado.formulario.mostrar}"
+                    visible="#{recomendacionesEmpleado.formulario.mostrar}">
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane >
+                            <f:facet name="label">Inf. General</f:facet>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Nombre:" for="referencia" />
+                                <h:inputText id="referencia" value="#{recomendacionesEmpleado.recomendacion.nombre}" 
+                                               title="Referencia" />
+                                <h:outputLabel value="Empresa:" for="empresa2" />
+                                <h:inputText id="empresa2" value="#{recomendacionesEmpleado.recomendacion.empresa}" title="Empresa" />
+                                <h:outputLabel value="Télefono:" for="telefono" />
+                                <h:inputText id="telefono" value="#{recomendacionesEmpleado.recomendacion.telefono}" title="Télefono" />
+                                <h:outputLabel value="Cargo:" for="cargo2" />
+                                <h:inputText id="cargo2" value="#{recomendacionesEmpleado.recomendacion.cargo}" title="Cargo" /> 
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane label="Adjuntos">
+                            <ui:include src="../mostrarImagenes.xhtml" />
+                        </ace:tabPane>
+                    </ace:tabSet>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{recomendacionesEmpleado.insertar()}" rendered="#{recomendacionesEmpleado.formulario.nuevo}" />
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{recomendacionesEmpleado.grabar()}" rendered="#{recomendacionesEmpleado.formulario.modificar}" />
+                        <ace:menuItem value="Está Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{recomendacionesEmpleado.eliminar()}" rendered="#{recomendacionesEmpleado.formulario.borrar}" />
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{recomendacionesEmpleado.formulario.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

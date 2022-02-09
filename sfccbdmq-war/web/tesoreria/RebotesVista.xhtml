@@ -1,0 +1,256 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{rebotesKardexSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGroup>
+
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="Número de Documento :"/>
+                            <h:inputText  value="#{rebotesKardexSfccbdmq.numero}"/>
+                            <h:outputLabel value="Número de Egreso :"/>
+                            <h:inputText  value="#{rebotesKardexSfccbdmq.id}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{rebotesKardexSfccbdmq.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{rebotesKardexSfccbdmq.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <h:outputLabel value="Concepto:"/>
+                            <h:inputTextarea cols="60" rows="4" value="#{rebotesKardexSfccbdmq.concepto}"/>
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{rebotesKardexSfccbdmq.buscar()}"/>
+                            </ace:menuBar>
+                            <ace:messages/>
+                        </h:panelGrid>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="panel"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+                        <h:panelGrid width="100%">
+                            <ace:dataTable 
+                                value="#{rebotesKardexSfccbdmq.listadoKardex}"
+                                var="item"
+                                paginator="true"
+                                lazy="true"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="top"
+                                rowsPerPageTemplate="15,20,25,50,100"
+                                currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rows="15"
+                                >
+                                <ace:column  headerText="Registro" style="text-align: right">
+                                    <h:outputText value="#{row+1}"/>
+                                </ace:column>
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{rebotesKardexSfccbdmq.reboteKardex(item)}" value="Rebote" icon="ui-icon ui-icon-cancel" rendered="#{item.estado==2}"/>
+                                        <ace:menuItem action="#{rebotesKardexSfccbdmq.imprimirKardex(item)}" value="Imprimir" icon="ui-icon ui-icon-print" rendered="#{item.estado==4}"/>
+                                        <ace:menuItem action="#{rebotesKardexSfccbdmq.pagarReboteKardex(item)}" value="Pagar" icon="ui-icon ui-icon-check" rendered="#{item.estado==4}"/>
+                                    </ace:menuButton>
+                                </ace:column>
+                                <ace:column  headerText="No Egreso" style="text-align: left">
+                                    <h:outputText  value="#{item.id}"/>
+                                </ace:column>
+                                <ace:column  headerText="Concepto"  style="text-align: left"
+                                             filterBy="#{item.observaciones}"  
+                                             sortBy="#{item.observaciones}">
+                                    <h:outputText  value="#{item.observaciones}"/>
+                                </ace:column>
+                                <ace:column  headerText="Proveedor" style="text-align: left"
+                                             filterBy="#{item.beneficiario}"  
+                                             sortBy="#{item.beneficiario}">
+                                    <h:outputText  value="#{item.proveedor.empresa.nombrecomercial}"/>
+                                    <h:outputText  value="#{item.beneficiario}" rendered="#{item.proveedor==null}"/>
+                                </ace:column>
+                                <ace:column  headerText="Número" style="text-align: left"
+                                             filterBy="#{item.documento}"  
+                                             sortBy="#{item.documento}">
+                                    <h:outputText  value="#{item.documento}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor"  style="text-align: right">
+                                    <h:outputText  value="#{item.valor}">
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Fecha de movimiento" style="text-align: right">
+                                    <h:outputText  value="#{item.fechamov}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>  
+                    </h:panelGroup>
+                </ace:panel>
+
+
+                <!--dialogo para rebote-->
+                <ace:dialog 
+                    header="Rebote de Pagos"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{rebotesKardexSfccbdmq.formularioRebote.mostrar}"
+                    visible="#{rebotesKardexSfccbdmq.formularioRebote.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputText value="No Documento:"/>
+                            <h:inputText value="#{rebotesKardexSfccbdmq.kardexRebote.egreso}" title="No Documento"/>
+                            <h:outputText value="Tipo de Movimiento:"/>
+                            <h:selectOneMenu value="#{rebotesKardexSfccbdmq.kardexRebote.tipomov}" title="Tipo de Movimiento" rendered="#{rebotesKardexSfccbdmq.formularioRebote.nuevo}">
+                                <f:selectItems value="#{tipoMovBancosSfccbdmq.comboReboteIngresoBancos}"/>
+                            </h:selectOneMenu>
+<!--                            <h:selectOneMenu value="#{rebotesKardexSfccbdmq.kardexRebote.tipomov}" title="Tipo de Movimiento" rendered="#{rebotesKardexSfccbdmq.formularioRebote.modificar}">
+                                <f:selectItems value="#{tipoMovBancosSfccbdmq.comboReboteEgresoBancos}"/>
+                            </h:selectOneMenu>
+                            debe tomar del normal pago de proveedores-->
+                            <h:selectOneMenu value="#{rebotesKardexSfccbdmq.kardexRebote.tipomov}" title="Tipo de Movimiento" rendered="#{rebotesKardexSfccbdmq.formularioRebote.modificar}">
+                                <f:selectItems value="#{tipoMovBancosSfccbdmq.comboObligacionesBancos}"/>
+                            </h:selectOneMenu>
+
+                            <h:outputLabel value="Fecha:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{rebotesKardexSfccbdmq.kardexRebote.fechamov}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputText value="Banco:"/>
+                            <h:outputText value="#{rebotesKardexSfccbdmq.kardex.banco.toString()}"/>
+                            <h:outputText value="Proveedor:"/>
+                            <h:outputText value="#{rebotesKardexSfccbdmq.kardex.proveedor.empresa.toString()}"/>
+
+                            <h:outputText value="No Comprobante:"/>
+                            <h:outputText value="#{rebotesKardexSfccbdmq.kardex.id}"/>
+                            <h:outputText value="Propuesta de Pago:" rendered="#{rebotesKardexSfccbdmq.formularioRebote.modificar}"/>
+                            <h:outputText value="#{rebotesKardexSfccbdmq.kardex.propuesta}" rendered="#{rebotesKardexSfccbdmq.formularioRebote.modificar}"/>
+                            <h:outputText value="Número SPI:" rendered="#{rebotesKardexSfccbdmq.formularioRebote.modificar}"/>
+                            <h:outputText value="#{rebotesKardexSfccbdmq.numeroSpi}" rendered="#{rebotesKardexSfccbdmq.formularioRebote.modificar}"/>
+                        </h:panelGrid>
+                        <ace:dataTable 
+                            value="#{rebotesKardexSfccbdmq.renglones}"
+                            var="itemDetalles1"
+                            paginator="false"
+                            lazy="false"
+                            resizableColumns="true"
+                            rowIndexVar="row"
+                            paginatorPosition="both"
+                            rowsPerPageTemplate="5,10,15,30,50,100"
+                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            >
+                            <f:facet name="header">Contabilización</f:facet>
+                            <ace:column  headerText="Cuenta"  style="text-align: left">
+                                <h:outputText  value="#{itemDetalles1.cuenta}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nombre"  style="text-align: left">
+                                <h:outputText  value="#{cuentasSfccbdmq.traerNombre(itemDetalles1.cuenta)}"/>
+                            </ace:column>
+                            <ace:column  headerText="Auxiliar"  style="text-align: left">
+                                <h:outputText  value="#{parametrosSfccbdmq.traerAuxiliar(itemDetalles1.auxiliar).toString().toString()}"/>
+                            </ace:column>
+
+
+                            <ace:column  headerText="Débitos" style="text-align: right">
+                                <h:outputText  value="#{itemDetalles1.valor*itemDetalles1.signo}" rendered="#{asientosSfccbdmq.isCredito(itemDetalles1.valor)}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Créditos" style="text-align: right">
+                                <h:outputText  value="#{itemDetalles1.valor*-1*itemDetalles1.signo}" rendered="#{asientosSfccbdmq.isDebito(itemDetalles1.valor)}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+
+                        </ace:dataTable>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                              action="#{rebotesKardexSfccbdmq.grabaReboteKardex()}" rendered="#{rebotesKardexSfccbdmq.formularioRebote.nuevo}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                              action="#{rebotesKardexSfccbdmq.grabaPagoReboteKardex()}" rendered="#{rebotesKardexSfccbdmq.formularioRebote.modificar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{rebotesKardexSfccbdmq.formularioRebote.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{rebotesKardexSfccbdmq.formularioReporte.mostrar}"
+                    visible="#{rebotesKardexSfccbdmq.formularioReporte.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="1">
+                            <!--                            <h:commandButton  value="Imprimir">
+                                                            <h:outputText id="printBoth" value="Imprimir"/>
+                                                            <ace:printer for="panelImprimir"/>
+                                                        </h:commandButton>-->
+                            <ace:dynamicResource fileName="Comprobante de Egreso.pdf" id="pdf-button1" label="Imprimir"
+                                                 mimeType="application/pdf" 
+                                                 rendered="#{rebotesKardexSfccbdmq.reporte!=null}"
+                                                 resource="#{rebotesKardexSfccbdmq.reporte}" 
+                                                 style="" type="button"/>
+                        </h:panelGrid>
+                        <ui:include src="imprimirRebote.xhtml" />
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{rebotesKardexSfccbdmq.formularioReporte.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

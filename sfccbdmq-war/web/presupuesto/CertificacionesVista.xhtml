@@ -1,0 +1,599 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panelUno"
+                           header="Mantenimiento Certificaciones"
+                           closable="false"
+                           toggleable="true"
+                           rendered="#{certificacionesSfccbdmq.formulario.mostrar}">
+                    <!--<ui:include src="totalesAnio.xhtml" />-->
+                    <h:panelGrid columns="2" width="100%" rendered="#{!certificacionesSfccbdmq.certificacion.anulado}">
+                        <h:outputLabel value="Descripción :" />
+                        <h:inputTextarea cols="60" rows="4"  value="#{certificacionesSfccbdmq.certificacion.motivo}" />
+                        <h:outputLabel value="Tipo Documento:"  />
+                        <h:selectOneMenu  value="#{certificacionesSfccbdmq.certificacion.tipodocumento}" title="Fuente" disabled="#{!certificacionesSfccbdmq.formulario.nuevo}" >
+                            <f:selectItems value="#{codigosSfccbdmq.comboDocumentosPresupuestof}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Dirección Solicitante:"  />
+                        <h:selectOneMenu  value="#{certificacionesSfccbdmq.certificacion.direccion}" title="Fuente" disabled="#{!certificacionesSfccbdmq.formulario.nuevo}" >
+                            <f:selectItems value="#{organigrama.comboDirecciones}"/>
+                        </h:selectOneMenu>
+                        <!--                        <h:outputLabel value="Cert. Anterior Sistema :" />
+                                                <h:inputText value="#{certificacionesSfccbdmq.certificacion.numeroanterior}" />-->
+                        <h:outputLabel value="Número Certificación:" />
+                        <h:inputText value="#{certificacionesSfccbdmq.codigoNumero}" />
+                        <h:outputLabel value="Fecha:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{certificacionesSfccbdmq.certificacion.fecha}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                    </h:panelGrid>
+
+
+                    <h:panelGrid columns="1" width="100%">
+
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" 
+                                          action="#{certificacionesSfccbdmq.nuevoDetalle()}" rendered="#{certificacionesSfccbdmq.certificacion.pacpoa==null}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{certificacionesSfccbdmq.formulario.nuevo}" 
+                                          action="#{certificacionesSfccbdmq.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{certificacionesSfccbdmq.grabar()}" 
+                                          rendered="#{certificacionesSfccbdmq.formulario.modificar}" />
+                            <ace:menuItem action="#{certificacionesSfccbdmq.borrar()}" 
+                                          value="Esta seguro de Borrar el registro?" 
+                                          rendered="#{certificacionesSfccbdmq.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{certificacionesSfccbdmq.formulario.cancelar()}"/>
+                        <!--<ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{certificacionesSfccbdmq.buscar()}"/>-->
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{certificacionesSfccbdmq.detalles}"
+                                       var="itemDetalle"
+                                       paginator="true"
+                                       lazy="false"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       binding="#{certificacionesSfccbdmq.formularioDetalle.fila}">
+                            <f:facet name="header">Total Certificación: #{certificacionesSfccbdmq.totalCertificacion}</f:facet>
+                            <!--                            <ace:column  headerText="Registro" style="text-align: right">
+                                                            <h:outputText value="#{row+1}"/>
+                                                        </ace:column>-->
+                            <ace:column style="text-align: left" rendered="#{certificacionesSfccbdmq.certificacion.pacpoa==null}">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..."  disabled="#{certificacionesSfccbdmq.formulario.borrar}">
+                                    <ace:menuItem action="#{certificacionesSfccbdmq.modificaDetalle()}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{certificacionesSfccbdmq.borraDetalle()}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column> 
+
+                            <ace:column  headerText="Fuente"  style="text-align: left">
+                                <h:outputText  value="#{itemDetalle.asignacion.fuente.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Partida"  style="text-align: left">
+                                <h:outputText  value="#{itemDetalle.asignacion.clasificador.toString()}"/>
+                            </ace:column>
+                            <c:forEach var="itemProducto" items="#{proyectosSfccbdmq.titulos}">
+                                <ace:column  headerText="#{itemProducto.titulo1}"  style="text-align: left">
+                                    <h:outputText  value="#{proyectosSfccbdmq.dividir(itemProducto, itemDetalle.asignacion.proyecto)}"/>
+                                </ace:column>
+                            </c:forEach>
+                            <ace:column  headerText="Producto"  style="text-align: left">
+                                <h:outputText  value="#{itemDetalle.asignacion.proyecto.toString()}"/>
+                            </ace:column>
+
+                            <ace:column  headerText="Valor" style="text-align: right">
+                                <h:outputText  value="#{itemDetalle.valor}">
+                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                </h:outputText>
+                            </ace:column>
+
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:panel id="panel"
+                           header="#{certificacionesSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           rendered="#{!certificacionesSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Año:" />
+                            <h:inputText value="#{certificacionesSfccbdmq.anio}" title="Año" />
+                            <h:outputLabel value="Impresos:" />
+                            <h:selectOneMenu  value="#{certificacionesSfccbdmq.impresas}" >
+                                <f:selectItem  itemLabel="--- Seleccione uno ---" itemValue=""/>
+                                <f:selectItem  itemLabel="SI" itemValue="true"/>
+                                <f:selectItem  itemLabel="NO" itemValue="false"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{certificacionesSfccbdmq.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{certificacionesSfccbdmq.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="No de Control:"  />
+                            <h:inputText value="#{certificacionesSfccbdmq.numeroControl}" />
+                            <h:outputLabel value="No de Control PACPOA:"  />
+                            <h:inputText value="#{certificacionesSfccbdmq.numeroControlPoa}" />
+
+                            <!--                            <h:outputLabel value="Tipo Documento:" />
+                                                        <h:selectOneMenu  value="#{certificacionesSfccbdmq.tipoDocumento}" >
+                                                            <f:selectItems value="#{codigosSfccbdmq.comboDocumentosPresupuesto}"/>
+                                                        </h:selectOneMenu>
+                                                        <h:outputLabel value="No Documento:"  />
+                                                        <h:inputText value="#{certificacionesSfccbdmq.numeroDocumento}" />-->
+                        </h:panelGrid>
+                        <h:panelGrid columns="1">
+                            <h:outputLabel value="Motivo :" />
+                            <h:inputTextarea cols="80" rows="5" value="#{certificacionesSfccbdmq.motivo}" title="Motivo" />
+
+                        </h:panelGrid>
+
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{certificacionesSfccbdmq.crear()}" />
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{certificacionesSfccbdmq.buscar()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{certificacionesSfccbdmq.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                            <ace:submitMonitor id="submitMonitorPanel"
+                                               for="panel"
+                                               blockUI="panel"
+                                               autoCenter="true"
+                                               activeLabel="Un Momento por favor"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{certificacionesSfccbdmq.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{certificacionesSfccbdmq.formulario.pantalla}" 
+                                              target="tabla2" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable id="tabla2"
+                                           value="#{certificacionesSfccbdmq.certificaciones}"
+                                           var="itemCertificaciones"
+                                           paginator="true"
+                                           lazy="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="5,10,15,30,50,100"
+                                           paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="30">
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{certificacionesSfccbdmq.modificar(itemCertificaciones)}" value="Editar" icon="ui-icon ui-icon-pencil" disabled="#{certificacionesSfccbdmq.editar}" />
+                                        <ace:menuItem action="#{certificacionesSfccbdmq.aprobar(itemCertificaciones)}" value="Aprobar" icon="ui-icon ui-icon-check"/>
+                                        <ace:menuItem action="#{certificacionesSfccbdmq.anular(itemCertificaciones)}" value="Anular" icon="ui-icon ui-icon-circle-close"/>
+                                        <ace:menuItem action="#{certificacionesSfccbdmq.eliminar(itemCertificaciones)}" value="Borrar" icon="ui-icon ui-icon-trash" disabled="#{certificacionesSfccbdmq.editar}"/>
+                                        <ace:menuItem action="#{certificacionesSfccbdmq.imprimi(itemCertificaciones)}" value="Imprimir" icon="ui-icon ui-icon-print"/>
+                                        <ace:menuItem action="#{certificacionesSfccbdmq.liberarSaldo(itemCertificaciones)}" value="Liberar Saldo" icon="ui-icon ui-icon-transferthick-e-w"/>
+                                        <ace:menuItem action="#{certificacionesSfccbdmq.ajusteCertificacion(itemCertificaciones)}" value="Ajuste" icon="ui-icon ui-icon-plus"/>
+                                        <!--<ace:menuItem action="#{certificacionesSfccbdmq.imprimirMovimientos(itemCertificaciones)}" value="Imprimir Mov." icon="ui-icon ui-icon-print"/>-->
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column  headerText="Número de Control" style="text-align: right">
+                                    <h:outputText  value="#{itemCertificaciones.numerocert}"/>
+                                </ace:column>
+                                <ace:column  headerText="Descripción"  style="text-align: left">
+                                    <h:outputText  value="#{itemCertificaciones.motivo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Dirección Solicitante"  style="text-align: left">
+                                    <h:outputText  value="#{itemCertificaciones.direccion.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Fecha" style="text-align: left">
+                                    <h:outputText  value="#{itemCertificaciones.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Valor"  style="text-align: left">
+                                    <h:outputText  value="#{certificacionesSfccbdmq.valorCertificacion}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+
+                                </ace:column>
+                                <ace:column  headerText="Utilizado"  style="text-align: left">
+                                    <h:outputText  value="#{certificacionesSfccbdmq.saldoCertificacion}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <!--                                <ace:column  headerText="Tipo de Documento"  style="text-align: left">
+                                                                    <h:outputText  value="#{itemCertificaciones.tipodocumento.nombre}"/>
+                                                                </ace:column>
+                                                                <ace:column  headerText="Número Documento" sortBy="#{itemCertificaciones.numerodocumeto}" style="text-align: right">
+                                                                    <h:outputText  value="#{itemCertificaciones.numerodocumeto}"/>
+                                                                </ace:column>-->
+                                <!--                                <ace:column  headerText="Impresa"  style="text-align: left">
+                                                                    <h:panelGrid rendered="#{itemCertificaciones.impreso}">
+                                                                        <img src="../resources/images/imputable.png" width="16" height="16" alt="imputable"/>
+                                                                    </h:panelGrid>
+                                                                    <h:panelGrid rendered="#{!itemCertificaciones.impreso}">
+                                                                        <img src="../resources/images/noimputable.png" width="16" height="16" alt="imputable"/>
+                                                                    </h:panelGrid>
+                                                                </ace:column>-->
+                                <ace:column  headerText="Aprobada"  style="text-align: left">
+                                    <h:outputText  value="SI" rendered="#{itemCertificaciones.impreso}"/>
+                                    <h:outputText  value="NO" rendered="#{!itemCertificaciones.impreso}"/>
+                                    <!--                                    <h:panelGrid >
+                                                                            <img src="../resources/images/si.png" width="16" height="16" alt="imputable"/>
+                                                                        </h:panelGrid>
+                                                                        <h:panelGrid rendered="#{!itemCertificaciones.impreso}">
+                                                                            <img src="../resources/images/no.png" width="16" height="16" alt="imputable"/>
+                                                                        </h:panelGrid>-->
+                                </ace:column>
+                                <ace:column  headerText="Anulado"  style="text-align: left">
+                                    <h:outputText  value="SI" rendered="#{itemCertificaciones.anulado}"/>
+                                    <h:outputText  value="NO" rendered="#{!itemCertificaciones.anulado}"/>
+                                </ace:column>
+                                <ace:column  headerText="Firma E."  style="text-align: left">
+                                    <h:outputText  value="SI" rendered="#{itemCertificaciones.archivo ne null}"/>
+                                    <h:outputText  value="NO" rendered="#{itemCertificaciones.archivo eq null}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nro. PACPOA"  style="text-align: left">
+                                    <h:outputText  value="#{certificacionesSfccbdmq.traerPacpoa(itemCertificaciones.pacpoa)}"/>
+                                </ace:column>
+
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:panel>
+                <!--</ace:dialog>-->
+
+
+                <!--dialogo para editar cada linea-->
+                <ace:dialog 
+                    header="Partidas"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{certificacionesSfccbdmq.formularioDetalle.mostrar}"
+                    visible="#{certificacionesSfccbdmq.formularioDetalle.mostrar}">
+                    <h:panelGroup>
+
+                        <h:panelGrid columns="2" rendered="#{certificacionesSfccbdmq.formularioClasificador.mostrar}">
+                            <h:outputLabel value="Partida :"/>
+                            <ace:comboBox value="#{certificacionesSfccbdmq.partida}" 
+                                          listValue="#{certificacionesSfccbdmq.listaClasificadores}"  
+                                          itemValue="#{itemClasificadores.codigo}"
+                                          filterMatchMode="startsWith"
+                                          width="300"
+                                          listVar="itemClasificadores" >
+                                <f:facet name="row">
+                                    <h:panelGrid columns="2" width="100%" columnClasses="tipo">
+                                        <h:outputText value="#{itemClasificadores.codigo}" />
+                                        <h:outputText value="#{itemClasificadores.nombre}" />
+                                    </h:panelGrid>
+                                </f:facet>
+                                <ace:ajax execute="fuente"/>    
+                            </ace:comboBox>
+                            <h:outputLabel value="Fuente:" for="fuente" />
+                            <h:selectOneMenu id="fuente" value="#{certificacionesSfccbdmq.fuente}">
+                                <f:selectItems value="#{certificacionesSfccbdmq.comboFuenteClasificador}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Proyectos :"/>
+                            <h:selectOneMenu value="#{certificacionesSfccbdmq.asignacion}">
+                                <f:selectItems value="#{certificacionesSfccbdmq.comboClasificadorFuente}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" rendered="#{certificacionesSfccbdmq.formularioClasificador.mostrar}">
+                            <h:outputText value="#{certificacionesSfccbdmq.asignacion.toString()}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" rendered="#{!certificacionesSfccbdmq.formularioClasificador.mostrar}">
+                            <h:outputLabel value="Fuente:" for="fuente" />
+                            <h:outputText value="#{certificacionesSfccbdmq.detalle.asignacion.clasificador.toString()}" />
+                            <h:outputLabel value="Partida :"/>
+                            <h:outputText value="#{certificacionesSfccbdmq.detalle.asignacion.fuente.nombre}" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Valor Asignación:" />
+                            <h:outputText value="#{certificacionesSfccbdmq.asignacion.valor}" >
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Valor reformas :"/>
+                            <h:outputText value="#{certificacionesSfccbdmq.valorReformas}" >
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Valor certificaciones :"/>
+                            <h:outputText value="#{certificacionesSfccbdmq.valorCertificaciones}" >
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Saldo por Certificar :"/>
+                            <h:outputText value="#{certificacionesSfccbdmq.asignacion.valor+certificacionesSfccbdmq.valorReformas-certificacionesSfccbdmq.valorCertificaciones}" >
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" >
+
+                            <h:outputLabel value="Valor:" for="valor" />
+                            <h:inputText id="valor" value="#{certificacionesSfccbdmq.detalle.valor}" title="Valor" />
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{certificacionesSfccbdmq.formularioDetalle.nuevo}" 
+                                              action="#{certificacionesSfccbdmq.insertarDetalle()}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{certificacionesSfccbdmq.grabarDetalle()}" 
+                                              rendered="#{certificacionesSfccbdmq.formularioDetalle.modificar}" />
+                                <ace:menuItem action="#{certificacionesSfccbdmq.eliminarDetalle()}" 
+                                              value="Esta seguro de Borrar el registro?" 
+                                              rendered="#{certificacionesSfccbdmq.formularioDetalle.borrar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{certificacionesSfccbdmq.formularioDetalle.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                            <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <!--imprimir-->
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{certificacionesSfccbdmq.formularioImpresion.mostrar}"
+                    visible="#{certificacionesSfccbdmq.formularioImpresion.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource 
+                            fileName="#{certificacionesSfccbdmq.nombreArchivo}.pdf"                                            
+                            label="Descargar archivo firmado"
+                            mimeType="application/pdf"
+                            resource="#{certificacionesSfccbdmq.recurso}" 
+                            type="button" rendered="#{certificacionesSfccbdmq.recurso ne null}"/>
+
+                        <h:outputText value=""/>
+
+                        <ace:dynamicResource fileName="Certificacion.pdf" id="pdf-button1" label="Imprimir"
+                                             mimeType="application/pdf" resource="#{certificacionesSfccbdmq.reportepdf}" 
+                                             style="" type="button"
+                                             rendered="#{certificacionesSfccbdmq.reportepdf ne null}"/>
+                        <ui:include src="imprimirCertificacion.xhtml" />
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Firmar" icon="ui-icon ui-icon-key" 
+                                              action="#{certificacionesSfccbdmq.firma()}"
+                                              rendered="#{certificacionesSfccbdmq.formularioImpresion.modificar}"/>
+                                <ace:menuItem value="Aprobar" icon="ui-icon ui-icon-check" 
+                                              action="#{certificacionesSfccbdmq.grabarAprobado()}"
+                                              rendered="#{certificacionesSfccbdmq.formularioImpresion.nuevo}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{certificacionesSfccbdmq.salir()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <!--Firmar el documento-->
+                <ace:dialog 
+                    header="Firmar"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{certificacionesSfccbdmq.formularioFirma.mostrar}"
+                    visible="#{certificacionesSfccbdmq.formularioFirma.mostrar}">
+                    <h:panelGroup>    
+                        <h:outputLabel value="Clave:" />
+                        <h:inputSecret value="#{certificacionesSfccbdmq.clave}" />
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Firmar" icon="ui-icon ui-icon-disk" 
+                                              action="#{certificacionesSfccbdmq.grabarFirma()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{certificacionesSfccbdmq.formularioFirma.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages style="white-space: pre-wrap"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog> 
+                <!--Anular Certificacion-->
+                <ace:dialog 
+                    header="Anular Certificación"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{certificacionesSfccbdmq.formularioAnular.mostrar}"
+                    visible="#{certificacionesSfccbdmq.formularioAnular.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2" width="100%">
+                            <h:outputLabel value="Observacion :" />
+                            <h:inputTextarea cols="60" rows="4"  value="#{certificacionesSfccbdmq.certificacion.observacionanulado}" />
+                            <h:outputLabel value="Fecha:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{certificacionesSfccbdmq.certificacion.fechaanulado}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%">
+                            <ace:dataTable value="#{certificacionesSfccbdmq.detalles}"
+                                           var="itemAnular"
+                                           paginator="true"
+                                           lazy="false"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="15,20,25,50,100"
+                                           currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="15"
+                                           binding="#{certificacionesSfccbdmq.formularioAnular.fila}">
+                                <f:facet name="header">Total Certificación: #{certificacionesSfccbdmq.totalCertificacion}</f:facet>
+                                <ace:column  headerText="Fuente"  style="text-align: left">
+                                    <h:outputText  value="#{itemAnular.asignacion.fuente.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Partida"  style="text-align: left">
+                                    <h:outputText  value="#{itemAnular.asignacion.clasificador.toString()}"/>
+                                </ace:column>
+                                <c:forEach var="itemProducto" items="#{proyectosSfccbdmq.titulos}">
+                                    <ace:column  headerText="#{itemProducto.titulo1}"  style="text-align: left">
+                                        <h:outputText  value="#{proyectosSfccbdmq.dividir(itemProducto, itemAnular.asignacion.proyecto)}"/>
+                                    </ace:column>
+                                </c:forEach>
+                                <ace:column  headerText="Producto"  style="text-align: left">
+                                    <h:outputText  value="#{itemAnular.asignacion.proyecto.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor" style="text-align: right">
+                                    <h:outputText  value="#{itemAnular.valor}">
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Esta seguro de Anular el registro?" icon="ui-icon ui-icon-disk" 
+                                          action="#{certificacionesSfccbdmq.grabarAnular()}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{certificacionesSfccbdmq.formularioAnular.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+                <!--Ajustar-->
+                <ace:dialog 
+                    header="Ajuste de Certificación"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{certificacionesSfccbdmq.formularioAjuste.mostrar}"
+                    visible="#{certificacionesSfccbdmq.formularioAjuste.mostrar}">
+                    <h:panelGroup>
+                        <h:outputLabel value="Partida :"/>
+                        <h:selectOneMenu value="#{certificacionesSfccbdmq.detalle.asignacion}">
+                            <f:selectItems value="#{certificacionesSfccbdmq.comboAsignacionCertificacion}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                        <h:panelGrid columns="2" >
+                            <h:outputLabel value="Saldo:"/>
+                            <h:outputText value="#{certificacionesSfccbdmq.valorSumado}" >
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Valor de Ajuste"/>
+                            <h:inputText value="#{certificacionesSfccbdmq.saldoLiberar}" />
+                            <h:outputLabel value="Fecha:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{certificacionesSfccbdmq.fechaLiberar}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>                        
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{certificacionesSfccbdmq.grabarAjusteCertificacion()}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{certificacionesSfccbdmq.formularioAjuste.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                        <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                    </h:panelGrid>
+                </ace:dialog>
+                <!--liberar-->
+                <ace:dialog 
+                    header="Liberar Saldo Certificación"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{certificacionesSfccbdmq.formularioLiberarSaldo.mostrar}"
+                    visible="#{certificacionesSfccbdmq.formularioLiberarSaldo.mostrar}">
+                    <h:panelGroup>
+                        <h:outputLabel value="Partida :"/>
+                        <h:selectOneMenu value="#{certificacionesSfccbdmq.detalle.asignacion}">
+                            <f:selectItems value="#{certificacionesSfccbdmq.comboAsignacionCertificacion}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                        <h:panelGrid columns="2" >
+                            <h:outputLabel value="Liberar saldo:"/>
+                            <h:outputText value="#{certificacionesSfccbdmq.valorComprometido}" >
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Saldo a liberar:"/>
+                            <h:inputText value="#{certificacionesSfccbdmq.saldoLiberar}" />
+                            <h:outputLabel value="Fecha:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{certificacionesSfccbdmq.fechaLiberar}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>                        
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{certificacionesSfccbdmq.grabarLiberarSaldo()}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{certificacionesSfccbdmq.formularioLiberarSaldo.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                        <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                    </h:panelGrid>
+                </ace:dialog>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

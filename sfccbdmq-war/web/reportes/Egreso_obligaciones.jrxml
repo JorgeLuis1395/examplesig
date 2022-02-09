@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Egreso_obligaciones" pageWidth="572" pageHeight="752" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="aa007210-3567-4958-bc60-84a564058b62">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="obligacion.concepto" class="java.lang.String"/>
+	<field name="obligacion.proveedor.empresa.nombrecomercial" class="java.lang.String"/>
+	<field name="obligacion.documento" class="java.lang.Integer"/>
+	<field name="obligacion.contrato.numero" class="java.lang.String"/>
+	<field name="valor" class="java.math.BigDecimal"/>
+	<variable name="valor_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="40" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="15" width="572" height="20" uuid="7f38e091-138b-49a8-9cf9-2e60f55c5ddc"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Detalles de Facturas]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="17" splitType="Stretch">
+			<staticText>
+				<reportElement x="43" y="0" width="277" height="10" uuid="28753906-615f-46af-8448-1c95abc07d25"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Concepto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="0" width="40" height="10" uuid="f59d495c-3d77-4f09-a75d-f18ba5b36be2"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Factura]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="317" y="0" width="52" height="10" uuid="86d044d1-5357-4cb1-9d10-4673c295fc1d"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Contrato]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="505" y="0" width="64" height="10" uuid="d442bace-1066-4ef8-a2ac-567dd1d77216"/>
+				<textElement textAlignment="Right">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="14" width="569" height="1" uuid="d0ab0594-78ae-46cc-af2c-37483f42fbcb"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="25" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="43" y="0" width="277" height="25" uuid="53cfa3e1-f0e5-4c04-a3b8-837b60dcaf65"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{obligacion.concepto}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="7" y="0" width="35" height="10" uuid="dd870dcb-7eed-4a16-8a30-56c18c85b7f6"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{obligacion.documento}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="319" y="0" width="186" height="10" uuid="5fade0e2-430e-483c-9445-0bbf54f2517a"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{obligacion.contrato.numero}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###,##0.00">
+				<reportElement x="506" y="0" width="64" height="10" uuid="e28c44aa-a71a-493a-aab4-ce3707da20dc"/>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="16" splitType="Stretch">
+			<textField pattern="###,##0.00">
+				<reportElement x="469" y="0" width="100" height="10" uuid="0b75abed-44bf-448e-bcbe-7ac9dd085da2"/>
+				<textElement textAlignment="Right">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="411" y="0" width="52" height="10" uuid="d4ae4e0b-0975-4cb0-ad3d-a3d2cb965d04"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total :]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="-1" width="569" height="1" uuid="ca03b909-c7ac-4990-8d98-fad40063d835"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

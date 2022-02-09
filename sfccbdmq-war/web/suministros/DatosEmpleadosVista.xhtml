@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <h:panelGrid width="100%">
+                    <ace:panel id="panel"
+                               header="#{datosEmpleadosSuministros.perfil.menu.texto}"
+                               closable="false"
+                               toggleable="false"  >
+
+                        <ui:include src="../BuscarOrganigrama.xhtml"/>
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Cédula:"/>
+                            <h:inputText value="#{datosEmpleadosSuministros.buscarCedula}" />
+                            <h:outputLabel value="Nombres:"/>
+                            <h:inputText value="#{datosEmpleadosSuministros.nombres}" />
+                            <h:outputLabel value="Apellidos:"/>
+                            <h:inputText value="#{datosEmpleadosSuministros.apellidos}" />
+                            <h:outputLabel value="Email:"/>
+                            <h:inputText value="#{datosEmpleadosSuministros.email}" />
+                            <h:outputLabel value="Estado Civil:" />
+                            <h:selectOneMenu value="#{datosEmpleadosSuministros.ecivil}" >
+                                <f:selectItems value="#{codigosSfccbdmq.comboEstadoCivil}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Cargo:" />
+                            <h:selectOneMenu value="#{datosEmpleadosSuministros.cargo}" >
+                                <f:selectItems value="#{cargoxorganigrama.comboCargosOrganigrama}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Género:" />
+                            <h:selectOneMenu value="#{datosEmpleadosSuministros.genero}" >
+                                <f:selectItems value="#{codigosSfccbdmq.comboGenero}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Grupo Sanguineo:" />
+                            <h:selectOneMenu value="#{datosEmpleadosSuministros.tipsang}">
+                                <f:selectItems value="#{codigosSfccbdmq.comboGrpSanguineo}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Modalidad de Contratación : " />
+                            <h:selectOneMenu value="#{datosEmpleadosSuministros.contratoL}" >
+                                <f:selectItems value="#{tipoContrato.comboTiposContrato}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Edificio:"  />
+                            <h:selectOneMenu value="#{oficinasSfccbdmq.edificio}" >
+                                <f:selectItems value="#{edificiosSfccbdmq.comboEdificioEspacio}" />
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Oficina:" />
+                            <h:selectOneMenu value="#{datosEmpleadosSuministros.oficina}" >
+                                <f:selectItems value="#{oficinasSfccbdmq.comboOficinaEspacio}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Nombramiento : " />
+                            <h:selectOneRadio value="#{datosEmpleadosSuministros.nombramiento}" style="border: 0px" >
+                                <f:selectItem itemValue="1" itemLabel="SI" />
+                                <f:selectItem itemValue="2" itemLabel="NO" />
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneRadio>
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="5">
+                            <h:outputLabel value="Fecha de Nacimiento:" />
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{datosEmpleadosSuministros.desde}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{datosEmpleadosSuministros.hasta}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid> 
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Grupo de Información Adicional:"  />
+                            <h:selectOneMenu value="#{cabecerasEmpleados.grupocabecera}" >
+                                <f:selectItems value="#{cabecerasEmpleados.comboCabecera}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu> 
+                            <h:outputLabel value="Campo donde buscar:"/>
+                            <h:selectOneMenu value="#{datosEmpleadosSuministros.cabeceraRrHh}" >
+                                <f:selectItems value="#{cabecerasEmpleados.comboCampos}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu> 
+
+
+                            <!--// primero texto si el campo es texto-->
+                            <h:outputLabel value="Texto a buscar:" rendered="#{datosEmpleadosSuministros.cabeceraRrHh.tipodato==2}" />
+                            <h:inputText value="#{datosEmpleadosSuministros.textoBuscar}" rendered="#{datosEmpleadosSuministros.cabeceraRrHh.tipodato==2}" />
+                            <!--// si el campo es texto-->
+                            <h:outputLabel value="Valor mayor o igual a:" rendered="#{datosEmpleadosSuministros.cabeceraRrHh.tipodato==1}" />
+                            <h:inputText value="#{datosEmpleadosSuministros.desdeNumerico}" rendered="#{datosEmpleadosSuministros.cabeceraRrHh.tipodato==1}" />
+                            <h:outputLabel value="Valor menor o igual a:" rendered="#{datosEmpleadosSuministros.cabeceraRrHh.tipodato==1}" />
+                            <h:inputText value="#{datosEmpleadosSuministros.desdeNumerico}" rendered="#{datosEmpleadosSuministros.cabeceraRrHh.tipodato==1}" />
+                            <!--// si es fecha-->
+                            <h:outputLabel value="Fecha desde:" rendered="#{datosEmpleadosSuministros.cabeceraRrHh.tipodato==3}" />
+                            <ace:dateTimeEntry navigator="true"  value="#{datosEmpleadosSuministros.desdeFecha}" rendered="#{datosEmpleadosSuministros.cabeceraRrHh.tipodato==3}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Fecha hasta:" rendered="#{datosEmpleadosSuministros.cabeceraRrHh.tipodato==3}" />
+                            <ace:dateTimeEntry navigator="true"  value="#{datosEmpleadosSuministros.hastaFecha}" rendered="#{datosEmpleadosSuministros.cabeceraRrHh.tipodato==3}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <!--// si es combo-->
+                            <h:outputLabel value="Seleccione :" rendered="#{datosEmpleadosSuministros.cabeceraRrHh.tipodato==0}" />
+                            <h:selectOneMenu value="#{datosEmpleadosSuministros.textoBuscar}" rendered="#{datosEmpleadosSuministros.cabeceraRrHh.tipodato==0}"  >
+                                <f:selectItems value="#{datosEmpleadosSuministros.comboRangoBuscar}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Seleccione :" rendered="#{datosEmpleadosSuministros.cabeceraRrHh.tipodato==4}" />
+                            <h:selectOneMenu value="#{datosEmpleadosSuministros.textoBuscar}" rendered="#{datosEmpleadosSuministros.cabeceraRrHh.tipodato==4}"  >
+                                <f:selectItems value="#{codigosSfccbdmq.getComboMaestro(datosEmpleadosSuministros.cabeceraRrHh.codigo)}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{datosEmpleadosSuministros.buscar()}"/>
+                            </ace:menuBar>
+
+                        </h:panelGrid>
+                        <ace:messages />
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{solicitudesCargo.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter  
+                                label="Exportar Archivo" 
+                                type="#{solicitudesCargo.formulario.pantalla}" 
+                                target="tablaEmpleados" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%" style="margin-bottom: 20px;">
+
+                            <ace:dataTable id="tablaEmpleados"
+                                           value="#{datosEmpleadosSuministros.empleados}"
+                                           var="item"
+                                           lazy="true"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="10,15,30,50"
+                                           currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="30"
+                                           style="width: 100%;"
+                                           >
+
+                                <ace:column style="text-align: left" >
+                                    <ace:menuButton  effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem value="Editar" icon="ui-icon ui-icon-document" action="#{datosEmpleadosSuministros.modificar()}"  />
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column  headerText="Cédula"  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.pin}"/>
+                                </ace:column>
+                                <ace:column  headerText="Apellidos "  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.apellidos}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nombres"  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.nombres}"/>
+                                </ace:column>
+                                <ace:column  headerText="Partida Individual"  style="text-align: left">
+                                    <h:outputText value="#{item.partidaindividual}"/>
+                                    <!--<h:outputText value="#{item.partida}.#{item.tipocontrato.codigoalterno}.#{item.cargoactual.organigrama.codigoalterno}.#{cargos.formatoId(item.cargoactual.cargo)}.#{item.codigo}"/>-->
+                                </ace:column>
+                                <c:forEach var="itemProducto" items="#{proyectosSfccbdmq.titulos}">
+                                    <ace:column  headerText="#{itemProducto.titulo1}"  style="text-align: left">
+                                        <h:outputText  value="#{proyectosSfccbdmq.dividir(itemProducto, item.proyecto)}"/>
+                                    </ace:column>
+                                </c:forEach>
+                                <ace:column  headerText="Programa"  style="text-align: left">
+                                    <h:outputText value="#{item.proyecto.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Partida"  style="text-align: left">
+                                    <h:outputText value="#{item.partida}"/>
+                                </ace:column>
+                                <ace:column  headerText="Modalidad de Contratación"  style="text-align: left">
+                                    <h:outputText value="#{item.tipocontrato.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Denominación"  style="text-align: left">
+                                    <h:outputText value="#{item.cargoactual.cargo.escalasalarial.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Grado"  style="text-align: left">
+                                    <h:outputText value="#{item.cargoactual.cargo.escalasalarial.codigo}"/>
+                                </ace:column>
+
+                                <ace:column  headerText="Cargo "  style="text-align: left">
+                                    <h:outputText value="#{item.cargoactual.cargo.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Proceso"  style="text-align: left">
+                                    <h:outputText value="#{item.cargoactual.organigrama.superior.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Unidad Administrativa"  style="text-align: left">
+                                    <h:outputText value="#{item.cargoactual.organigrama.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="R.M.U." style="text-align: right">
+                                    <h:outputText  value="#{item.cargoactual.cargo.escalasalarial.sueldobase}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column headerText="Nombramiento" style="text-align: left">
+                                    <h:graphicImage url="../resources/images/si.png" rendered="#{item.tipocontrato.nombramiento}"/>
+                                    <h:graphicImage url="../resources/images/no.png" rendered="#{!item.tipocontrato.nombramiento}"/>
+                                </ace:column> 
+
+                                <ace:column  headerText="Fecha Ingreso"  style="text-align: left">
+                                    <h:outputText  value="#{item.fechaingreso}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:panel>
+                    <!--</ace:dialog>-->
+                </h:panelGrid>
+                <ace:dialog
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    header="#{datosEmpleadosSuministros.perfil.menu.texto}"
+                    rendered="#{datosEmpleadosSuministros.formulario.mostrar}"
+                    visible="#{datosEmpleadosSuministros.formulario.mostrar}">
+                    <ace:tabSet clientSide="true">
+                        <ace:tabPane label="Datos Básicos" >
+
+                            <h:panelGrid columns="4" width="90%"  >
+                                <h:outputLabel value="Cédula:"  />
+                                <h:outputLabel value="#{datosEmpleadosSuministros.entidad.pin}"/>
+                                <h:outputLabel value="Cargo"  />
+                                <h:outputLabel value="#{datosEmpleadosSuministros.empleado.cargoactual.cargo.nombre}"/>
+                                <h:outputLabel value="Código" />
+                                <h:outputLabel value="#{datosEmpleadosSuministros.empleado.codigo}"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="4" width="90%">
+                                <h:outputLabel value="Edificio:" />
+                                <h:outputLabel  value="#{oficinasSfccbdmq.edificio}" title="Edificio" />
+                                <h:outputLabel value="Oficina:" />
+                                <h:outputLabel  value="#{datosEmpleadosSuministros.empleado.oficina}" title="Edificio" />
+                            </h:panelGrid>
+                            <h:panelGrid columns="4" width="90%"  >
+                                <h:outputLabel value="Nombres:"   for="empleadonombre"/>
+                                <h:outputLabel value="#{datosEmpleadosSuministros.entidad.nombres}" id="empleadonombre"  />
+                                <h:outputLabel value="Apellidos:"   for="empleadoapellido"/>
+                                <h:outputLabel value="#{datosEmpleadosSuministros.entidad.apellidos}" id="empleadoapellido" />
+                                <h:outputLabel value="Ocupación:"   for="empleadoocupacion"/>
+                                <h:outputLabel value="#{datosEmpleadosSuministros.entidad.ocupacion}" id="empleadoocupacion"/>
+                                <h:outputLabel value="Email:"   for="empleadocorreo"/>
+                                <h:outputLabel value="#{datosEmpleadosSuministros.entidad.email}" id="empleadocorreo"/>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane label="Información Adicional">
+                            <h:panelGrid width="100%" >
+
+                                <ace:dataTable value="#{datosEmpleadosSuministros.listaCabeceraempleado}"  var="itemEmpleados"
+                                               resizableColumns="true"
+                                               style="width: 99%;"
+                                               binding="#{datosEmpleadosSuministros.formularioImagen.fila}">
+                                    <ace:row condition="group" groupBy="#{itemEmpleados.cabecera.idgrupo.texto}" pos="before" styleClass="titulo">
+                                        <ace:column colspan="7">
+                                            #{itemEmpleados.cabecera.idgrupo.texto} 
+                                        </ace:column>
+                                    </ace:row>   
+                                    <ace:column headerText="Información" style="text-align: left">
+                                        <h:outputLabel value="#{itemEmpleados.cabecera.texto}:" />
+                                    </ace:column> 
+                                    <ace:column   headerText="Valores" style="text-align: left" >
+                                        <h:inputText id="numero1" value="#{itemEmpleados.valornumerico}" 
+                                                       rendered="#{itemEmpleados.tipodato==1}">
+                                        </h:inputText>
+                                        <h:inputText value="#{itemEmpleados.valortexto}" rendered="#{itemEmpleados.tipodato==2}" />
+                                        <h:selectOneMenu value="#{itemEmpleados.valortexto}" rendered="#{itemEmpleados.tipodato==0}"  >
+                                            <f:selectItems value="#{datosEmpleadosSuministros.comboRango}"/>
+                                        </h:selectOneMenu>
+                                        <h:selectOneMenu value="#{itemEmpleados.codigo}" rendered="#{itemEmpleados.tipodato==4}"  >
+                                            <f:selectItems value="#{codigosSfccbdmq.getComboMaestro(itemEmpleados.cabecera.codigo)}"/>
+                                        </h:selectOneMenu>
+                                        <ace:dateTimeEntry navigator="true"  value="#{itemEmpleados.valorfecha}" rendered="#{itemEmpleados.tipodato==3}"
+                                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </ace:dateTimeEntry>
+                                    </ace:column> 
+                                    <ace:column headerText="Ayuda" style="text-align: left">
+                                        <h:outputText value="#{itemEmpleados.cabecera.ayuda}"/>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane> 
+                    </ace:tabSet>
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" action="#{datosEmpleadosSuministros.grabar()}" rendered="#{datosEmpleadosSuministros.formulario.modificar}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" action="#{datosEmpleadosSuministros.cancelar()}" />
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+
+                </ace:dialog> 
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

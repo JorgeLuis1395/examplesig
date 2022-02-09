@@ -1,0 +1,193 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+    <ace:dialog 
+        header="Detalle de Obligación"
+        closable="false"
+        modal="true"
+        draggable="true"
+        showEffect="clip"
+        hideEffect="fade"
+        rendered="#{fondoRotativoSfccbdmq.formularioDetalle.mostrar}"
+        visible="#{fondoRotativoSfccbdmq.formularioDetalle.mostrar}">
+        <h:panelGroup>
+            <h:panelGrid columns="1">
+                <h:outputLabel  value="Referencia :"/>
+                <h:inputTextarea value="#{fondoRotativoSfccbdmq.detalle.referencia}" rows="4" cols="60"/>
+            </h:panelGrid>
+            <h:panelGrid columns="2">
+                <h:outputLabel  value="Compromiso :"/>
+                <h:outputText value="#{fondoRotativoSfccbdmq.compromiso.motivo}"/>
+                <h:outputLabel  value="Cuenta Presupuesto :"/>
+                <h:selectOneMenu value="#{fondoRotativoSfccbdmq.detalle.detallecompromiso}" 
+                                 rendered="#{fondoRotativoSfccbdmq.formularioDetalle.nuevo}">
+                    <f:selectItems value="#{fondoRotativoSfccbdmq.comboCuentasPresupuesto}"/>
+                    <ace:ajax execute="@all"/>
+                </h:selectOneMenu>
+                <h:outputText value="#{fondoRotativoSfccbdmq.detalle.detallecompromiso.toString()}" rendered="#{fondoRotativoSfccbdmq.formularioDetalle.modificar}"/>
+            </h:panelGrid>
+            <h:panelGrid columns="1">
+                <h:outputText value="#{fondoRotativoSfccbdmq.detalle.detallecompromiso.motivo}"/>
+            </h:panelGrid>
+            <h:panelGrid columns="4">
+                <h:outputLabel  value="Valor comprometido:"/>
+                <h:outputText  value="#{fondoRotativoSfccbdmq.detalle.detallecompromiso.valor}">
+                    <f:convertNumber pattern="###,###,##0.00"/>
+                </h:outputText>
+                <h:outputLabel  value="Saldo del compromiso:"/>
+                <h:outputText  value="#{fondoRotativoSfccbdmq.detalle.detallecompromiso.saldo}">
+                    <f:convertNumber pattern="###,###,##0.00"/>
+                </h:outputText>
+            </h:panelGrid>
+            <h:panelGrid columns="2">
+                <h:outputLabel  value="Cuenta contable :"/>
+                <h:selectOneMenu value="#{fondoRotativoSfccbdmq.detalle.idcuenta}" >
+                    <f:selectItems value="#{fondoRotativoSfccbdmq.comboCuentas}"/>
+                    <ace:ajax execute="@all"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="Bien o Servicios :"/>
+                <h:selectBooleanCheckbox value="#{fondoRotativoSfccbdmq.detalle.bien}">
+                    <ace:ajax execute="@all"/>
+                </h:selectBooleanCheckbox>
+
+                <h:outputLabel  value="Base Imponible :"/>
+                <h:inputText value="#{fondoRotativoSfccbdmq.detalle.valor}"/>
+                <h:outputLabel  value="Incluye Impuestos? :"/>
+                <h:selectBooleanCheckbox value="#{fondoRotativoSfccbdmq.iva}" >
+                    <ace:ajax execute="@all"/>
+                </h:selectBooleanCheckbox>
+                <h:outputLabel  value="Retención :"/>
+                <h:selectOneMenu value="#{fondoRotativoSfccbdmq.detalle.retencion}" >
+                    <f:selectItems value="#{fondoRotativoSfccbdmq.comboRetenciones}"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="Impuesto :"/>
+                <h:selectOneMenu value="#{fondoRotativoSfccbdmq.detalle.impuesto}" >
+                    <f:selectItems value="#{impuestosSfccbdmq.comboImpuestos}"/>
+                </h:selectOneMenu>
+            </h:panelGrid>
+            <h:panelGrid columns="2">
+                <h:outputLabel  value="Ret. sobre Impuesto :"/>
+                <h:selectOneMenu value="#{fondoRotativoSfccbdmq.detalle.retimpuesto}" >
+                    <f:selectItems value="#{fondoRotativoSfccbdmq.comboRetencionesImpuestos}"/>
+                </h:selectOneMenu>
+            </h:panelGrid>
+            <h:panelGrid columns="1" width="100%">
+                <ace:menuBar autoSubmenuDisplay="true" >
+                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{fondoRotativoSfccbdmq.formularioDetalle.nuevo}" 
+                                  action="#{fondoRotativoSfccbdmq.insertarDetalle()}"/>
+                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                  action="#{fondoRotativoSfccbdmq.grabarDetalle()}" 
+                                  rendered="#{fondoRotativoSfccbdmq.formularioDetalle.modificar}" />
+                    <ace:menuItem action="#{fondoRotativoSfccbdmq.borrarDetalle()}" 
+                                  value="Esta seguro de Borrar el registro?" 
+                                  rendered="#{fondoRotativoSfccbdmq.formularioDetalle.borrar}"/>
+
+                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                  action="#{fondoRotativoSfccbdmq.formularioDetalle.cancelar()}"/>
+                </ace:menuBar>
+                <ace:messages />
+            </h:panelGrid>
+        </h:panelGroup>
+    </ace:dialog>
+    <ace:dialog 
+        header="Detalle de Obligación"
+        closable="false"
+        modal="true"
+        draggable="true"
+        showEffect="clip"
+        hideEffect="fade"
+        rendered="#{fondoRotativoSfccbdmq.formularioDetalleCuenta.mostrar}"
+        visible="#{fondoRotativoSfccbdmq.formularioDetalleCuenta.mostrar}">
+        <h:panelGroup>
+            <h:panelGrid columns="1">
+                <h:outputLabel  value="Referencia :"/>
+                <h:inputTextarea value="#{fondoRotativoSfccbdmq.detalle.referencia}" rows="4" cols="60"/>
+            </h:panelGrid>
+
+            <h:panelGrid columns="2">
+                <h:outputLabel  value="Cuenta proveedor :"/>
+                <h:selectOneMenu value="#{fondoRotativoSfccbdmq.cuentaproveedor}" >
+                    <f:selectItems value="#{fondoRotativoSfccbdmq.comboCuentasProveedor}"/>
+                    <ace:ajax execute="@all"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="Cuenta contable :"/>
+                <h:selectOneMenu value="#{fondoRotativoSfccbdmq.detalle.idcuenta}" >
+                    <f:selectItems value="#{fondoRotativoSfccbdmq.comboCuentasDetalle}"/>
+                    <ace:ajax execute="@all"/>
+                </h:selectOneMenu>
+                <h:outputLabel value="Centro de costo:" for="centrocosto" 
+                               rendered="#{fondoRotativoSfccbdmq.detalle.idcuenta.ccosto}"/>
+                <h:selectOneMenu  value="#{fondoRotativoSfccbdmq.detalle.cc}" title="Tipo de asiento"  
+                                  rendered="#{fondoRotativoSfccbdmq.detalle.idcuenta.ccosto}">
+                    <f:selectItems value="#{ccostoSfccbdmq.comboCcostoStr}"/>
+                    <ace:ajax execute="@all"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="Auxiliar Empleado? :"/>
+                <h:selectBooleanCheckbox value="#{fondoRotativoSfccbdmq.empleado}" >
+                    <ace:ajax execute="@all"/>
+                </h:selectBooleanCheckbox>
+            </h:panelGrid>
+            <h:panelGrid columns="1" rendered="#{fondoRotativoSfccbdmq.empleado}">
+                <ui:include src="../BuscarUsuario.xhtml" />
+            </h:panelGrid>
+            <h:panelGrid columns="2">
+                <h:outputLabel  value="Bien o Servicios :"/>
+                <h:selectBooleanCheckbox value="#{fondoRotativoSfccbdmq.detalle.bien}" >
+                    <ace:ajax execute="@all"/>
+                </h:selectBooleanCheckbox>
+                <h:outputLabel  value="Centro de Costo :" rendered="#{fondoRotativoSfccbdmq.detalle.idcuenta.ccosto}"/>
+                <h:selectOneMenu value="#{fondoRotativoSfccbdmq.detalle.cc}" 
+                                 rendered="#{fondoRotativoSfccbdmq.detalle.idcuenta.ccosto}">
+                    <f:selectItems value="#{ccostoSfccbdmq.comboCcostoStr}"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="Base Imponible :"/>
+                <h:inputText value="#{fondoRotativoSfccbdmq.detalle.valor}"/>
+                <h:outputLabel  value="Incluye Impuestos? :"/>
+                <h:selectBooleanCheckbox value="#{fondoRotativoSfccbdmq.iva}"/>
+
+                <h:outputLabel  value="Retención :"/>
+                <h:selectOneMenu value="#{fondoRotativoSfccbdmq.detalle.retencion}" >
+                    <f:selectItems value="#{fondoRotativoSfccbdmq.comboRetenciones}"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="Impuesto :"/>
+                <h:selectOneMenu value="#{fondoRotativoSfccbdmq.detalle.impuesto}" >
+                    <f:selectItems value="#{impuestosSfccbdmq.comboImpuestos}"/>
+                </h:selectOneMenu>
+            </h:panelGrid>
+            <h:panelGrid columns="2">
+                <h:outputLabel  value="Ret. sobre Impuesto :"/>
+                <h:selectOneMenu value="#{fondoRotativoSfccbdmq.detalle.retimpuesto}" >
+                    <f:selectItems value="#{fondoRotativoSfccbdmq.comboRetencionesImpuestos}"/>
+                </h:selectOneMenu>
+            </h:panelGrid>
+            <h:panelGrid columns="1" width="100%">
+                <ace:menuBar autoSubmenuDisplay="true" >
+                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{fondoRotativoSfccbdmq.formularioDetalleCuenta.nuevo}" 
+                                  action="#{fondoRotativoSfccbdmq.insertarDetalleCuenta()}"/>
+                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                  action="#{fondoRotativoSfccbdmq.grabarDetalleCuenta()}" 
+                                  rendered="#{fondoRotativoSfccbdmq.formularioDetalleCuenta.modificar}" />
+                    <ace:menuItem action="#{fondoRotativoSfccbdmq.borrarDetalleCuenta()}" 
+                                  value="Esta seguro de Borrar el registro?" 
+                                  rendered="#{fondoRotativoSfccbdmq.formularioDetalleCuenta.borrar}"/>
+
+                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                  action="#{fondoRotativoSfccbdmq.formularioDetalleCuenta.cancelar()}"/>
+                </ace:menuBar>
+                <ace:messages />
+            </h:panelGrid>
+        </h:panelGroup>
+    </ace:dialog>
+</html>

@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{ingresosSuministrosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  
+                           rendered="#{!ingresosSuministrosSfccbdmq.formulario.mostrar}">
+
+                    <ui:include src="../BuscarProveedor.xhtml" />
+                    <h:panelGrid columns="4" width="90%" rendered="#{proveedoresSfccbdmq.proveedor!=null}">
+                        <h:outputLabel value="Contrato :" />
+                        <h:selectOneMenu  value="#{ingresosSuministrosSfccbdmq.contrato}">
+                            <f:selectItems value="#{contratosSfccbdmq.comboContratos}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Número de Documento :"/>
+                        <h:inputText  value="#{ingresosSuministrosSfccbdmq.factura}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="4">
+                        <h:outputLabel value="Bodega :" />
+                        <h:selectOneMenu  value="#{ingresosSuministrosSfccbdmq.bodega}">
+                            <f:selectItems value="#{permisosBodegasEmpleadosSfccbdmq.comboBodegasLogueado}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Tipo de Movimiento :" />
+                        <h:selectOneMenu  value="#{ingresosSuministrosSfccbdmq.tipo}">
+                            <f:selectItems value="#{txSuministrosSfccbdmq.comboIngresos}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Número de Movimiento" />
+                        <h:inputText value="#{ingresosSuministrosSfccbdmq.numero}"/>
+                        <h:outputLabel value="Estado :" />
+                        <h:selectOneMenu  value="#{ingresosSuministrosSfccbdmq.estado}">
+                            <f:selectItems value="#{ingresosSuministrosSfccbdmq.comboEstados}"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1">
+                        <h:outputLabel value="Observaciones" />
+                        <h:inputTextarea cols="80" rows="4" value="#{ingresosSuministrosSfccbdmq.observaciones}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="5">
+                        <h:outputLabel value="Fecha :"/>
+                        <h:outputLabel value="Desde:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{ingresosSuministrosSfccbdmq.desde}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Hasta:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{ingresosSuministrosSfccbdmq.hasta}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                    </h:panelGrid> 
+
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{ingresosSuministrosSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document"  
+                                          rendered="#{ingresosSuministrosSfccbdmq.puedeNuevo}"
+                                          action="#{ingresosSuministrosSfccbdmq.nuevo()}"/>
+                        </ace:menuBar>
+
+                    </h:panelGrid>
+                    <ace:messages />
+                    <ace:submitMonitor 
+                        for="panel"
+                        blockUI="panel"
+                        autoCenter="true"
+                        activeLabel="Un Momento por favor"/>
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{ingresosSuministrosSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{ingresosSuministrosSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid width="100%" style="margin-bottom: 20px;">
+
+                        <ace:dataTable id="tabla"
+                                       value="#{ingresosSuministrosSfccbdmq.cabeceras}"
+                                       var="item"
+                                       lazy="true"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="10,15,30,50"
+                                       currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="30"
+                                       style="width: 100%;"
+                                       >
+                            <ace:column style="text-align: left" >
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem value="Editar" icon="ui-icon ui-icon-pencil" 
+                                                  action="#{ingresosSuministrosSfccbdmq.modifica(0)}" 
+                                                  rendered="#{ingresosSuministrosSfccbdmq.isPuedeModifica(item)}" />
+                                    <ace:menuItem value="Editar Transferencia" icon="ui-icon ui-icon-pencil" 
+                                                  action="#{ingresosSuministrosSfccbdmq.transferencia()}" 
+                                                  rendered="#{ingresosSuministrosSfccbdmq.isPuedeTransferencia(item)}" />
+                                    <ace:menuItem value="Recepción"
+                                                  icon="ui-icon ui-icon-pencil" action="#{ingresosSuministrosSfccbdmq.modifica(1)}" 
+                                                  rendered="#{ingresosSuministrosSfccbdmq.isPuedeRecepcion(item)}" />
+                                    <ace:menuItem value="Revision" icon="ui-icon ui-icon-pencil" action="#{ingresosSuministrosSfccbdmq.modifica(2)}" rendered="#{ingresosSuministrosSfccbdmq.isPuedeRevision(item)}" />
+                                    <ace:menuItem value="Aprobación" icon="ui-icon ui-icon-pencil" action="#{ingresosSuministrosSfccbdmq.modifica(3)}" rendered="#{ingresosSuministrosSfccbdmq.isPuedeAprobacion(item)}" />
+                                    <ace:menuItem value="Imprimir" icon="ui-icon ui-icon-print" action="#{ingresosSuministrosSfccbdmq.imprimir()}"  />
+                                    <ace:menuItem action="#{ingresosSuministrosSfccbdmq.elimina()}"
+                                                  value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="Fecha Mov."  
+
+                                         sortBy="#{item.fecha}" 
+                                         style="text-align: left">
+                                <h:outputText  value="#{item.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Número "  style="text-align: left">
+                                <h:outputText value="#{item.numero}"/>
+                            </ace:column>
+                            <ace:column  headerText="Observaciones"  
+                                         filterBy="#{item.observaciones}" 
+                                         filterMatchMode="contains" 
+                                         sortBy="#{item.observaciones}" 
+                                         style="text-align: left">
+                                <h:outputText value="#{item.observaciones}"/>
+                            </ace:column>
+                            <ace:column  headerText="Estado "  
+                                         filterBy="#{item.estado}" 
+                                         filterMatchMode="contains" 
+                                         sortBy="#{item.estado}" 
+                                         style="text-align: left">
+                                <h:outputText value="#{ingresosSuministrosSfccbdmq.traerEstado(item.estado)}"/>
+                            </ace:column>
+                            <ace:column  headerText="Transacción"  
+                                         filterBy="#{item.txid.nombre}" 
+                                         filterMatchMode="contains" 
+                                         sortBy="#{item.txid.nombre}" 
+                                         style="text-align: left">
+                                <h:outputText value="#{item.txid.nombre}"/>
+                            </ace:column>
+
+                            <ace:column  headerText="Número Documento " 
+                                         filterBy="#{item.factura}" 
+                                         filterMatchMode="contains" 
+                                         sortBy="#{item.factura}" 
+                                         style="text-align: left">
+                                <h:outputText value="#{item.factura}"/>
+                            </ace:column>
+                            <ace:column  headerText="Solicitud" 
+                                         filterBy="#{item.solicitud}" 
+                                         filterMatchMode="contains" 
+                                         sortBy="#{item.solicitud}" 
+                                         style="text-align: left">
+                                <h:outputText value="#{item.solicitud.id}"/>
+                            </ace:column>
+                            <ace:column  headerText="Bodega"
+                                         filterBy="#{item.bodega.nombre}" 
+                                         filterMatchMode="contains" 
+                                         sortBy="#{item.bodega.nombre}" 
+                                         style="text-align: left">
+                                <h:outputText value="#{item.bodega.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Fecha Ingreso"
+
+                                         sortBy="#{item.fechadigitacion}" 
+                                         style="text-align: left">
+                                <h:outputText  value="#{item.fechadigitacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Fecha Contab."  
+
+                                         sortBy="#{item.fechacontable}" 
+                                         style="text-align: left">
+                                <h:outputText  value="#{item.fechacontable}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Proveedor" 
+                                         filterBy="#{item.proveedor.empresa.nombre}" 
+                                         filterMatchMode="contains" 
+                                         sortBy="#{item.proveedor.empresa.nombre}" 
+                                         style="text-align: left">
+                                <h:outputText value="#{item.proveedor.empresa.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Contrato" 
+                                         filterBy="#{item.contrato.numero}" 
+                                         filterMatchMode="contains" 
+                                         sortBy="#{item.contrato.numero}" 
+                                         style="text-align: left">
+                                <h:outputText value="#{item.contrato.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Total"  style="text-align: right">
+                                <h:outputText value="#{ingresosSuministrosSfccbdmq.traerTotal(item)}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <!--</ace:dialog>-->
+                <ace:panel id="panel1"
+                           header="#{ingresosSuministrosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  
+                           rendered="#{ingresosSuministrosSfccbdmq.formulario.mostrar}">
+                    <ui:include src="ingresoKardex.xhtml"/>
+                </ace:panel>
+
+                <ace:dialog
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    header="Modificar/Crear Registro"
+                    rendered="#{ingresosSuministrosSfccbdmq.formularioRenglones.mostrar}"
+                    visible="#{ingresosSuministrosSfccbdmq.formularioRenglones.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2" width="90%" >
+                            <h:outputLabel value="Familia :"  rendered="#{ingresosSuministrosSfccbdmq.formularioRenglones.nuevo}"/>
+                            <h:selectOneMenu value="#{tiposSuministrosSfccbdmq.familiaSuministros}" 
+                                             rendered="#{ingresosSuministrosSfccbdmq.formularioRenglones.nuevo}">
+                                <f:selectItems value="#{codigosSfccbdmq.comboFamiliaSuministros}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Tipo :"  rendered="#{ingresosSuministrosSfccbdmq.formularioRenglones.nuevo}"/>
+                            <h:selectOneMenu value="#{suministrosSfccbdmq.tipo}" rendered="#{ingresosSuministrosSfccbdmq.formularioRenglones.nuevo}" 
+                                             >
+                                <f:selectItems value="#{tiposSuministrosSfccbdmq.comboTipoFamiliaEspacio}" />
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Suministro:" />
+                            <ace:comboBox value="#{ingresosSuministrosSfccbdmq.kardex.codigoSuministro}"
+                                          valueChangeListener="#{ingresosSuministrosSfccbdmq.cambiaCodigo}"
+                                          filterMatchMode="startsWith"
+                                          width="600"
+                                          listVar="itemSuministro"
+                                          listValue="#{suministrosSfccbdmq.listadoSuministrosTipo}"
+                                          itemValue="#{itemSuministro.codigobarras}"
+                                          rendered="#{ingresosSuministrosSfccbdmq.formularioRenglones.nuevo}">
+                                <f:facet name="row">
+                                    <h:panelGrid columns="1" width="100%" >
+                                        <h:outputText value="#{itemSuministro.codigobarras} - #{itemSuministro.nombre} " />
+                                    </h:panelGrid>
+                                </f:facet>
+                                <ace:ajax execute="@all"/>
+                            </ace:comboBox>
+                            <h:outputLabel value="#{ingresosSuministrosSfccbdmq.kardex.suministro.toString()}" 
+                                           rendered="#{!ingresosSuministrosSfccbdmq.formularioRenglones.nuevo}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" width="90%" rendered="#{ingresosSuministrosSfccbdmq.kardex.suministro.lote}" >
+                            <h:outputLabel value="Número de Lote:" />
+                            <h:inputText value="#{ingresosSuministrosSfccbdmq.kardex.nombreLote}" rendered="#{ingresosSuministrosSfccbdmq.formularioRenglones.nuevo}"/>
+                            <h:outputLabel value="Número de Lote:" rendered="#{!ingresosSuministrosSfccbdmq.formularioRenglones.nuevo}"/>
+                            <h:outputLabel value="#{ingresosSuministrosSfccbdmq.kardex.lote.lote}" rendered="#{!ingresosSuministrosSfccbdmq.formularioRenglones.nuevo}"/>
+                            <h:outputLabel value="Fecha de Caducidad:" />
+                            <ace:dateTimeEntry navigator="true" value="#{ingresosSuministrosSfccbdmq.kardex.fechaCaduca}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               rendered="#{ingresosSuministrosSfccbdmq.formularioRenglones.nuevo}"
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="#{ingresosSuministrosSfccbdmq.kardex.lote.fechaCaduca}" rendered="#{!ingresosSuministrosSfccbdmq.formularioRenglones.nuevo}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputLabel>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" width="90%" >
+                            <h:outputLabel value="Cantidad:" />
+                            <h:inputText id="cantidad" value="#{ingresosSuministrosSfccbdmq.kardex.cantidad}" title="Cantidad" />
+                            <h:outputLabel value="Cantidad Inversión:"  />
+                            <h:inputText value="#{ingresosSuministrosSfccbdmq.kardex.cantidadinversion}" title="Cantidad" />
+                            <h:outputLabel value="Costo Unitario:" rendered="#{ingresosSuministrosSfccbdmq.cabecera.txid.ingreso}"/>
+                            <h:inputText id="costo" value="#{ingresosSuministrosSfccbdmq.kardex.costo}" title="Costo" rendered="#{ingresosSuministrosSfccbdmq.cabecera.txid.ingreso}"/>
+                            <h:outputLabel value="Unidad:"  />
+                            <h:selectOneMenu id="unidad" value="#{ingresosSuministrosSfccbdmq.kardex.unidad}" title="Unidad" >
+                                <f:selectItems value="#{ingresosSuministrosSfccbdmq.unidadesSuministro}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Saldo:" />
+                            <h:outputLabel value="#{ingresosSuministrosSfccbdmq.saldo}" />
+                            <h:outputLabel value="Saldo Inversión:" />
+                            <h:outputLabel value="#{ingresosSuministrosSfccbdmq.saldoInversion}" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="1">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{ingresosSuministrosSfccbdmq.insertarRenglon()}" rendered="#{ingresosSuministrosSfccbdmq.formularioRenglones.nuevo}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" action="#{ingresosSuministrosSfccbdmq.grabarRenglon()}" rendered="#{ingresosSuministrosSfccbdmq.formularioRenglones.modificar}" />
+                                <ace:menuItem value="Esta Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{ingresosSuministrosSfccbdmq.borrarRenglon()}" rendered="#{ingresosSuministrosSfccbdmq.formularioRenglones.borrar}" />
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" action="#{ingresosSuministrosSfccbdmq.formularioRenglones.cancelar()}" />
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog> 
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{ingresosSuministrosSfccbdmq.formularioImprimir.mostrar}"
+                    visible="#{ingresosSuministrosSfccbdmq.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+
+                        <ace:dynamicResource fileName="MovimientoInv.pdf" id="pdf-button1" label="Generar PDF"
+                                             mimeType="application/pdf" resource="#{ingresosSuministrosSfccbdmq.reporte}" 
+                                             style="" type="button"/>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{ingresosSuministrosSfccbdmq.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Errores"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{ingresosSuministrosSfccbdmq.formularioErrores.mostrar}"
+                    visible="#{ingresosSuministrosSfccbdmq.formularioErrores.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{ingresosSuministrosSfccbdmq.formularioErrores.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporterError" 
+                                              label="Exportar Archivo" 
+                                              type="#{ingresosSuministrosSfccbdmq.formularioErrores.pantalla}" 
+                                              target="tablaError" fileName="datosError"/>
+                        </h:panelGrid>
+                        <ace:dataTable id="tablaError"
+                                       value="#{ingresosSuministrosSfccbdmq.listaErrores}"
+                                       var="itemError"
+                                       lazy="false"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="10,15,30,50"
+                                       currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="30"
+                                       style="width: 100%;"
+                                       >
+                            
+                            
+                            <ace:column  headerText="Suministro "  style="text-align: left">
+                                <h:outputText value="#{itemError.transaccion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Observación"  style="text-align: left">
+                                <h:outputText value="#{itemError.observaciones}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{ingresosSuministrosSfccbdmq.formularioErrores.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

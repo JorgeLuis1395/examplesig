@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{reporteSaldosBodegas.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <h:panelGrid columns="2" >
+                        <h:outputLabel value="Familia :"  />
+                        <h:selectOneMenu value="#{reporteSaldosBodegas.familia}">
+                            <f:selectItems value="#{codigosSfccbdmq.comboFamiliaSuministros}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Tipo :"  />
+                        <h:selectOneMenu value="#{reporteSaldosBodegas.tipo}" >
+                            <f:selectItems value="#{reporteSaldosBodegas.comboTipoFamiliaEspacio}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Suministro :"  />
+                        <h:selectOneMenu value="#{reporteSaldosBodegas.suministro}" >
+                            <f:selectItems value="#{reporteSaldosBodegas.comboSuministroTipo}"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="4">
+                        <h:outputLabel value="Desde:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{reporteSaldosBodegas.desde}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Hasta:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{reporteSaldosBodegas.hasta}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                    </h:panelGrid> 
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteSaldosBodegas.buscar()}"  />
+                            <ace:menuItem value="Hoja Elect." icon="ui-icon ui-icon-calculator" action="#{reporteSaldosBodegas.exportar()}"/>
+
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable 
+                            value="#{reporteSaldosBodegas.listaSuministros}"
+                            var="novedadItem"
+                            binding="#{reporteSaldosBodegas.formulario.fila}"
+                            scrollHeight="600"
+                            scrollable="true">
+                            <ace:row condition="group" groupBy="#{novedadItem.tipo}" pos="before">
+                                <ace:column  colspan="#{reporteSaldosBodegas.listaBodegas.size()+14}" style="background-color: #0099CC;text-align: left;color: #FFF">
+                                    <h:panelGrid columns="4">
+                                        <h:outputText value="Familia :" />
+                                        <h:outputText value="#{novedadItem.tipo.familia.nombre}" />
+                                        <h:outputText value="Tipo :" />
+                                        <h:outputText value="#{novedadItem.tipo.nombre}" />
+                                    </h:panelGrid>
+                                </ace:column>
+                            </ace:row>
+                            <ace:column  headerText="Código"  style="text-align: left">
+                                <h:outputText value="#{novedadItem.codigobarras}"/>
+                            </ace:column>    
+                            <ace:column  headerText="Suministro"  style="text-align: left">
+                                <h:outputText value="#{novedadItem.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Unidad de medida"  style="text-align: left">
+                                <h:outputText value="#{novedadItem.unidad.equivalencia}"/>
+                            </ace:column>
+
+                            <c:forEach items="#{reporteSaldosBodegas.listaBodegas}" var="itemBodegas">
+                                <ace:column style="text-align: right" headerText="#{itemBodegas.nombre}">
+                                    <h:outputText value="#{reporteSaldosBodegas.getSaldoBodega(novedadItem, itemBodegas)}" rendered="#{!novedadItem.mostrar}">
+                                        <f:convertNumber pattern="###,##0.00"/>
+                                    </h:outputText>
+                                    <h:outputText value="#{reporteSaldosBodegas.getSaldo(itemBodegas)}" rendered="#{novedadItem.mostrar}">
+                                        <f:convertNumber pattern="###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column style="text-align: right" headerText="#{itemBodegas.nombre} Inv">
+                                    <h:outputText value="#{reporteSaldosBodegas.getSaldoBodegaInv(novedadItem, itemBodegas)}"  rendered="#{!novedadItem.mostrar}">
+                                        <f:convertNumber pattern="###,##0.00"/>
+                                    </h:outputText>
+                                    <h:outputText value="#{reporteSaldosBodegas.getSaldoInv(itemBodegas)}" rendered="#{novedadItem.mostrar}">
+                                        <f:convertNumber pattern="###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </c:forEach>
+
+                            <ace:column style="text-align: right" headerText="Cantidad (a)">
+                                <h:outputText value="#{novedadItem.cantidad}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right" headerText="Cantidad Inv (b)">
+                                <h:outputText value="#{novedadItem.cantidadinv}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right" headerText="Total cantidad (a + b)">
+                                <h:outputText value="#{novedadItem.cantidad + novedadItem.cantidadinv}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+
+                            <ace:column style="text-align: right" headerText="Costo promedio (c)">
+                                <h:outputText value="#{novedadItem.costopr}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right" headerText="Costo promedio Inv (d)">
+                                <h:outputText value="#{novedadItem.costoprinve}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+
+                            <ace:column style="text-align: right" headerText=" Total (a * c)">
+                                <h:outputText value="#{novedadItem.cantidad * novedadItem.costopr}" rendered="#{!novedadItem.mostrar}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                                <h:outputText value="#{reporteSaldosBodegas.cantidadCosto}" rendered="#{novedadItem.mostrar}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right" headerText="Total Inv (b * d)">
+                                <h:outputText value="#{novedadItem.cantidadinv * novedadItem.costoprinve}" rendered="#{!novedadItem.mostrar}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                                <h:outputText value="#{reporteSaldosBodegas.cantidadCostoInv}" rendered="#{novedadItem.mostrar}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+
+                        </ace:dataTable>
+                    </h:panelGrid>
+
+                </ace:panel>
+                <ace:dialog 
+                    header="Exportar"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteSaldosBodegas.formularioReporte.mostrar}"
+                    visible="#{reporteSaldosBodegas.formularioReporte.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="Kardex.xls" id="xsl-boton" label="Exportar a XLS"
+                                             mimeType="application/xls" resource="#{reporteSaldosBodegas.reporteXls}" 
+                                             style="" type="button"
+                                             rendered="#{reporteSaldosBodegas.reporteXls!=null}"/>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteSaldosBodegas.formularioReporte.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

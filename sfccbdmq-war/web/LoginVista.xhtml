@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : LoginVista
+    Created on : 27/08/2011, 07:34:58 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+        <link href="resources/css/default.css" rel="stylesheet" type="text/css" />
+        <link href="resources/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <!--<link rel="stylesheet" type="text/css" href="./xmlhttp/css/rime/rime.css"/>-->
+        <title>Administración y Gestión Empresarial</title>
+    </h:head>
+    <h:body>
+        <h:form id="form">
+            <ui:composition template="/plantillas/plantilla.xhtml">
+                 
+                <ui:define name="content">
+                    <ace:dialog 
+                        header="Ingreso SIGAF"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{!logueoSfccbdmq.modulos}"
+                        visible="#{!logueoSfccbdmq.modulos}">
+                        <h:panelGroup>
+
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Usuario:"/>
+                                <h:inputText value="#{logueoSfccbdmq.usr}"/>
+                                <h:outputLabel  value="Contraseña:"/>
+                                <h:inputSecret value="#{logueoSfccbdmq.pwd}"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Ingresar" icon="ui-icon ui-icon-key"  action="#{logueoSfccbdmq.login()}"/>
+                                </ace:menuBar>
+                                <icecore:defaultAction action="#{logueoSfccbdmq.login()}" key="Enter"/> 
+                                
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                </ui:define>
+                 <!--Fin--> 
+            </ui:composition>
+        </h:form>
+    </h:body>
+</html>

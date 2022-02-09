@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{cargaDocElectSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <!--panel principal-->
+                    <h:panelGroup>
+                        <h:panelGrid columns="3" width="100%" rendered="#{!cargaDocElectSfccbdmq.formulario.mostrar}">
+                            <h:outputLabel value="Archivo a Subir de Facturas:" />
+                            <ace:fileEntry id="file-entry" 
+
+                                           maxFileCount="1" 
+                                           maxFileCountMessage="Máximo un archivo" 
+                                           fileEntryListener="#{cargaDocElectSfccbdmq.archivoListener}" 
+                                           maxFileSize="6291456" 
+                                           maxFileSizeMessage="Tamaño muy grande." 
+                                           maxTotalSize="18874368" 
+                                           maxTotalSizeMessage="Total del tamaño muy grande." 
+                                           useOriginalFilename="true" 
+                                           useSessionSubdir="true"/>
+                            <h:commandButton type="submit" value="Cargar datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="3" width="100%" rendered="#{cargaDocElectSfccbdmq.formulario.mostrar}">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Procesar" icon="ui-icon ui-icon-document" 
+                                              action="#{cargaDocElectSfccbdmq.procesar()}" 
+                                              />
+                                
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{cargaDocElectSfccbdmq.formulario.cancelar()}"/>
+                            </ace:menuBar>
+                            <!--<h:commandButton  value="Procesar" action="#{cargaDocElectSfccbdmq.procesar()}"/>-->
+                        </h:panelGrid>
+
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="@all"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+                        <ace:dataTable id="tabla" 
+                                       value="#{cargaDocElectSfccbdmq.listaDocumentos}"
+                                       var="itemFacturas"
+                                       paginator="true"
+                                       lazy="false"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="top"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="30"
+                                       >
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column  headerText="Error"  style="text-align: left" 
+                                         sortBy="#{itemFacturas.error}"
+                                         filterBy="#{itemFacturas.error}" 
+                                         filterMatchMode="contains">
+                                <h:outputText  value="#{itemFacturas.error}"/>
+                            </ace:column>
+                            <ace:column  headerText="Fecha emisión"  style="text-align: left"
+                                         sortBy="#{itemFacturas.fechaemision}"
+                                         filterBy="#{itemFacturas.fechaemision}" 
+                                         rangedFilter="false"
+                                         filterDatePattern="dd/MM/yyyy">
+                                <h:outputText  value="#{itemFacturas.fechaemision}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Número"  style="text-align: left" 
+                                         sortBy="#{itemFacturas.numero}"
+                                         filterBy="#{itemFacturas.numero}" 
+                                         filterMatchMode="contains">
+                                <h:outputText  value="#{itemFacturas.numero}"/>
+                            </ace:column>
+                            <ace:column  headerText="Autorización"  style="text-align: left"  
+                                         sortBy="#{itemFacturas.autorizacion}"
+                                         filterBy="#{itemFacturas.autorizacion}" 
+                                         filterMatchMode="contains">
+                                <h:outputText  value="#{itemFacturas.autorizacion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Clave" style="text-align: left"
+                                         sortBy="#{itemFacturas.autorizacion}"
+                                         filterBy="#{itemFacturas.autorizacion}" 
+                                         filterMatchMode="contains">
+                                <h:outputText  value="#{itemFacturas.clave}"/>
+                            </ace:column>
+                            <ace:column  headerText="Base Imponible"  style="text-align: right">
+                                <h:outputText  value="#{itemFacturas.baseimponible}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Base imponible 0"  style="text-align: right">
+                                <h:outputText  value="#{itemFacturas.baseimponible0}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Iva"  style="text-align: right">
+                                <h:outputText  value="#{itemFacturas.iva}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Valor del gasto"  style="text-align: right">
+                                <h:outputText  value="#{itemFacturas.valortotal}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>   
+                    </h:panelGroup>
+                </ace:panel>
+                <!--fin dilogo para imrpimir-->
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

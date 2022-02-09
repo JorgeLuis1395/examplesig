@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!--Aqui va todo el codigo de la pagina--> 
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="Reporte de Impuestos Empleados"
+                           closable="false"
+                           toggleable="false"  >
+                    <ace:panel header="Parámetros de Búsqueda">
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Año"/>
+                            <h:inputText value="#{reporteImpuestosEmpleadosSfccbdmq.anio}"/>
+                            <h:outputText value="Mes"/>
+                            <h:inputText value="#{reporteImpuestosEmpleadosSfccbdmq.mes}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteImpuestosEmpleadosSfccbdmq.buscar()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <h:panelGrid columns="3">
+                            <ace:dynamicResource  fileName="Gastos Deducibles.xls" id="pdf-boton1" label="Gastos Deducibles XLS"
+                                                  mimeType="application/xls" resource="#{reporteImpuestosEmpleadosSfccbdmq.reporte}" 
+                                                  style="" type="button" rendered="#{reporteImpuestosEmpleadosSfccbdmq.reporte ne null}"/>
+                            <ace:dynamicResource  fileName="Valores Retenidos.xls" id="pdf-boton2" label="Valores Retenidos XLS"
+                                                  mimeType="application/xls" resource="#{reporteImpuestosEmpleadosSfccbdmq.reporte2}" 
+                                                  style="" type="button" rendered="#{reporteImpuestosEmpleadosSfccbdmq.reporte2 ne null}"/>
+                            <ace:dynamicResource  fileName="Pagos Empleadoss.xls" id="pdf-boton3" label="Pagos Empleados XLS"
+                                                  mimeType="application/xls" resource="#{reporteImpuestosEmpleadosSfccbdmq.reporte3}" 
+                                                  style="" type="button" rendered="#{reporteImpuestosEmpleadosSfccbdmq.reporte3 ne null}"/>
+                        </h:panelGrid>
+                        <ace:messages/>
+                    </ace:panel> 
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                   for="panel"
+                                   blockUI="panel"
+                                   autoCenter="true"
+                                   activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="false">
+                    <h:panelGrid width="100%">
+                        <ace:tabSet>
+                            <!--Gastos Deducibles-->
+                            <ace:tabPane >
+                                <f:facet name="label">Gastos Deducibles</f:facet>
+                                <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                    <h:outputLabel  value="Exportar a:"/>
+                                    <h:selectOneRadio  value="#{reporteImpuestosEmpleadosSfccbdmq.formulario.pantalla}" required="true">
+                                        <f:ajax disabled="false"/>
+                                        <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                        <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                        <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                        <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                    </h:selectOneRadio>
+                                    <ace:dataExporter id="dataExporter1" 
+                                                      label="Exportar Archivo" 
+                                                      type="#{reporteImpuestosEmpleadosSfccbdmq.formulario.pantalla}" 
+                                                      target="tabla1" fileName="datos"/>
+                                </h:panelGrid>
+                                <ace:dataTable id="tabla1" 
+                                               value="#{reporteImpuestosEmpleadosSfccbdmq.lista1}"
+                                               var="item"
+                                               rowIndexVar="row"
+                                               scrollHeight="600"
+                                               scrollable="true">
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Año"  style="text-align: left">
+                                        <h:outputText value="#{item.anio}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Número de cédula o pasaporte del trabajador"  style="text-align: left">
+                                        <h:outputText value="#{item.cedula}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Deducible vivienda (Anual)" style="text-align: right">
+                                        <h:outputText  value="#{item.vivienda}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Deducible Salud (Anual)" style="text-align: right">
+                                        <h:outputText  value="#{item.salud}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Deducible educación (Anual)" style="text-align: right">
+                                        <h:outputText  value="#{item.educacion}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Deducible alimentación (Anual)" style="text-align: right">
+                                        <h:outputText  value="#{item.alimentacion}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Deducible vestimenta (Anual)" style="text-align: right">
+                                        <h:outputText  value="#{item.vestimenta}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Deducible Arte y Cultura" style="text-align: right">
+                                        <h:outputText  value="#{item.arteCultura}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Rebajas especiales Discapacitados" style="text-align: right">
+                                        <h:outputText  value="#{item.discapacidad}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Rebajas especiales Tercera Edad" style="text-align: right">
+                                        <h:outputText  value="#{item.terceraEdad}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Ingresos Gravados otros empleadores (Anual)" style="text-align: right">
+                                        <h:outputText  value="#{item.ingresosGrabados}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Rebajas otros empleadores IESS (Anual)" style="text-align: right">
+                                        <h:outputText  value="#{item.rebajas}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Retenido y asumido por otros empleadores (Anual)" style="text-align: right">
+                                        <h:outputText  value="#{item.retenido}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </ace:tabPane>
+                            <!--Valores Retenidos-->
+                            <ace:tabPane >
+                                <f:facet name="label">Valores Retenidos</f:facet>
+                                <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                    <h:outputLabel  value="Exportar a:"/>
+                                    <h:selectOneRadio  value="#{reporteImpuestosEmpleadosSfccbdmq.formulario.pantalla}" required="true">
+                                        <f:ajax disabled="false"/>
+                                        <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                        <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                        <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                        <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                    </h:selectOneRadio>
+                                    <ace:dataExporter id="dataExporter2" 
+                                                      label="Exportar Archivo" 
+                                                      type="#{reporteImpuestosEmpleadosSfccbdmq.formulario.pantalla}" 
+                                                      target="tabla2" fileName="datos"/>
+                                </h:panelGrid>
+                                <ace:dataTable id ="tabla2"
+                                               value="#{reporteImpuestosEmpleadosSfccbdmq.lista2}"
+                                               var="item2"
+                                               rowIndexVar="row"
+                                               scrollHeight="600"
+                                               scrollable="true">
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="FECHA"  style="text-align: left">
+                                        <h:outputText value="#{item2.fecha}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="NUMERO DE CEDULA PASAPORTE "  style="text-align: left">
+                                        <h:outputText value="#{item2.cedula}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="VALOR RETENIDO " style="text-align: right">
+                                        <h:outputText  value="#{item2.retenido}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </ace:tabPane>
+                            <!--Pago Empleados-->
+                            <ace:tabPane >
+                                <f:facet name="label">Pagos Empleados</f:facet>
+                                <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                    <h:outputLabel  value="Exportar a:"/>
+                                    <h:selectOneRadio  value="#{reporteImpuestosEmpleadosSfccbdmq.formulario.pantalla}" required="true">
+                                        <f:ajax disabled="false"/>
+                                        <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                        <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                        <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                        <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                    </h:selectOneRadio>
+                                    <ace:dataExporter id="dataExporter3" 
+                                                      label="Exportar Archivo" 
+                                                      type="#{reporteImpuestosEmpleadosSfccbdmq.formulario.pantalla}" 
+                                                      target="tabla3" fileName="datos"/>
+                                </h:panelGrid>
+                                <ace:dataTable id="tabla3" 
+                                               value="#{reporteImpuestosEmpleadosSfccbdmq.lista3}"
+                                               var="item3"
+                                               rowIndexVar="row"
+                                               scrollHeight="600"
+                                               scrollable="true">
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="AÑO"  style="text-align: left">
+                                        <h:outputText value="#{item3.anio}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="NUMERO DE CEDULA"  style="text-align: left">
+                                        <h:outputText value="#{item3.cedula}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="REMUNERACIONES" style="text-align: right">
+                                        <h:outputText  value="#{item3.vivienda}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="SUB Y ENCAR" style="text-align: right">
+                                        <h:outputText  value="#{item3.salud}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="D 3" style="text-align: right">
+                                        <h:outputText  value="#{item3.educacion}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="D4" style="text-align: right">
+                                        <h:outputText  value="#{item3.alimentacion}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="FR" style="text-align: right">
+                                        <h:outputText  value="#{item3.vestimenta}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="PART UTIL" style="text-align: right">
+                                        <h:outputText  value="#{item3.arteCultura}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="OTROS ING NO GRAV" style="text-align: right">
+                                        <h:outputText  value="#{item3.discapacidad}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="IEP+IEX" style="text-align: right">
+                                        <h:outputText  value="#{item3.terceraEdad}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="IR EMPLEADOR" style="text-align: right">
+                                        <h:outputText  value="#{item3.ingresosGrabados}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </ace:tabPane>
+                        </ace:tabSet>
+                    </h:panelGrid>
+                </ace:panel>
+            </ui:define>
+            <!--Fin--> 
+        </ui:composition>
+    </h:body>
+</html>

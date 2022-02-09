@@ -1,0 +1,163 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : luisfernando
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+
+    </h:head>
+    <h:body>
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{productosSfcbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Nombre: "  />
+                        <h:inputText  value="#{productosSfcbdmq.nombre}"/>
+                        <h:outputLabel value="Cuenta Ingresos: "  />
+                        <h:inputText  value="#{productosSfcbdmq.categoria}"/>
+                        <h:outputLabel value="Código: "  />
+                        <h:inputText  value="#{productosSfcbdmq.codigo}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="7">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{productosSfcbdmq.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{productosSfcbdmq.nuevo()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="true">
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{productosSfcbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{productosSfcbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       paginatorAlwaysVisible="true"
+                                       value="#{productosSfcbdmq.listaProductos}"
+                                       var="item"
+                                       paginator="true"
+                                       lazy="false"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,30,50,100"
+                                       paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="30" 
+                                       binding="#{productosSfcbdmq.formulario.fila}">
+                            <ace:column headerText="Acciones" style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem 
+                                        action="#{productosSfcbdmq.modificar()}" 
+                                        value="Editar" 
+                                        icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem 
+                                        action="#{productosSfcbdmq.eliminar()}" 
+                                        value="Borrar" 
+                                        icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="N°" style="text-align: left">
+                                <h:outputText  value="#{item.id}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nombre"  style="text-align: left">
+                                <h:outputText  value="#{item.nombre}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Cuenta Ingreso"  style="text-align: left">
+                                <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(item.categoria).nombre}}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Código"  style="text-align: left">
+                                <h:outputText  value="#{item.codigo}"/>
+                            </ace:column> 
+                            <ace:column  headerText="P.V.P"  style="text-align: left">
+                                <h:outputText  value="#{item.preciounitario}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column> 
+                            <ace:column  headerText="Iva"  style="text-align: left">
+                                <h:outputText  value="#{item.impuesto.porcentaje}">
+                                    <f:convertNumber pattern="0.00"/>
+                                </h:outputText>
+                            </ace:column> 
+                            
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{productosSfcbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="false"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    width="400"
+                    rendered="#{productosSfcbdmq.formulario.mostrar}"
+                    visible="#{productosSfcbdmq.formulario.mostrar}">
+                    <ace:panel>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Código: "  />
+                            <h:inputText  value="#{productosSfcbdmq.producto.codigo}" title="Codigo"/>   
+                            <h:outputLabel value="Nombre: "/>
+                            <h:inputText  value="#{productosSfcbdmq.producto.nombre}" title="Nombre"/> 
+                            <h:outputLabel value="Cuenta Ingreso: "  />
+                            <h:inputText  value="#{productosSfcbdmq.producto.categoria}" title="Catagoria"/>  
+                            <h:outputLabel  value="Impuesto :"/>
+                            <h:selectOneMenu value="#{productosSfcbdmq.producto.impuesto}" >
+                                <f:selectItems value="#{impuestosSfccbdmq.comboImpuestos}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>    
+
+                            <h:outputLabel value="P.V.P: "  />
+                            <h:inputText  value="#{productosSfcbdmq.producto.preciounitario}" title="Valor"/>
+                        </h:panelGrid>
+                    </ace:panel>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          rendered="#{productosSfcbdmq.formulario.nuevo}" 
+                                          action="#{productosSfcbdmq.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{productosSfcbdmq.grabar()}" 
+                                          rendered="#{productosSfcbdmq.formulario.modificar}" />
+                            <ace:menuItem action="#{productosSfcbdmq.borrar()}" 
+                                          value="¿Está seguro de Borrar el registro?" 
+                                          icon="ui-icon ui-icon-trash" 
+                                          rendered="#{productosSfcbdmq.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{productosSfcbdmq.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

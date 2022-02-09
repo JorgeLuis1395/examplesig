@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="http://201.183.235.48:8080/PersonasWS/PersonasWS?WSDL" uri="src/conf/xml-resources/web-service-references/PersonasWS/wsdl/201.183.235.48_8080/PersonasWS/PersonasWS.wsdl"/>
+    <system systemId="http://201.183.235.48:8080/PersonasWS/PersonasWS?xsd=1" uri="src/conf/xml-resources/web-service-references/PersonasWS/wsdl/201.183.235.48_8080/PersonasWS/PersonasWS.xsd_1.xsd"/>
+    <system systemId="http://192.168.0.172:8080/PersonasWS/PersonasWS?WSDL" uri="src/conf/xml-resources/web-service-references/PersonasWS_1/wsdl/192.168.0.172_8080/PersonasWS/PersonasWS.wsdl"/>
+    <system systemId="http://192.168.0.172:8080/PersonasWS/PersonasWS?xsd=1" uri="src/conf/xml-resources/web-service-references/PersonasWS_1/wsdl/192.168.0.172_8080/PersonasWS/PersonasWS.xsd_1.xsd"/>
+    <system systemId="https://servicios.bomberosquito.gob.ec:8181/PersonasWS/PersonasWS?tester" uri="src/conf/xml-resources/web-service-references/PersonasWS_tester/wsdl/servicios.bomberosquito.gob.ec_8181/PersonasWS/PersonasWS.tester"/>
+    <system systemId="https://servicios.bomberosquito.gob.ec:8181/PersonasWS/PersonasWS?wsdl" uri="src/conf/xml-resources/web-service-references/PersonasWS_2/wsdl/servicios.bomberosquito.gob.ec_8181/PersonasWS/PersonasWS.wsdl"/>
+    <system systemId="https://servicios.bomberosquito.gob.ec:8181/PersonasWS/PersonasWS?xsd=1" uri="src/conf/xml-resources/web-service-references/PersonasWS_2/wsdl/servicios.bomberosquito.gob.ec_8181/PersonasWS/PersonasWS.xsd_1.xsd"/>
+    <system systemId="http://servicios.bomberosquito.gob.ec:8080/PersonasWS/PersonasWS?wsdl" uri="src/conf/xml-resources/web-service-references/PersonasWS/wsdl/servicios.bomberosquito.gob.ec_8080/PersonasWS/PersonasWS.wsdl"/>
+    <system systemId="http://servicios.bomberosquito.gob.ec:8080/PersonasWS/PersonasWS?xsd=1" uri="src/conf/xml-resources/web-service-references/PersonasWS/wsdl/servicios.bomberosquito.gob.ec_8080/PersonasWS/PersonasWS.xsd_1.xsd"/>
+</catalog>

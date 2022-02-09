@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{abonosEmpleadoSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <ace:panel header="Parámetros de Búsqueda">
+                        <ui:include src="../BuscarEmpleado.xhtml"/>
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{abonosEmpleadoSfccbdmq.buscar()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <ace:messages/>
+                    </ace:panel> 
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="false"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{abonosEmpleadoSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{abonosEmpleadoSfccbdmq.formulario.pantalla}" 
+                                          target="prestamoItems" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="prestamoItems" 
+                                       value="#{abonosEmpleadoSfccbdmq.listaPrestamos}"
+                                       var="prestamoItem"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,50"
+
+                                       paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="5"
+                                       binding="#{abonosEmpleadoSfccbdmq.formulario.fila}">
+
+                            <ace:column  style="text-align: left"  >
+                                <ace:menuButton  effect="slide" effectDuration="200" value="...">
+                                    <ace:menuItem value="Abonar" icon="ui-icon ui-icon-pencil" action="#{abonosEmpleadoSfccbdmq.modificaTabla(prestamoItem)}"  />
+                                </ace:menuButton>
+                            </ace:column>
+
+
+                            <ace:column  headerText="Descripción"  style="text-align: left">
+                                <h:outputText value="#{prestamoItem.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Valor" style="text-align: right">
+                                <h:outputText  value="#{prestamoItem.valor}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Valor Pendiente" style="text-align: right">
+                                <h:outputText  value="#{abonosEmpleadoSfccbdmq.valorPendiente(prestamoItem)}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="No Meses" style="text-align: right">
+                                <h:outputText  value="#{prestamoItem.couta}">
+                                    <f:convertNumber maxFractionDigits="0" minFractionDigits="0"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Fecha de Solicitud" style="text-align: left">
+                                <h:outputText  value="#{prestamoItem.fechasolicitud}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Fecha de Revisión" style="text-align: left">
+                                <h:outputText  value="#{prestamoItem.fechaaprobacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column headerText="Revisado por" style="text-align: left">
+                                <h:outputText value="#{prestamoItem.aprobadopor.entidad.toString()}"/>
+                            </ace:column>
+                            <ace:column headerText="Observaciones" style="text-align: left">
+                                <h:outputText value="#{prestamoItem.aprobadopor.entidad.toString()}"/>
+                            </ace:column>
+                            <ace:column headerText="Tipo" style="text-align: left">
+                                <h:outputText value="#{prestamoItem.tipo.nombre}"/>
+                            </ace:column>
+                            <ace:column headerText="Aprobado" style="text-align: left">
+                                <h:graphicImage url="../resources/images/si.png" rendered="#{prestamoItem.aprobado}"/>
+                                <h:graphicImage url="../resources/images/no.png" rendered="#{!prestamoItem.aprobado}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{abonosEmpleadoSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{abonosEmpleadoSfccbdmq.formulario.mostrar}"
+                    visible="#{abonosEmpleadoSfccbdmq.formulario.mostrar}">
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane >
+                            <f:facet name="label">Inf. General</f:facet>
+                            
+                            <h:panelGrid columns="1">
+                                <h:outputLabel value="#{abonosEmpleadoSfccbdmq.periodo}" escape="false"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="4">
+                                <h:outputText value="Tipo de Movimiento Bancario:"/>
+                                <h:selectOneMenu value="#{abonosEmpleadoSfccbdmq.kardex.tipomov}" title="Tipo de Movimiento">
+                                    <f:selectItems value="#{tipoMovBancosSfccbdmq.comboIngresosBancos}"/>
+                                </h:selectOneMenu>
+                                <h:outputText value="Banco:"/>
+                                <h:selectOneMenu value="#{abonosEmpleadoSfccbdmq.kardex.banco}" title="Banco">
+                                    <f:selectItems value="#{bancosSfccbdmq.comboBancos}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                                <h:outputText value="No Documento : "/>
+                                <h:inputText value="#{abonosEmpleadoSfccbdmq.kardex.documento}" title="No Documento"/>
+                                <h:outputText value="No Comprobante de Ingreso : "/>
+                                <h:inputText value="#{abonosEmpleadoSfccbdmq.kardex.egreso}" title="No Documento"/>
+                                <h:outputLabel value="Fecha Movimiento:"/>
+                                <ace:dateTimeEntry navigator="true"  value="#{abonosEmpleadoSfccbdmq.kardex.fechamov}" 
+                                                   popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </ace:dateTimeEntry>
+                                <h:outputLabel value="Tipo Préstamo: " />
+                                <h:selectOneMenu value="#{abonosEmpleadoSfccbdmq.prestamo.tipo}"  disabled="true">
+                                    <f:selectItems value="#{codigosSfccbdmq.comboTipoPrestamosf}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+
+                                <h:outputLabel value="Descripción:"/>
+                                <h:inputTextarea cols="60" rows="4" value="#{abonosEmpleadoSfccbdmq.kardex.observaciones}" title="Descripción"/>
+                                <h:outputLabel value="Valor:" for="valor" />
+                                <h:outputText id="valor" value="#{abonosEmpleadoSfccbdmq.prestamo.valor}" title="Valor" >
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                                <h:outputLabel value="No de Cuotas:" for="couta" />
+                                <h:outputText id="couta" value="#{abonosEmpleadoSfccbdmq.prestamo.couta}" title="Cuota" />
+                                <h:outputLabel value="No de Cuotas pendientes:" for="couta" />
+                                <h:outputText value="#{abonosEmpleadoSfccbdmq.tiempoCuotas}" title="Cuota pagadas" />
+                                <h:outputLabel value="Valor pendiente:" />
+                                <h:outputLabel value="#{abonosEmpleadoSfccbdmq.valorAbono}" title="Valor del Abono"/>
+                                <h:outputLabel value="Valor del Abono:" />
+                                <h:inputText  value="#{abonosEmpleadoSfccbdmq.valorAbono}" title="Valor del Abono"/>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane label="Asiento contable">
+                            <ace:dataTable 
+                                paginatorAlwaysVisible="true"
+                                value="#{abonosEmpleadoSfccbdmq.listarenglones}"
+                                var="itemDetalles"
+                                rowIndexVar="row"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                >
+                                <f:facet name="header">Contabilización</f:facet>
+                                <ace:column  headerText="Cuenta"  style="text-align: left">
+                                    <h:outputText  value="#{itemDetalles.cuenta}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nombre"  style="text-align: left">
+                                    <h:outputText  value="#{cuentasSfccbdmq.traerNombre(itemDetalles.cuenta)}"/>
+                                </ace:column>
+
+                                <ace:column  headerText="Referencia"  style="text-align: left">
+                                    <h:outputText  value="#{itemDetalles.referencia}"/>
+                                </ace:column>
+
+                                <ace:column  headerText="Débitos" style="text-align: right">
+                                    <h:outputText  value="#{itemDetalles.valor}" rendered="#{asientosSfccbdmq.isCredito(itemDetalles.valor)}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>id
+                                <ace:column  headerText="Créditos" style="text-align: right">
+                                    <h:outputText  value="#{itemDetalles.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemDetalles.valor)}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+
+                            </ace:dataTable>
+                        </ace:tabPane>
+                        <ace:tabPane label="Adjuntos">
+                            <ui:include src="../mostrarImagenes.xhtml" />
+                        </ace:tabPane>
+                    </ace:tabSet>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Aprobar" icon="ui-icon ui-icon-check"  action="#{abonosEmpleadoSfccbdmq.aprueba()}" />
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{abonosEmpleadoSfccbdmq.formulario.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Tabla Amortización"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{abonosEmpleadoSfccbdmq.formularioAmortizacion.mostrar}"
+                    visible="#{abonosEmpleadoSfccbdmq.formularioAmortizacion.mostrar}">
+                    <h:panelGrid columns="1">
+                        <h:commandButton  value="Imprimir">
+                            <ace:printer for="panelImprimir"/>
+                        </h:commandButton>
+                    </h:panelGrid>
+                    <ace:panel id="panelImprimir" style="display:block;">
+                        <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+                        <h:panelGrid  width="90%" columns="2" style="text-align: right">
+                            <h:outputText value="Usuario :"/>
+                            <h:outputText value="#{parametrosSfccbdmq.logueado.userid}"/>
+                            <h:outputText value="Fecha :"/>
+                            <h:outputText value="#{parametrosSfccbdmq.fechaActual}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                            </h:outputText>
+                        </h:panelGrid>
+                        <h:panelGrid  width="90%" columns="1" style="text-align: center">
+                            <h3>Comprobante de Ingreso No: #{abonosEmpleadoSfccbdmq.kardex.egreso}</h3>
+                        </h:panelGrid>
+                        <h:panelGrid  width="90%" columns="1" style="text-align: right">
+                            <h3>Valor : #{abonosEmpleadoSfccbdmq.valorStr}</h3>
+                        </h:panelGrid>
+                        <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                            <h:outputLabel value="No documento :" />
+                            <h:outputLabel value="#{abonosEmpleadoSfccbdmq.kardex.egreso}"/>
+                            <h:outputLabel value="Fecha de emisión:" />
+                            <h:outputLabel value="#{abonosEmpleadoSfccbdmq.kardex.fechamov}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputLabel>
+                        </h:panelGrid>
+                        <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                            <ace:panel  header ="Origen">
+                                <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                                    <h:outputLabel value="Banco:" />
+                                    <h:outputLabel value="#{abonosEmpleadoSfccbdmq.kardex.banco.nombre}"/>
+                                    <h:outputLabel value="Cta No:" />
+                                    <h:outputLabel value="#{abonosEmpleadoSfccbdmq.kardex.banco.numerocuenta}"/>
+                                </h:panelGrid>
+                            </ace:panel>
+                        </h:panelGrid>
+                        <ace:dataTable 
+                            value="#{abonosEmpleadoSfccbdmq.listarenglones}"
+                            var="itemDetallesImprimir"
+                            rowIndexVar="row"
+                            style="display:block;width: 90%">
+                            <f:facet name="header">Contabilización : #{abonosEmpleadoSfccbdmq.periodo}</f:facet>
+                            <ace:column  headerText="Cuenta"  style="text-align: left">
+                                <h:outputText  value="#{itemDetallesImprimir.cuenta}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nombre"  style="text-align: left">
+                                <h:outputText  value="#{cuentasSfccbdmq.traerNombre(itemDetallesImprimir.cuenta)}"/>
+                            </ace:column>
+
+                            <ace:column  headerText="Referencia"  style="text-align: left">
+                                <h:outputText  value="#{itemDetallesImprimir.referencia}"/>
+                            </ace:column>
+
+                            <ace:column  headerText="Débitos" style="text-align: right">
+                                <h:outputText  value="#{itemDetallesImprimir.valor}" rendered="#{asientosSfccbdmq.isCredito(itemDetallesImprimir.valor)}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Créditos" style="text-align: right">
+                                <h:outputText  value="#{itemDetallesImprimir.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemDetallesImprimir.valor)}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+
+                        </ace:dataTable>
+                        <ace:dataTable  value="#{abonosEmpleadoSfccbdmq.listaAmortizaciones}"
+                                        var="amortizacionItem"
+                                        style="display:block;width: 90%">
+                            <f:facet name="header">Tabla de Amortización Anticipo : #{abonosEmpleadoSfccbdmq.prestamo.empleado.entidad.toString()} </f:facet>
+                            <ace:column  headerText="Año"  style="text-align: left">
+                                <h:outputText value="#{amortizacionItem.anio}"/>
+                            </ace:column>
+                            <ace:column  headerText="Mes"  style="text-align: left">
+                                <h:outputText value="#{amortizacionItem.mes}"/>
+                            </ace:column>
+                            <ace:column  headerText="Cuota" style="text-align: right">
+                                <h:outputText  value="#{amortizacionItem.cuota}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+
+                            <ace:column  headerText="Valor Pagado" style="text-align: right">
+                                <h:outputText  value="#{amortizacionItem.valorpagado}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+
+                        </ace:dataTable>
+                        
+                    </ace:panel>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{abonosEmpleadoSfccbdmq.formularioAmortizacion.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

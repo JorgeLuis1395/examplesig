@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{novedadesConcepto.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <!--<ace:panel header="Parámetros de Búsqueda">-->
+                    <h:panelGrid columns="2" rendered="#{!novedadesConcepto.formulario.mostrar}">
+                        <h:outputText value="Mes" />
+                        <h:inputText value="#{novedadesConcepto.mes}"/>
+                        <h:outputText value="Año:" />
+                        <h:inputText value="#{novedadesConcepto.anio}"/>
+                        <h:outputLabel value="Concepto :"  />
+                        <h:selectOneMenu value="#{novedadesConcepto.concepto}" >
+                            <f:selectItems value="#{conceptosSfccbdmq.comboConceptosNovedades}"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{novedadesConcepto.buscar()}" rendered="#{!novedadesConcepto.formulario.mostrar}" />
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{novedadesConcepto.grabar()}" rendered="#{novedadesConcepto.formulario.mostrar}" />
+                            <ace:menuItem value="limpiar Valores" icon="ui-icon ui-icon-check"  action="#{novedadesConcepto.limpiar()}" rendered="#{novedadesConcepto.formulario.mostrar}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{novedadesConcepto.cancelar()}" />
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <h:panelGrid columns="5" width="100%" rendered="#{novedadesConcepto.formulario.mostrar}">
+                        <h:outputLabel value="Separador de campos :"/>
+                        <h:inputText value="#{novedadesConcepto.separador}" size="3">
+                            <ace:ajax execute="@all"/>
+                        </h:inputText>
+                        <h:outputLabel value="Archivo a Subir:" />
+
+                        <ace:fileEntry id="file-entry" 
+
+                                       maxFileCount="1" 
+                                       maxFileCountMessage="Máximo un archivo" 
+                                       fileEntryListener="#{novedadesConcepto.archivoListener}" 
+                                       maxFileSize="6291456" 
+                                       maxFileSizeMessage="Tamaño muy grande." 
+                                       maxTotalSize="18874368" 
+                                       maxTotalSizeMessage="Total del tamaño muy grande." 
+                                       useOriginalFilename="true" 
+                                       useSessionSubdir="true"/>
+                        <h:commandButton type="submit" value="Cargar datos"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid width="100%" rendered="#{novedadesConcepto.listaNovedadesxempleado.size()>0}">
+                        <ace:dataTable 
+                            value="#{novedadesConcepto.listaNovedadesxempleado}"
+                            var="novedadItem"
+                            binding="#{novedadesConcepto.formulario.fila}">
+                            <f:facet name="header">#{novedadesConcepto.concepto.nombre}</f:facet>
+                            <ace:column  headerText="C.I."  style="text-align: left">
+                                <h:outputText value="#{novedadItem.empleado.entidad.pin}"/>
+                            </ace:column>
+                            <ace:column  headerText="Empleado"  style="text-align: left">
+                                <h:outputText value="#{novedadItem.empleado.entidad.toString()}"/>
+                            </ace:column>
+                            <!--                            <ace:column  headerText="Ingreso" style="text-align: left">
+                                                            <h:graphicImage url="../resources/images/si.png" rendered="#{novedadItem.concepto.concepto.ingreso}"/>
+                                                            <h:graphicImage url="../resources/images/no.png" rendered="#{!novedadItem.concepto.concepto.ingreso}"/>
+                                                        </ace:column>-->
+                            <ace:column  headerText="Valor" style="text-align: left">
+                                <h:inputText   value="#{novedadItem.valor}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%" rendered="#{novedadesConcepto.listaPagosEmpleados.size()>0}">
+                        <ace:dataTable 
+                            value="#{novedadesConcepto.listaPagosEmpleados}"
+                            var="pagosItem">
+                            <f:facet name="header">#{novedadesConcepto.concepto.nombre}</f:facet>
+                            <ace:column  headerText="C.I."  style="text-align: left">
+                                <h:outputText value="#{pagosItem.empleado.entidad.pin}"/>
+                            </ace:column>
+                            <ace:column  headerText="Empleado"  style="text-align: left">
+                                <h:outputText value="#{pagosItem.empleado.entidad.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Valor" style="text-align: left">
+                                <h:inputText   value="#{pagosItem.valor}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{novedadesConcepto.buscar()}" rendered="#{!novedadesConcepto.formulario.mostrar}" />
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{novedadesConcepto.grabar()}" rendered="#{novedadesConcepto.formulario.mostrar}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{novedadesConcepto.cancelar()}" />
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <ace:messages/>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

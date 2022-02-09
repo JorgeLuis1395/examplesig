@@ -1,0 +1,179 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <ace:panel id="panelImprimir" style="display:block;">
+        <h:panelGroup>
+            <h:panelGrid width="90%">
+                <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+                <h:panelGrid  width="90%" columns="2" style="text-align: right">
+                    <h:outputText value="Usuario :"/>
+                    <h:outputText value="#{parametrosSfccbdmq.logueado.userid}"/>
+                    <h:outputText value="Fecha :"/>
+                    <h:outputText value="#{parametrosSfccbdmq.fechaActual}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                    </h:outputText>
+                </h:panelGrid>
+                <h:panelGrid  width="90%" columns="1" style="text-align: center">
+                    <h3>Cambio de Custodio</h3>
+                </h:panelGrid>
+
+                <h:panelGrid columns="2" width="90%">
+                    <h:outputLabel value="Tipo de Alta:"/>
+                    <h:outputLabel value="#{cambioCustodioActivosSfccbdmq.activo.alta.descripcion}"/>
+                    <h:outputLabel value="Poliza de Seguros:"/>
+                    <h:outputLabel value="#{cambioCustodioActivosSfccbdmq.activo.poliza.toString()}"/>
+                    <h:outputLabel value="Clasificación:"/>
+                    <h:outputLabel value="#{cambioCustodioActivosSfccbdmq.activo.clasificacion.toString()}" />
+                    <h:outputLabel value="Observaciones:" />
+                    <h:outputLabel value="#{cambioCustodioActivosSfccbdmq.tacking.descripcion}" />
+                </h:panelGrid>
+                <h:panelGrid columns="2" width="90%" >
+                    <h:outputLabel value="Custodio Origen:"/>
+                    <h:outputLabel value="#{cambioCustodioActivosSfccbdmq.tacking.cuenta1}" />
+                    <h:outputLabel value="Custodio destino:" />
+                    <h:outputLabel value="#{cambioCustodioActivosSfccbdmq.tacking.cuenta2}" />
+
+                </h:panelGrid>
+
+                <h:panelGrid columns="4" width="90%">
+                    <h:outputLabel value="Grupo:" />
+                    <h:outputText value="#{cambioCustodioActivosSfccbdmq.activo.grupo.toString()}"/>
+                    <h:outputLabel value="Sub Grupo:" />
+                    <h:outputText value="#{cambioCustodioActivosSfccbdmq.activo.subgrupo.toString()}"/>
+                    <h:outputLabel value="Clasificación:" />
+                    <h:outputText value="#{cambioCustodioActivosSfccbdmq.activo.clasificacion.nombre}"/>
+                    <h:outputLabel value="Centro de Costo :" />
+                    <h:outputText value="#{ccostoSfccbdmq.traerNombre(cambioCustodioActivosSfccbdmq.activo.ccosto)}"/>
+                    <h:outputLabel value="Nombre :" />
+                    <h:outputLabel value="#{cambioCustodioActivosSfccbdmq.activo.nombre}" />
+                    <h:outputLabel value="Marca:" />
+                    <h:outputLabel value="#{cambioCustodioActivosSfccbdmq.activo.marca}" />
+                    <h:outputLabel value="Modelo:" />
+                    <h:outputLabel value="#{cambioCustodioActivosSfccbdmq.activo.modelo}" />
+                    <h:outputLabel value="Año fabricación:" />
+                    <h:outputLabel value="#{cambioCustodioActivosSfccbdmq.activo.aniofabricacion}" />
+                    <h:outputLabel value="Color:" />
+                    <h:outputLabel value="#{cambioCustodioActivosSfccbdmq.activo.color}" />
+                </h:panelGrid>
+                <h:panelGrid columns="4" width="100%" border="1">
+                    <h:outputLabel value="Código:" for="codigo"/>
+                    <h:outputLabel value="#{cambioCustodioActivosSfccbdmq.activo.codigo}" title="Codigo"/>
+                    <h:outputLabel value="Código Inventario:" for="inventario" />
+                    <h:outputText  value="#{cambioCustodioActivosSfccbdmq.activo.inventario}" title="Inventario" />
+                    <h:outputLabel value="Código Alterno:" for="alterno" />
+                    <h:outputText  value="#{cambioCustodioActivosSfccbdmq.activo.alterno}" title="Alterno" />
+                    <h:outputLabel value="Código de Barras:" for="barras" />
+                    <h:outputText value="#{cambioCustodioActivosSfccbdmq.activo.barras}" title="Barras" />
+                    <h:outputLabel value="Numero de serie:" for="numeroserie" />
+                    <h:outputText value="#{cambioCustodioActivosSfccbdmq.activo.numeroserie}" title="Numeroserie" />
+                </h:panelGrid>
+                <h:panelGrid columns="1" width="90%">
+                    <h:outputLabel value="Descripción:"/>
+                    <h:outputLabel value="#{cambioCustodioActivosSfccbdmq.activo.descripcion}"/>
+                    <h:outputLabel value="Observaciones :"/>
+                    <h:outputLabel value="#{cambioCustodioActivosSfccbdmq.activo.observaciones}"/>
+                </h:panelGrid>
+                <h:panelGrid columns="4" width="90%">
+                    <h:outputLabel value="Edificio:" />
+                    <h:outputText  value="#{cambioCustodioActivosSfccbdmq.activo.localizacion.edificio.nombre}" />
+                    <h:outputLabel value="Oficina:" />
+                    <h:outputText  value="#{cambioCustodioActivosSfccbdmq.activo.localizacion.nombre}" />
+                </h:panelGrid>
+
+                <h:panelGrid columns="6" width="90%">
+                    <h:outputLabel value="Fecha Ingreso:"/>
+                    <h:outputText value="#{cambioCustodioActivosSfccbdmq.activo.fechaingreso}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                    <h:outputLabel value="Valor alta:" />
+                    <h:outputText value="#{cambioCustodioActivosSfccbdmq.activo.valoralta}" title="Valor alta" />
+                </h:panelGrid>    
+                <h:panelGrid width="90%" rendered="#{cambioCustodioActivosSfccbdmq.hijos.size()>0}">
+                    <ace:dataTable id="tablaHijosUno" 
+                                   value="#{cambioCustodioActivosSfccbdmq.hijos}"
+                                   var="itemHijosImprime"
+                                   paginator="false"
+                                   lazy="false"
+                                   resizableColumns="true"
+                                   rowIndexVar="row"
+                                   paginatorPosition="both"
+                                   rowsPerPageTemplate="5,10,15,50,all"
+                                   paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                   >
+
+                        <f:facet name="header">Componentes</f:facet>
+                        <ace:column  headerText="Fecha Ingreso"  style="text-align: right">
+                            <h:outputText  value="#{itemHijosImprime.fechaingreso}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Nombre"  style="text-align: left">
+                            <h:outputText  value="#{itemHijosImprime.nombre}"/>
+                        </ace:column>
+                        <ace:column  headerText="Descripción"  style="text-align: left">
+                            <h:outputText  value="#{itemHijosImprime.descripcion}"/>
+                        </ace:column>
+                        <ace:column  headerText="Marca"  style="text-align: left">
+                            <h:outputText  value="#{itemHijosImprime.marca}"/>
+                        </ace:column>
+                        <ace:column  headerText="Modelo"  style="text-align: left">
+                            <h:outputText  value="#{itemHijosImprime.modelo}"/>
+                        </ace:column>
+                        <ace:column  headerText="No Serie"  style="text-align: left">
+                            <h:outputText  value="#{itemHijosImprime.numeroserie}"/>
+                        </ace:column>
+                        <ace:column  headerText="Código Alterno"  style="text-align: left">
+                            <h:outputText  value="#{itemHijosImprime.alterno}"/>
+                        </ace:column>
+                        <ace:column  headerText="Código de barras"  style="text-align: left">
+                            <h:outputText  value="#{itemHijosImprime.barras}"/>
+                        </ace:column>
+                        <ace:column  headerText="Valor Alta"  style="text-align: right">
+                            <h:outputText  value="#{itemHijosImprime.valoralta}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="% Valor Residual"  style="text-align: right">
+                            <h:outputText  value="#{itemHijosImprime.valorresidual}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                        </ace:column>
+                    </ace:dataTable>
+                </h:panelGrid>
+                <h:panelGrid  width="90%" columns="1">
+                    <h:outputLabel value="" />
+                    <h:outputLabel value="" />
+                    <h:outputLabel value="" />
+                    <h:outputLabel value="" />
+                    <h:outputLabel value="" />
+                    <h:outputLabel value="" />
+                    <h:outputLabel value="" />
+                </h:panelGrid>
+                <h:panelGrid  width="90%" columns="5">
+                    <h:outputLabel value="f.----------------------------" />
+                    <h:outputLabel value="" />
+                    <h:outputLabel value="f.----------------------------" />
+                    <h:outputLabel value="" />
+                    <h:outputLabel value="f.----------------------------" />
+                    <h:outputLabel value="Preparado por"  />
+                    <h:outputLabel value="" />
+                    <h:outputLabel value="Rec. Conforme"  />
+                    <h:outputLabel value="" />
+                    <h:outputLabel value="Aprobado por"  />
+
+                </h:panelGrid>
+            </h:panelGrid>
+        </h:panelGroup>
+    </ace:panel>
+</html>

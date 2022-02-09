@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{reporteStockConsolidado.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <ui:include src="../BuscarSuministro.xhtml" />
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Bodega :" />
+                        <h:selectOneMenu  value="#{reporteStockConsolidado.bodega}">
+                            <f:selectItems value="#{bodegasSfccbdmq.comboBodegasSuministrost}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Familia :" />
+                        <h:selectOneMenu value="#{tiposSuministrosSfccbdmq.familiaSuministros}">
+                            <f:selectItems value="#{codigosSfccbdmq.comboFamiliaSuministros}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Tipo :"  />
+                        <h:selectOneMenu value="#{suministrosSfccbdmq.tipo}">
+                            <f:selectItems value="#{tiposSuministrosSfccbdmq.comboTipoFamiliaEspacio}" />
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Suministro:" for="suministro" />
+                        <h:selectOneMenu id="suministro" value="#{reporteStockConsolidado.suministro}" title="Suministro">
+                            <f:selectItems value="#{suministrosSfccbdmq.comboSuministroTipo}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="4">
+                        <h:outputLabel value="Desde:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{reporteStockConsolidado.desde}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Hasta:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{reporteStockConsolidado.hasta}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                    </h:panelGrid> 
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteStockConsolidado.buscar()}"  />
+                            <ace:menuItem value="Hoja Elect." icon="ui-icon ui-icon-calculator" action="#{reporteStockConsolidado.exportar()}"/>
+                        </ace:menuBar>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="panel"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{reporteStockConsolidado.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{reporteStockConsolidado.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla"
+                                       value="#{reporteStockConsolidado.listaReporte}"
+                                       var="novedadItem"
+                                       lazy="false"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="10,15,30,50,All"
+                                       currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="30"
+                                       scrollHeight="500"
+                                       scrollable="true">
+
+                            <ace:columnGroup  type="header">
+                                <ace:row>
+                                    <ace:column  rowspan="2" headerText="SUMINISTRO"/>
+                                    <ace:column  rowspan="2" headerText="NOMBRE"/>
+
+                                    <ace:column  colspan="2" headerText="SALDO INICIAL"/>
+                                    <ace:column  colspan="2" headerText="COSTO INICIAL"/>
+                                    <ace:column  colspan="2" headerText="CANTIDAD INGRESOS"/>
+                                    <ace:column  colspan="2" headerText="COSTO INGRESOS"/>
+                                    <ace:column  colspan="2" headerText="CANTIDAD Tx INGRESOS"/>
+                                    <ace:column  colspan="2" headerText="COSTO Tx INGRESOS"/>
+                                    <ace:column  colspan="2" headerText="CANTIDAD EGRESOS"/>
+                                    <ace:column  colspan="2" headerText="COSTO EGRESOS"/>
+                                    <ace:column  colspan="2" headerText="CANTIDAD Tx EGRESOS"/>
+                                    <ace:column  colspan="2" headerText="COSTO Tx EGRESOS"/>
+                                    <ace:column  colspan="2" headerText="SALDO FINAL"/>
+                                    <ace:column  colspan="2" headerText="COSTO FINAL"/>
+                                </ace:row>
+                                <ace:row>
+                                    <ace:column  headerText="CORRIENTE"/>
+                                    <ace:column  headerText="INVERSIÓN"/>
+                                    <ace:column  headerText="CORRIENTE"/>
+                                    <ace:column  headerText="INVERSIÓN"/>
+                                    <ace:column  headerText="CORRIENTE"/>
+                                    <ace:column  headerText="INVERSIÓN"/>
+                                    <ace:column  headerText="CORRIENTE"/>
+                                    <ace:column  headerText="INVERSIÓN"/>
+                                    <ace:column  headerText="CORRIENTE"/>
+                                    <ace:column  headerText="INVERSIÓN"/>
+                                    <ace:column  headerText="CORRIENTE"/>
+                                    <ace:column  headerText="INVERSIÓN"/>
+                                    <ace:column  headerText="CORRIENTE"/>
+                                    <ace:column  headerText="INVERSIÓN"/>
+                                    <ace:column  headerText="CORRIENTE"/>
+                                    <ace:column  headerText="INVERSIÓN"/>
+                                    <ace:column  headerText="CORRIENTE"/>
+                                    <ace:column  headerText="INVERSIÓN"/>
+                                    <ace:column  headerText="CORRIENTE"/>
+                                    <ace:column  headerText="INVERSIÓN"/>
+                                    <ace:column  headerText="CORRIENTE"/>
+                                    <ace:column  headerText="INVERSIÓN"/>
+                                    <ace:column  headerText="CORRIENTE"/>
+                                    <ace:column  headerText="INVERSIÓN"/>
+                                </ace:row>
+                            </ace:columnGroup>
+                            <ace:column style="text-align: left">
+                                <h:outputText value="#{novedadItem.suministroEntidad.codigobarras}"/>
+                            </ace:column>
+                            <ace:column style="text-align: left">
+                                <h:outputText value="#{novedadItem.suministroEntidad.nombre}"/>
+                            </ace:column>
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.ingreso}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.egreso}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.saldoinicial}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.saldoinicialinv}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.cantidadingreso}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.cantidadingresoinv}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.costounitarioing}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.costounitarioInving}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <!--transferencias ingresos-->
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.txIngresos}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.txIngresosInv}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.txCostoIngresos}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.txCostoIngresosInv}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <!--fin transferencias-->
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.cantidadegreso}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.cantidadegresoinv}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.costounitarioegreso}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.costounitarioInvegreso}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <!--transferencias ingresos-->
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.txEgresos}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.txEgresosInv}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.txCostoEgresos}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.txCostoEgresosInv}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <!--fin transferencias-->
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.totalingreso}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.totalegreso}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.costopromediosaldo}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right">
+                                <h:outputText value="#{novedadItem.costopromediosaldoInv}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                    <ace:dialog 
+                        header="Exportar"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{reporteStockConsolidado.formularioReporte.mostrar}"
+                        visible="#{reporteStockConsolidado.formularioReporte.mostrar}">
+                        <h:panelGroup>
+                            <ace:dynamicResource fileName="Kardex.xls" id="xsl-boton" label="Exportar a XLS"
+                                                 mimeType="application/xls" resource="#{reporteStockConsolidado.reporteXls}" 
+                                                 style="" type="button"
+                                                 rendered="#{reporteStockConsolidado.reporteXls!=null}"/>
+
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{reporteStockConsolidado.formularioReporte.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

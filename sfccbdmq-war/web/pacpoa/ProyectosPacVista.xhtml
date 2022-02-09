@@ -1,0 +1,318 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:body>
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="Proyectos"
+                           closable="false"
+                           toggleable="true">
+                    <h:panelGrid columns="4" width="100%">
+                        <h:outputLabel value="Año :"/>
+                        <h:inputText value="#{proyectosPac.anio}"/>
+                        <h:outputLabel value="Direccion:" />
+                        <h:selectOneMenu value="#{proyectosPac.direccion}">
+                            <f:selectItems value="#{consultasPoa.comboDirecciones}" />
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Código de Proyecto:" />
+                        <h:inputText value="#{proyectosPac.codigo}" />
+                        <h:outputLabel value="Nombre de Proyecto:" />
+                        <h:inputText value="#{proyectosPac.nombre}" />
+
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{proyectosPac.buscar()}"/>
+
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+
+                </ace:panel>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="true">
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{proyectosPac.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{proyectosPac.formulario.pantalla}" 
+                                          target="tabla" fileName="Proyectos_#{proyectosPac.anio}"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       paginatorAlwaysVisible="true"
+                                       value="#{proyectosPac.proyectos}"
+                                       var="item"
+                                       paginator="true"
+                                       lazy="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="10,15,20,25,50,100,200"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="100">
+                            <ace:tableConfigPanel
+                                dragHandle=".ui-tableconf-header"
+                                columnNameConfigurable="true"
+                                columnVisibilityConfigurable="true"
+                                columnOrderingConfigurable="true"
+                                modal="true"
+                                type="last-col"/>
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column headerText="Acciones" style="text-align: left">
+                                <ace:menuButton  effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{proyectosPac.analista(item)}" value="Asignar Analista" icon="ui-icon ui-icon-person"/>
+                                    <ace:menuItem action="#{proyectosPac.proceso(item)}" value="Fecha inicio proceso" icon="ui-icon ui-icon-script" />                                                                                                           
+                                    <ace:menuItem action="#{proyectosPac.publicacion(item)}" value="Fecha publicación" icon="ui-icon ui-icon-folder-open" />
+                                    <ace:menuItem action="#{proyectosPac.desierto(item)}" value="Fecha declarado desierto" icon="ui-icon ui-icon-folder-collapsed" />
+                                    <ace:menuItem action="#{proyectosPac.modificarPAC(item)}" value="Editar" icon="ui-icon ui-icon-pencil" />
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="Código" style="text-align: left" filterBy="#{item.codigo}" filterMatchMode="contains">
+                                <h:outputText  value="#{item.codigo}"/>
+                            </ace:column>
+                            <ace:column  headerText="Partida" style="text-align: left" filterBy="#{item.codigo}" filterMatchMode="contains">
+                                <h:outputText  value="#{proyectosPac.traerPartidaProyecto(item)}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nombre" style="text-align: left" filterBy="#{item.nombre}" filterMatchMode="contains">
+                                <h:outputText  value="#{item.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Dirección" style="text-align: left">
+                                <h:outputText  value="#{consultasPoa.traerDireccion(item.direccion)}"/>
+                            </ace:column>
+                            <ace:column  headerText="CPC" style="text-align: left">
+                                <h:outputText  value="#{item.cpc}"/>
+                            </ace:column>
+                            <ace:column  headerText="Tipo Compra" style="text-align: left">
+                                <h:outputText  value="#{consultasPoa.traerTipoCompra(item.tipocompra)}"/>
+                            </ace:column>
+                            <ace:column  headerText="Detalle" style="text-align: left">
+                                <h:outputText  value="#{item.detalle}"/>
+                            </ace:column>
+                            <ace:column  headerText="Cuatrimestre 1"  style="text-align: left">
+                                <h:outputText  value="#{item.cuatrimestre1?'S':''}"/>
+                            </ace:column>
+                            <ace:column  headerText="Cuatrimestre 2"  style="text-align: left">
+                                <h:outputText  value="#{item.cuatrimestre2?'S':''}"/>
+                            </ace:column>
+                            <ace:column  headerText="Cuatrimestre 3"  style="text-align: left">
+                                <h:outputText  value="#{item.cuatrimestre3?'S':''}"/>
+                            </ace:column>
+                            <ace:column  headerText="Cantidad" style="text-align: left">
+                                <h:outputText  value="#{item.cantidad}"/>
+                            </ace:column>
+                            <ace:column  headerText="Unidad" style="text-align: left">
+                                <h:outputText  value="#{consultasPoa.traerTipoUnidad(item.unidad)}"/>
+                            </ace:column>
+                            <ace:column  headerText="Tipo de Producto"  style="text-align: left">
+                                <h:outputText  value="#{consultasPoa.traerTipoProducto(item.tipoproducto)}"/>
+                            </ace:column>
+                            <!--                            <ace:column  headerText="Catalogo Electronico"  style="text-align: left">
+                                                            <h:outputText  value="#{item.catalogoStr?'S':''}"/>
+                                                        </ace:column>-->
+                            <ace:column  headerText="Procedimiento Contratacion"  style="text-align: left">
+                                <h:outputText  value="#{consultasPoa.traerTipoProcedimiento(item.procedimientocontratacion)}"/>
+                            </ace:column>
+                            <!--                            <ace:column  headerText="Fondo bid"  style="text-align: left">
+                                                            <h:outputText  value="#{item.fondoStr?'S':''}"/>
+                                                        </ace:column>-->
+                            <ace:column  headerText="Número Operación"  style="text-align: left">
+                                <h:outputText  value="#{item.numerooperacion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Código Operación"  style="text-align: left">
+                                <h:outputText  value="#{item.codigooperacion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Regimen"  style="text-align: left">
+                                <h:outputText  value="#{consultasPoa.traerTipoRegimen(item.regimen)}"/>
+                            </ace:column>
+                            <ace:column  headerText="Presupuesto"  style="text-align: left">
+                                <h:outputText  value="#{consultasPoa.traerTipoPresupuesto(item.presupuesto)}"/>
+                            </ace:column>
+                            <ace:column  headerText="Valor" style="text-align: left">
+                                <h:outputText  value="#{item.valoriva}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+
+
+
+                <ace:dialog 
+                    header="Proceso"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{proyectosPac.formularioProceso.mostrar}"
+                    visible="#{proyectosPac.formularioProceso.mostrar}">
+
+                    <h:panelGrid columns="2">
+                        <!--                                FM13SEP2018-->
+
+                        <h:outputLabel value="Fecha Solicitud:" />
+                        <ace:dateTimeEntry navigator="true" value="#{proyectosPac.inicioProceso}" 
+                                           popupIcon="ui-icon ui-icon-calendar"  renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                        </ace:dateTimeEntry>  
+
+                        <h:outputLabel value="Observación:" />
+                        <h:inputTextarea cols="60" rows="4" value="#{proyectosPac.observacion}" title="Observación" />
+
+                    </h:panelGrid>
+
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{proyectosPac.grabarProceso}" rendered="#{proyectosPac.formularioProceso.nuevo}" />   
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{proyectosPac.grabarPublicacion()}" rendered="#{proyectosPac.formularioProceso.modificar}" />                       
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{proyectosPac.grabarDesierto()}" rendered="#{proyectosPac.formularioProceso.borrar}" />                       
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{proyectosPac.formularioProceso.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+
+                <!--                FM 15 ENE 2018-->
+
+                <ace:dialog 
+                    header="Asignar analista"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{proyectosPac.formularioAnalista.mostrar}"
+                    visible="#{proyectosPac.formularioAnalista.mostrar}">
+
+                    <h:panelGrid rendered="#{!proyectosPac.formularioAnalista.modificar}" >
+                        <ui:include src="../BuscarEmpleadoAdicional.xhtml"/>
+                    </h:panelGrid>
+
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{proyectosPac.grabarAnalista()}" rendered="#{proyectosPac.formularioAnalista.nuevo}" />   
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{proyectosPac.editarAnalista()}" rendered="#{proyectosPac.formularioAnalista.modificar}" /> 
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{proyectosPac.formularioAnalista.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Certificacion PAC"
+                    closable="false"
+                    modal="true"
+                    draggable="false"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{proyectosPac.formularioCertificacion.mostrar}"
+                    visible="#{proyectosPac.formularioCertificacion.mostrar}">
+                    <h:panelGroup>    
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Año: " />
+                            <h:outputLabel value="#{proyectosPac.anio}" />
+                            <!--                            <h:outputLabel value="Partida: " />
+                                                        <h:outputLabel value="#{proyectosPac.traerPartidaProyecto(proyectosPac)}" />-->
+
+                            <h:outputLabel value="CPC:" />
+                            <h:selectOneMenu value="#{proyectosPac.proyecto.cpc}" style="width: 300px" >
+                                <f:selectItems value="#{consultasPoa.comboCPC}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Tipo de Compra:" />
+                            <h:selectOneMenu value="#{proyectosPac.proyecto.tipocompra}"  >
+                                <f:selectItems value="#{consultasPoa.tipoCompra}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Detalle:" />
+                            <h:inputTextarea value="#{proyectosPac.proyecto.detalle}" title="Detalle" cols="40"/>
+                            <h:outputLabel value="Cantidad:" />
+                            <h:inputText value="#{proyectosPac.proyecto.cantidad}" />
+                            <h:outputLabel value="Unidad" />
+                            <h:selectOneMenu value="#{proyectosPac.proyecto.unidad}"  >
+                                <f:selectItems value="#{consultasPoa.tipoUnidad}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Tipo de Presupuesto de Inversión:" />
+                            <h:selectOneMenu value="#{proyectosPac.proyecto.presupuesto}"   >
+                                <f:selectItems value="#{consultasPoa.tipoPresupuesto}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Impuesto :" />
+                            <h:selectOneMenu  value="#{proyectosPac.proyecto.impuesto}">
+                                <f:selectItems value="#{impuestosSfccbdmq.comboImpuestos2}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Costo Unitario: " />
+                            <h:inputText  value="#{proyectosPac.proyecto.valoriva}">
+                                <ace:ajax execute="@all" render="@all"/>
+                                <f:convertNumber pattern="##0.00"/>
+                            </h:inputText>
+                            <h:outputLabel value="Valor total: " />
+                            <h:outputText  value="#{proyectosPac.proyecto.valoriva + proyectosPac.valorTotal}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Cuatrimestre 1:" />
+                            <ace:checkboxButton value="#{proyectosPac.proyecto.cuatrimestre1}"/>
+                            <h:outputLabel value="Cuatrimestre 2:" />
+                            <ace:checkboxButton value="#{proyectosPac.proyecto.cuatrimestre2}"/>
+                            <h:outputLabel value="Cuatrimestre 3:" />
+                            <ace:checkboxButton value="#{proyectosPac.proyecto.cuatrimestre3}"/>
+                            <h:outputLabel value="Tipo de Producto:" />
+                            <h:selectOneMenu value="#{proyectosPac.proyecto.tipoproducto}"  >
+                                <f:selectItems value="#{consultasPoa.tipoProducto}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Catálogo Electrónico:" />
+                            <ace:checkboxButton value="#{proyectosPac.proyecto.catalogoelectronico}"/>
+                            <h:outputLabel value="Procedimiento de Contratación:" />
+                            <h:selectOneMenu value="#{proyectosPac.proyecto.procedimientocontratacion}"   >
+                                <f:selectItems value="#{consultasPoa.tipoProcedimiento}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Fondos Bid:"/>
+                            <ace:checkboxButton value="#{proyectosPac.proyecto.fondobid}">
+                                <ace:ajax execute="all"/>
+                            </ace:checkboxButton>
+                            <h:outputLabel value="Código de Operación: " rendered="#{proyectosPac.proyecto.fondobid}"/>
+                            <h:inputText value="#{proyectosPac.proyecto.codigooperacion}" rendered="#{proyectosPac.proyecto.fondobid}"/>
+                            <h:outputLabel value="Número de Operación: " rendered="#{proyectosPac.proyecto.fondobid}"/>
+                            <h:inputText value="#{proyectosPac.proyecto.numerooperacion}" rendered="#{proyectosPac.proyecto.fondobid}"/>
+                            <h:outputLabel value="Tipo de Régimen:" />
+                            <h:selectOneMenu value="#{proyectosPac.proyecto.regimen}"  >
+                                <f:selectItems value="#{consultasPoa.tipoRegimen}" />
+                            </h:selectOneMenu>
+                            <!--                            <h:outputLabel  value="Fecha de Utilización"/>
+                                                        <ace:dateTimeEntry navigator="true" id="fecha" value="#{proyectosPac.proyecto.fechautilizacion}" 
+                                                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                        </ace:dateTimeEntry>-->
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{proyectosPac.grabarCertificacionPAC()}" 
+                                          rendered="#{proyectosPac.formularioCertificacion.modificar}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{proyectosPac.formularioCertificacion.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                </ace:dialog>
+
+
+
+                <ui:include src="DescargarDocumentos.xhtml"/>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

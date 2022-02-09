@@ -1,0 +1,228 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{consultarAsientosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGroup>
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="Tipo de Asiento :" />
+                            <h:selectOneMenu  value="#{consultarAsientosSfccbdmq.tipoAsiento}">
+                                <f:selectItems value="#{tipoAsientoSfccbdmq.comboTipoasiento}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Equivalencia : " for="equivalencia" />
+                            <h:selectOneMenu id="equivalencia" value="#{consultarAsientosSfccbdmq.equivalencia}" title="Equivalencia" >
+                                <f:selectItems value="#{codigosSfccbdmq.comboEquivalenciaTipoAsiento}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Número de Documento :"/>
+                            <h:inputText  value="#{consultarAsientosSfccbdmq.numero}"/>
+                            <!--                        </h:panelGrid>
+                                                    <h:panelGrid columns="4" width="50%">-->
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{consultarAsientosSfccbdmq.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{consultarAsientosSfccbdmq.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+
+
+                            <h:outputLabel value="Módulo :"/>
+                            <h:selectOneMenu value="#{consultarAsientosSfccbdmq.modulo}">
+                                <f:selectItems value="#{codigosSfccbdmq.comboModulos}"/>
+                                <!--<ace:ajax execute="@all"/>-->
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Número de Documento en módulo:"/>
+                            <h:inputText  value="#{consultarAsientosSfccbdmq.numeroModulo}"/>
+                            <h:outputLabel value="Incluye Auxiliares:"/>
+                            <h:selectBooleanCheckbox  value="#{consultarAsientosSfccbdmq.conAuxiliares}"/>
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <h:outputLabel value="Concepto:"/>
+                            <h:inputTextarea cols="60" rows="4" value="#{consultarAsientosSfccbdmq.descripcion}"/>
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{consultarAsientosSfccbdmq.buscar()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                   for="panel"
+                                   blockUI="panel"
+                                   autoCenter="true"
+                                   activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Bùsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{consultarAsientosSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{consultarAsientosSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <!--                    <h:panelGrid styleClass="centeredPanelGrid">
+                                            
+                                        </h:panelGrid>-->
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{consultarAsientosSfccbdmq.cabeceras}"
+                                       var="item"
+                                       paginator="true"
+                                       lazy="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       scrollHeight="600"
+                                       scrollable="true"
+                                       binding="#{consultarAsientosSfccbdmq.formulario.fila}">
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{consultarAsientosSfccbdmq.imprimir(item)}" value="Imprimir Detallado" icon="ui-icon ui-icon-print"/>
+                                    <ace:menuItem action="#{consultarAsientosSfccbdmq.imprimirResumido(item)}" value="Imprimir Resumido" icon="ui-icon ui-icon-print"/>
+                                </ace:menuButton>
+                                <ace:submitMonitor id="submitMonitorPanel"
+                                                   for="menuButton"
+                                                   blockUI="menuButton"
+                                                   autoCenter="true"
+                                                   activeLabel="Un Momento por favor"/>
+                            </ace:column> 
+                            <ace:column  headerText="Fecha" style="text-align: right" sortBy="#{item.fecha}">
+                                <h:outputText  value="#{item.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Tipo"  style="text-align: left" sortBy="#{item.tipo}">
+                                <h:outputText  value="#{item.tipo.nombre}"/>
+                            </ace:column>  
+                            <ace:column  headerText="No."  style="text-align: left" sortBy="#{item.numero}">
+                                <h:outputText  value="#{item.numero}"/>
+                            </ace:column>  
+                            <ace:column  headerText="Descripción"  style="text-align: left" sortBy="#{item.descripcion}">
+                                <h:outputText  value="#{item.descripcion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Débitos"  style="text-align: right">
+                                <h:outputText  value="#{consultarAsientosSfccbdmq.debitos}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Créditos"  style="text-align: right">
+                                <h:outputText  value="#{consultarAsientosSfccbdmq.creditos}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+
+                            <ace:column  headerText="Módulo"  style="text-align: left" sortBy="#{item.modulo.nombre}">
+                                <h:outputText  value="#{item.modulo.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="No doc en Módulo" style="text-align: left" sortBy="#{item.idmodulo}">
+                                <h:outputText  value="#{item.idmodulo}"/>
+                            </ace:column>
+                            <ace:column  headerText="Opción" style="text-align: left" sortBy="#{item.opcion}">
+                                <h:outputText  value="#{item.opcion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Usuario"  style="text-align: left">
+                                <h:outputText  value="#{item.usuario}"/>
+                            </ace:column>
+                            <ace:column  headerText="F. grabación" style="text-align: left" sortBy="#{item.dia}">
+                                <h:outputText  value="#{item.dia}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{consultarAsientosSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{consultarAsientosSfccbdmq.formulario.mostrar}"
+                    visible="#{consultarAsientosSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <!--                        <h:panelGrid columns="1">
+                                                    <h:commandButton  value="Imprimir">
+                                                        <h:outputText id="printBoth" value="Imprimir"/>
+                                                        <ace:printer for="panelImprimir"/>
+                                                    </h:commandButton>
+                                                </h:panelGrid>-->
+                        <ui:include src="consultaAsiento.xhtml" />
+                        <ace:dynamicResource fileName="Asiento.xls" label="Generar XLS"
+                                             mimeType="application/xls" 
+                                             rendered="#{consultarAsientosSfccbdmq.reporteXls!=null}" 
+                                             resource="#{consultarAsientosSfccbdmq.reporteXls}" 
+                                             style="" type="button"/>
+                        
+                        <ace:dynamicResource fileName="AsientoResumido.pdf" label="Generar PDF"
+                                             mimeType="application/pdf" 
+                                             rendered="#{consultarAsientosSfccbdmq.reporteResumido!=null}" 
+                                             resource="#{consultarAsientosSfccbdmq.reporteResumido}" 
+                                             style="" type="button"/>
+                        <ace:dynamicResource fileName="AsientoResumido.xls" label="Generar XLS"
+                                             mimeType="application/xls" 
+                                             rendered="#{consultarAsientosSfccbdmq.reporteResumidoXls!=null}" 
+                                             resource="#{consultarAsientosSfccbdmq.reporteResumidoXls}" 
+                                             style="" type="button"/>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{consultarAsientosSfccbdmq.formulario.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

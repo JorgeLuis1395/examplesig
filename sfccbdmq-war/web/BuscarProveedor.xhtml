@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:panelGroup>
+        <h:panelGrid columns="2" style="text-align: left">
+            <!--                                <h:outputText id="outputText2" value="R.U.C"/>-->
+            <h:selectOneMenu value="#{proveedoresSfccbdmq.tipobuscar}">
+                <f:selectItem itemLabel="Razón Social del Proveedor" itemValue="-2"/>
+                <f:selectItem itemLabel="R.U.C. del Proveedor" itemValue="-1"/>
+                <f:selectItem itemLabel="Código" itemValue="-4"/>
+                <f:selectItem itemLabel="Nombre comercial del Proveedor" itemValue="-3"/>
+                <ace:ajax execute="@all"/>
+            </h:selectOneMenu>
+            <ace:autoCompleteEntry  listValue="#{proveedoresSfccbdmq.listaProveedores}" 
+                                    listVar="itemProveedor" 
+                                    rows="8" 
+                                    value="#{proveedoresSfccbdmq.ruc}" 
+                                    valueChangeListener="#{proveedoresSfccbdmq.cambiaempresa}" 
+                                    filterBy="#{itemProveedor.empresa.ruc}"
+                                    textChangeListener="#{proveedoresSfccbdmq.proveedorRucChangeEventHandler}"
+                                    width="400"
+                                    label="Buscar por RUC"
+                                    rendered="#{proveedoresSfccbdmq.tipobuscar==-1}">
+                <f:facet name="row">
+                    <h:panelGrid  columns="4"  width="100%" columnClasses="tipo" style="text-align: left;font-size: xx-small">
+                        <h:outputText value="#{itemProveedor.empresa.ruc}"/>
+                        <h:outputText value="#{itemProveedor.empresa.nombre}"/>
+                        <h:outputText value="#{itemProveedor.empresa.nombrecomercial}"/>
+                        <h:outputText value="#{itemProveedor.codigo}"/>
+                    </h:panelGrid>
+                </f:facet>
+                <ace:ajax execute="@all"/>
+            </ace:autoCompleteEntry>
+            <ace:autoCompleteEntry  listValue="#{proveedoresSfccbdmq.listaProveedores}" 
+                                    listVar="itemProveedor" 
+                                    rows="8" 
+                                    value="#{proveedoresSfccbdmq.ruc}" 
+                                    valueChangeListener="#{proveedoresSfccbdmq.cambiaempresa}" 
+                                    filterBy="#{itemProveedor.empresa.nombre}"
+                                    textChangeListener="#{proveedoresSfccbdmq.proveedorChangeEventHandler}"
+                                    width="400"
+                                    label="Buscar por Nombre"
+                                    rendered="#{proveedoresSfccbdmq.tipobuscar==-2}"
+                                    filterMatchMode="none">
+                <f:facet name="row">
+                    <h:panelGrid  columns="4"  width="100%" columnClasses="tipo" style="text-align: left;font-size: xx-small">
+                        <h:outputText value="#{itemProveedor.empresa.nombre}"/>
+                        <h:outputText value="#{itemProveedor.empresa.ruc}"/>
+                        <h:outputText value="#{itemProveedor.empresa.nombrecomercial}"/>
+                        <h:outputText value="#{itemProveedor.codigo}"/>
+                    </h:panelGrid>
+                </f:facet>
+                <ace:ajax execute="@all"/>
+            </ace:autoCompleteEntry>
+            <ace:autoCompleteEntry  listValue="#{proveedoresSfccbdmq.listaProveedores}" 
+                                    listVar="itemProveedor" 
+                                    rows="8" 
+                                    value="#{proveedoresSfccbdmq.ruc}" 
+                                    valueChangeListener="#{proveedoresSfccbdmq.cambiaempresa}" 
+                                    filterBy="#{itemProveedor.empresa.nombrecomercial}"
+                                    textChangeListener="#{proveedoresSfccbdmq.proveedorRazonChangeEventHandler}"
+                                    width="400"
+                                    label="Buscar por Razón"
+                                    rendered="#{proveedoresSfccbdmq.tipobuscar==-3}"
+                                    filterMatchMode="none">
+                <f:facet name="row">
+                    <h:panelGrid  columns="4"  width="100%" columnClasses="tipo" style="text-align: left;font-size: xx-small">
+                        <h:outputText value="#{itemProveedor.empresa.nombrecomercial}"/>
+                        <h:outputText value="#{itemProveedor.empresa.ruc}"/>
+                        <h:outputText value="#{itemProveedor.empresa.nombre}"/>
+                        <h:outputText value="#{itemProveedor.codigo}"/>
+                    </h:panelGrid>
+                </f:facet>
+                <ace:ajax execute="@all"/>
+            </ace:autoCompleteEntry>
+            <ace:autoCompleteEntry  listValue="#{proveedoresSfccbdmq.listaProveedores}" 
+                                    listVar="itemProveedor" 
+                                    rows="8" 
+                                    value="#{proveedoresSfccbdmq.ruc}" 
+                                    valueChangeListener="#{proveedoresSfccbdmq.cambiaempresa}" 
+                                    filterBy="#{itemProveedor.empresa.codigo}"
+                                    textChangeListener="#{proveedoresSfccbdmq.proveedorCodigoChangeEventHandler}"
+                                    width="400"
+                                    label="Buscar por Código"
+                                    rendered="#{proveedoresSfccbdmq.tipobuscar==-4}">
+                <f:facet name="row">
+                    <h:panelGrid  columns="4"  width="100%" columnClasses="tipo" style="text-align: left;font-size: xx-small">
+                        <h:outputText value="#{itemProveedor.codigo}"/>
+                        <h:outputText value="#{itemProveedor.empresa.nombrecomercial}"/>
+                        <h:outputText value="#{itemProveedor.empresa.ruc}"/>
+                        <h:outputText value="#{itemProveedor.empresa.nombre}"/>
+
+                    </h:panelGrid>
+                </f:facet>
+                <ace:ajax execute="@all"/>
+            </ace:autoCompleteEntry>
+        </h:panelGrid>
+
+
+       
+        <h:panelGrid columns="2" style="text-align: left" width="100%">
+            <h:outputText  value="Código :"/>
+            <h:outputText  value=" #{proveedoresSfccbdmq.proveedor.codigo}"/>
+            <h:outputText  value="Nombre :"/>
+            <h:outputText  value=" #{proveedoresSfccbdmq.proveedor.empresa.nombre}"/>
+            <h:outputText  value="Razon Social:"/>
+            <h:outputText  value="#{proveedoresSfccbdmq.proveedor.empresa.nombrecomercial}"/>
+            <h:outputText value="R.U.C.:"/>
+            <h:outputText  value="#{proveedoresSfccbdmq.proveedor.empresa.ruc}"/>
+        </h:panelGrid>
+    </h:panelGroup>
+</html>

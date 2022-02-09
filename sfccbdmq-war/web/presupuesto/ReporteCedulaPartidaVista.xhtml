@@ -1,0 +1,245 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{reporteCedulaPartidaSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="6">
+                        <!--                        <h:outputLabel value="Nivel :"/>
+                                                <h:selectOneMenu value="#{reporteCedulaPartidaSfccbdmq.nivel}">
+                                                    <f:selectItems value="#{reporteCedulaNivelesSfccbdmq.comboNiveles}"/>
+                                                </h:selectOneMenu>-->
+                        <h:outputLabel value="Tipo :" />
+                        <h:selectOneMenu value="#{reporteCedulaPartidaSfccbdmq.ingegrtodos}">
+                            <f:selectItem  itemLabel="Ingresos" itemValue="1"/>
+                            <f:selectItem  itemLabel="Egresos" itemValue="2"/>
+                            <!--<f:selectItem  itemLabel="Todos" itemValue="0"/>-->
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Mensual?:"/>
+                        <h:selectBooleanCheckbox value="#{reporteCedulaPartidaSfccbdmq.mensual}"/>
+                        <h:outputLabel value="Fuente:" for="fuente" />
+                        <h:selectOneMenu id="fuente" value="#{reporteCedulaPartidaSfccbdmq.fuenteFinanciamiento}">
+                            <f:selectItems value="#{codigosSfccbdmq.comboFuenteFinv}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Desde :"/>
+                        <ace:dateTimeEntry navigator="true" value="#{reporteCedulaPartidaSfccbdmq.desde}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Hasta:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{reporteCedulaPartidaSfccbdmq.hasta}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+
+                    </h:panelGrid> 
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Partida:" />
+                        <ace:autoCompleteEntry  listValue="#{clasificadorSfccbdmq.listaClasificador}" 
+                                                listVar="itemClasificador" 
+                                                rows="8" 
+                                                value="#{reporteCedulaPartidaSfccbdmq.partida}" 
+                                                valueChangeListener="#{clasificadorSfccbdmq.cambiaCodigo}" 
+                                                filterBy="#{itemClasificador.codigo}"
+                                                textChangeListener="#{clasificadorSfccbdmq.clasificadorChangeEventHandler}"
+                                                width="400"
+                                                >
+                            <f:facet name="row">
+                                <h:panelGrid  columns="2"  width="100%" columnClasses="tipo" style="text-align: left;font-size: xx-small">
+                                    <h:outputText value="#{itemClasificador.codigo}"/>
+                                    <h:outputText value="#{itemClasificador.nombre}"/>
+                                </h:panelGrid>
+                            </f:facet>
+
+                        </ace:autoCompleteEntry>
+<!--                        <h:outputLabel value="Partida:" />
+                        <h:selectInputText  listValue="#{clasificadorSfccbdmq.listaClasificador}" value="#{reporteCedulaPartidaSfccbdmq.partida}"
+                                            listVar="clasificadores" rows="10"  partialSubmit="true"
+                                            valueChangeListener="#{clasificadorSfccbdmq.cambiaCodigo}" width="300px" >
+                            <f:facet name="selectInputText">
+                                <h:panelGrid columnClasses="tipo" columns="2" id="gcolumnas" width="300px">
+                                    <h:outputText value="#{clasificadores.codigo}"/>
+                                    <h:outputText value="#{clasificadores.nombre}"/>
+                                </h:panelGrid>
+                            </f:facet>
+                            <f:ajax render="codigocla"/>
+                        </h:selectInputText>-->
+                    </h:panelGrid>
+                    <h:panelGrid columns="4" width="100%">
+                        <h:outputLabel value="Producto :"/>
+                        <ace:comboBox value="#{reporteCedulaPartidaSfccbdmq.proyecto}" 
+                                      listValue="#{proyectosSfccbdmq.listaProyectos}"  
+                                      itemValue="#{itemProyecto.codigo}"
+                                      filterMatchMode="startsWith"
+                                      listVar="itemProyecto" width="600">
+                            <f:facet name="row">
+                                <h:panelGrid columns="1" width="100%" >
+                                    <h:outputText value="#{itemProyecto.codigo} - #{itemProyecto.nombre} " />
+                                </h:panelGrid>
+                            </f:facet>
+                        </ace:comboBox>
+                    </h:panelGrid>
+
+
+                    <h:panelGrid columns="1" width="100%">
+
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteCedulaPartidaSfccbdmq.buscar()}"/>
+                        </ace:menuBar>
+                        <ace:dynamicResource fileName="Cedula.pdf" id="pdf-buttonCedula" label="Generar PDF"
+                                          mimeType="application/pdf" 
+                                          rendered="#{reporteCedulaPartidaSfccbdmq.reporte!=null}"
+                                          resource="#{reporteCedulaPartidaSfccbdmq.reporte}" 
+                                          style="" type="button"/>
+                        <ace:dynamicResource fileName="Cedula.xls" id="pdf-buttonCedulaXls" label="Generar XLS"
+                                          mimeType="application/xls" 
+                                          rendered="#{reporteCedulaPartidaSfccbdmq.reporteXls!=null}"
+                                          resource="#{reporteCedulaPartidaSfccbdmq.reporteXls}" 
+                                          style="" type="button"/>
+                        <ace:messages/>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                <ace:panel id="panelImprimir">
+                    <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+                    <h:panelGrid width="100%" columns="4">
+                        <h:outputLabel value="Desde:"/>
+                        <h:outputLabel value="#{reporteCedulaPartidaSfccbdmq.desde}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputLabel>
+
+                        <h:outputLabel value="Hasta:"/>
+                        <h:outputLabel value="#{reporteCedulaPartidaSfccbdmq.hasta}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputLabel>
+                    </h:panelGrid>
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{reporteCedulaPartidaSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{reporteCedulaPartidaSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+
+                        <ace:dataTable id="tabla"
+                                       paginatorAlwaysVisible="true"
+                                       value="#{reporteCedulaPartidaSfccbdmq.asignaciones}"
+                                       var="item"
+                                       >
+                            
+                            <ace:column  headerText="Partida" style="text-align: left" id="codigo">
+                                <h:outputText  value="#{item.titulo1}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nombre"  style="text-align: left">
+                                <h:outputText  value="#{item.titulo2}"/>
+                            </ace:column>
+                            
+                            <ace:column  headerText="Asignación" style="text-align: right" 
+                                         rendered="#{!reporteCedulaPartidaSfccbdmq.mensual}">
+                                <h:outputText  value="#{item.asignacion}"  >
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Reformas" style="text-align: right">
+                                <h:outputText  value="#{item.reforma}"  >
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Asignación Codificada (a)" style="text-align: right" 
+                                         rendered="#{!reporteCedulaPartidaSfccbdmq.mensual}">
+                                <h:outputText  value="#{item.codificado}"  >
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Certificación (b)" style="text-align: right" rendered="#{reporteCedulaPartidaSfccbdmq.verColumna}">
+                                <h:outputText  value="#{item.certificacion}"  >
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Saldo certificación (a-b)" style="text-align: right" 
+                                         rendered="#{!reporteCedulaPartidaSfccbdmq.mensual and reporteCedulaPartidaSfccbdmq.verColumna}">
+                                <h:outputText  value="#{item.certificado}"  >
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Compromisos (d)" style="text-align: right" 
+                                         rendered="#{reporteCedulaPartidaSfccbdmq.verColumna}">
+                                <h:outputText  value="#{item.compromiso}"  >
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Saldo Compromiso (a-d)" style="text-align: right" 
+                                         rendered="#{!reporteCedulaPartidaSfccbdmq.mensual and reporteCedulaPartidaSfccbdmq.verColumna}">
+                                <h:outputText  value="#{item.comprometido}"  >
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="#{reporteCedulaPartidaSfccbdmq.titulo1}" style="text-align: right">
+                                <h:outputText  value="#{item.devengado}"  >
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="#{reporteCedulaPartidaSfccbdmq.titulo2}" style="text-align: right" 
+                                         rendered="#{!reporteCedulaPartidaSfccbdmq.mensual and reporteCedulaPartidaSfccbdmq.verColumna}">
+                                <h:outputText  value="#{item.saldoDevengado}"  >
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Pagado (g)" style="text-align: right">
+                                <h:outputText  value="#{item.ejecutado}"  >
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="#{reporteCedulaPartidaSfccbdmq.titulo3}" style="text-align: right" 
+                                         rendered="#{!reporteCedulaPartidaSfccbdmq.mensual}">
+                                <h:outputText  value="#{item.saldoEjecutado}"  >
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+
+                </ace:panel>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

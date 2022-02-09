@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel 
+                    id="panel"
+                    header="#{constatacionesBienes.perfil.menu.texto}"
+                    closable="false"
+                    toggleable="true"
+                    >    
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <h:panelGrid columns="4">
+                        
+                        <h:panelGrid columns="1" width="100%">
+                            <ui:include src="../BuscarEmpleado.xhtml"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                         <h:outputLabel value="Año: " />
+                        <h:inputText value="#{constatacionesBienes.anio}" title="Año" />
+                        <h:outputLabel value="Estado Constatación: "/>
+                        <h:selectOneMenu  value="#{constatacionesBienes.estadoCons}"> 
+                            <f:selectItem itemLabel="---" itemValue="0"/>
+                            <f:selectItem itemLabel="Si" itemValue="1"/>
+                            <f:selectItem itemLabel="No" itemValue="2"/>
+                            <f:selectItem itemLabel="Sobrantes" itemValue="3"/>
+                        </h:selectOneMenu>
+                        <!--  <h:outputLabel value="Custodio de bien: "/>
+                          <h:selectOneMenu  value="#{constatacionesBienes.empleado}"> 
+                              <f:selectItems value="#{constatacionesBienes.comboCustodioBienes}"/>
+                          </h:selectOneMenu>-->
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{constatacionesBienes.buscar()}"/>
+                            <ace:menuItem value="Hoja Elect." icon="ui-icon ui-icon-calculator"  action="#{constatacionesBienes.exporta()}"/>
+<!--              <ace:menuItem value="Hoja Elect." icon="ui-icon ui-icon-calculator" action="#{constatacionesBienes.exportar()}"/>-->
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <h:panelGrid>
+<!--                        <ace:dynamicResource  fileName="ConstatacionesBienes.xls" label="Exportar a XLS"
+                                              mimeType="application/xls" resource="#{constatacionesBienes.reporte}" 
+                                              style="" type="button" rendered="#{constatacionesBienes.reporte ne null}"/>-->
+
+
+                    </h:panelGrid>
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{constatacionesBienes.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{constatacionesBienes.formulario.pantalla}" 
+                                          target="tablaf" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:dataTable 
+                            id="tablaf"
+                            paginatorAlwaysVisible="true"
+                            value="#{constatacionesBienes.listaConstataciones}"
+                            var="item"
+                            paginator="true"
+                            lazy="true"
+                            resizableColumns="true"
+                            rowIndexVar="row"
+                            paginatorPosition="both"
+                            rowsPerPageTemplate="5,10,15,30,50,100,all"
+                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            rows="15">
+                            <ace:column  headerText="N°" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Ci Custodio" style="text-align: right">
+                                <h:outputText value="#{item.cicustodio}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Custodio" style="text-align: right">
+                                <h:outputText value="#{constatacionesBienes.traerEmpleado(item.cicustodio).toString()}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Código de inventario" style="text-align: left" filterBy="#{item.codigo}" filterMatchMode="startsWith">
+                                <h:outputText  value="#{item.codigo}"/>
+                            </ace:column>
+                            <ace:column  headerText="Inventario" style="text-align: left" filterBy="#{item.codigo}" filterMatchMode="startsWith">
+                                <h:outputText  value="#{item.inventario}"/>
+                            </ace:column>
+                            <ace:column  headerText="Código del bien" style="text-align: left"  
+                                         filterBy="#{item.codigobien}" filterMatchMode="startsWith">
+                                <h:outputText  value="#{item.codigobien}"/>
+                            </ace:column>
+                            <ace:column  headerText="Descripción" style="text-align: left" filterBy="#{item.descripcion}" filterMatchMode="startsWith">
+                                <h:outputText  value="#{item.descripcion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Serie" style="text-align: left" filterBy="#{item.nroserie}" filterMatchMode="startsWith">
+                                <h:outputText  value="#{item.nroserie}"/>
+                            </ace:column>
+                            <ace:column  headerText="Color" style="text-align: left" filterBy="#{item.color}" filterMatchMode="startsWith">
+                                <h:outputText  value="#{item.color}"/>
+                            </ace:column>
+                            <ace:column  headerText="Estado del bien" style="text-align: left" filterBy="#{item.estadobien}" filterMatchMode="startsWith">
+                                <h:outputText  value="#{item.estadobien}"/>
+                            </ace:column>
+                            <ace:column  headerText="Edificio" style="text-align: left">
+                                <h:outputText  value="#{item.nombreEdificio}"/>
+                            </ace:column>
+                            <ace:column  headerText="Oficina" style="text-align: left">
+                                <h:outputText  value="#{item.nombreOficina}"/>
+                            </ace:column>
+                            <ace:column  headerText="Observaciones" style="text-align: left" filterBy="#{item.observacion}" filterMatchMode="startsWith">
+                                <h:outputText  value="#{item.observacion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Constatado" style="text-align: left" >
+                                <h:outputText  value="#{item.constatado eq null ?'Sobrante':item.constatado?'Constatado':'No Constatado'}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="Exportar "
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{constatacionesBienes.formularioReporte.mostrar}"
+                    visible="#{constatacionesBienes.formularioReporte.mostrar and constatacionesBienes.empleado!=null}">
+                    <h:panelGroup>
+                        <ace:dynamicResource  fileName="ConstatacionesBienes.xls" label="Exportar a XLS"
+                                              mimeType="application/xls" resource="#{constatacionesBienes.reporte}" 
+                                              style="" type="button"/>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{constatacionesBienes.formularioReporte.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

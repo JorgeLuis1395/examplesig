@@ -1,0 +1,305 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{pagosSaldosFrSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGroup>
+
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="Número de Documento :"/>
+                            <h:inputText  value="#{pagosSaldosFrSfccbdmq.numero}"/>
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{pagosSaldosFrSfccbdmq.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{pagosSaldosFrSfccbdmq.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+                        <h:panelGrid columns="6" width="100%">
+                            <h:outputLabel value="Concepto:"/>
+                            <h:inputTextarea cols="60" rows="4" value="#{pagosSaldosFrSfccbdmq.concepto}"/>
+                            <h:outputLabel value="Número de Solicitud de pago :"/>
+                            <h:inputText  value="#{pagosSaldosFrSfccbdmq.id}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{pagosSaldosFrSfccbdmq.nuevoKardex()}"/>
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{pagosSaldosFrSfccbdmq.buscar()}"/>
+                            </ace:menuBar>
+                            <ace:messages/>
+                        </h:panelGrid>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="panel"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+                        <h:panelGrid width="100%">
+                            <ace:dataTable 
+                                value="#{pagosSaldosFrSfccbdmq.listadoKardex}"
+                                var="item"
+                                paginator="true"
+                                lazy="true"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="top"
+                                rowsPerPageTemplate="15,20,25,50,100"
+                                currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rows="15"
+                                >
+                                <ace:column  headerText="Registro" style="text-align: right">
+                                    <h:outputText value="#{row+1}"/>
+                                </ace:column>
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <!--<ace:menuItem action="#{pagosSaldosFrSfccbdmq.borraKardex(item)}" value="Borrar" icon="ui-icon ui-icon-trash"/>-->
+                                        <ace:menuItem action="#{pagosSaldosFrSfccbdmq.imprimirKardex(item)}" value="Imprimir" icon="ui-icon ui-icon-print"/>
+                                    </ace:menuButton>
+                                </ace:column>
+                                <ace:column  headerText="No Egreso" style="text-align: left">
+                                    <h:outputText  value="#{item.id}"/>
+                                </ace:column>
+                                <ace:column  headerText="Concepto"  style="text-align: left">
+                                    <h:outputText  value="#{item.observaciones}"/>
+                                </ace:column>
+                                <ace:column  headerText="Beneficiario" style="text-align: left">
+                                    <h:outputText  value="#{item.beneficiario}"/>
+                                </ace:column>
+                                <!--                                <ace:column  headerText="Número" style="text-align: left">
+                                                                    <h:outputText  value="#{item.documento}"/>
+                                                                </ace:column>-->
+                                <ace:column  headerText="Valor"  style="text-align: right">
+                                    <h:outputText  value="#{item.valor}">
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Fecha de movimiento" style="text-align: right">
+                                    <h:outputText  value="#{item.fechamov}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>  
+                    </h:panelGroup>
+                </ace:panel>
+
+                <!--para editar-->
+                <ace:dialog 
+                    header="#{pagosSaldosFrSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{pagosSaldosFrSfccbdmq.formulario.mostrar}"
+                    visible="#{pagosSaldosFrSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Beneficiario Proveedores [SI] / Empleados [NO]:"/>
+                            <ace:checkboxButton value="#{pagosSaldosFrSfccbdmq.proveedoresBeneficiarios}">
+                                <ace:ajax execute="@all"/>
+                            </ace:checkboxButton>
+                        </h:panelGrid>
+                        <h:panelGrid rendered="#{pagosSaldosFrSfccbdmq.proveedoresBeneficiarios}">
+                            <ui:include src="../BuscarProveedor.xhtml" />
+                        </h:panelGrid>
+                        <h:panelGrid rendered="#{!pagosSaldosFrSfccbdmq.proveedoresBeneficiarios}">
+                            <ui:include src="../BuscarUsuario.xhtml"/>
+                        </h:panelGrid>
+<!--                        <h:panelGrid columns="2" width="100%" rendered="#{pagosSaldosFrSfccbdmq.formulario.nuevo}">
+                            <ui:include src="../BuscarUsuario.xhtml"/>
+                        </h:panelGrid>-->
+
+                        <h:panelGrid columns="2" width="100%" rendered="#{pagosSaldosFrSfccbdmq.formulario.nuevo}">
+                            <h:outputText value="Proveedores [SI] / Empleados [NO]:"/>
+                            <ace:checkboxButton value="#{pagosSaldosFrSfccbdmq.proveedores}">
+                                <ace:ajax execute="@all"/>
+                            </ace:checkboxButton>
+                            <h:outputText value="Empleados :" rendered="#{!pagosSaldosFrSfccbdmq.proveedores}"/>
+                            <h:selectOneMenu value="#{pagosSaldosFrSfccbdmq.entidad}" 
+                                             rendered="#{!pagosSaldosFrSfccbdmq.proveedores}">
+                                <f:selectItems value="#{pagosSaldosFrSfccbdmq.comboEmpleados}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputText value="Proveedores:" rendered="#{pagosSaldosFrSfccbdmq.proveedores}"/>
+                            <h:selectOneMenu value="#{pagosSaldosFrSfccbdmq.proveedor}" 
+                                             rendered="#{pagosSaldosFrSfccbdmq.proveedores}">
+                                <f:selectItems value="#{pagosSaldosFrSfccbdmq.comboProveedores}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputText value="Cuenta de Saldos:"/>
+                            <h:selectOneMenu value="#{pagosSaldosFrSfccbdmq.ctaInicial}">
+                                <f:selectItems value="#{pagosSaldosFrSfccbdmq.comboPagosCuentas}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Forma de pago:"/>
+                            <h:selectOneMenu value="#{pagosSaldosFrSfccbdmq.kardex.formapago}" title="Formapago">
+                                <f:selectItems value="#{codigosSfccbdmq.comboFormaDePago}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Fecha:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{pagosSaldosFrSfccbdmq.kardex.fechamov}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputText value="No Egreso:"/>
+                            <h:inputText value="#{pagosSaldosFrSfccbdmq.kardex.egreso}" title="No egreso"/>
+                            <h:outputText value="Observaciones:"/>
+                            <h:inputTextarea cols="60" rows="4" value="#{pagosSaldosFrSfccbdmq.kardex.observaciones}" title="Observaciones"/>
+                            <h:outputText value="Documento:" rendered="#{pagosSaldosFrSfccbdmq.kardex.formapago.parametros=='C'}"/>
+                            <h:inputText value="#{pagosSaldosFrSfccbdmq.kardex.documento}" title="Documento" rendered="#{pagosSaldosFrSfccbdmq.kardex.formapago.parametros=='C'}"/>
+                            <h:outputText value="Tipo de Movimiento:"/>
+                            <h:selectOneMenu value="#{pagosSaldosFrSfccbdmq.kardex.tipomov}" title="Tipo de Movimiento">
+                                <f:selectItems value="#{tipoMovBancosSfccbdmq.comboObligacionesBancos}"/>
+                            </h:selectOneMenu>
+                            <h:outputText value="Banco:"/>
+                            <h:selectOneMenu value="#{pagosSaldosFrSfccbdmq.kardex.banco}" title="Banco">
+                                <f:selectItems value="#{bancosSfccbdmq.comboBancos}"/>
+                            </h:selectOneMenu>
+                            <h:outputText value="Valor Seleccionado : "/>
+                            <h:outputText value="#{pagosSaldosFrSfccbdmq.valorPagar}">
+                                <f:convertNumber pattern="###,##0.00"/>
+                            </h:outputText>
+                            <h:outputText value="Valor Total : "/>
+                            <h:outputText value="#{pagosSaldosFrSfccbdmq.valorAPagar}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" width="100%">
+                            <h:commandButton action="#{pagosSaldosFrSfccbdmq.agregarPago()}" value="Agregar Pago"/>
+                            <h:commandButton action="#{pagosSaldosFrSfccbdmq.agregarCuenta()}" value="Agregar Cuenta"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%">
+                            <ace:dataTable
+                                value="#{pagosSaldosFrSfccbdmq.valoresPagar}"
+                                var="itemCuentas"
+                                paginator="true"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="top"
+                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rows="10"
+                                binding="#{pagosSaldosFrSfccbdmq.formularioPago.fila}"
+                                >
+                                <ace:column  headerText="Cuenta" style="text-align: left">
+                                    <h:outputText  value="#{itemCuentas.cuenta}"/>
+                                </ace:column>
+                                <ace:column  headerText="N. Cuenta" style="text-align: left">
+                                    <h:outputText  value="#{cuentasSfccbdmq.traerNombre(itemCuentas.cuenta)}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor"  style="text-align: left">
+                                    <h:outputText  value="#{itemCuentas.valor}">
+                                        <f:convertNumber pattern="###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid> 
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                              action="#{pagosSaldosFrSfccbdmq.insertarKardex()}" rendered="#{pagosSaldosFrSfccbdmq.formulario.nuevo}"/>
+                                <ace:menuItem value="Esta seguro de borrar?" icon="ui-icon ui-icon-trash"  
+                                              action="#{pagosSaldosFrSfccbdmq.eliminar()}" rendered="#{pagosSaldosFrSfccbdmq.formulario.borrar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{pagosSaldosFrSfccbdmq.formulario.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{pagosSaldosFrSfccbdmq.formularioReporte.mostrar}"
+                    visible="#{pagosSaldosFrSfccbdmq.formularioReporte.mostrar}">
+                    <h:panelGroup>
+                        <!--                        <h:panelGrid columns="1">
+                                                    <h:commandButton  value="Imprimir">
+                                                        <ace:printer for="panelImprimir"/>
+                                                    </h:commandButton>
+                                                </h:panelGrid>
+                                                <ui:include src="imprimirPagoFr.xhtml" />-->
+                        <ace:dynamicResource fileName="Egreso.pdf" id="pdf-button1" label="Generar PDF"
+                                             mimeType="application/pdf" resource="#{pagosSaldosFrSfccbdmq.reporte}" 
+                                             style="" type="button"/>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{pagosSaldosFrSfccbdmq.formularioReporte.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Ingresar Cuentas"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{pagosSaldosFrSfccbdmq.formularioPago.mostrar}"
+                    visible="#{pagosSaldosFrSfccbdmq.formularioPago.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2" width="100%">
+                            <h:outputText value="Cuenta:"/>
+                            <h:selectOneMenu value="#{pagosSaldosFrSfccbdmq.ctaInicial}" >
+                                <f:selectItems value="#{pagosSaldosFrSfccbdmq.comboCuentas}"/>
+                            </h:selectOneMenu>
+                            <h:outputText value="Valor : "/>
+                            <h:inputText value="#{pagosSaldosFrSfccbdmq.renglon.valor}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                              action="#{pagosSaldosFrSfccbdmq.grabarCuenta()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{pagosSaldosFrSfccbdmq.formularioPago.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

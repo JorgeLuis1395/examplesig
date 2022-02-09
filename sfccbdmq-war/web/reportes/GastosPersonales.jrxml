@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="d1a1cb9f-bc64-4d4b-935b-640c9882626c">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="anio" class="java.lang.Integer"/>
+	<parameter name="mesdia" class="java.lang.String"/>
+	<parameter name="cedula" class="java.lang.String"/>
+	<parameter name="nombres" class="java.lang.String"/>
+	<parameter name="nombrelogo" class="java.lang.String"/>
+	<parameter name="ruc" class="java.lang.String"/>
+	<parameter name="razon" class="java.lang.String"/>
+	<field name="nombre" class="java.lang.String"/>
+	<field name="codigo" class="java.lang.String"/>
+	<field name="valor" class="java.lang.Double"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="177" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="555" height="107" uuid="b5d9336b-085c-4882-9674-cc167a474e48"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<frame>
+					<reportElement mode="Opaque" x="0" y="0" width="111" height="64" backcolor="#B3D7E4" uuid="84b790ac-71f8-4aed-9b0e-3f6ada631858"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<staticText>
+						<reportElement x="4" y="49" width="97" height="11" forecolor="#13139C" uuid="ba2e7a33-6f61-4fdf-b1c6-01051eeb289a"/>
+						<textElement>
+							<font size="8" isItalic="true"/>
+						</textElement>
+						<text><![CDATA[FORMULARIO SRI-GP]]></text>
+					</staticText>
+					<image>
+						<reportElement x="10" y="5" width="91" height="38" uuid="629e899f-49ed-47a5-84e0-4501de128bf7"/>
+						<imageExpression><![CDATA[$P{nombrelogo}]]></imageExpression>
+					</image>
+				</frame>
+				<frame>
+					<reportElement mode="Opaque" x="111" y="1" width="444" height="29" backcolor="#B3D7E4" uuid="052396e6-e398-4437-b646-c8b7f981b212"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<staticText>
+						<reportElement x="0" y="0" width="444" height="26" forecolor="#13139C" uuid="46721bf7-988c-4135-8f97-cea7fa1a84ba"/>
+						<textElement textAlignment="Center">
+							<font size="8" isBold="true"/>
+						</textElement>
+						<text><![CDATA[DECLARACIÓN DE GASTOS PERSONALES A SER UTILIZADOS POR EL EMPLEADOR EN EL CASO DE INGRESOS EN RELACION DE DEPENDENCIA ]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement x="0" y="70" width="169" height="37" uuid="b973752b-6490-4898-b6f5-67827f905b92"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<staticText>
+						<reportElement x="0" y="10" width="100" height="20" forecolor="#13139C" backcolor="#13139C" uuid="6f295e96-4887-4b8a-b962-de7d8caf3759"/>
+						<textElement>
+							<font size="8" isBold="true"/>
+						</textElement>
+						<text><![CDATA[EJERCICIO FISCAL]]></text>
+					</staticText>
+					<rectangle>
+						<reportElement x="100" y="0" width="15" height="37" backcolor="#B3D7E4" uuid="ad8cf843-4337-4151-bb0a-21e588242fe3"/>
+					</rectangle>
+					<textField>
+						<reportElement x="115" y="10" width="51" height="20" forecolor="#13139C" uuid="91533325-6adf-4831-ab48-48fc042b630f"/>
+						<textElement>
+							<font size="8"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$P{anio}]]></textFieldExpression>
+					</textField>
+				</frame>
+			</frame>
+			<frame>
+				<reportElement x="221" y="60" width="334" height="44" uuid="6889900a-6c07-42f1-98a2-b4c78c218006"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<staticText>
+					<reportElement x="0" y="0" width="118" height="35" forecolor="#13139C" uuid="d59e90b8-1e65-4f65-b7ec-52c4a4f73744"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CIUDAD Y FECHA DE ENTREGA/RECEPCION]]></text>
+				</staticText>
+				<rectangle>
+					<reportElement x="118" y="0" width="15" height="42" backcolor="#B3D7E4" uuid="7b93bb37-2569-42b9-a8ef-eb877cd8b1de"/>
+				</rectangle>
+				<frame>
+					<reportElement x="135" y="0" width="80" height="21" uuid="7ee82d5d-db40-411f-b197-980033dd714b"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<staticText>
+						<reportElement x="5" y="4" width="69" height="13" forecolor="#13139C" uuid="630bcfab-fc9d-4f85-9130-0ca708383da0"/>
+						<textElement textAlignment="Center">
+							<font size="8" isBold="true"/>
+						</textElement>
+						<text><![CDATA[CIUDAD]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement x="135" y="21" width="80" height="21" uuid="38103f42-e265-474f-8d35-fa97431dd797"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<staticText>
+						<reportElement x="2" y="4" width="69" height="13" forecolor="#13139C" uuid="74db3a1d-008c-4814-9f84-76c96c268ccd"/>
+						<textElement textAlignment="Center">
+							<font size="8" isBold="true"/>
+						</textElement>
+						<text><![CDATA[QUITO]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement x="215" y="0" width="65" height="21" uuid="2711a717-7466-4e7e-b968-4fc17eab581e"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<staticText>
+						<reportElement x="2" y="4" width="49" height="13" forecolor="#13139C" uuid="dc6d27ba-2b52-44b0-90e5-09eb860a9d30"/>
+						<textElement textAlignment="Center">
+							<font size="8" isBold="true"/>
+						</textElement>
+						<text><![CDATA[AÑO]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement x="280" y="0" width="54" height="21" uuid="7f531bdb-39b0-424a-bef9-83eb847b54d2"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<staticText>
+						<reportElement x="0" y="4" width="54" height="13" forecolor="#13139C" uuid="a47d0c25-01e8-4a3a-9d06-3dfea38c4d5b"/>
+						<textElement textAlignment="Center">
+							<font size="8" isBold="true"/>
+						</textElement>
+						<text><![CDATA[MES DIA]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement x="216" y="21" width="64" height="21" uuid="894f0795-a1ac-48e2-81d1-2448490c7a61"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+				</frame>
+				<frame>
+					<reportElement x="279" y="21" width="55" height="21" uuid="0205bc5d-b6d1-440b-bb3e-b793149aa4f7"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textField>
+						<reportElement x="1" y="2" width="54" height="17" forecolor="#13139C" uuid="72b2de0e-36bf-451f-8c9a-3f5eb13a1de2"/>
+						<textElement>
+							<font size="8"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$P{mesdia}]]></textFieldExpression>
+					</textField>
+				</frame>
+				<textField>
+					<reportElement x="215" y="24" width="65" height="20" forecolor="#13139C" uuid="1c17a501-1ccf-4bb9-ab04-6114765d9bcc"/>
+					<textElement textAlignment="Center">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{anio}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement x="0" y="107" width="555" height="68" uuid="48673120-28d6-408d-9758-bdb95474537b"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<staticText>
+					<reportElement x="6" y="0" width="539" height="20" forecolor="#13139C" uuid="a20098a4-8283-41f2-afc0-30afc15d8a21"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Información / Identificación del empleado contribuyente (a ser llenado por el empleado)]]></text>
+				</staticText>
+				<frame>
+					<reportElement mode="Opaque" x="1" y="18" width="30" height="28" forecolor="#13139C" backcolor="#B3D7E4" uuid="d04bc11c-fd8c-4bd1-bd94-2166f48d88c5"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<staticText>
+						<reportElement x="2" y="1" width="21" height="20" forecolor="#13139C" uuid="a3c77d72-4023-46ac-8e0f-9b41ed785e17"/>
+						<text><![CDATA[101]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement x="32" y="19" width="259" height="29" uuid="bff9dbce-e3da-46bf-954b-1872daf0588c"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<staticText>
+						<reportElement x="0" y="0" width="135" height="12" forecolor="#13139C" uuid="0a9580b2-5ebe-4952-af36-dba3e9875f71"/>
+						<textElement>
+							<font size="8"/>
+						</textElement>
+						<text><![CDATA[CEDULA O PASAPORTE]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="0" y="12" width="246" height="17" forecolor="#13139C" uuid="8c708a95-4703-4fea-a30b-7b36473fe117"/>
+						<textElement>
+							<font size="8"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$P{cedula}]]></textFieldExpression>
+					</textField>
+					<frame>
+						<reportElement mode="Opaque" x="229" y="0" width="30" height="28" forecolor="#13139C" backcolor="#B3D7E4" uuid="10728473-0b8a-4fb6-90a7-988ec51cb31c"/>
+						<box>
+							<pen lineWidth="1.0"/>
+							<topPen lineWidth="1.0"/>
+							<leftPen lineWidth="1.0"/>
+							<bottomPen lineWidth="1.0"/>
+							<rightPen lineWidth="1.0"/>
+						</box>
+						<staticText>
+							<reportElement x="2" y="1" width="21" height="20" forecolor="#13139C" uuid="6f1650ca-53a9-4125-92d0-e88e56fa98ec"/>
+							<text><![CDATA[102]]></text>
+						</staticText>
+					</frame>
+				</frame>
+				<frame>
+					<reportElement x="292" y="19" width="263" height="29" uuid="400501e0-faa2-4d64-8c9c-9f5b8813b5d8"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<staticText>
+						<reportElement x="0" y="0" width="246" height="12" forecolor="#13139C" uuid="2bda57b5-5dd5-42ad-b6c8-168539dd6b2f"/>
+						<textElement>
+							<font size="8"/>
+						</textElement>
+						<text><![CDATA[APELLIDOS Y NOMBRES COMPLETOS]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="0" y="12" width="246" height="17" forecolor="#13139C" uuid="bceaa813-4a41-4dfe-896f-565090550028"/>
+						<textElement>
+							<font size="8"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$P{nombres}]]></textFieldExpression>
+					</textField>
+				</frame>
+			</frame>
+			<staticText>
+				<reportElement x="5" y="155" width="542" height="20" forecolor="#13139C" uuid="d83ad1e9-b762-42e3-89af-5c1b046a511e"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INGRESOS GRAVADOS PROYECTADOS (sin decimotercera y decimocuarta remuneración)]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="555" height="14" uuid="84a80146-55c8-402f-ab38-966f8a6c0669"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textField>
+					<reportElement x="4" y="0" width="338" height="14" forecolor="#13139C" uuid="b3c0ced2-675e-4c74-a272-f238660ae58e"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###,##0.00" isBlankWhenNull="true">
+					<reportElement x="403" y="0" width="144" height="14" forecolor="#13139C" uuid="eccfc83f-0e5f-4d36-8cd0-38c7563c2daf"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="379" y="0" width="32" height="14" forecolor="#13139C" uuid="3434e26f-4b74-42ef-aa5c-8ac584a1dc78"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[USD$]]></text>
+				</staticText>
+				<frame>
+					<reportElement mode="Opaque" x="339" y="0" width="30" height="14" forecolor="#13139C" backcolor="#B3D7E4" uuid="b90fb3b0-caf1-4d50-af4e-ed87e617da0c"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textField>
+						<reportElement x="0" y="0" width="20" height="14" forecolor="#13139C" uuid="323a55dd-53c7-421c-84f4-819d7f6c9045"/>
+						<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
+					</textField>
+				</frame>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="294" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="555" height="102" uuid="96fbc2d4-f16e-4077-8009-4a47db788a13"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<staticText>
+					<reportElement x="3" y="0" width="548" height="102" forecolor="#13139C" uuid="cd01930e-0e86-4514-a8fa-e9753afb818b"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[NOTAS: 
+1.- Cuando un contribuyente trabaje con DOS O MÁS empleadores, presentará este informe al empleador con el que perciba mayores ingresos, el que efectuará la retención considerando los ingresos gravados y deducciones (aportes personales al IESS) con todos los empleadores.  Una copia certificada, con la respectiva firma y sello del empleador, será presentada a los demás empleadores para que se abstengan de efectuar retenciones sobre los pagos efectuados por concepto de remuneración del trabajo en relación de dependencia. 
+2. La deducción total por gastos personales no podrá superar el 50% del total de sus ingresos gravados (casillero 105), y en ningún caso  será mayor al equivalente a 1.3 veces la fracción básica exenta de Impuesto a la Renta de personas naturales. A partir del año 2011 debe considerarse como cuantía máxima para cada tipo de gasto, el monto equivalente a la fracción básica exenta de Impuesto a la Renta en: vivienda 0.325 veces, educación 0.325  veces, alimentación 0.325 veces, vestimenta 0.325, salud 1.3 veces.]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement x="0" y="102" width="555" height="75" uuid="34e01381-ed10-401d-ba9e-7f320d602af5"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<staticText>
+					<reportElement x="0" y="0" width="554" height="20" forecolor="#13139C" uuid="e60804c3-493e-4aa8-a6eb-145b81d93fee"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ Identificación del Agente de Retención (a ser llenado por el empleador)]]></text>
+				</staticText>
+				<frame>
+					<reportElement mode="Opaque" x="4" y="20" width="30" height="41" forecolor="#13139C" backcolor="#B3D7E4" uuid="c23207df-2850-402d-8a44-9b18a778f1e9"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<staticText>
+						<reportElement x="2" y="1" width="21" height="20" forecolor="#13139C" uuid="1c0a6f6a-586e-4d43-aeff-e7e43626ae78"/>
+						<text><![CDATA[112]]></text>
+					</staticText>
+				</frame>
+				<staticText>
+					<reportElement x="34" y="21" width="29" height="20" forecolor="#13139C" uuid="4e6e503b-c81a-4188-bc06-123b7f86b3f2"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[RUC]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="34" y="41" width="223" height="20" forecolor="#13139C" uuid="76a9766a-1244-4688-b480-4a3ad776c0a4"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{ruc}]]></textFieldExpression>
+				</textField>
+				<frame>
+					<reportElement mode="Opaque" x="256" y="20" width="30" height="41" forecolor="#13139C" backcolor="#B3D7E4" uuid="3a946c87-597e-44f9-ae7d-c96017bd3606"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<staticText>
+						<reportElement x="2" y="1" width="21" height="20" forecolor="#13139C" uuid="e9ef1ea9-a6e1-4308-ba2a-a87e3a24eac4"/>
+						<text><![CDATA[113]]></text>
+					</staticText>
+				</frame>
+				<staticText>
+					<reportElement x="286" y="21" width="29" height="20" forecolor="#13139C" uuid="98d4ac56-441f-4e75-852b-bd407cb144aa"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[RUC]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="286" y="41" width="265" height="20" forecolor="#13139C" uuid="db37ba59-1f73-4ef3-8bc6-b3fd910af67c"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{razon}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement x="-1" y="193" width="555" height="100" uuid="29678fd1-8e52-4be7-8a3a-a7f26393b60a"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<staticText>
+					<reportElement x="17" y="0" width="489" height="20" forecolor="#13139C" uuid="a14fd67f-ac6d-4580-9ca2-a0ac6ffab183"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Firmas ]]></text>
+				</staticText>
+				<frame>
+					<reportElement x="0" y="20" width="245" height="20" uuid="8c27a4d9-8f4c-4d00-9f43-28a06d2c76b9"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<staticText>
+						<reportElement x="15" y="2" width="210" height="18" forecolor="#13139C" uuid="798a835e-f3c7-487b-87e0-4928bc6efe62"/>
+						<textElement>
+							<font size="8" isBold="true"/>
+						</textElement>
+						<text><![CDATA[EMPLEADOR / AGENTE DE RETENCION]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement x="245" y="20" width="310" height="20" uuid="5f7ba61d-d243-4abe-9da7-fa75c7977b59"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<staticText>
+						<reportElement x="68" y="1" width="210" height="18" forecolor="#13139C" uuid="d562d991-3977-4fdf-867d-d11295d2e7dc"/>
+						<textElement>
+							<font size="8" isBold="true"/>
+						</textElement>
+						<text><![CDATA[EMPLEADO CONTRIBUYENTE]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement x="0" y="40" width="245" height="60" uuid="3934791d-5a80-459b-9afd-4fd1bc8820ea"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+				</frame>
+				<frame>
+					<reportElement x="245" y="40" width="310" height="60" uuid="1e391294-7788-4ebe-8476-87207176b24a"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<staticText>
+						<reportElement x="0" y="35" width="307" height="20" uuid="dc1fdb27-b1e0-4990-ab03-3e3493b94032"/>
+						<textElement textAlignment="Center">
+							<font size="8"/>
+						</textElement>
+						<text><![CDATA[FIRMA DEL SERVIDOR]]></text>
+					</staticText>
+				</frame>
+			</frame>
+		</band>
+	</summary>
+</jasperReport>

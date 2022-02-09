@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{tipoContrato.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"  >
+                    <h:panelGrid>
+
+                        
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="Código : "/>
+                            <h:inputText value="#{tipoContrato.codigo}"/>
+                            <h:outputLabel value="Nombre : "/>
+                            <h:inputText value="#{tipoContrato.nombre}"/>
+<!--                            <h:outputLabel value="Duración : "/>
+                            <h:inputText value="#{tipoContrato.duracion}"/>
+                            <h:outputLabel value="Nombramiento : " />
+                            <h:selectOneRadio value="#{tipoContrato.nombramiento}" partialSubmit="true" style="border: 0px" >
+                                <f:selectItem itemValue="1" itemLabel="SI" />
+                                <f:selectItem itemValue="2" itemLabel="NO" />
+                            </h:selectOneRadio >-->
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{tipoContrato.buscar()}"/>
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{tipoContrato.nuevo()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                    <ace:messages/>
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{tipoContrato.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{tipoContrato.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{tipoContrato.listaContratos}"
+                                       var="item"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,50,all"
+                                       paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       binding="#{tipoContrato.formulario.fila}">
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{tipoContrato.modificar()}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{tipoContrato.eliminar()}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column>
+                            <ace:column  headerText="Orden" style="text-align: left">
+                                <h:outputText  value="#{item.ordinal}"/>
+                            </ace:column>
+                            <ace:column  headerText="Código" style="text-align: left">
+                                <h:outputText  value="#{item.codigo}"/>
+                            </ace:column>
+                             <ace:column  headerText="Código Alterno" style="text-align: left">
+                                 <h:outputText  value="#{item.codigoalterno}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nombre" style="text-align: left">
+                                <h:outputText  value="#{item.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Factor vacaciones" style="text-align: left">
+                                <h:outputText  value="#{item.factovacaciones}">
+                                    <f:convertNumber pattern="###,0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Régimen" style="text-align: left">
+                                <h:outputText  value="#{item.regimen}"/>
+                            </ace:column>
+                            <ace:column headerText="Nombramiento" style="text-align: left">
+                                <h:outputText  value="SI" rendered="#{item.nombramiento}"/>
+                                <h:outputText  value="NO" rendered="#{!item.nombramiento}"/>
+                            </ace:column> <!--
+                            <ace:column headerText="Relación de Dependencia" style="text-align: left">
+                                <h:graphicImage url="../resources/images/si.png" rendered="#{item.relaciondependencia}"/>
+                                <h:graphicImage url="../resources/images/no.png" rendered="#{!item.relaciondependencia}"/>
+                            </ace:column> -->
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{tipoContrato.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{tipoContrato.formulario.mostrar}"
+                    visible="#{tipoContrato.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Código:" for="codigo" />
+                            <h:inputText id="codigo" value="#{tipoContrato.contrato.codigo}" title="Código" disabled="#{tipoContrato.contrato.id !=null}" />
+                            <h:outputLabel value="Código Alterno:"  />
+                            <h:inputText  value="#{tipoContrato.contrato.codigoalterno}" title="Código"  />
+                            <h:outputLabel value="Nombre:" for="nombre" />
+                            <h:inputText id="nombre" value="#{tipoContrato.contrato.nombre}" title="Nombre" />
+                            <h:outputLabel value="Orden:" for="orden" />
+                            <h:inputText id="orden" value="#{tipoContrato.contrato.ordinal}" title="Orden"/>
+                            <h:outputLabel value="Factor vacaiones (días mensuales):" />
+                            <h:inputText  value="#{tipoContrato.contrato.factovacaciones}" title="Factor vacaiones"/>
+                            <h:outputLabel value="Régimen:" />
+                            <h:inputText value="#{tipoContrato.contrato.regimen}"/>
+                            <h:outputLabel value="Descripción:" for="obsc" />
+                            <h:inputTextarea id="obsc" value="#{tipoContrato.contrato.descripcion}" title="Obsc" style="width: 100% ; text-align: justify;" cols="30" rows="4" />
+                            <h:outputLabel value="Nombramiento" for="nombramiento" />
+                            <h:selectBooleanCheckbox value="#{tipoContrato.contrato.nombramiento}" /><!--
+                            <h:outputLabel value="Tiene relación de dependencia?" for="nombramiento" />
+                            <h:selectBooleanCheckbox value="#{tipoContrato.contrato.relaciondependencia}"  />-->
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{tipoContrato.formulario.nuevo}" 
+                                          action="#{tipoContrato.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{tipoContrato.grabar()}" 
+                                          rendered="#{tipoContrato.formulario.modificar}" />
+                            <ace:menuItem action="#{tipoContrato.borrar()}" 
+                                          value="¿Está seguro de Borrar el registro?" 
+                                          icon="ui-icon ui-icon-trash"
+                                          rendered="#{tipoContrato.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{tipoContrato.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

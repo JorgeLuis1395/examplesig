@@ -1,0 +1,394 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:body>
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="Certificaciones PAC"
+                           closable="false"
+                           toggleable="true"
+                           rendered="#{!certificacionPac.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Año:" />
+                            <h:inputText value="#{certificacionPac.anio}" title="Año" />
+                            <h:outputLabel value="No de Control PAC:"  />
+                            <h:inputText value="#{certificacionPac.numeroControlPac}" />
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{certificacionPac.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{certificacionPac.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="No de Control POA:"  />
+                            <h:inputText value="#{certificacionPac.numeroControl}" />
+                            <h:outputLabel value="Dirección"  />
+                            <h:selectOneMenu  value="#{certificacionPac.direccion}" title="Dirección">
+                                <f:selectItems value="#{consultasPoa.comboDirecciones}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1">
+                            <h:outputLabel value="Motivo :" />
+                            <h:inputTextarea cols="80" rows="5" value="#{certificacionPac.motivo}" title="Motivo" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{certificacionPac.buscar()}"/>
+                            </ace:menuBar>
+                            <ace:messages style="white-space: pre-wrap"/>
+                            <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                        </h:panelGrid>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{certificacionPac.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{certificacionPac.formulario.pantalla}" 
+                                              target="tabla2" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable id="tabla2"
+                                           paginatorAlwaysVisible="true"
+                                           value="#{certificacionPac.listacCertificacionesPac}"
+                                           var="itemCertificaciones"
+                                           paginator="true"
+                                           lazy="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="5,10,15,30,50,100,all"
+                                           paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="30">
+                                <ace:column headerText="Acciones" style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+<!--                                        <ace:menuItem action="#{certificacionPac.modificarPAC(itemCertificaciones)}" 
+                                                      value="Certificación PAC" icon="ui-icon ui-icon-pencil"/>-->
+                                        <ace:menuItem action="#{certificacionPac.aprobar(itemCertificaciones)}" 
+                                                      value="Aprobar" icon="ui-icon ui-icon-script"
+                                                      rendered="#{!itemCertificaciones.impresopac}"/>
+                                        <ace:menuItem action="#{certificacionPac.rechazar(itemCertificaciones)}" 
+                                                      value="Rechazar" icon="ui-icon ui-icon-script"
+                                                      rendered="#{itemCertificaciones.impresopac and !itemCertificaciones.rechazadopac}"/>
+                                        <ace:menuItem action="#{certificacionPac.reporte(itemCertificaciones)}" 
+                                                      value="Imprimir" icon="ui-icon ui-icon-print"
+                                                      rendered="#{itemCertificaciones.impresopac}"/>
+                                        <ace:menuItem action="#{certificacionPac.generar(itemCertificaciones)}" 
+                                                      value="Generar PAC" icon="ui-icon ui-icon-script"
+                                                      rendered="#{itemCertificaciones.impresopac and itemCertificaciones.rechazadopac}"/>
+
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column  headerText="Número de Solilcitud" style="text-align: right">
+                                    <h:outputText  value="#{itemCertificaciones.id}"/>
+                                </ace:column>
+                                <ace:column  headerText="Número de Control POA" style="text-align: right">
+                                    <h:outputText  value="#{itemCertificaciones.numero}"/>
+                                </ace:column>
+                                <ace:column  headerText="Número de Control PAC" style="text-align: right">
+                                    <h:outputText  value="#{itemCertificaciones.numeropac}"/>
+                                </ace:column>
+                                <ace:column  headerText="Código" style="text-align: right">
+                                    <h:outputText  value="#{certificacionPac.traerProyecto(itemCertificaciones)}"/>
+                                </ace:column>
+                                <ace:column  headerText="Direccion"  style="text-align: left">
+                                    <h:outputText  value="#{consultasPoa.traerDireccion(itemCertificaciones.direccion)}"/>
+                                </ace:column>
+                                <ace:column  headerText="Descripción"  style="text-align: left">
+                                    <h:outputText  value="#{certificacionPac.traerProyectoDetalle(itemCertificaciones)}"/>
+                                </ace:column>
+                                <ace:column  headerText="Fecha" style="text-align: left">
+                                    <h:outputText  value="#{itemCertificaciones.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Aprobada POA"  style="text-align: left">
+                                    <h:panelGrid rendered="#{itemCertificaciones.impreso}">
+                                        <img src="../resources/images/si.png" />
+                                    </h:panelGrid>
+                                    <h:panelGrid rendered="#{!itemCertificaciones.impreso}">
+                                        <img src="../resources/images/no.png" width="16" height="16" />
+                                    </h:panelGrid>
+                                </ace:column>
+                                <ace:column  headerText="Anulada POA"  style="text-align: left">
+                                    <h:panelGrid rendered="#{itemCertificaciones.anulado}">
+                                        <img src="../resources/images/si.png" />
+                                    </h:panelGrid>
+                                    <h:panelGrid rendered="#{!itemCertificaciones.anulado}">
+                                        <img src="../resources/images/no.png" width="16" height="16" />
+                                    </h:panelGrid>
+                                </ace:column>
+                                <ace:column  headerText="Rechazada POA"  style="text-align: left">
+                                    <h:panelGrid rendered="#{itemCertificaciones.rechazado}">
+                                        <img src="../resources/images/si.png" />
+                                    </h:panelGrid>
+                                    <h:panelGrid rendered="#{!itemCertificaciones.rechazado}">
+                                        <img src="../resources/images/no.png" width="16" height="16" />
+                                    </h:panelGrid>
+                                </ace:column>
+                                <ace:column  headerText="Aprobada PAC"  style="text-align: left">
+                                    <h:panelGrid rendered="#{itemCertificaciones.impresopac}">
+                                        <img src="../resources/images/si.png" />
+                                    </h:panelGrid>
+                                    <h:panelGrid rendered="#{!itemCertificaciones.impresopac}">
+                                        <img src="../resources/images/no.png" width="16" height="16" />
+                                    </h:panelGrid>
+                                </ace:column>
+                                <ace:column  headerText="Rechazada PAC"  style="text-align: left">
+                                    <h:panelGrid rendered="#{itemCertificaciones.rechazadopac}">
+                                        <img src="../resources/images/si.png" />
+                                    </h:panelGrid>
+                                    <h:panelGrid rendered="#{!itemCertificaciones.rechazadopac}">
+                                        <img src="../resources/images/no.png" width="16" height="16" />
+                                    </h:panelGrid>
+                                </ace:column>
+
+                                <ace:column  headerText="Usuario"  style="text-align: left">
+                                    <h:outputText  value="#{itemCertificaciones.usuariopac}"/>
+                                </ace:column>
+                                <ace:column  headerText="Firma E."  style="text-align: left">
+                                    <h:panelGrid rendered="#{itemCertificaciones.archivopac ne null}">
+                                        <img src="../resources/images/si.png" />
+                                    </h:panelGrid>
+                                    <h:panelGrid rendered="#{itemCertificaciones.archivopac eq null}">
+                                        <img src="../resources/images/no.png" width="16" height="16" />
+                                    </h:panelGrid>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:panel> 
+                <ace:dialog 
+                    header="Certificacion PAC"
+                    closable="false"
+                    modal="true"
+                    draggable="false"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{certificacionPac.formularioCertificacion.mostrar}"
+                    visible="#{certificacionPac.formularioCertificacion.mostrar}">
+                    <h:panelGroup>    
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Año: " />
+                            <h:outputLabel value="#{certificacionPac.anio}" />
+                            <h:outputLabel value="Partida: " />
+                            <h:outputLabel value="#{certificacionPac.traerPartidaProyecto(certificacionPac.detalle)}" />
+
+                            <h:outputLabel value="CPC:" />
+                            <h:selectOneMenu value="#{certificacionPac.proyecto.cpc}" style="width: 300px" >
+                                <f:selectItems value="#{consultasPoa.comboCPC}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Tipo de Compra:" />
+                            <h:selectOneMenu value="#{certificacionPac.proyecto.tipocompra}"  >
+                                <f:selectItems value="#{consultasPoa.tipoCompra}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Detalle:" />
+                            <h:inputTextarea value="#{certificacionPac.proyecto.detalle}" title="Detalle" cols="40"/>
+                            <h:outputLabel value="Cantidad:" />
+                            <h:inputText value="#{certificacionPac.proyecto.cantidad}" />
+                            <h:outputLabel value="Unidad" />
+                            <h:selectOneMenu value="#{certificacionPac.proyecto.unidad}"  >
+                                <f:selectItems value="#{consultasPoa.tipoUnidad}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Tipo de Presupuesto de Inversión:" />
+                            <h:selectOneMenu value="#{certificacionPac.proyecto.presupuesto}"   >
+                                <f:selectItems value="#{consultasPoa.tipoPresupuesto}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Impuesto :" />
+                            <h:selectOneMenu  value="#{certificacionPac.proyecto.impuesto}">
+                                <f:selectItems value="#{impuestosSfccbdmq.comboImpuestos2}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Costo Unitario: " />
+                            <h:outputText  value="#{certificacionPac.proyecto.valoriva}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Cuatrimestre 1:" />
+                            <ace:checkboxButton value="#{certificacionPac.proyecto.cuatrimestre1}"/>
+                            <h:outputLabel value="Cuatrimestre 2:" />
+                            <ace:checkboxButton value="#{certificacionPac.proyecto.cuatrimestre2}"/>
+                            <h:outputLabel value="Cuatrimestre 3:" />
+                            <ace:checkboxButton value="#{certificacionPac.proyecto.cuatrimestre3}"/>
+                            <h:outputLabel value="Tipo de Producto:" />
+                            <h:selectOneMenu value="#{certificacionPac.proyecto.tipoproducto}"  >
+                                <f:selectItems value="#{consultasPoa.tipoProducto}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Catálogo Electrónico:" />
+                            <ace:checkboxButton value="#{certificacionPac.proyecto.catalogoelectronico}"/>
+                            <h:outputLabel value="Procedimiento de Contratación:" />
+                            <h:selectOneMenu value="#{certificacionPac.proyecto.procedimientocontratacion}"   >
+                                <f:selectItems value="#{consultasPoa.tipoProcedimiento}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Fondos Bid:"/>
+                            <ace:checkboxButton value="#{certificacionPac.proyecto.fondobid}">
+                                <ace:ajax execute="all"/>
+                            </ace:checkboxButton>
+                            <h:outputLabel value="Código de Operación: " rendered="#{certificacionPac.proyecto.fondobid}"/>
+                            <h:inputText value="#{certificacionPac.proyecto.codigooperacion}" rendered="#{certificacionPac.proyecto.fondobid}"/>
+                            <h:outputLabel value="Número de Operación: " rendered="#{certificacionPac.proyecto.fondobid}"/>
+                            <h:inputText value="#{certificacionPac.proyecto.numerooperacion}" rendered="#{certificacionPac.proyecto.fondobid}"/>
+                            <h:outputLabel value="Tipo de Régimen:" />
+                            <h:selectOneMenu value="#{certificacionPac.proyecto.regimen}"  >
+                                <f:selectItems value="#{consultasPoa.tipoRegimen}" />
+                            </h:selectOneMenu>
+                            <!--                            <h:outputLabel  value="Fecha de Utilización"/>
+                                                        <ace:dateTimeEntry navigator="true" id="fecha" value="#{certificacionPac.proyecto.fechautilizacion}" 
+                                                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                        </ace:dateTimeEntry>-->
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{certificacionPac.grabarCertificacionPAC()}" 
+                                          rendered="#{certificacionPac.formularioCertificacion.modificar}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{certificacionPac.formularioCertificacion.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                </ace:dialog>  
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="false"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{certificacionPac.formularioImpresion.mostrar}"
+                    visible="#{certificacionPac.formularioImpresion.mostrar}">
+                    <h:panelGroup>    
+                        <ace:dynamicResource 
+                            fileName="#{certificacionPac.nombreArchivo}"                                            
+                            attachment="true"                                             
+                            label="Descargar archivo firmado"
+                            mimeType="#{certificacionPac.tipoArchivo}"
+                            resource="#{certificacionPac.recurso}" 
+                            type="button" rendered="#{certificacionPac.recurso ne null}"/>
+                        <ace:dynamicResource 
+                            fileName="CertificacionPAC.pdf"                                            
+                            attachment="true"                                             
+                            label="Descargar archivo"
+                            mimeType="application/pdf"
+                            resource="#{certificacionPac.reportepdf}" 
+                            type="button" rendered="#{certificacionPac.reportepdf ne null}"/>
+                        <ui:include src="imprimirCertificacionPac.xhtml" />
+                        <h:panelGrid columns="2" rendered="#{!certificacionPac.imprimir}">
+                            <h:outputLabel value="Fecha de recepción de Documentos:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{certificacionPac.fechaDoc}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Fecha de Aprobación:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{certificacionPac.fechapac}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Responsable :" />
+                            <h:selectOneMenu value="#{certificacionPac.usuariopac}">
+                                <f:selectItems value="#{certificacionPac.comboUsuariosPac}" />
+                            </h:selectOneMenu> 
+                            <h:outputText  value="Observaciones :" />
+                            <h:inputTextarea cols="60" rows="8" value="#{certificacionPac.obsRechazo}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Aprobar" icon="ui-icon ui-icon-check" 
+                                              action="#{certificacionPac.grabarAprobacion()}" 
+                                              rendered="#{!certificacionPac.imprimir and !certificacionPac.certificacion.impresopac}"/>
+                                <ace:menuItem value="Rechazar" icon="ui-icon ui-icon-close" 
+                                              action="#{certificacionPac.grabarRechazo()}" 
+                                              rendered="#{!certificacionPac.imprimir and !certificacionPac.certificacion.rechazadopac}" />
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{certificacionPac.grabarGenerar()}"
+                                              rendered="#{!certificacionPac.imprimir and certificacionPac.certificacion.rechazadopac}"/>
+                                <ace:menuItem value="Firmar" icon="ui-icon ui-icon-key" 
+                                              action="#{certificacionPac.firma()}"
+                                              rendered="#{certificacionPac.imprimir}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{certificacionPac.formularioImpresion.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages style="white-space: pre-wrap"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog> 
+
+                <!--                <ace:dialog 
+                                    header="Generar Certificación PAC"
+                                    closable="false"
+                                    modal="true"
+                                    draggable="false"
+                                    showEffect="clip"
+                                    hideEffect="fade"
+                                    rendered="#{certificacionPac.formularioGenerar.mostrar}"
+                                    visible="#{certificacionPac.formularioGenerar.mostrar}">
+                                    <h:outputLabel value="Desde:"/>
+                                    <ace:dateTimeEntry navigator="true"  value="#{certificacionPac.fechapac}" 
+                                                       popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                       pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </ace:dateTimeEntry>
+                                    <h:outputLabel value="¿Está seguro de generar nuevamente la certificación PAC" />
+                                    <h:panelGrid columns="1" width="100%">
+                                        <ace:menuBar autoSubmenuDisplay="true" >
+                                            <ace:menuItem value="Aprobar" icon="ui-icon ui-icon-check" 
+                                                          action="#{certificacionPac.grabarGenerar()}"/>
+                                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                          action="#{certificacionPac.formularioGenerar.cancelar()}"/>
+                                        </ace:menuBar>
+                                        <ace:messages style="white-space: pre-wrap"/>
+                                    </h:panelGrid>
+                                </ace:dialog> -->
+
+                <ace:dialog 
+                    header="Firmar"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{certificacionPac.formularioFirma.mostrar}"
+                    visible="#{certificacionPac.formularioFirma.mostrar}">
+                    <h:panelGroup>    
+<!--                        <h:outputLabel value="Cédula:" />
+                        <h:inputText value="#{certificacionPac.cedula}" />-->
+                        <h:outputLabel value="Clave:" />
+                        <h:inputSecret value="#{certificacionPac.clave}" />
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Firmar" icon="ui-icon ui-icon-disk" 
+                                              action="#{certificacionPac.grabarFirma()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{certificacionPac.formularioFirma.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages style="white-space: pre-wrap"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog> 
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

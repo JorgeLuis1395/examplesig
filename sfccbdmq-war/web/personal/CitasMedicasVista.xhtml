@@ -1,0 +1,185 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : PrincipalVista
+    Created on : 28/08/2011, 11:31:00 AM
+    Author     : luisfernando
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+
+    </h:head>
+    <h:body>
+        <h:form>
+            <ui:composition template="../plantillas/plantillaPersonal.xhtml">
+
+                <!-- Aqui va todo el codigo de la pagina -->
+                <ui:define name="content">
+                    <ace:panel id="panel"
+                               header="Citas Médicas"
+                               closable="false"
+                               toggleable="true">
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Centro: "/>
+                            <h:selectOneMenu value="#{citasMedicas.centro}">
+                                <f:selectItems value="#{centros.comboCentros}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Especialidades: "/>
+                            <h:selectOneMenu value="#{citasMedicas.especialidad}">
+                                <f:selectItems value="#{citasMedicas.comboEspecialidad}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Profesional: "/>
+                            <h:selectOneMenu value="#{citasMedicas.profesional}">
+                                <f:selectItems value="#{citasMedicas.comboProfesionalesEspecialidad}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Fecha:" styleClass="bold"/>
+                            <ace:dateTimeEntry navigator="true" value="#{citasMedicas.fecha}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield"  >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                <ace:ajax event="dateSelect" render="combohoras"/>
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hora: " styleClass="bold"/>
+                            <h:selectOneMenu value="#{citasMedicas.hora}" id="combohoras">
+                                <f:selectItems value="#{citasMedicas.horasDisponibles}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="2" rendered="#{!citasMedicas.formulario.mostrar}" >
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{citasMedicas.grabar()}"/>
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{citasMedicas.buscar()}"/>
+<!--                                <ace:menuItem value="Ver Agenda" icon="ui-icon ui-icon-calendar"  action="#{citasMedicas.verAgenda()}" rendered="#{citasMedicas.profesional!=null and !citasMedicas.ver}"/>
+                                <ace:menuItem value="Ocultar Agenda" icon="ui-icon ui-icon-calendar"  action="#{citasMedicas.ocultarAgenda()}" rendered="#{citasMedicas.profesional!=null and citasMedicas.ver}"/>-->
+                            </ace:menuBar>
+                            <ace:messages/>
+                        </h:panelGrid>
+                    </ace:panel>
+                    <ace:panel 
+                        header="Resultado Búsqueda"
+                        closable="false"
+                        toggleable="true"              >
+                        <h:panelGrid columns="3">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{citasMedicas.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{citasMedicas.formulario.pantalla}" 
+                                              target="tabla" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%">
+                            <ace:dataTable id="tabla" 
+                                           value="#{citasMedicas.listaCitas}"
+                                           var="item"
+                                           rowIndexVar="row"
+                                           binding="#{citasMedicas.formulario.fila}">
+                                <ace:column headerText="Acciones" style="text-align: left">
+                                    <ace:menuButton  effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{citasMedicas.eliminar()}" value="Cancelar" icon="ui-icon ui-icon-trash" rendered="#{item.activo}"/>
+                                        <ace:menuItem action="#{citasMedicas.reactivar()}" value="Reactivar" icon="ui-icon ui-icon-arrowreturn-1-w" rendered="#{!item.activo}"/>
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column  headerText="Registro" style="text-align: right">
+                                    <h:outputText value="#{row+1}"/>
+                                </ace:column>
+                                <ace:column  headerText="Fecha" style="text-align: left">
+                                    <h:outputText  value="#{item.fecha}">
+                                        <f:convertDateTime  pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Hora" style="text-align: left">
+                                    <h:outputText  value="#{item.hora}">
+                                        <f:convertDateTime  pattern="HH:mm"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Paciente" style="text-align: left">
+                                    <h:outputText  value="#{item.paciente.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Profesional" style="text-align: left">
+                                    <h:outputText  value="#{item.profesional.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Centro Médico" style="text-align: left">
+                                    <h:outputText  value="#{item.profesional.centro.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Estado" style="text-align: left">
+                                    <h:outputText  value="#{item.activo?'ACTIVO':'CANCELADO'}"/>
+                                </ace:column>
+                                <ace:column  headerText="Historial" style="text-align: left">
+                                    <ui:repeat value="#{citasMedicas.separar(item.observaciones)}" var="h">
+                                        <h:outputText  value="- #{h}]"/><br/><br/>
+                                    </ui:repeat>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:panel>
+
+                    <ace:dialog 
+                        header="#{citasMedicas.perfil.menu.texto}"
+                        closable="false"
+                        modal="true"
+                        draggable="false"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{citasMedicas.formulario.mostrar}"
+                        visible="#{citasMedicas.formulario.mostrar}">
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Razón:" styleClass="bold"/>
+                            <h:inputTextarea cols="19" rows="2" value="#{citasMedicas.cita.razon}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{citasMedicas.grabarReactivar()}" 
+                                              rendered="#{citasMedicas.formulario.modificar}"/>
+                                <ace:menuItem action="#{citasMedicas.borrar()}" 
+                                              value="¿Está seguro de Cancelar Cita?" 
+                                              icon="ui-icon ui-icon-trash" 
+                                              rendered="#{citasMedicas.formulario.borrar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{citasMedicas.formulario.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </ace:dialog>
+<!--                    <h:panelGrid width="100%" rendered="#{citasMedicas.ver}" id="imprimir">
+                        <ace:dataTable                                      
+                            value="#{citasMedicas.listahoras}"
+                            resizableColumns="true"
+                            var="hora">
+                            <f:facet name="header">#{citasMedicas.header()}</f:facet>
+                            <ace:column  headerText="Horas" style="text-align: right">
+                                <h:outputText value="#{hora.toString()}"/>
+                            </ace:column>
+                            <c:forEach items="#{horarios.dias}" var="dia">
+                                <ace:column headerText="#{dia.toString()}">
+                                    <span style="background-color: #{citasMedicas.getColor(hora, dia)}; padding:  2px;">
+                                    <h:outputText value="#{citasMedicas.getColorReserva(hora, dia)}" style="color: #195f88"/>
+                                    </span>
+                                    <hr style="border: 1px solid #{citasMedicas.getColor(hora, dia)};"/>
+                                </ace:column>
+                            </c:forEach>
+                        </ace:dataTable>
+                    </h:panelGrid>-->
+                </ui:define>
+                <!-- Fin -->
+            </ui:composition>
+        </h:form>
+    </h:body>
+
+</html>

@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+
+    <h:panelGrid>
+
+        <h:panelGrid columns="4">
+            <h:outputLabel value="Producto:"/>
+            <h:selectOneMenu value="#{proyectosPoa.tipoBuscar}">
+                <f:selectItem itemLabel="Código" itemValue="1"/>
+                <f:selectItem itemLabel="Nombre" itemValue="2"/>
+                <ace:ajax execute="@all"/>
+            </h:selectOneMenu>
+            <ace:autoCompleteEntry
+                rendered="#{proyectosPoa.tipoBuscar eq 1}"
+                value="#{proyectosPoa.codigo}"
+                rows="10" width="400"
+                listVar="proyectoAuto"
+                filterBy="#{proyectoAuto.codigo}"
+                filterMatchMode="contains"
+                listValue="#{proyectosPoa.listaProyecto}"
+                valueChangeListener="#{proyectosPoa.cambiaCodigo}"
+                textChangeListener="#{proyectosPoa.codigoChangeEventHandler}">
+                <f:facet name="row">
+                    <h:panelGrid columns="2">
+                        <h:outputText value="#{proyectoAuto.codigo}"/>
+                        <h:outputText value="#{proyectoAuto.nombre}"/>
+                    </h:panelGrid>
+                </f:facet>
+                <ace:ajax execute="@all"/>
+            </ace:autoCompleteEntry>
+            <ace:autoCompleteEntry
+                rendered="#{proyectosPoa.tipoBuscar eq 2}"
+                value="#{proyectosPoa.codigo}"
+                rows="10" width="400"
+                listVar="proyectoAuto1"
+                filterBy="#{proyectoAuto1.nombre}"
+                filterMatchMode="contains"
+                listValue="#{proyectosPoa.listaProyecto}"
+                valueChangeListener="#{proyectosPoa.cambiaCodigo}"
+                textChangeListener="#{proyectosPoa.codigoChangeEventHandler}">
+                <f:facet name="row">
+                    <h:panelGrid columns="2">
+                        <h:outputText value="#{proyectoAuto1.codigo}"/>
+                        <h:outputText value="#{proyectoAuto1.nombre}"/>
+                    </h:panelGrid>
+                </f:facet>
+                <ace:ajax execute="@all"/>
+            </ace:autoCompleteEntry>
+        </h:panelGrid>
+        <ace:panel rendered="#{proyectosPoa.proyectoSeleccionado ne null}">
+            <h:panelGrid columns="2">
+                <h:outputLabel value="Producto:"/>
+                <h:outputLabel  value="#{proyectosPoa.proyectoSeleccionado.toString()}"/>
+                <!--
+                            <c:forEach var="itemProducto" items="#{proyectosPoa.titulos}">
+                                <h:outputLabel value="#{itemProducto.titulo1}:" />
+                                <h:outputLabel  value="#{proyectosPoa.dividir(itemProducto, proyectosPoa.proyectoSeleccionado)}"/>
+                            </c:forEach>-->
+                <h:outputLabel value="Ingreso" rendered="#{proyectosPoa.proyectoSeleccionado.ingreso}" style="color: green;"/>
+                <h:outputLabel value="Egreso"  rendered="#{!proyectosPoa.proyectoSeleccionado.ingreso}" style="color: red;"/>
+            </h:panelGrid>
+        </ace:panel>
+    </h:panelGrid>
+
+</html>

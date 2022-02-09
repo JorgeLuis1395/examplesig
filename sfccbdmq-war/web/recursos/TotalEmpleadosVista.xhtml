@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <h:panelGrid width="100%">
+                    <ace:panel id="panel"
+                               header="#{totalEmpleados.perfil.menu.texto}"
+                               closable="false"
+                               toggleable="false"  >
+
+
+                        <ace:messages />
+
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{totalEmpleados.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{totalEmpleados.formulario.pantalla}" 
+                                              target="tablaEmpleados" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%" style="margin-bottom: 20px;">
+
+                            <ace:dataTable id="tablaEmpleados"
+                                           value="#{totalEmpleados.empleados}"
+                                           var="item"
+                                           lazy="false"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="10,15,30,50"
+                                           currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="30"
+                                           style="width: 100%;"
+                                           scrollHeight="600"
+                                           scrollable="true">
+                                <ace:tableConfigPanel id="tableConfig"
+                                                      dragHandle=".ui-tableconf-header"
+                                                      columnNameConfigurable="true"
+                                                      columnVisibilityConfigurable="true"
+                                                      columnOrderingConfigurable="true"
+                                                      columnSortingConfigurable="true"
+                                                      modal="false"
+                                                      type="first-col" rendered="#{totalEmpleados.empleados.size()>0}"/>
+                                <ace:column  id="fila" headerText=""  style="text-align: right">
+                                    <h:outputText value="#{row+1}"/>
+                                </ace:column>
+                                <ace:column  id="cedula" headerText="Cédula"  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.pin}"/>
+                                </ace:column>
+                                <ace:column  id="apellidos" headerText="Apellidos "  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.apellidos}"/>
+                                </ace:column>
+                                <ace:column id="nombres" headerText="Nombres"  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.nombres}"/>
+                                </ace:column>
+                                <c:forEach var="itemProducto" items="#{proyectosSfccbdmq.titulos}">
+                                    <ace:column  headerText="#{itemProducto.titulo1}"  style="text-align: left">
+                                        <h:outputText  value="#{proyectosSfccbdmq.dividir(itemProducto, item.proyecto)}"/>
+                                    </ace:column>
+                                </c:forEach>
+                                <ace:column id="programa" headerText="Programa"  style="text-align: left">
+                                    <h:outputText value="#{item.proyecto.toString()}"/>
+                                </ace:column>
+                                <ace:column id="partida" headerText="Partida"  style="text-align: left">
+                                    <h:outputText value="#{item.partida}"/>
+                                </ace:column>
+                                <ace:column  id="modalidad" headerText="Modalidad de Contratación"  style="text-align: left">
+                                    <h:outputText value="#{item.tipocontrato.nombre}"/>
+                                </ace:column>
+                                <ace:column id="denominacion" headerText="Denominación"  style="text-align: left">
+                                    <h:outputText value="#{item.cargoactual.cargo.escalasalarial.nombre}"/>
+                                </ace:column>
+                                <ace:column id="grado" headerText="Grado"  style="text-align: left">
+                                    <h:outputText value="#{item.cargoactual.cargo.escalasalarial.codigo}"/>
+                                </ace:column>
+                                <ace:column id="cargo" headerText="Cargo "  style="text-align: left">
+                                    <h:outputText value="#{item.cargoactual.cargo.nombre}"/>
+                                </ace:column>
+                                <ace:column  id="proceso" headerText="Proceso"  style="text-align: left">
+                                    <h:outputText value="#{item.cargoactual.organigrama.superior.nombre}"/>
+                                </ace:column>
+                                <ace:column id="unidad" headerText="Unidad Administrativa"  style="text-align: left">
+                                    <h:outputText value="#{item.cargoactual.organigrama.nombre}"/>
+                                </ace:column>
+                                <ace:column id="rmu" headerText="R.M.U." style="text-align: right">
+                                    <h:outputText  value="#{item.cargoactual.cargo.escalasalarial.sueldobase}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column id="fingreso" headerText="Fecha Ingreso"  style="text-align: left">
+                                    <h:outputText  value="#{item.fechaingreso}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column id="direccion" headerText="Dirección"  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.direccion.toString()}"/>
+                                </ace:column>
+                                <ace:column id="email" headerText="email"  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.email}"/>
+                                </ace:column>
+                                <ace:column id="estadocivil" headerText="Estado civil"  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.estadocivil.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="F. Nacim."  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column id="genero" headerText="Género"  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.genero.nombre}"/>
+                                </ace:column>
+                                <ace:column id="grupocontable" headerText="Grupo contable"  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.grupocontable.toString()}"/>
+                                </ace:column>
+                                <ace:column id="lugar" headerText="L. trabajo"  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.lugartrabajo}"/>
+                                </ace:column>
+                                <ace:column id="nacionalidad" headerText="Nacionalidad"  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.nacionalidad.toString()}"/>
+                                </ace:column>
+                                <ace:column id="ocupacion" headerText="Ocupación"  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.ocupacion}"/>
+                                </ace:column>
+                                <ace:column id="tiposangre" headerText="Tipo de Sangre"  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.tiposangre.toString()}"/>
+                                </ace:column>
+                                <ace:column id="userid" headerText="User ID"  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.userid}"/>
+                                </ace:column>
+                                <c:forEach var="itemRrhh" items="#{totalEmpleados.listaCabecerarrhh}">
+                                    <ace:column   headerText="#{itemRrhh.texto}"  style="text-align: left">
+                                        <h:outputText  value="#{totalEmpleados.getDato(itemRrhh, item)}"/>
+                                    </ace:column>
+                                </c:forEach>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:panel>
+                    <!--</ace:dialog>-->
+                </h:panelGrid>
+                <ace:dialog
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    header="#{totalEmpleados.perfil.menu.texto}"
+                    rendered="#{totalEmpleados.formulario.mostrar}"
+                    visible="#{totalEmpleados.formulario.mostrar}">
+                    <ui:include src="DatosEmpleadoExistente.xhtml"/>
+
+                </ace:dialog> 
+                <!--Poner  con include ya que vista demasiado Cargada;-->
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

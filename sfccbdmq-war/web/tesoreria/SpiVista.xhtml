@@ -1,0 +1,544 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{spiSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGroup rendered="#{spiSfccbdmq.formulario.mostrar}">
+
+                        <h:panelGrid columns="2" width="30%">
+
+
+                            <h:outputLabel value="Fecha:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{spiSfccbdmq.spi.fecha}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Propuestas:"/>
+                            <h:selectOneMenu value="#{spiSfccbdmq.propuesta}" valueChangeListener="#{spiSfccbdmq.cambiaValor}">
+                                <f:selectItems value="#{kardexPagosSfccbdmq.comboPropuestas}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+<!--                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{spiSfccbdmq.formulario.nuevo}" 
+                                              action="#{spiSfccbdmq.insertar()}"/>-->
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{spiSfccbdmq.grabar()}" 
+                                              rendered="#{spiSfccbdmq.formulario.modificar}" />
+                                <ace:menuItem action="#{spiSfccbdmq.borrar()}" 
+                                              value="Esta seguro de Borrar el registro?" 
+                                              rendered="#{spiSfccbdmq.formulario.borrar}"/>
+                                <ace:menuItem value="Pasar Todos" icon="ui-icon ui-icon-seek-end"  
+                                              action="#{spiSfccbdmq.colocarTodas()}"/>
+                                <ace:menuItem value="Pasar Seleccionados" icon="ui-icon ui-icon-seek-end"  
+                                              action="#{spiSfccbdmq.colocarSeleccionadas()}"/>
+                                <ace:menuItem value="Retirar Todas" 
+                                              icon="ui-icon ui-icon-seek-first" 
+                                              action="#{spiSfccbdmq.retirarTodas()}" />
+                                <ace:menuItem value="Retirar Seleccionados" 
+                                              icon="ui-icon ui-icon-seek-first" 
+                                              action="#{spiSfccbdmq.retirarSeleccionadas()}" />
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{spiSfccbdmq.salir()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+
+
+                        <ace:splitPane columnDivider="50"
+                                       scrollable="true"
+                                       style="width: 100%;height: 600px">
+                            <f:facet name="left">
+                                <ace:dataTable 
+                                    value="#{spiSfccbdmq.listakardex}"
+                                    var="item"
+                                    paginator="true"
+                                    lazy="false"
+                                    resizableColumns="true"
+                                    rowIndexVar="row"
+                                    paginatorPosition="both"
+                                    rowsPerPageTemplate="15,20,25,50,100"
+                                    currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                    rows="15"
+                                    binding="#{origen}">
+                                    <f:facet name="header">Para seleccionar #{spiSfccbdmq.valorSeleccionar}</f:facet>
+                                    <ace:column style="text-align: left">
+                                        <h:selectBooleanCheckbox value="#{item.seleccionar}"/>
+                                        <!--                                        <ace:menuBar autoSubmenuDisplay="true" >
+                                                                                    <ace:menuItem action="#{spiSfccbdmq.colocar(item)}" 
+                                                                                                  value="Selecciona" icon="ui-icon ui-icon-seek-next" >
+                                                                                        <ace:ajax execute="@all"/>
+                                                                                    </ace:menuItem>
+                                                                                </ace:menuBar>-->
+                                    </ace:column>
+                                    <ace:column  headerText="Concepto" filterBy="#{item.observaciones}"  
+                                                 sortBy="#{item.observaciones}"
+                                                 filterMatchMode="contains"
+                                                 style="text-align: left">
+                                        <h:outputText  value="#{item.observaciones}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Origen"  style="text-align: left" 
+                                                 filterBy="#{item.origen}"  
+                                                 sortBy="#{item.origen}"
+                                                 filterMatchMode="contains">
+                                        <h:outputText  value="#{item.origen}"/>
+                                    </ace:column>
+
+                                    <ace:column  headerText="Proveedor" style="text-align: left" 
+                                                 filterBy="#{item.beneficiario}"  
+                                                 sortBy="#{item.beneficiario}"
+                                                 filterMatchMode="contains">
+                                        <h:outputText  value="#{item.beneficiario}" rendered="#{item.proveedor==null}"/>
+                                        <h:outputText  value="#{item.proveedor.empresa.toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Contrato" style="text-align: left"
+                                                 filterBy="#{item.anticipo.contrato.numero}"  
+                                                 sortBy="#{item.anticipo.contrato.numero}"
+                                                 filterMatchMode="contains">
+                                        <h:outputText  value="#{item.anticipo.contrato.toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Fecha" style="text-align: left" 
+                                                 filterBy="#{item.fechamov}"  
+                                                 sortBy="#{item.fechamov}"
+                                                 filterMatchMode="contains">
+                                        <h:outputText  value="#{item.fechamov}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Valor" style="text-align: right" 
+                                                 filterBy="#{item.valor}"  
+                                                 sortBy="#{item.valor}"
+                                                 filterMatchMode="contains">
+                                        <h:outputText  value="#{item.valor}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+
+                                </ace:dataTable>
+                            </f:facet>
+                            <f:facet name="right">
+                                <ace:dataTable 
+                                    value="#{spiSfccbdmq.listaSeleccionada}"
+                                    var="seleccionados"
+                                    paginator="true"
+                                    lazy="false"
+                                    resizableColumns="true"
+                                    rowIndexVar="row1"
+                                    paginatorPosition="both"
+                                    rowsPerPageTemplate="5,10,15,30,50,100"
+                                    paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                    rows="30"
+                                    binding="#{destino}">
+                                    <f:facet name="header">Seleccionados #{spiSfccbdmq.valorSeleccionado}</f:facet>
+                                    <ace:column style="text-align: left">
+                                        <h:selectBooleanCheckbox value="#{seleccionados.seleccionar}"/>
+                                        <!--                                        <ace:menuBar autoSubmenuDisplay="true" >
+                                                                                    <ace:menuItem action="#{spiSfccbdmq.retirar(seleccionados)}" 
+                                                                                                  value="Retira" icon="ui-icon ui-icon-seek-prev" >
+                                                                                        <ace:ajax execute="@all"/>
+                                                                                    </ace:menuItem>
+                                                                                </ace:menuBar>-->
+                                    </ace:column>
+                                    <ace:column  headerText="Concepto"  style="text-align: left">
+                                        <h:outputText  value="#{seleccionados.observaciones}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Origen"  style="text-align: left">
+                                        <h:outputText  value="#{seleccionados.origen}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Proveedor" style="text-align: left">
+                                        <h:outputText  value="#{seleccionados.proveedor.empresa.toString()}"/>
+                                        <h:outputText  value="#{(seleccionados.beneficiario)}" rendered="#{seleccionados.proveedor==null}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Contrato" style="text-align: left">
+                                        <h:outputText  value="#{seleccionados.anticipo.contrato.toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Fecha" style="text-align: left">
+                                        <h:outputText  value="#{seleccionados.fechamov}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Valor" style="text-align: right">
+                                        <h:outputText  value="#{seleccionados.valor}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Propuesta" 
+                                                 filterBy="#{seleccionados.propuesta}"  
+                                                 sortBy="#{seleccionados.propuesta}"
+                                                 filterMatchMode="contains">
+                                        <h:outputText  value="#{seleccionados.propuesta}"/>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </f:facet>
+                        </ace:splitPane>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{!spiSfccbdmq.formulario.mostrar}">
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Banco :" />
+                            <h:selectOneMenu  value="#{spiSfccbdmq.banco}" id="contrato">
+                                <f:selectItems value="#{bancosSfccbdmq.comboBancos}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{spiSfccbdmq.desde}" id="dos"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{spiSfccbdmq.hasta}" id="tres"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+
+                            <h:outputLabel value="Estado :"/>
+                            <h:selectOneMenu  value="#{spiSfccbdmq.estado}">
+                                <!--<f:selectItem  itemLabel="COMPROMISO" itemValue="0"/>-->
+                                <f:selectItem  itemLabel="INGRESADO"  itemValue="0"/>
+                                <f:selectItem  itemLabel="GENERADO" itemValue="1"/>
+                                <f:selectItem  itemLabel="ANULADO" itemValue="-1"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+
+                            <!--                            <a href="https://publico.bce.fin.ec/bce_publico/" target="_blank">
+                                                            <img src="../resources/images/logobce2013.jpg" width="430" height="109" alt="logobce2013"/>
+                            
+                                                        </a>-->
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <!--<ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{spiSfccbdmq.nuevo()}" />-->
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{spiSfccbdmq.buscar()}"/>
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{spiSfccbdmq.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages/>
+                        </h:panelGrid>
+
+                        <!-- tabla de obligaciones-->
+                        <h:panelGrid width="100%">
+                            <ace:dataTable id="tabla1" 
+                                           value="#{spiSfccbdmq.listaSpi}"
+                                           var="itemSpi"
+                                           paginator="true"
+                                           lazy="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row2"
+                                           paginatorPosition="top"
+                                           rowsPerPageTemplate="5,10,15,30,50,100"
+                                           paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="10"
+                                           binding="#{spiSfccbdmq.formulario.fila}"
+                                           >
+                                <f:facet name="header">Listado de SPI</f:facet>
+                                <ace:column  headerText="Registro" style="text-align: right">
+                                    <h:outputText value="#{row2+1}"/>
+                                </ace:column>
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{spiSfccbdmq.modifica(itemSpi)}" value="Editar" icon="ui-icon ui-icon-pencil" rendered="#{itemSpi.estado==0}"/>
+                                        <ace:menuItem action="#{spiSfccbdmq.coloca(itemSpi)}" value="Colocar Código" icon="ui-icon ui-icon-folder-open" rendered="#{itemSpi.estado!=0}"/>
+                                        <ace:menuItem action="#{spiSfccbdmq.cambiaFecha(itemSpi)}" value="Cambia Fecha" icon="ui-icon ui-icon-calendar"/>
+                                        <ace:menuItem action="#{spiSfccbdmq.generarAnt(itemSpi)}" value="Generar Archivo" icon="ui-icon ui-icon-folder-open"/>
+                                        <!--<ace:menuItem action="#{spiSfccbdmq.eliminar(itemSpi)}" value="Borrar" icon="ui-icon ui-icon-trash" rendered="#{itemSpi.estado==0}"/>-->
+                                        <ace:menuItem action="#{spiSfccbdmq.eliminar(itemSpi)}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                    </ace:menuButton>
+                                </ace:column>
+                                <ace:column  headerText="No."  
+                                             filterBy="#{itemSpi.id}"  
+                                             sortBy="#{itemSpi.id}"
+                                             style="text-align: left">
+                                    <h:outputText  value="#{itemSpi.id}"/>
+                                </ace:column>
+                                <ace:column  headerText="No. Propuesta"  
+                                             filterBy="#{itemSpi.numero}"  
+                                             sortBy="#{itemSpi.numero}"
+                                             style="text-align: left">
+                                    <h:outputText  value="#{itemSpi.numero}"/>
+                                </ace:column>
+                                <ace:column  headerText="Banco"  
+                                             style="text-align: left">
+                                    <h:outputText  value="#{itemSpi.banco.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor" style="text-align: right">
+                                    <h:outputText  value="#{spiSfccbdmq.valorFila}">
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Fecha" style="text-align: left">
+                                    <h:outputText  value="#{itemSpi.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Usuario"  style="text-align: left">
+                                    <h:outputText  value="#{itemSpi.usuario}"/>
+                                </ace:column>
+                                <ace:column  headerText="Código Banco"  style="text-align: left">
+                                    <h:outputText  value="#{itemSpi.clavebanco}"/>
+                                </ace:column>
+                                <ace:column  headerText="Estado" sortBy="#{itemSpi.estado}" style="text-align: left">
+                                    <h:outputText  value="INGRESADO" rendered="#{itemSpi.estado==0}"/>
+                                    <h:outputText  value="GENERADO" rendered="#{itemSpi.estado==1}"/>
+                                    <h:outputText  value="ANULADO" rendered="#{itemSpi.estado==-1}"/>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>  
+                    </h:panelGroup>
+                </ace:panel>
+                <ace:dialog 
+                    header="Colocar Código banco"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{spiSfccbdmq.formularioColoca.mostrar}"
+                    visible="#{spiSfccbdmq.formularioColoca.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2" width="100%">
+                            <h:outputText  value="Código del Banco : " rendered="#{spiSfccbdmq.formularioColoca.modificar}"/>
+                            <h:inputText  value="#{spiSfccbdmq.spi.clavebanco}" rendered="#{spiSfccbdmq.formularioColoca.modificar}"/>
+                            <h:outputLabel value="Fecha:" rendered="#{spiSfccbdmq.formularioColoca.nuevo}"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{spiSfccbdmq.spi.fecha}" rendered="#{spiSfccbdmq.formularioColoca.nuevo}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputText  value="Valor SPI : "/>
+                            <h:outputText  value="#{spiSfccbdmq.valorSeleccionado}"/>
+                            <h:outputText  value="Número de Propuesta : "/>
+                            <h:inputText  value="#{spiSfccbdmq.spi.numero}" size="5">
+                                <f:validateLength maximum="5"/>
+                            </h:inputText>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{spiSfccbdmq.formularioImprimir.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{spiSfccbdmq.formularioImprimir.pantalla}" 
+                                              target="tablaSpiExportar" fileName="datosSpi"/>
+                        </h:panelGrid>   
+                        <h:panelGrid columns="1" width="100%">
+
+                            <ace:dataTable id="tablaSpiExportar" 
+                                           value="#{spiSfccbdmq.listaSeleccionada}"
+                                           var="itemSpiExportar"
+                                           paginator="false"
+                                           binding="#{spiSfccbdmq.formularioImprimir.fila}">
+                                <!--                                <ace:column  headerText="CEDULA, RUC O PASAPORTE" style="text-align: left">
+                                                                    <h:outputText  value="#{itemSpiExportar.documento}"/>
+                                                                </ace:column>-->
+                                <!--                                <ace:column  headerText="REFERENCIA" style="text-align: left">
+                                                                    <h:outputText  value="#{itemSpiExportar.observaciones}"/>
+                                                                </ace:column>-->
+                                <ace:column  headerText="NOMBRE" style="text-align: left">
+                                    <h:outputText  value="#{itemSpiExportar.beneficiario}"/>
+                                </ace:column>
+                                <ace:column  headerText="INSTITUCION FINANCIERA" style="text-align: left">
+                                    <h:outputText  value="#{itemSpiExportar.bancotransferencia.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="CUENTA BENEFICIARIO" style="text-align: right">
+                                    <h:outputText  value="#{itemSpiExportar.cuentatrans}"/>
+                                </ace:column>
+                                <ace:column  headerText="TIPOCUENTA" style="text-align: left">
+                                    <h:outputText  value="#{itemSpiExportar.tcuentatrans}"/>
+                                </ace:column>
+                                <ace:column  headerText="VALOR" style="text-align: right">
+                                    <h:outputText  value="#{itemSpiExportar.valor}"/>
+                                </ace:column>
+                                <ace:column  headerText="CONCEPTO" style="text-align: left">
+                                    <h:outputText  value="#{itemSpiExportar.observaciones}"/>
+                                </ace:column>
+                                <ace:column  headerText="FECHA" style="text-align: left">
+                                    <h:outputText  value="#{itemSpiExportar.fechamov}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <!--                                <ace:column  headerText="DETALLE" style="text-align: left">
+                                                                    <h:outputText  value="#{itemSpiExportar.detalle}"/>
+                                                                </ace:column>-->
+                            </ace:dataTable>
+
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              rendered="#{spiSfccbdmq.formularioColoca.modificar}"
+                                              action="#{spiSfccbdmq.grabaColoca()}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              rendered="#{spiSfccbdmq.formularioColoca.nuevo}"
+                                              action="#{spiSfccbdmq.grabaFecha()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{spiSfccbdmq.formularioColoca.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Generar Archivo"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{spiSfccbdmq.formularioImprimir.mostrar}"
+                    visible="#{spiSfccbdmq.formularioImprimir.mostrar}">
+                    <h:panelGrid columns="4"> 
+                        <h:outputText value="Archivo:" styleClass="bold"/>
+                        <h:outputText value="spi-sp.zip"/>
+                        <ace:dynamicResource fileName="spi-sp.zip" 
+                                             attachment="false" 
+                                             label="Descargar documento"
+                                             resource="#{spiSfccbdmq.recursoTxt}" 
+                                             type="button"/>
+                        <ace:dynamicResource fileName="Spi.xls"  label="Spi xls"
+                                             mimeType="application/xls" 
+                                             resource="#{spiSfccbdmq.recursoXls}" 
+                                             style="" type="button"/>
+                        <ace:dynamicResource fileName="Spi.pdf"  label="Imprimir"
+                                             mimeType="application/xls" 
+                                             resource="#{spiSfccbdmq.recursoPdf}" 
+                                             style="" type="button"/>
+                        <!--                        <h:commandButton  value="Imprimir">
+                                                    <h:outputText id="printBoth" value="Imprimir"/>
+                                                    <ace:printer for="panelImprimir"/>
+                                                </h:commandButton>-->
+                    </h:panelGrid>
+                    <ace:panel id="panelImprimir" style="display:block;">
+                        <h:panelGrid width="90%">
+                            <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+                            <h:panelGrid  width="20%" columns="2" style="text-align: left">
+                                <h:outputText value="Usuario :"/>
+                                <h:outputText value="#{parametrosSfccbdmq.logueado.userid}"/>
+                                <h:outputText value="Fecha :"/>
+                                <h:outputText value="#{parametrosSfccbdmq.fechaActual}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                                </h:outputText>
+                            </h:panelGrid>
+                            <h:panelGrid  width="90%" columns="1" style="text-align: center">
+                                <h3>REPORTE DE CONTROL TRANSFERENCIAS SPI - #{spiSfccbdmq.spi.id}</h3>
+                            </h:panelGrid>
+                            <h:panelGrid  width="90%" columns="1" style="text-align: center">
+                                <h3>INSTITUCION : #{configuracionSfccbdmq.configuracion.nombre}</h3>
+                            </h:panelGrid>
+                            <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                                <h:outputLabel value="Fecha de aceptación:" />
+                                <h:outputLabel value="#{spiSfccbdmq.spi.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputLabel>
+                                <h:outputLabel value="Número de control:" />
+                                <h:outputLabel value="#{spiSfccbdmq.spiMd5}" />
+                            </h:panelGrid>
+
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:dataTable 
+                                    value="#{spiSfccbdmq.listaTotales}"
+                                    var="itemDetalles"
+                                    paginator="false"
+                                    lazy="false"
+                                    resizableColumns="true"
+                                    rowIndexVar="row"
+                                    paginatorPosition="both"
+                                    rowsPerPageTemplate="5,10,15,30,50,100"
+                                    paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                    >
+
+                                    <ace:column  headerText="Cuenta"  style="text-align: left">
+                                        <h:outputText  value="#{itemDetalles.titulo1}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Institución Pagadora"  style="text-align: left">
+                                        <h:outputText  value="#{itemDetalles.titulo2}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="# Pagos"  style="text-align: left">
+                                        <h:outputText  value="#{itemDetalles.indice}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="US$ MONTO" style="text-align: right">
+                                        <h:outputText  value="#{itemDetalles.total}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+
+                                </ace:dataTable>
+                            </h:panelGrid>
+                            <h:panelGrid  width="90%" columns="2">
+                                <b></b>
+                                <b></b>
+                                <b></b>
+                                <b></b>
+                                <b></b>
+                                <b></b>
+                                <b></b>
+                                <b></b>
+                                <b></b>
+                                <b></b>
+                                <b></b>
+                                <b></b>
+                                <b></b>
+                                <b></b>
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="f.----------------------------" />
+                                <h:outputLabel value="f.----------------------------" />
+                                <c:forEach items="#{codigosSfccbdmq.firmasTesoreria}" var="firmas">
+                                    <h:outputLabel value="#{firmas.nombre}"/>
+                                </c:forEach>
+                                <c:forEach items="#{codigosSfccbdmq.firmasTesoreria}" var="descricip">
+                                    <h:outputLabel value="#{descricip.descripcion}"/>
+                                </c:forEach>
+                                <c:forEach items="#{codigosSfccbdmq.firmasTesoreria}" var="param">
+                                    <h:outputLabel value="#{param.parametros}"/>
+                                </c:forEach>
+                            </h:panelGrid>
+
+                        </h:panelGrid>
+
+                    </ace:panel>
+                    <h:panelGrid>
+                        <ace:menuBar>
+                            <ace:menuItem value="Cerrar" icon="ui-icon ui-icon-close" 
+                                          action="#{spiSfccbdmq.formularioImprimir.cancelar()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

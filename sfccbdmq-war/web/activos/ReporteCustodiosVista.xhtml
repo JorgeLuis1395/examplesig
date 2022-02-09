@@ -1,0 +1,229 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{reporteCustodioSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteCustodioSfccbdmq.buscar()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <!--                </ace:panel>
+                                   
+                                    <ace:panel 
+                                        header="Resultado Bùsqueda"
+                                        closable="false"
+                                        toggleable="true"
+                                        >-->
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{reporteCustodioSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{reporteCustodioSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane >
+                            <f:facet name="label">Internos</f:facet>
+                            <ace:dynamicResource 
+                                fileName="Internos.pdf" id="pdf-button1" label="Imprimir"
+                                mimeType="application/pdf" 
+                                resource="#{reporteCustodioSfccbdmq.reporteInternos}" 
+                                rendered="#{reporteCustodioSfccbdmq.reporteInternos!=null}"
+                                style="" type="button"/>
+                            <h:panelGrid width="100%">
+                                <ace:dataTable id="tabla" 
+                                               value="#{reporteCustodioSfccbdmq.listaReporte}"
+                                               var="item"
+                                               paginator="true"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="15,20,25,50,100"
+                                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="15"
+                                               binding="#{reporteCustodioSfccbdmq.formulario.fila}"
+                                               scrollHeight="600"
+                                               scrollable="true">
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <ace:column style="text-align: left">
+                                        <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." rendered="#{item.referencia!=null}">
+                                            <ace:menuItem action="#{reporteCustodioSfccbdmq.seleccionaInterno(item)}" value="Ver" icon="ui-icon ui-icon-pencil" />
+                                        </ace:menuButton>
+                                    </ace:column> 
+                                    <ace:column  headerText="Cédula" style="text-align: left">
+                                        <h:outputText  value="#{item.referencia}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Apellidos" style="text-align: left">
+                                        <h:outputText  value="#{item.total}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Nombres" style="text-align: left">
+                                        <h:outputText  value="#{item.cuenta}"/>
+                                    </ace:column>
+
+                                    <ace:column  headerText="Valor de Custodia" style="text-align: right">
+                                        <h:outputText  value="#{item.saldoInicial}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane >
+                            <f:facet name="label">Externos</f:facet>
+                            <ace:dynamicResource fileName="Externos.pdf" id="pdf-buttonex" label="Imprimir"
+                                                 mimeType="application/pdf" 
+                                                 rendered="#{reporteCustodioSfccbdmq.reporteExternos!=null}"
+                                                 resource="#{reporteCustodioSfccbdmq.reporteExternos}" 
+                                                 style="" type="button"/>
+                            <h:panelGrid width="100%">
+                                <ace:dataTable id="tablaExternos" 
+                                               value="#{reporteCustodioSfccbdmq.listaExternos}"
+                                               var="item"
+                                               paginator="true"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="15,20,25,50,100"
+                                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="15">
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <ace:column style="text-align: left">
+                                        <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." rendered="#{itemExterno.referencia!=null}">
+                                            <ace:menuItem action="#{reporteCustodioSfccbdmq.seleccionaExterno(itemExterno)}" value="Ver" icon="ui-icon ui-icon-pencil" />
+                                        </ace:menuButton>
+                                    </ace:column> 
+                                    <ace:column  headerText="Dirección" style="text-align: left">
+                                        <h:outputText  value="#{item.referencia}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Nombres" style="text-align: left">
+                                        <h:outputText  value="#{item.total}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Empresa" style="text-align: left">
+                                        <h:outputText  value="#{item.cuenta}"/>
+                                    </ace:column>
+
+                                    <ace:column  headerText="Valor de Custodia" style="text-align: right">
+                                        <h:outputText  value="#{item.saldoInicial}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+
+                    </ace:tabSet>
+                </ace:panel>
+                <ace:dialog 
+                    header="Activos en custodia"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteCustodioSfccbdmq.formulario.mostrar}"
+                    visible="#{reporteCustodioSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2" width="100%" >
+                            <h:outputText  value="Cédula" />
+                            <h:outputText  value="#{reporteCustodioSfccbdmq.auxiliar.referencia}"/>
+                            <h:outputText  value="Apellidos" />
+                            <h:outputText  value="#{reporteCustodioSfccbdmq.auxiliar.total}"/>
+                            <h:outputText  value="Nombres" />
+                            <h:outputText  value="#{reporteCustodioSfccbdmq.auxiliar.cuenta}"/>
+                            <h:outputText  value="Valor de Custodia" />
+                            <h:outputText  value="#{reporteCustodioSfccbdmq.auxiliar.saldoInicial}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable id="tablaDep" 
+                                           value="#{reporteCustodioSfccbdmq.listaActivos}"
+                                           var="itemActivos"
+                                           paginator="true"
+                                           lazy="false"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="5,10,15,50,all"
+                                           paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="5"
+                                           >
+                                <ace:column  headerText="Ubicación"  style="text-align: left">
+                                    <h:outputText  value="#{itemActivos.localizacion.edificio.nombre}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Código"  style="text-align: left">
+                                    <h:outputText  value="#{itemActivos.codigo}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Descripción"  style="text-align: left">
+                                    <h:outputText  value="#{itemActivos.descripcion}"/>
+                                </ace:column> 
+                                <ace:column  headerText="Fecha Adquisición"  style="text-align: right">
+                                    <h:outputText  value="#{itemActivos.fechaalta}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+
+                            </ace:dataTable>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteCustodioSfccbdmq.formulario.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

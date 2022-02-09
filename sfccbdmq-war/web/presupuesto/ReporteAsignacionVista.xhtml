@@ -1,0 +1,193 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{reporteAsignacionesSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="2" width="100%">
+                        <h:outputLabel value="Año :"/>
+                        <h:inputText value="#{reporteAsignacionesSfccbdmq.anio}" id="anio"/>
+                        <h:outputLabel value="Código de Proyecto :"/>
+                        <h:inputText value="#{reporteAsignacionesSfccbdmq.codigo}"/>
+                        <h:outputLabel value="Clasificador :"/>
+                        <h:inputText value="#{reporteAsignacionesSfccbdmq.partida}"/>
+                        <h:outputLabel value="Detallado por fuente de financiamiento:"/>
+                        <h:selectBooleanCheckbox value="#{reporteAsignacionesSfccbdmq.fuente}" id="fuenet" 
+                                                 valueChangeListener="#{reporteAsignacionesSfccbdmq.cambiaFuente}">
+                            <ace:ajax execute="@all"/>
+                        </h:selectBooleanCheckbox>
+
+                    </h:panelGrid>
+
+
+                    <h:panelGrid columns="1" width="100%">
+
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteAsignacionesSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Hoja Elect. por Partidas" icon="ui-icon ui-icon-calculator" action="#{reporteAsignacionesSfccbdmq.exportarPartidas()}"  />
+                            <ace:menuItem value="Hoja Elect. Asignación" icon="ui-icon ui-icon-calculator" action="#{reporteAsignacionesSfccbdmq.exportarProyectos()}"  />
+                            <!--FM 01 OCT 2018-->
+                            <ace:menuItem value="PDF por Partidas" icon="ui-icon ui-icon-script" action="#{reporteAsignacionesSfccbdmq.exportarPdfPartidas()}"  />
+                            <ace:menuItem value="PDF Asignación" icon="ui-icon ui-icon-script" action="#{reporteAsignacionesSfccbdmq.exportarPdfProyectos()}"  />
+                            
+                            
+                            <ace:menuItem value="Imprimir" icon="ui-icon ui-icon-print" action="#{reporteAsignacionesSfccbdmq.imprimirPantalla()}"  rendered="#{reporteAsignacionesSfccbdmq.asignaciones.size()>0}"/>
+<!--                            <ace:menuItem value="imprimir" icon="ui-icon ui-icon-print"  >
+                                <ace:printer for="panelImprimir"/>
+                            </ace:menuItem>-->
+                        </ace:menuBar>
+                        <ace:messages/>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    </h:panelGrid>
+<!--                    <h:panelGrid columns="4" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{reporteAsignacionesSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{reporteAsignacionesSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                        <h:commandButton  value="Imprimir">
+                                                            <h:outputText id="printBoth" value="Imprimir"/>
+                            <ace:printer for="panelImprimir"/>
+                        </h:commandButton>
+                    </h:panelGrid>-->
+                </ace:panel>
+
+                <ace:panel id="panelImprimir" style="display:block;">
+                <!--<ace:panel id="panelImprimir" style="display:block;font-size: x-small">-->
+<!--                        <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+                        <h:panelGrid width="50%" columns="2">
+                            <h:outputLabel value="Total Ingresos :"/>
+                            <h:outputText value="#{reporteAsignacionesSfccbdmq.totalIngresos}">
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Total Egresos :"/>
+                            <h:outputText value="#{reporteAsignacionesSfccbdmq.totalEgresos}">
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Total  :"/>
+                            <h:outputText value="#{reporteAsignacionesSfccbdmq.totalIngresos-reporteAsignacionesSfccbdmq.totalEgresos}">
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                        </h:panelGrid>-->
+                        <h:panelGrid width="90%">
+
+                            <ace:dataTable id="tabla" 
+                                           value="#{reporteAsignacionesSfccbdmq.asignaciones}"
+                                           var="item"
+                                           scrollHeight="600"
+                                           scrollable="true"
+                                           binding="#{reporteAsignacionesSfccbdmq.formulario.fila}" style="display:block;">
+                                <!--                            <ace:column  headerText="Registro" style="text-align: right">
+                                                                <h:outputText value="#{row+1}"/>
+                                                            </ace:column>-->
+                                <ace:column  headerText="Código" style="text-align: left" id="codigo" styleClass="#{item.titulo1}">
+                                    <h:outputText  value="#{item.codigo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nombre"  style="text-align: left" id="nombre" styleClass="#{item.titulo1}">
+                                    <h:outputText  value="#{item.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Fuente"  style="text-align: left" id="fuente" rendered="#{reporteAsignacionesSfccbdmq.fuente}" styleClass="#{item.titulo1}">
+                                    <h:outputText  value="#{item.fuente}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor" style="text-align: right" styleClass="#{item.titulo1}">
+                                    <h:outputText  value="#{reporteAsignacionesSfccbdmq.valor}" id="valor">
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </ace:column>
+<!--                                <ace:column  headerText="No Cuentas Contables"  style="text-align: left" styleClass="#{item.titulo1}">
+                                    <h:outputText  value="#{reporteAsignacionesSfccbdmq.cuentasContables}"/>
+                                </ace:column>-->
+                            </ace:dataTable>
+                        </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="Imprimir/exportar "
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteAsignacionesSfccbdmq.formularioReporte.mostrar}"
+                    visible="#{reporteAsignacionesSfccbdmq.formularioReporte.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="#{reporteAsignacionesSfccbdmq.nombreArchivo}" id="pdf-botonMayor" label="#{reporteAsignacionesSfccbdmq.tipoArchivo}"
+                                            mimeType="#{reporteAsignacionesSfccbdmq.tipoMime}" resource="#{reporteAsignacionesSfccbdmq.reporte}" 
+                                            style="" type="button"/>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteAsignacionesSfccbdmq.formularioReporte.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                
+                
+                <ace:dialog 
+                    header="Imprimir/exportar "
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteAsignacionesSfccbdmq.formularioReportePdf.mostrar}"
+                    visible="#{reporteAsignacionesSfccbdmq.formularioReportePdf.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="#{reporteAsignacionesSfccbdmq.nombreArchivo}" id="pdf-botonMayor1" label="#{reporteAsignacionesSfccbdmq.tipoArchivo}"
+                                             mimeType="#{reporteAsignacionesSfccbdmq.tipoMime}" resource="#{reporteAsignacionesSfccbdmq.reportePdf}" 
+                                            style="" type="button"/>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteAsignacionesSfccbdmq.formularioReportePdf.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                
+                
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

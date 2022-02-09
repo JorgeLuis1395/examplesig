@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{novedadesEmpleado.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <!--<ace:panel header="Parámetros de Búsqueda">-->
+                    <h:panelGrid columns="2" rendered="#{!novedadesEmpleado.formulario.mostrar}">
+                        <ui:include src="../BuscarSoloEmpleadosActivos.xhtml"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <h:outputText value="Mes" />
+                        <h:inputText value="#{novedadesEmpleado.mes}"/>
+                        <h:outputText value="Año:" />
+                        <h:inputText value="#{novedadesEmpleado.anio}"/>
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{novedadesEmpleado.buscar()}" rendered="#{!novedadesEmpleado.formulario.mostrar}" />
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{novedadesEmpleado.grabar()}" rendered="#{novedadesEmpleado.formulario.mostrar}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{novedadesEmpleado.cancelar()}" />
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <ace:messages/>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    
+                    <h:panelGrid width="100%">
+                        <ace:dataTable 
+                            value="#{novedadesEmpleado.listaNovedadesxempleado}"
+                                       var="novedadItem"
+                                       binding="#{novedadesEmpleado.formulario.fila}">
+                            <f:facet name="header">#{empleados.empleadoSeleccionado.entidad.toString()}</f:facet>
+
+                            <ace:column  headerText="Concepto"  style="text-align: left">
+                                <h:outputText value="#{novedadItem.concepto.nombre}"/>
+                            </ace:column>
+
+                            <ace:column  headerText="Valor" style="text-align: left">
+                                <h:inputText   value="#{novedadItem.valor}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{novedadesEmpleado.buscar()}" rendered="#{!novedadesEmpleado.formulario.mostrar}" />
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{novedadesEmpleado.grabar()}" rendered="#{novedadesEmpleado.formulario.mostrar}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{novedadesEmpleado.cancelar()}" />
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <ace:messages/>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

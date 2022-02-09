@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+    
+    <ace:panel 
+               header="#{obligacionesSfccbdmq.perfil.menu.texto}"
+               closable="false"
+               toggleable="true"
+               rendered="#{!obligacionesSfccbdmq.formulario.mostrar}">
+        <h:panelGroup>
+            <ui:include src="../BuscarProveedor.xhtml" />
+            <h:panelGrid columns="2" width="100%">
+                <h:outputLabel value="Contrato :" />
+                <h:selectOneMenu  value="#{obligacionesSfccbdmq.contrato}">
+                     <!--<f:selectItem itemLabel="Sin contrato" itemValue="0"/>-->
+                     <f:selectItems value="#{contratosSfccbdmq.comboContratosverdadero}"/>
+                </h:selectOneMenu>
+                <h:outputLabel value="Tipo de Documento :"/>
+                <h:selectOneMenu  value="#{obligacionesSfccbdmq.tipoDocumento}">
+                    <f:selectItems value="#{codigosSfccbdmq.comboDocumentos}"/>
+                </h:selectOneMenu>
+                <h:outputLabel value="Número de Documento :"/>
+                <h:inputText  value="#{obligacionesSfccbdmq.numero}"/>
+
+            </h:panelGrid>
+            <h:panelGrid columns="5" width="50%">
+                <h:selectOneMenu value="#{obligacionesSfccbdmq.tipoFecha}">
+                    <f:selectItem itemLabel="Fecha de Emisión" itemValue="o.fechaemision"/>
+                    <f:selectItem itemLabel="Fecha de Ingreso" itemValue="o.fechaingreso"/>
+                    <f:selectItem itemLabel="Fecha de Vencimiento" itemValue="o.fechavencimiento"/>
+                    <f:selectItem itemLabel="Fecha de Contabilización" itemValue="o.fechacontable"/>
+                </h:selectOneMenu>
+                <h:outputLabel value="Desde:"/>
+                <ace:dateTimeEntry navigator="true"  value="#{obligacionesSfccbdmq.desde}" 
+                                   popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                </ace:dateTimeEntry>
+                <h:outputLabel value="hasta:"/>
+                <ace:dateTimeEntry navigator="true"  value="#{obligacionesSfccbdmq.hasta}" 
+                                   popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                </ace:dateTimeEntry>
+            </h:panelGrid>
+            <h:panelGrid columns="2" width="50%">
+
+                <h:outputLabel value="Estado :"/>
+                <h:selectOneMenu  value="#{obligacionesSfccbdmq.estado}">
+                    <!--<f:selectItem  itemLabel="COMPROMISO" itemValue="0"/>-->
+                    <f:selectItem  itemLabel="INGRESADO"  itemValue="0"/>
+                    <f:selectItem  itemLabel="CONTABILIZADO" itemValue="2"/>
+                    <f:selectItem  itemLabel="ANULADO" itemValue="-1"/>
+                    <ace:ajax execute="@all"/>
+                </h:selectOneMenu>
+                <h:outputLabel value="Concepto:"/>
+                <h:inputTextarea cols="60" rows="4" value="#{obligacionesSfccbdmq.concepto}"/>
+            </h:panelGrid>
+            <h:panelGrid columns="1" width="100%">
+                <ace:menuBar autoSubmenuDisplay="true" >
+                    <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{obligacionesSfccbdmq.buscar()}"/>
+
+                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                  action="#{obligacionesSfccbdmq.cancelar()}"/>
+                </ace:menuBar>
+                <ace:messages/>
+            </h:panelGrid>
+
+            <h:panelGrid width="100%">
+                <ace:dataTable id="tabla" 
+                               value="#{obligacionesSfccbdmq.obligaciones}"
+                               var="item"
+                               paginator="true"
+                               lazy="true"
+                               resizableColumns="true"
+                               rowIndexVar="row"
+                               paginatorPosition="top"
+                               rowsPerPageTemplate="15,20,25,50,100"
+                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                               rows="15"
+                               >
+                    <ace:column  headerText="Registro" style="text-align: right">
+                        <h:outputText value="#{row+1}"/>
+                    </ace:column>
+                    <ace:column style="text-align: left">
+                        <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                            <ace:menuItem action="#{obligacionesSfccbdmq.modificarContab(item)}" value="Contabilizar" icon="ui-icon ui-icon-pencil" rendered="#{item.estado==0 or item.estado==1}"/>
+                            <!--<ace:menuItem action="#{obligacionesSfccbdmq.contabilizar(item)}" value="Contabilizar" icon="ui-icon ui-icon-note" rendered="#{item.estado==0}"/>-->
+                            <ace:menuItem action="#{obligacionesSfccbdmq.imprimirSolicitudPago(item)}" value="Imprimir" icon="ui-icon ui-icon-print" rendered="#{item.estado==2}"/>
+                            <ace:menuItem action="#{obligacionesSfccbdmq.reimprimeManual(item)}" value="Imp. Ret. Manual" icon="ui-icon ui-icon-print" rendered="#{item.fechar ne null and item.claver eq null}"/>
+                            <ace:menuItem action="#{obligacionesSfccbdmq.reenviarCorreo(item)}" value="Reenviar Correo" icon="ui-icon ui-icon-mail-closed" rendered="#{item.estado>0 and item.claver ne null}"/>
+                            <ace:menuItem action="#{obligacionesSfccbdmq.eliminar(item)}" 
+                                          value="Borrar" icon="ui-icon ui-icon-trash"/>
+                        </ace:menuButton>
+                    </ace:column>
+                    <ace:column  headerText="Fecha emisión" style="text-align: left">
+                        <h:outputText  value="#{item.fechaemision}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Concepto" style="text-align: left">
+                        <h:outputText  value="#{item.concepto}"/>
+                    </ace:column>
+                    <ace:column  headerText="Proveedor" style="text-align: left">
+                        <h:outputText  value="#{item.proveedor.empresa.toString()}"/>
+                    </ace:column>
+                    <ace:column  headerText="Tipo de Documento" style="text-align: left">
+                        <h:outputText  value="#{item.tipodocumento.nombre}"/>
+                    </ace:column>
+                    <ace:column  headerText="Número" style="text-align: left">
+                        <h:outputText  value="#{item.documento}"/>
+                    </ace:column>
+<!--                                <ace:column  headerText="Número de Retención" sortBy="#{item.numeror}" style="text-align: left">
+                        <h:outputText  value="#{item.numeror}"/>
+                    </ace:column>-->
+                    <ace:column  headerText="Contrato" style="text-align: left">
+                        <h:outputText  value="#{item.contrato.toString()}"/>
+                    </ace:column>
+                    <ace:column  headerText="Estado" sortBy="#{item.estado}" style="text-align: left">
+                        <h:outputText  value="INGRESADO" rendered="#{item.estado==0}"/>
+                        <h:outputText  value="INGRESADO" rendered="#{item.estado==1}"/>
+                        <h:outputText  value="CONTABILIZADO" rendered="#{item.estado==2}"/>
+                        <h:outputText  value="ANULADO" rendered="#{item.estado==-1}"/>
+                    </ace:column>
+
+                </ace:dataTable>
+            </h:panelGrid>  
+        </h:panelGroup>
+    </ace:panel>
+
+
+    
+        
+
+</html>

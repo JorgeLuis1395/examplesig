@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+    <ace:panel id="panelImprimir" style="display:block;">
+
+        <h:panelGrid width="100%">
+            <h:panelGrid  width="100%" columns="1" style="text-align: center;font-size: small"  >
+                <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+                <h3><strong>CUERPO DE BOMBEROS DEL DISTRITO METROPOLITANO DE QUITO</strong></h3>
+                <h3><strong>PAGARÉ A LA ORDEN NRO #{aprobarGarante.prestamo.pagare}</strong></h3>
+               
+            </h:panelGrid>
+            <h:panelGrid  width="100%" columns="2" style="text-align: left">
+                <h3>Anticipo No: #{aprobarGarante.prestamo.id}       POR #{aprobarGarante.prestamo.valor} </h3>
+            </h:panelGrid>
+            <h:panelGrid  width="100%" columns="1" style="text-align: justify">
+                <h:outputLabel value="Yo , #{aprobarGarante.prestamo.empleado.entidad.toString()}, portador(a) de la cédula de identidad 
+                               #{aprobarGarante.prestamo.empleado.entidad.pin} domiciliada(o) en la ciudad de QUITO en la Dirección #{aprobarGarante.prestamo.empleado.entidad.direccion.principal} - #{aprobarGarante.prestamo.empleado.entidad.direccion.secundaria}
+                               ,con el cargo de #{aprobarGarante.prestamo.empleado.cargoactual.toString()}; debo y pagaré a la orden del CUERPO DE BOMBEROS DEL DMQ. 
+                               La suma de: $ #{aprobarGarante.prestamo.valor.intValue()} /100 Dólares que he recibido de dicha Institución en calidad Anticipo de remuneración a mi entera satisfacción.
+
+                               La cantidad indicada en este pagaré me obligo a cancelar en #{aprobarGarante.prestamo.couta.toString()} mes (es) fijos, mediante pagos mensuales por un valor de $
+                               #{aprobarGarante.prestamosEmpleadoBean.valorCuota()} excepto en el mes de diciembre que se me descontará la cantidad de $ #{aprobarGarante.prestamo.valordiciembre.toString()}
+                               ; para lo cual autorizo el descuento respectivo de mi remuneración mensual unificada, a partir de la suscripción de este documento de crédito. Sobre la cantidad prestada reconocerá el interés
+                               del 0% anual, desde la fecha de emisión hasta la total cancelación de esta obligación. El incumplimiento en el pago de TRES dividendos
+                               mensuales dará derecho a la parte acreedora para declarar vencida la obligación.
+                               " />
+                <br/>
+                <h:outputText value="                               
+                              En caso de mora acepto pagar el interés mensual que esté en vigencia en el Banco Central del Ecuador de la obligación que adquiero mediante
+                              este documento, el mismo que se liquidará en cuotas vencidas, corren a mi cargo todos los impuestos y tasas que causen esta operación, así
+                              como también los gastos judiciales y extrajudiciales, inclusive honorarios profesionales que ocasionen el cobro de este crédito. Me sujeto al
+                              trámite del juicio ejecutivo o verbal sumario a elección de la entidad acreedora, con todos mis bienes, con renuncia de fuero y domicilio. El
+                              pago no podrá hacerse por partes ni aún por mis herederos o sucesores. Sin protesto.
+                              Autorizo de forma expresa en caso de incumplimiento de la obligación al CUERPO DE BOMBEROS DEL DISTRITO METROPOLITANO DE QUITO,
+                              o a la persona que sea cesionario o endosatario de los efectos u obligaciones contendidas o derivadas del presente documento, para que toda
+                              la información de riesgos crediticios, constante en el presente documento sea transferida y actualizada periódicamente a los burós de crédito,
+                              Ministerio de Finanzas del Ecuador, Ministerio de Relaciones Laborales u otras entidades que pudieran reemplazar a tales instituciones, así
+                              como también para que mi actividad o comportamiento crediticio, comercial o contractual sea reportado y actualizado a tales entidades.">
+                </h:outputText>
+            </h:panelGrid>
+            <h:panelGrid  width="100%" columns="1" style="text-align: left">
+                <h:outputLabel value="Quito, "/> 
+                <h:outputLabel value="#{aprobarGarante.prestamo.fechasolicitud}"> 
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputLabel>
+            </h:panelGrid>
+            <h:panelGrid  width="10%" columns="1" style=" height: 10px;">
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <ace:graphicImage   value="#{imagenesSfccbdmq.traerImagenJpg(aprobarGarante.prestamo.empleado.entidad)}" />
+                <ace:graphicImage   value="#{imagenesSfccbdmq.traerImagenBmp(aprobarGarante.prestamo.empleado.entidad)}" />
+            </h:panelGrid>
+            <br/>
+            <h:panelGrid  width="100%" columns="1" style="text-align: left">
+                <h:outputLabel value="Nombre: #{aprobarGarante.prestamo.empleado.entidad.toString()}" />
+                <h:outputLabel value="CI: #{aprobarGarante.prestamo.empleado.entidad.pin}" />
+                <br/>
+                <h:outputLabel value="VISTO BUENO" />
+            </h:panelGrid>
+        </h:panelGrid>
+        <br/>
+        <br/>
+        <h:panelGrid width="100%">
+            <h:panelGrid  width="100%" columns="1" style="text-align: justify">
+                <h:outputLabel value="Yo , #{aprobarGarante.empleadoBean.empleadoSeleccionado}, portador de la cédula de identidad No #{aprobarGarante.empleadoBean.empleadoSeleccionado.entidad.pin}
+                               domiciliada (o) en la ciudad de QUITO en #{aprobarGarante.empleadoBean.empleadoSeleccionado.entidad.direccion.principal} - #{aprobarGarante.empleadoBean.empleadoSeleccionado.entidad.direccion.secundaria}
+                               teléfono #{aprobarGarante.empleadoBean.empleadoSeleccionado.entidad.direccion.telefonos} ,con el cargo #{aprobarGarante.empleadoBean.empleadoSeleccionado.entidad.empleados.cargoactual.toString()}.
+
+                               Por aval me (nos)
+                               constituyo (imos) en Garante solidario en cumplimiento de la obligación constante en el pagaré que antecede, haciendo de deuda ajena
+                               propia y renunciando a los beneficios de domicilio orden, excusión y división de bienes; quedando sometido a los jueces del cantón Quito y al
+                               juicio ejecutivo o verbal sumario a elección del actor. Sin protesto exímase de la presentación para el pago, así como de avisos por falta de
+                               pago.
+                               El pago no podrá hacerse por partes ni aún por nuestros herederos.
+                               " />
+            </h:panelGrid>
+            <h:panelGrid  width="100%" columns="1" style="text-align: left">
+                <h:outputLabel value="Quito, "/> 
+                <h:outputLabel value="#{aprobarGarante.prestamo.fechaFinanciero}" >
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputLabel>          
+
+            </h:panelGrid>
+            <h:panelGrid  width="10%" columns="1" style=" height: 10px;">
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <ace:graphicImage   value="#{imagenesSfccbdmq.traerImagenBmp(aprobarGarante.empleadoBean.empleadoSeleccionado.entidad)  }" />
+                <ace:graphicImage   value="#{imagenesSfccbdmq.traerImagenJpg(aprobarGarante.empleadoBean.empleadoSeleccionado.entidad) }" />
+            </h:panelGrid>
+            <br/>
+
+            <h:panelGrid  width="100%" columns="1" style="text-align: left">
+
+                <h:outputLabel value="Nombre: #{aprobarGarante.empleadoBean.empleadoSeleccionado}" />
+                <h:outputLabel value="CI: #{aprobarGarante.empleadoBean.empleadoSeleccionado.entidad.pin}" />
+                <h:outputLabel value="Dirección domiciliaria: #{aprobarGarante.empleadoBean.empleadoSeleccionado.entidad.direccion.principal} - #{aprobarGarante.empleadoBean.empleadoSeleccionado.entidad.direccion.secundaria}" />
+                <br/>
+                <br/>
+            </h:panelGrid>
+
+        </h:panelGrid>
+
+    </ace:panel>
+</html>

@@ -1,0 +1,764 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{reporteRolEmpleado.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <!--<ace:panel header="Parámetros de Búsqueda">-->
+
+                    <ui:include src="../BuscarOrganigrama.xhtml"/>
+
+                    <h:panelGrid columns="4">
+                        <h:outputLabel value="Cédula:"/>
+                        <h:inputText value="#{reporteRolEmpleado.buscarCedula}" />
+                        <h:outputLabel value="Nombres:"/>
+                        <h:inputText value="#{reporteRolEmpleado.nombres}" />
+                        <h:outputLabel value="Apellidos:"/>
+                        <h:inputText value="#{reporteRolEmpleado.apellidos}" />
+                        <h:outputLabel value="Email:"/>
+                        <h:inputText value="#{reporteRolEmpleado.email}" />
+                        <h:outputLabel value="Estado Civil:" />
+                        <h:selectOneMenu value="#{reporteRolEmpleado.ecivil}" >
+                            <f:selectItems value="#{codigosSfccbdmq.comboEstadoCivil}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Cargo:" />
+                        <h:selectOneMenu value="#{reporteRolEmpleado.cargo}" >
+                            <f:selectItems value="#{cargoxorganigrama.comboCargosOrganigrama}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Género:" />
+                        <h:selectOneMenu value="#{reporteRolEmpleado.genero}" >
+                            <f:selectItems value="#{codigosSfccbdmq.comboGenero}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Grupo Sanguineo:" />
+                        <h:selectOneMenu value="#{reporteRolEmpleado.tipsang}">
+                            <f:selectItems value="#{codigosSfccbdmq.comboGrpSanguineo}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Modalidad de Contratación : " />
+                        <h:selectOneMenu value="#{reporteRolEmpleado.contrato}" >
+                            <f:selectItems value="#{tipoContrato.comboTiposContrato}" />
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Edificio:"  />
+                        <h:selectOneMenu value="#{oficinasSfccbdmq.edificio}">
+                            <f:selectItems value="#{edificiosSfccbdmq.comboEdificioEspacio}" />
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Oficina:" />
+                        <h:selectOneMenu value="#{reporteRolEmpleado.oficina}" >
+                            <f:selectItems value="#{oficinasSfccbdmq.comboOficinaEspacio}" />
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Nombramiento : " />
+                        <h:selectOneRadio value="#{reporteRolEmpleado.nombramiento}"  style="border: 0px" >
+                            <f:selectItem itemValue="1" itemLabel="SI" />
+                            <f:selectItem itemValue="2" itemLabel="NO" />
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneRadio>
+
+                    </h:panelGrid>
+                    <h:panelGrid columns="5">
+                        <h:outputLabel value="Fecha de Nacimiento:" />
+                        <h:outputLabel value="Desde:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{reporteRolEmpleado.desde}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Hasta:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{reporteRolEmpleado.hasta}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                    </h:panelGrid> 
+                    <h:panelGrid columns="4">
+                        <h:outputLabel value="Grupo de Información Adicional:"  />
+                        <h:selectOneMenu value="#{cabecerasEmpleados.grupocabecera}">
+                            <f:selectItems value="#{cabecerasEmpleados.comboCabecera}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu> 
+                        <h:outputLabel value="Campo donde buscar:"/>
+                        <h:selectOneMenu value="#{reporteRolEmpleado.cabeceraRrHh}" >
+                            <f:selectItems value="#{cabecerasEmpleados.comboCampos}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu> 
+                        <!--// primero texto si el campo es texto-->
+                        <h:outputLabel value="Texto a buscar:" rendered="#{reporteRolEmpleado.cabeceraRrHh.tipodato==2}" />
+                        <h:inputText value="#{reporteRolEmpleado.textoBuscar}" 
+                                     rendered="#{reporteRolEmpleado.cabeceraRrHh.tipodato==2}" />
+                        <!--// si el campo es texto-->
+                        <h:outputLabel value="Valor mayor o igual a:" rendered="#{reporteRolEmpleado.cabeceraRrHh.tipodato==1}" />
+                        <h:inputText value="#{reporteRolEmpleado.desdeNumerico}" 
+                                     rendered="#{reporteRolEmpleado.cabeceraRrHh.tipodato==1}" />
+                        <h:outputLabel value="Valor menor o igual a:" rendered="#{reporteRolEmpleado.cabeceraRrHh.tipodato==1}" />
+                        <h:inputText value="#{reporteRolEmpleado.desdeNumerico}" rendered="#{reporteRolEmpleado.cabeceraRrHh.tipodato==1}" />
+                        <!--// si es fecha-->
+                        <h:outputLabel value="Fecha desde:" rendered="#{reporteRolEmpleado.cabeceraRrHh.tipodato==3}" />
+                        <ace:dateTimeEntry navigator="true"  value="#{reporteRolEmpleado.desdeFecha}" rendered="#{reporteRolEmpleado.cabeceraRrHh.tipodato==3}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Fecha hasta:" rendered="#{reporteRolEmpleado.cabeceraRrHh.tipodato==3}" />
+                        <ace:dateTimeEntry navigator="true"  value="#{reporteRolEmpleado.hastaFecha}" rendered="#{reporteRolEmpleado.cabeceraRrHh.tipodato==3}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <!--// si es combo-->
+                        <h:outputLabel value="Seleccione :" rendered="#{reporteRolEmpleado.cabeceraRrHh.tipodato==0}" />
+                        <h:selectOneMenu value="#{reporteRolEmpleado.textoBuscar}" rendered="#{reporteRolEmpleado.cabeceraRrHh.tipodato==0}"  >
+                            <f:selectItems value="#{reporteRolEmpleado.comboRangoBuscar}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Seleccione :" rendered="#{reporteRolEmpleado.cabeceraRrHh.tipodato==4}" />
+                        <h:selectOneMenu value="#{reporteRolEmpleado.textoBuscar}" rendered="#{reporteRolEmpleado.cabeceraRrHh.tipodato==4}"  >
+                            <f:selectItems value="#{codigosSfccbdmq.getComboMaestro(reporteRolEmpleado.cabeceraRrHh.codigo)}"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <!--                    <ui:include src="../ExcluirUsuario.xhtml"/>-->
+                    <h:panelGrid columns="2">
+                        <ace:autoCompleteEntry 
+                            value="#{entidadesSfccbdmq.apellidos}"
+                            rows="10" width="300"
+                            listVar="empleadoSeleccionar"
+                            filterBy="#{empleadoSeleccionar.apellidos}"
+                            listValue="#{entidadesSfccbdmq.listaEntidades}"
+                            valueChangeListener="#{entidadesSfccbdmq.cambiaApellido}"
+                            textChangeListener="#{entidadesSfccbdmq.entidadChangeEventHandler}"
+                            label="Excluir Empleado:"
+                            labelPosition="left">
+                            <f:facet name="row">
+                                <h:panelGrid columns="3" width="100%"  style="text-align: left;font-size: xx-small" columnClasses="tipo">
+                                    <h:outputText value="#{empleadoSeleccionar.apellidos}"/>
+                                    <h:outputText value="#{empleadoSeleccionar.nombres}"/>
+                                    <h:outputText value="#{empleadoSeleccionar.pin}"/>
+                                </h:panelGrid>
+                            </f:facet>
+                        </ace:autoCompleteEntry>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" rendered="#{entidadesSfccbdmq.entidad!=null}">
+                        <h:outputLabel value="Nombres:" />
+                        <h:outputLabel value="#{entidadesSfccbdmq.entidad.nombres}" />
+                        <h:outputLabel value="Email:" />
+                        <h:outputLabel  value="#{entidadesSfccbdmq.entidad.email}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <h:outputText value="Mes :"/>
+                        <h:inputText value="#{reporteRolEmpleado.mesDesde}"/>
+                        <!--                        <h:outputText value="Mes Hasta:"/>
+                                                <h:inputText value="#{reporteRolEmpleado.mesHasta}"/>-->
+                        <h:outputText value="Año:"/>
+                        <h:inputText value="#{reporteRolEmpleado.anio}"/>
+                        <h:outputText value="Agrupar columnas?:"/>
+                        <h:selectBooleanCheckbox  value="#{reporteRolEmpleado.agrupado}"/>
+
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteRolEmpleado.buscarInformacion()}" />
+                            <ace:menuItem value="Hoja Elect." icon="ui-icon ui-icon-calculator" action="#{reporteRolEmpleado.exportar()}"/>
+                            <ace:menuItem value="Pdf Rol" icon="ui-icon ui-icon-calculator" action="#{reporteRolEmpleado.exportarPdf()}"/>
+                            <ace:menuItem value="Hoja Elect. Rol" icon="ui-icon ui-icon-calculator" action="#{reporteRolEmpleado.exportarRol()}"/>
+                            <ace:menuItem value="Hoja Elect. provisiones Sociales" icon="ui-icon ui-icon-calculator" 
+                                          action="#{reporteRolEmpleado.exportarProvisiones()}"/>
+                            <ace:menuItem value="PDF Provisiones Sociales" icon="ui-icon ui-icon-calculator" action="#{reporteRolEmpleado.exportarProvisionesPdf()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <ace:messages/>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+
+                    <ace:tabSet style="clear:both;">
+                        <ace:tabPane >
+                            <f:facet name="label">Totales</f:facet>
+                            <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                <h:outputLabel  value="Exportar a:"/>
+                                <h:selectOneRadio  value="#{reporteRolEmpleado.formulario.pantalla}" required="true">
+                                    <f:ajax disabled="false"/>
+                                    <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                    <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                    <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                    <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                </h:selectOneRadio>
+                                <ace:dataExporter 
+                                    label="Exportar Archivo" 
+                                    type="#{reporteRolEmpleado.formulario.pantalla}" 
+                                    target="listRolesTabla" fileName="datosIngresos"
+                                    />
+                            </h:panelGrid>
+                            <h:panelGrid width="100%">
+                                <ace:dataTable id="listRolesTabla" 
+                                               value="#{reporteRolEmpleado.listaRoles}"
+                                               var="pagoRol"
+                                               lazy="false"
+                                               paginator="true"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="10,15,30,50"
+                                               currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="30"
+                                               style="width: 100%;"
+                                               scrollHeight="600"
+                                               scrollable="true">
+
+                                    <ace:column   headerText=""  style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <!--resto del contenido-->
+                                    <ace:column  headerText="Cédula"  style="text-align: left">
+                                        <h:outputText value="#{pagoRol.entidad.pin}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Apellidos "  style="text-align: left">
+                                        <h:outputText value="#{pagoRol.entidad.apellidos}"/>
+                                    </ace:column>
+                                    <ace:column headerText="Nombres"  style="text-align: left">
+                                        <h:outputText value="#{pagoRol.entidad.nombres}"/>
+                                    </ace:column>
+                                    <ace:column headerText="Género"  style="text-align: left">
+                                        <h:outputText value="#{pagoRol.entidad.genero.nombre}"/>
+                                    </ace:column>
+                                    <!--                                    <ace:column headerText="Calle principal"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoRol.direccionBk.principal}"/>
+                                                                        </ace:column>
+                                                                        <ace:column  headerText="Calle secundaria"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoRol.direccionBk.secundaria}"/>
+                                                                        </ace:column>
+                                                                        <ace:column headerText="Número"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoRol.direccionBk.numero}"/>
+                                                                        </ace:column>
+                                                                        <ace:column  headerText="Teléfonos"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoRol.direccionBk.telefonos}"/>
+                                                                        </ace:column>
+                                                                        <ace:column   headerText="Partida Individual"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoRol.partidaindividual}"/>
+                                                                        </ace:column>-->
+                                    <!--                                    <c:forEach var="pagoEgresost" items="#{proyectosSfccbdmq.titulos}">
+                                                                            <ace:column  headerText="#{pagoEgresost.titulo1}"  style="text-align: left">
+                                                                                <h:outputText  value="#{proyectosSfccbdmq.dividir(pagoEgresost, pagoRol.proyecto)}"/>
+                                                                            </ace:column>
+                                                                        </c:forEach>
+                                                                        <ace:column headerText="Programa"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoRol.proyecto.toString()}"/>
+                                                                        </ace:column>
+                                                                        <ace:column  headerText="Partida"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoRol.partida}"/>
+                                                                        </ace:column>-->
+                                    <!--                                    <ace:column  headerText="Modalidad de Contratación"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoRol.tipocontrato.nombre}"/>
+                                                                        </ace:column>
+                                                                        <ace:column  headerText="Denominación"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoRol.cargoactual.cargo.escalasalarial.nombre}"/>
+                                                                        </ace:column>
+                                                                        <ace:column  headerText="Grado"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoRol.cargoactual.cargo.escalasalarial.codigo}"/>
+                                                                        </ace:column>
+                                    
+                                                                        <ace:column  headerText="Cargo "  style="text-align: left">
+                                                                            <h:outputText value="#{pagoRol.cargoactual.cargo.nombre}"/>
+                                                                        </ace:column>
+                                                                        <ace:column  headerText="Proceso"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoRol.cargoactual.organigrama.superior.nombre}"/>
+                                                                        </ace:column>
+                                                                        <ace:column id="unidadAdministrativa" headerText="Unidad Administrativa"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoRol.cargoactual.organigrama.nombre}"/>
+                                                                        </ace:column>-->
+                                    <!--fin resto del contenido-->
+                                    <ace:column  headerText="RMU"  style="text-align: right;background-color: #00ffff;">
+                                        <h:outputText value="#{reporteRolEmpleado.getRmu(pagoRol)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="ENCARGO"  style="text-align: right;background-color: #00ffff;">
+                                        <h:outputText   value="#{reporteRolEmpleado.getEncargos(pagoRol)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="SUBROGACIONES"  style="text-align: right;background-color: #00ffff;">
+                                        <h:outputText   value="#{reporteRolEmpleado.getSubrogaciones(pagoRol)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <c:forEach items="#{reporteRolEmpleado.ingresosSobre}" var="itemIngresosTotal">
+                                        <ace:column  style="text-align: right;background-color: #00ffff;" headerText="#{itemIngresosTotal.nombre}">
+                                            <h:outputText value="#{reporteRolEmpleado.getPagoconcepto(pagoRol, itemIngresosTotal)}">
+                                                <f:convertNumber pattern="###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                    </c:forEach>
+                                    <ace:column  headerText="TOTAL INGRESOS" style="text-align: right">
+                                        <h:outputText   value="#{reporteRolEmpleado.getTotalIngresos(pagoRol)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <c:forEach items="#{reporteRolEmpleado.egresosSobre}" var="itemEgresosTotal" >
+                                        <ace:column style="text-align: right;background-color: #ffff66;" headerText="#{itemEgresosTotal.nombre}">
+                                            <h:outputText value="#{reporteRolEmpleado.getPagoconcepto(pagoRol, itemEgresosTotal)}">
+                                                <f:convertNumber pattern="###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                    </c:forEach>
+                                    <ace:column  headerText="ANTICIPOS EMPLEADOS"  style="text-align: right;background-color: #ffff66;">
+                                        <h:outputText   value="#{reporteRolEmpleado.getAnticipos(pagoRol)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="TOTAL EGRESOS" style="text-align: right">
+                                        <h:outputText   value="#{reporteRolEmpleado.getTotalEgresos(pagoRol)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="TOTAL" style="text-align: right">
+                                        <h:outputText   value="#{reporteRolEmpleado.getTotalIngresos(pagoRol)-reporteRolEmpleado.getTotalEgresos(pagoRol)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <c:forEach items="#{reporteRolEmpleado.proviciones}" var="itemProvicionesh">
+                                        <ace:column style="text-align: right" headerText="Provisión #{itemProvicionesh.nombre}">
+                                            <h:outputText value="#{reporteRolEmpleado.getPagoconcepto(pagoRol, itemProvicionesh)}">
+                                                <f:convertNumber pattern="###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                    </c:forEach>
+                                    <ace:column  headerText="TOTAL PROVISIONES" style="text-align: right">
+                                        <h:outputText   value="#{reporteRolEmpleado.getTotalProviciones(pagoRol)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane >
+                            <f:facet name="label">Ingresos</f:facet>
+                            <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                <h:outputLabel  value="Exportar a:"/>
+                                <h:selectOneRadio  value="#{reporteRolEmpleado.formularioIngresos.pantalla}" required="true">
+                                    <f:ajax disabled="false"/>
+                                    <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                    <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                    <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                    <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                </h:selectOneRadio>
+                                <ace:dataExporter 
+                                    label="Exportar Archivo" 
+                                    type="#{reporteRolEmpleado.formularioIngresos.pantalla}" 
+                                    target="tablaIngresos" fileName="datosIngresos"/>
+                            </h:panelGrid>
+                            <h:panelGrid width="100%">
+                                <ace:dataTable id="tablaIngresos"
+                                               value="#{reporteRolEmpleado.listaRoles}"
+                                               rowIndexVar="row"
+                                               var="pagoTotal"
+                                               lazy="false"
+                                               paginator="true"
+                                               resizableColumns="true"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="10,15,30,50"
+                                               currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="30"
+                                               style="width: 100%;">
+
+                                    <ace:column   headerText=""  style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+
+                                    <!--resto del contenido-->
+                                    <ace:column  headerText="Cédula"  style="text-align: left">
+                                        <h:outputText value="#{pagoTotal.entidad.pin}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Apellidos "  style="text-align: left">
+                                        <h:outputText value="#{pagoTotal.entidad.apellidos}"/>
+                                    </ace:column>
+                                    <ace:column headerText="Nombres"  style="text-align: left">
+                                        <h:outputText value="#{pagoTotal.entidad.nombres}"/>
+                                    </ace:column>
+                                    <ace:column headerText="Género"  style="text-align: left">
+                                        <h:outputText value="#{pagoTotal.entidad.genero.nombre}"/>
+                                    </ace:column>
+                                    <!--                                    <ace:column headerText="Calle principal"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoTotal.direccionBk.principal}"/>
+                                                                        </ace:column>
+                                                                        <ace:column  headerText="Calle secundaria"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoTotal.direccionBk.secundaria}"/>
+                                                                        </ace:column>
+                                                                        <ace:column headerText="Número"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoTotal.direccionBk.numero}"/>
+                                                                        </ace:column>
+                                                                        <ace:column  headerText="Teléfonos"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoTotal.direccionBk.telefonos}"/>
+                                                                        </ace:column>
+                                                                        <ace:column   headerText="Partida Individual"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoTotal.partidaindividual}"/>
+                                                                        </ace:column>
+                                                                        <c:forEach var="itemProducto1" items="#{proyectosSfccbdmq.titulos}">
+                                                                            <ace:column  headerText="#{itemProducto1.titulo1}"  style="text-align: left">
+                                                                                <h:outputText  value="#{proyectosSfccbdmq.dividir(itemProducto1, pagoTotal.proyecto)}"/>
+                                                                            </ace:column>
+                                                                        </c:forEach>
+                                                                        <ace:column headerText="Programa"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoTotal.proyecto.toString()}"/>
+                                                                        </ace:column>
+                                                                        <ace:column  headerText="Partida"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoTotal.partida}"/>
+                                                                        </ace:column>
+                                                                        <ace:column  headerText="Modalidad de Contratación"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoTotal.tipocontrato.nombre}"/>
+                                                                        </ace:column>
+                                                                        <ace:column  headerText="Denominación"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoTotal.cargoactual.cargo.escalasalarial.nombre}"/>
+                                                                        </ace:column>
+                                                                        <ace:column  headerText="Grado"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoTotal.cargoactual.cargo.escalasalarial.codigo}"/>
+                                                                        </ace:column>
+                                    
+                                                                        <ace:column  headerText="Cargo "  style="text-align: left">
+                                                                            <h:outputText value="#{pagoTotal.cargoactual.cargo.nombre}"/>
+                                                                        </ace:column>
+                                                                        <ace:column  headerText="Proceso"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoTotal.cargoactual.organigrama.superior.nombre}"/>
+                                                                        </ace:column>
+                                                                        <ace:column id="unidadAdministrativa" headerText="Unidad Administrativa"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoTotal.cargoactual.organigrama.nombre}"/>
+                                                                        </ace:column>-->
+                                    <!--fin resto del contenido-->
+                                    <ace:column  headerText="RMU"  style="text-align: right">
+                                        <h:outputText value="#{reporteRolEmpleado.getRmu(pagoTotal)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="ENCARGO"  style="text-align: right;">
+                                        <h:outputText   value="#{reporteRolEmpleado.getEncargos(pagoTotal)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="SUBROGACIONES" style="text-align: right">
+                                        <h:outputText   value="#{reporteRolEmpleado.getSubrogaciones(pagoTotal)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <c:forEach items="#{reporteRolEmpleado.ingresosSobre}" var="itemConceptos">
+                                        <ace:column style="text-align: right" headerText="#{itemConceptos.nombre}">
+                                            <h:outputText value="#{reporteRolEmpleado.getPagoconcepto(pagoTotal, itemConceptos)}">
+                                                <f:convertNumber pattern="###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                    </c:forEach>
+                                    <ace:column  headerText="TOTAL" style="text-align: right">
+                                        <h:outputText   value="#{reporteRolEmpleado.getTotalIngresos(pagoTotal)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane >
+                            <f:facet name="label">Egresos</f:facet>
+                            <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                <h:outputLabel  value="Exportar a:"/>
+                                <h:selectOneRadio  value="#{reporteRolEmpleado.formularioEgresos.pantalla}" required="true">
+                                    <f:ajax disabled="false"/>
+                                    <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                    <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                    <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                    <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                </h:selectOneRadio>
+                                <ace:dataExporter 
+                                    label="Exportar Archivo" 
+                                    type="#{reporteRolEmpleado.formularioEgresos.pantalla}" 
+                                    target="tablaEgresos" fileName="datosIngresos"/>
+                            </h:panelGrid>
+                            <h:panelGrid width="100%">
+                                <ace:dataTable id="tablaEgresos"
+                                               value="#{reporteRolEmpleado.listaEgresos}"
+                                               rowIndexVar="row"
+                                               var="pagoEgresos" 
+                                               paginator="true"
+                                               resizableColumns="true"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="10,15,30,50"
+                                               currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="30"
+                                               style="width: 100%;">
+
+                                    <ace:column   headerText=""  style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <!--resto del contenido-->
+                                    <ace:column  headerText="Cédula"  style="text-align: left">
+                                        <h:outputText value="#{pagoEgresos.entidad.pin}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Apellidos "  style="text-align: left">
+                                        <h:outputText value="#{pagoEgresos.entidad.apellidos}"/>
+                                    </ace:column>
+                                    <ace:column headerText="Nombres"  style="text-align: left">
+                                        <h:outputText value="#{pagoEgresos.entidad.nombres}"/>
+                                    </ace:column>
+                                    <ace:column headerText="Género"  style="text-align: left">
+                                        <h:outputText value="#{pagoEgresos.entidad.genero.nombre}"/>
+                                    </ace:column>
+                                    <!--                                    <ace:column headerText="Calle principal"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoEgresos.direccionBk.principal}"/>
+                                                                        </ace:column>
+                                                                        <ace:column  headerText="Calle secundaria"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoEgresos.direccionBk.secundaria}"/>
+                                                                        </ace:column>
+                                                                        <ace:column headerText="Número"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoEgresos.direccionBk.numero}"/>
+                                                                        </ace:column>
+                                                                        <ace:column  headerText="Teléfonos"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoEgresos.direccionBk.telefonos}"/>
+                                                                        </ace:column>
+                                                                        <ace:column   headerText="Partida Individual"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoEgresos.partidaindividual}"/>
+                                                                        </ace:column>
+                                                                        <c:forEach var="pagoEgresosk" items="#{proyectosSfccbdmq.titulos}">
+                                                                            <ace:column  headerText="#{pagoEgresosk.titulo1}"  style="text-align: left">
+                                                                                <h:outputText  value="#{proyectosSfccbdmq.dividir(pagoEgresosk, pagoEgresos.proyecto)}"/>
+                                                                            </ace:column>
+                                                                        </c:forEach>
+                                                                        <ace:column headerText="Programa"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoEgresos.proyecto.toString()}"/>
+                                                                        </ace:column>
+                                                                        <ace:column  headerText="Partida"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoEgresos.partida}"/>
+                                                                        </ace:column>
+                                                                        <ace:column  headerText="Modalidad de Contratación"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoEgresos.tipocontrato.nombre}"/>
+                                                                        </ace:column>
+                                                                        <ace:column  headerText="Denominación"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoEgresos.cargoactual.cargo.escalasalarial.nombre}"/>
+                                                                        </ace:column>
+                                                                        <ace:column  headerText="Grado"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoEgresos.cargoactual.cargo.escalasalarial.codigo}"/>
+                                                                        </ace:column>
+                                    
+                                                                        <ace:column  headerText="Cargo "  style="text-align: left">
+                                                                            <h:outputText value="#{pagoEgresos.cargoactual.cargo.nombre}"/>
+                                                                        </ace:column>
+                                                                        <ace:column  headerText="Proceso"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoEgresos.cargoactual.organigrama.superior.nombre}"/>
+                                                                        </ace:column>
+                                                                        <ace:column id="unidadAdministrativa" headerText="Unidad Administrativa"  style="text-align: left">
+                                                                            <h:outputText value="#{pagoEgresos.cargoactual.organigrama.nombre}"/>
+                                                                        </ace:column>-->
+                                    <!--fin resto del contenido-->
+                                    <c:forEach items="#{reporteRolEmpleado.egresosSobre}" var="itemEgresos">
+                                        <ace:column style="text-align: right" headerText="#{itemEgresos.nombre}">
+                                            <h:outputText value="#{reporteRolEmpleado.getPagoconcepto(pagoEgresos, itemEgresos)}">
+                                                <f:convertNumber pattern="###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                    </c:forEach>
+                                    <ace:column  headerText="ANTICIPOS EMPLEADOS" style="text-align: right">
+                                        <h:outputText   value="#{reporteRolEmpleado.getAnticipos(pagoEgresos)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="TOTAL" style="text-align: right">
+                                        <h:outputText   value="#{reporteRolEmpleado.getTotalEgresos(pagoEgresos)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane >
+                            <f:facet name="label">Provisiones</f:facet>
+                            <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                <h:outputLabel  value="Exportar a:"/>
+                                <h:selectOneRadio  value="#{reporteRolEmpleado.formularioProviciones.pantalla}" required="true">
+                                    <f:ajax disabled="false"/>
+                                    <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                    <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                    <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                    <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                </h:selectOneRadio>
+                                <ace:dataExporter 
+                                    label="Exportar Archivo" 
+                                    type="#{reporteRolEmpleado.formularioProviciones.pantalla}" 
+                                    target="tablaProviciones" fileName="datosProviciones"/>
+                            </h:panelGrid>
+                            <h:panelGrid width="100%">
+                                <ace:dataTable id="tablaProviciones"
+                                               value="#{reporteRolEmpleado.listaProviciones}"
+                                               rowIndexVar="row"
+                                               var="pagoProviciones"           paginator="true"
+                                               resizableColumns="true"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="10,15,30,50"
+                                               currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="30"
+                                               >
+
+                                    <ace:column   headerText=""  style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <!--resto del contenido-->
+                                    <ace:column  headerText="Cédula"  style="text-align: left">
+                                        <h:outputText value="#{pagoProviciones.entidad.pin}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Apellidos "  style="text-align: left">
+                                        <h:outputText value="#{pagoProviciones.entidad.apellidos}"/>
+                                    </ace:column>
+                                    <ace:column headerText="Nombres"  style="text-align: left">
+                                        <h:outputText value="#{pagoProviciones.entidad.nombres}"/>
+                                    </ace:column>
+                                    <ace:column headerText="Género"  style="text-align: left">
+                                        <h:outputText value="#{pagoProviciones.entidad.genero.nombre}"/>
+                                    </ace:column>
+                                    <ace:column headerText="Calle principal"  style="text-align: left">
+                                        <h:outputText value="#{pagoProviciones.direccionBk.principal}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Calle secundaria"  style="text-align: left">
+                                        <h:outputText value="#{pagoProviciones.direccionBk.secundaria}"/>
+                                    </ace:column>
+                                    <ace:column headerText="Número"  style="text-align: left">
+                                        <h:outputText value="#{pagoProviciones.direccionBk.numero}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Teléfonos"  style="text-align: left">
+                                        <h:outputText value="#{tablaProviciones.direccionBk.telefonos}"/>
+                                    </ace:column>
+                                    <ace:column   headerText="Partida Individual"  style="text-align: left">
+                                        <h:outputText value="#{pagoProviciones.partidaindividual}"/>
+                                    </ace:column>
+                                    <c:forEach var="pagoEgresos1" items="#{proyectosSfccbdmq.titulos}">
+                                        <ace:column  headerText="#{pagoEgresos1.titulo1}"  style="text-align: left">
+                                            <h:outputText  value="#{proyectosSfccbdmq.dividir(pagoEgresos1, pagoProviciones.proyecto)}"/>
+                                        </ace:column>
+                                    </c:forEach>
+                                    <ace:column headerText="Programa"  style="text-align: left">
+                                        <h:outputText value="#{pagoProviciones.proyecto.toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Partida"  style="text-align: left">
+                                        <h:outputText value="#{pagoProviciones.partida}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Modalidad de Contratación"  style="text-align: left">
+                                        <h:outputText value="#{pagoProviciones.tipocontrato.nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Denominación"  style="text-align: left">
+                                        <h:outputText value="#{pagoProviciones.cargoactual.cargo.escalasalarial.nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Grado"  style="text-align: left">
+                                        <h:outputText value="#{pagoProviciones.cargoactual.cargo.escalasalarial.codigo}"/>
+                                    </ace:column>
+
+                                    <ace:column  headerText="Cargo "  style="text-align: left">
+                                        <h:outputText value="#{pagoProviciones.cargoactual.cargo.nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Proceso"  style="text-align: left">
+                                        <h:outputText value="#{pagoProviciones.cargoactual.organigrama.superior.nombre}"/>
+                                    </ace:column>
+                                    <ace:column id="unidadAdministrativa" headerText="Unidad Administrativa"  style="text-align: left">
+                                        <h:outputText value="#{pagoProviciones.cargoactual.organigrama.nombre}"/>
+                                    </ace:column>
+                                    <!--fin resto del contenido-->
+                                    <c:forEach items="#{reporteRolEmpleado.proviciones}" var="itemProvicionesh">
+                                        <ace:column style="text-align: right" headerText="#{itemProvicionesh.nombre}">
+                                            <h:outputText value="#{reporteRolEmpleado.getPagoconcepto(pagoProviciones, itemProvicionesh)}">
+                                                <f:convertNumber pattern="###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                    </c:forEach>
+                                    <ace:column  headerText="TOTAL" style="text-align: right">
+                                        <h:outputText   value="#{reporteRolEmpleado.getTotalProviciones(pagoProviciones)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+
+                    </ace:tabSet>
+
+                    <ace:dialog 
+                        header="Exportar"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{reporteRolEmpleado.formularioReporte.mostrar}"
+                        visible="#{reporteRolEmpleado.formularioReporte.mostrar}">
+                        <h:panelGroup>
+                            <ace:dynamicResource fileName="rol.xls" id="pdf-botonMayor" label="Exportar a XLS"
+                                                 mimeType="application/xls" resource="#{reporteRolEmpleado.reporte}" 
+                                                 style="" type="button"/>
+
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{reporteRolEmpleado.formularioReporte.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                    <ace:dialog 
+                        header="Rol General"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{reporteRolEmpleado.formularioPdf.mostrar}"
+                        visible="#{reporteRolEmpleado.formularioPdf.mostrar}">
+                        <h:panelGroup>
+                            <ace:dynamicResource fileName="Rol.pdf" label="Exportar a PDF"
+                                                 mimeType="application/pdf" resource="#{reporteRolEmpleado.reportePdf}" 
+                                                 style="" type="button"/>
+
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{reporteRolEmpleado.formularioPdf.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                    <ace:dialog 
+                        header="Rol General"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{reporteRolEmpleado.formularioGenera.mostrar}"
+                        visible="#{reporteRolEmpleado.formularioGenera.mostrar}">
+                        <h:panelGroup>
+                            <h:outputText   value="El Rol se está generando desea continuar"/>
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Continuar" icon="ui-icon ui-icon-check" 
+                                                  action="#{reporteRolEmpleado.buscar()}"/>
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{reporteRolEmpleado.formularioGenera.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"          
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <ace:panel 
+        id="panelImprimir" 
+        style="border: 0px; width: 100%"
+        closable="false"
+        toggleable="true">
+        <h:panelGrid width="100%" style="text-align: center;">           
+            <!--<h:outputText value="Impresión"/>-->
+            <h3>Certificación PAC </h3>
+
+            <h:panelGrid columns="2" rendered="#{certificacionPac.proyecto.fechautilizacion ne null}">
+                <h:outputLabel value="FECHA :"  style="text-align: left; font-weight: bold"/>
+                <h:outputLabel value="#{certificacionPac.proyecto.fechautilizacion}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputLabel>
+            </h:panelGrid>
+            <h:panelGrid columns="2" rendered="#{certificacionPac.proyecto.fechautilizacion eq null}">
+                <h:outputLabel value="FECHA :"  style="text-align: left; font-weight: bold"/>
+                <h:outputLabel value="#{certificacionPac.detalle.certificacion.fecha}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputLabel>
+            </h:panelGrid>
+
+            <h:panelGrid  columns="2" style="text-align: left">
+                <h:outputLabel value="PARTIDA:"  style="text-align: left; font-weight: bold"/>
+                <h:outputText  value="#{certificacionPac.traerPartidaProyecto(certificacionPac.detalle)}"/>
+                <h:outputLabel value="DIRECCIÓN:"  style="text-align: left; font-weight: bold"/>
+                <h:outputText  value="#{consultasPoa.traerDireccion(certificacionPac.proyecto.direccion)}"/>
+                <h:outputLabel value="CPC:" style="text-align: left; font-weight: bold"/>
+                <h:outputText value="#{certificacionPac.proyecto.cpc}" />
+                <h:outputLabel value="TIPO COMPRA:" style="text-align: left; font-weight: bold"/>
+                <h:outputText  value="#{consultasPoa.traerTipoCompra(certificacionPac.proyecto.tipocompra)}"/>
+                <h:outputLabel value="DETALLE:" style="text-align: left; font-weight: bold"/>
+                <h:outputText value="#{certificacionPac.proyecto.detalle}" title="Detalle"/>
+                <h:outputLabel value="CANTIDAD:" style="text-align: left; font-weight: bold"/>
+                <h:outputText value="#{certificacionPac.proyecto.cantidad}" />
+                <h:outputLabel value="UNIDAD:" style="text-align: left; font-weight: bold"/>
+                <h:outputText  value="#{consultasPoa.traerTipoUnidad(certificacionPac.proyecto.unidad)}"/>
+                <h:outputLabel value="COSTO UNITARIO:" style="text-align: left; font-weight: bold"/>
+                <h:outputText  value="#{certificacionPac.traerValorAsignacion(certificacionPac.detalle)}">
+                    <f:convertNumber pattern="###,###,##0.00"/>
+                </h:outputText>
+                <h:outputLabel value="CUATRIMESTRE 1:" style="text-align: left; font-weight: bold"/>
+                <h:outputText value="#{certificacionPac.proyecto.cuatrimestre1 != null ? certificacionPac.proyecto.cuatrimestre1 ? 'S':'':'' }"/>
+                <h:outputLabel value="CUATRIMESTRE 2:" style="text-align: left; font-weight: bold"/>
+                <h:outputText value="#{certificacionPac.proyecto.cuatrimestre2 != null ? certificacionPac.proyecto.cuatrimestre2 ? 'S':'':'' }"/>
+                <h:outputLabel value="CUATRIMESTRE 3:" style="text-align: left; font-weight: bold"/>
+                <h:outputText value="#{certificacionPac.proyecto.cuatrimestre3 != null ? certificacionPac.proyecto.cuatrimestre3 ? 'S':'':'' }"/>
+                <h:outputLabel value="TIPO PRODUCTO:" style="text-align: left; font-weight: bold"/>
+                <h:outputText  value="#{consultasPoa.traerTipoProducto(certificacionPac.proyecto.tipoproducto)}"/>
+                <h:outputLabel value="CATÁLOGO ELECTRÓNICO:" style="text-align: left; font-weight: bold"/>
+                <h:outputText value="#{certificacionPac.proyecto.catalogoelectronico != null ? certificacionPac.proyecto.catalogoelectronico ? 'SI':'NO':'' }"/>
+                <h:outputLabel value="PROCEDIMIENTO CONTRATACIÓN:" style="text-align: left; font-weight: bold"/>
+                <h:outputText  value="#{consultasPoa.traerTipoProcedimiento(certificacionPac.proyecto.procedimientocontratacion)}"/>
+                <h:outputLabel value="FONDOS BID:" style="text-align: left; font-weight: bold"/>
+                <h:outputText value="#{certificacionPac.proyecto.fondobid != null ? certificacionPac.proyecto.fondobid ? 'SI':'NO':'' }"/>
+                <h:outputLabel value="CÓDIGO OPERACIÓN:" style="text-align: left; font-weight: bold" rendered="#{certificacionPac.proyecto.fondobid and certificacionPac.proyecto.fondobid != null}"/>
+                <h:outputText  value="#{certificacionPac.proyecto.codigooperacion}" rendered="#{certificacionPac.proyecto.fondobid and certificacionPac.proyecto.fondobid != null}"/>
+                <h:outputLabel value="NÚMERO OPERACIÓN:" style="text-align: left; font-weight: bold" rendered="#{certificacionPac.proyecto.fondobid and certificacionPac.proyecto.fondobid != null}"/>
+                <h:outputText  value="#{certificacionPac.proyecto.numerooperacion}" rendered="#{certificacionPac.proyecto.fondobid and certificacionPac.proyecto.fondobid != null}"/>
+                <h:outputLabel value="TIPO DE RÉGIMEN:" style="text-align: left; font-weight: bold"/>
+                <h:outputText  value="#{consultasPoa.traerTipoRegimen(certificacionPac.proyecto.regimen)}"/>
+                <h:outputLabel value="PRESUPUESTO DE INVERSIÓN:" style="text-align: left; font-weight: bold"/>
+                <h:outputText  value="#{consultasPoa.traerTipoPresupuesto(certificacionPac.proyecto.presupuesto)}"/>
+                <h:outputText value="#{certificacionPac.blancos}" escape="false"/>
+            </h:panelGrid>
+        </h:panelGrid>
+    </ace:panel>
+</html>

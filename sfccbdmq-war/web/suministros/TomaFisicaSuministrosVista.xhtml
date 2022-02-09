@@ -1,0 +1,338 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{tomaFisicaSuministrosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane >
+                            <f:facet name="label">Subir Información toma</f:facet>
+                            <h:panelGrid columns="2" width="30%">
+                                <h:outputLabel value="Separador de campos :"/>
+                                <h:inputText value="#{tomaFisicaSuministrosSfccbdmq.separador}" size="3" >
+                                    <ace:ajax execute="@all"/>
+                                </h:inputText>
+                                <h:outputLabel value="Archivo a Subir:" />
+                            </h:panelGrid>
+                            <h:panelGrid columns="3" width="100%">
+                                <ace:fileEntry id="file-entry" 
+
+                                               maxFileCount="1" 
+                                               maxFileCountMessage="Máximo un archivo" 
+                                               fileEntryListener="#{tomaFisicaSuministrosSfccbdmq.archivoListener}" 
+                                               maxFileSize="6291456" 
+                                               maxFileSizeMessage="Tamaño muy grande." 
+                                               maxTotalSize="18874368" 
+                                               maxTotalSizeMessage="Total del tamaño muy grande." 
+                                               useOriginalFilename="true" 
+                                               useSessionSubdir="true"/>
+                                <h:commandButton type="submit" value="Cargar datos"/>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane >
+                            <f:facet name="label">Parámetros de Búsqueda</f:facet>
+                            <h:panelGroup>
+                                <h:panelGrid columns="4">
+
+                                    <h:outputLabel value="Familia :" />
+                                    <h:selectOneMenu value="#{tomaFisicaSuministrosSfccbdmq.familia}" 
+                                                       >
+                                        <f:selectItems value="#{codigosSfccbdmq.comboFamiliaSuministros}"/>
+                                        <ace:ajax execute="@all"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Tipo :"  />
+                                    <h:selectOneMenu value="#{tomaFisicaSuministrosSfccbdmq.tipo}"  
+                                                       >
+                                        <f:selectItems value="#{tiposSuministrosSfccbdmq.comboTipoFamiliaEspacio}" />
+                                        <ace:ajax execute="@all"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Suministro:" for="suministro" />
+                                    <h:selectOneMenu id="suministro" value="#{tomaFisicaSuministrosSfccbdmq.suministro}" title="Suministro" 
+                                                       >
+                                        <f:selectItems value="#{suministrosSfccbdmq.comboSuministroTipo}"/>
+                                        <ace:ajax execute="@all"/>
+                                    </h:selectOneMenu>
+                                </h:panelGrid>
+
+
+                                <h:panelGrid columns="4" width="100%">
+                                    <h:outputLabel value="Nombre:" />
+                                    <h:inputText value="#{tomaFisicaSuministrosSfccbdmq.nombre}" title="Nombre" />
+                                    <h:outputLabel value="Nombre Comercial:" />
+                                    <h:inputText  value="#{tomaFisicaSuministrosSfccbdmq.comercial}" title="Nombre Comercial" />
+                                    <h:outputLabel value="Codigo:" />
+                                    <h:inputText value="#{tomaFisicaSuministrosSfccbdmq.codigo}" title="Codigo" />
+                                    <h:outputLabel value="Código Alterno:" />
+                                    <h:inputText  value="#{tomaFisicaSuministrosSfccbdmq.alterno}" title="Alterno" />
+                                </h:panelGrid>
+                            </h:panelGroup>
+                        </ace:tabPane>
+                    </ace:tabSet>
+                    <h:panelGrid columns="1" width="100%">
+                        <h:panelGrid columns="1" width="100%">
+                            <h:outputLabel value="Observaciones de la Toma:"/>
+                            <h:inputTextarea cols="60" rows="4" value="#{tomaFisicaSuministrosSfccbdmq.toma.observaciones}" id="seis"/>
+
+                        </h:panelGrid>
+                        <ace:menuBar autoSubmenuDisplay="true" >
+
+                            <ace:menuItem value="Buscar Suministros" icon="ui-icon ui-icon-search"  action="#{tomaFisicaSuministrosSfccbdmq.buscarSuministros()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{tomaFisicaSuministrosSfccbdmq.nuevoRenglon()}"/>
+                            <ace:menuItem value="Terminar" icon="ui-icon ui-icon-disk" 
+                                          action="#{tomaFisicaSuministrosSfccbdmq.terminar()}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{tomaFisicaSuministrosSfccbdmq.salir()}"/>
+                        </ace:menuBar>
+                        <!--<h:outputConnectionStatus/>-->
+                    </h:panelGrid>
+                </ace:panel>
+               <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                <ace:tabSet style="clear:both;" clientSide="true">
+                    <ace:tabPane >
+                        <f:facet name="label">Registros</f:facet>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{tomaFisicaSuministrosSfccbdmq.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{tomaFisicaSuministrosSfccbdmq.formulario.pantalla}" 
+                                              target="tabla" fileName="datos"/>
+                        </h:panelGrid>
+                        <!--                    <h:panelGrid styleClass="centeredPanelGrid">
+                                                
+                                            </h:panelGrid>-->
+                        <h:panelGrid width="100%" >
+                            <ace:dataTable id="tabla" 
+                                           value="#{tomaFisicaSuministrosSfccbdmq.listaDetalleToma}"
+                                           var="item"
+                                           paginator="true"
+                                           lazy="false"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="15,20,25,50,100,300"
+                                           currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="50"
+                                           binding="#{tomaFisicaSuministrosSfccbdmq.formulario.fila}">
+                                <ace:column style="text-align: left">
+
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{tomaFisicaSuministrosSfccbdmq.modificaRenglon(item)}" 
+                                                      value="Cambiar" icon="ui-icon ui-icon-pencil"/>
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column  headerText="Código Suministro"  style="text-align: right">
+                                    <h:outputText  value="#{item.suministro.codigobarras}"/>
+                                </ace:column>
+                                <ace:column  headerText="Familia"  style="text-align: left">
+                                    <h:outputText  value="#{item.suministro.tipo.familia.nombre}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Tipo"  style="text-align: left">
+                                    <h:outputText  value="#{item.suministro.tipo.nombre}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Nombre"  style="text-align: left">
+                                    <h:outputText  value="#{item.suministro.nombre}"/>
+                                </ace:column>  
+
+                                <ace:column  headerText="Saldo"  style="text-align: left">
+                                    <h:outputText  value="#{item.saldo}">
+                                        <f:convertNumber pattern="###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Constatado"  style="text-align: left">
+                                    <h:outputText  value="#{item.constatado}">
+                                        <f:convertNumber pattern="###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Diferencia"  style="text-align: left">
+                                    <h:outputText  value="#{item.saldo-item.constatado}">
+                                        <f:convertNumber pattern="###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:tabPane>
+
+                </ace:tabSet>
+
+
+                <!--edicion del activo-->
+                <ace:dialog 
+                    header="#{tomaFisicaSuministrosSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{!tomaFisicaSuministrosSfccbdmq.formularioToma.mostrar}"
+                    visible="#{!tomaFisicaSuministrosSfccbdmq.formularioToma.mostrar}">
+
+                    <h:panelGrid columns="4" width="100%">
+                        <h:outputLabel value="Bodega :" />
+                        <h:selectOneMenu  value="#{tomaFisicaSuministrosSfccbdmq.bodega}">
+                            <f:selectItems value="#{bodegasSfccbdmq.comboBodegasSuministros}"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="4" width="100%">
+                        <h:outputLabel value="Desde:"/>
+                        <ace:dateTimeEntry navigator="true"  value="#{tomaFisicaSuministrosSfccbdmq.desde}" id="dos"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Hasta:"/>
+                        <ace:dateTimeEntry navigator="true"  value="#{tomaFisicaSuministrosSfccbdmq.hasta}" id="tres"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{tomaFisicaSuministrosSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{tomaFisicaSuministrosSfccbdmq.nuevo()}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{tomaFisicaSuministrosSfccbdmq.cancelar()}"/>
+                        </ace:menuBar>
+                        <!--<h:outputConnectionStatus/>-->
+                        <ace:messages/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tablaO" 
+                                       value="#{tomaFisicaSuministrosSfccbdmq.listaTomas}"
+                                       var="itemTomas"
+                                       paginator="true"
+                                       lazy="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="top"
+                                       rowsPerPageTemplate="5,10,15,30,50,100"
+                                       paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="10"
+                                       >
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{tomaFisicaSuministrosSfccbdmq.modifica()}" value="Cambiar" icon="ui-icon ui-icon-pencil" disabled="#{itemTomas.fechafin!=null}"/>
+                                </ace:menuButton>
+                            </ace:column>
+                            <ace:column  headerText="Fecha Inicio" style="text-align: left">
+                                <h:outputText  value="#{itemTomas.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Bodega" style="text-align: left">
+                                <h:outputText  value="#{itemTomas.bodega.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Observaciones" style="text-align: left">
+                                <h:outputText  value="#{itemTomas.bodega.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Fecha Fin" style="text-align: left">
+                                <h:outputText  value="#{itemTomas.fechafin}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+
+                        </ace:dataTable>
+                    </h:panelGrid>  
+
+                </ace:dialog>
+                <ace:dialog 
+                    header="#{tomaFisicaSuministrosSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{tomaFisicaSuministrosSfccbdmq.formulario.mostrar}"
+                    visible="#{tomaFisicaSuministrosSfccbdmq.formulario.mostrar}">
+
+                    <h:panelGrid columns="2" rendered="#{tomaFisicaSuministrosSfccbdmq.formulario.nuevo}">
+                        <h:outputLabel value="Familia :" />
+                        <h:selectOneMenu value="#{tiposSuministrosSfccbdmq.familiaSuministros}" 
+                                           >
+                            <f:selectItems value="#{codigosSfccbdmq.comboFamiliaSuministros}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Tipo :"  />
+                        <h:selectOneMenu value="#{suministrosSfccbdmq.tipo}"  
+                                           >
+                            <f:selectItems value="#{tiposSuministrosSfccbdmq.comboTipoFamiliaEspacio}" />
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Suministro:"  />
+                        <h:selectOneMenu  value="#{tomaFisicaSuministrosSfccbdmq.detalleToma.suministro}" title="Suministro" 
+                                            >
+                            <f:selectItems value="#{suministrosSfccbdmq.comboSuministroTipo}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" rendered="#{!tomaFisicaSuministrosSfccbdmq.formulario.nuevo}">
+                        <h:outputLabel value="Suministro:" />
+                        <h:outputLabel value="#{tomaFisicaSuministrosSfccbdmq.detalleToma.suministro.nombre}" />
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" >
+                        <h:outputLabel value="saldo:" />
+                        <h:outputLabel value="#{tomaFisicaSuministrosSfccbdmq.detalleToma.saldo}" >
+                            <f:convertNumber pattern="###,##0.00"/>
+                        </h:outputLabel>
+                        <h:outputLabel value="Valor constatado:" />
+                        <h:inputText value="#{tomaFisicaSuministrosSfccbdmq.detalleToma.constatado}" />
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{tomaFisicaSuministrosSfccbdmq.insertarRenglon()}" 
+                                          rendered="#{tomaFisicaSuministrosSfccbdmq.formulario.nuevo}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{tomaFisicaSuministrosSfccbdmq.grabarRenglon()}" 
+                                          rendered="#{tomaFisicaSuministrosSfccbdmq.formulario.modificar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{tomaFisicaSuministrosSfccbdmq.formulario.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

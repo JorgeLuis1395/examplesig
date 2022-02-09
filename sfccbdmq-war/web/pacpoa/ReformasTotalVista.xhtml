@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+        <title>Reformas</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <ui:define name="content">
+
+                <ace:panel id="imprimir" header="Total Reformas (R) y Número de Asignaciones Afectadas (A)">
+                    <h:panelGrid columns="6" width="100%">
+                        <h:outputLabel value="Año :"/>
+                        <h:inputText value="#{totalReformasPoa.anio}"/>                        
+                    </h:panelGrid>
+                    <h:panelGrid>
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar"   icon="ui-icon ui-icon-search"  action="#{totalReformasPoa.buscar()}" />
+                        </ace:menuBar> 
+                    </h:panelGrid>
+
+                    <ace:messages/>
+
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{totalReformasPoa.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter
+                            label="Exportar Archivo" 
+                            type="#{totalReformasPoa.formulario.pantalla}" 
+                            target="tabla" fileName="Total Certificaciones" />
+                    </h:panelGrid>
+
+                    <ace:dataTable       
+                        id="tabla"
+                        value="#{totalReformasPoa.listaDirecciones}"
+                        var="item"
+                        paginatorAlwaysVisible="true"
+                        currentPageReportTemplate="{totalRecords} registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                        rowsPerPageTemplate="10,15,20,50,100"
+                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"              
+                        style="width: 100%;">
+
+                        <ace:columnGroup type="header">
+                            <ace:row>
+                                <ace:column headerText="Dirección" rowspan="2"/>
+                                <c:forEach items="#{totalReformasPoa.meses}" var="mes">
+                                    <ace:column headerText="#{totalReformasPoa.getNombreMes(mes)}" colspan="2"/>
+                                </c:forEach>
+                                <ace:column headerText="Total" colspan="2"/>
+                            </ace:row>
+                            <ace:row>
+                                <c:forEach items="#{totalReformasPoa.meses}" var="mes">
+                                    <ace:column headerText="R" style="text-align: right"/>
+                                    <ace:column headerText="A" style="text-align: right"/>
+                                </c:forEach>
+                                <ace:column headerText="R" style="text-align: right"/>
+                                <ace:column headerText="A" style="text-align: right"/>
+                            </ace:row>
+
+                        </ace:columnGroup>
+
+                        <ace:column style="text-align: left"    headerText="Dirección"  >
+                            <h:outputText value="#{item.nombre}"/>
+                        </ace:column>
+
+
+                        <c:forEach var="mes" items="#{totalReformasPoa.meses}">
+                            <ace:column  headerText="#{totalReformasPoa.getNombreMes(mes)}"  style="text-align: right">
+                                <h:outputText  value="#{totalReformasPoa.traerTotalReformas(mes, item.codigo)}"/>
+                            </ace:column>
+                            <ace:column style="text-align: right">
+                                <h:outputText  value="#{totalReformasPoa.traerTotalAsignaciones(mes, item.codigo)}"/>
+                            </ace:column>
+                        </c:forEach>
+                        <ace:column style="text-align: right" headerText="Total"  styleClass="bold" >
+                            <h:outputText value="#{totalReformasPoa.traerTotalReformas(null, item)}"/>
+                        </ace:column>
+                        <ace:column style="text-align: right" styleClass="bold">
+                            <h:outputText value="#{totalReformasPoa.traerTotalAsignaciones(null, item)}"/>
+                        </ace:column>
+                        <ace:row condition="group" groupBy="#{totalReformasPoa.listaDirecciones}" pos="after"  styleClass="total" >
+                            <ace:column  style="text-align: right">
+                                <h:outputText value="TOTALES" />
+                            </ace:column>
+                            <c:forEach var="mest" items="#{totalReformasPoa.meses}">
+                                <ace:column style="text-align: right">
+                                    <h:outputText  value="#{totalReformasPoa.traerTotalReformas(mest, null)}"/>
+                                </ace:column>
+                                <ace:column  style="text-align: right">
+                                    <h:outputText  value="#{totalReformasPoa.traerTotalAsignaciones(mest, null)}"/>
+                                </ace:column>
+                            </c:forEach>
+                            <ace:column   style="text-align: right;" >
+                                <h:outputText value="#{totalReformasPoa.traerTotalReformas(null, null)}"  />
+                            </ace:column>
+                            <ace:column   style="text-align: right;" >
+                                <h:outputText value="#{totalReformasPoa.traerTotalAsignaciones(null, null)}"  />
+                            </ace:column>
+                        </ace:row>
+                    </ace:dataTable>      
+                </ace:panel>
+            </ui:define>
+        </ui:composition>
+
+    </h:body>
+</html>

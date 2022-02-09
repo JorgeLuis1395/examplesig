@@ -1,0 +1,370 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel 
+                    id="panel"
+                    header="#{faltantesSobrantes.perfil.menu.texto}"
+                    closable="false"
+                    toggleable="true"
+                    >    
+
+
+                    <!--        <h:panelGrid columns="2">
+                           <h:outputLabel value="Nombres Custodio " />
+                           <h:inputText value="#{faltantesSobrantes.nombre}" title="Nombre" />
+                           <h:outputLabel value="Apellidos Custodio " />
+                           <h:inputText value="#{faltantesSobrantes.apellidos}" title="Apellidos" />
+                                              <h:outputLabel value="Cédula Custodio " />
+                                                   <h:inputText value="#{faltantesSobrantes.cedula}" title="Cédula" />
+                       </h:panelGrid>-->
+
+                    <!--                    <h:panelGrid columns="2">
+                                            <h:outputLabel value="Estado Constatación: "/>
+                                            <h:selectOneMenu  value="#{faltantesSobrantes.estadoCons}"> 
+                                                <f:selectItem itemLabel="" itemValue=""/>
+                                                 <f:selectItem itemLabel="(Sin constatación/No constatados" itemValue="0"/>
+                                                <f:selectItem itemLabel="(Constatados" itemValue="1"/>
+                                                <f:selectItem itemLabel="Sobrantes" itemValue="2"/>
+                    
+                                            </h:selectOneMenu>
+                    
+                                        </h:panelGrid>-->
+
+                    <h:panelGrid columns="1" width="100%">
+                        <ui:include src="../BuscarEmpleado.xhtml"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{faltantesSobrantes.buscar()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <!--                </ace:panel>
+                                    <ace:panel>-->
+                    <h:panelGrid>
+                        <ace:dynamicResource  fileName="SobrantesFaltantes.xls" id="pdf-botonMayor" label="Exportar a XLS"
+                                              mimeType="application/xls" resource="#{faltantesSobrantes.reporte}" 
+                                              style="" type="button" rendered="#{faltantesSobrantes.reporte ne null}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{faltantesSobrantes.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{faltantesSobrantes.formulario.pantalla}" 
+                                          target="tablaf" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:dataTable 
+                            id="tablaf"
+                            paginatorAlwaysVisible="true"
+                            value="#{faltantesSobrantes.listaConstataciones}"
+                            var="item"
+                            paginator="true"
+                            lazy="true"
+                            resizableColumns="true"
+                            rowIndexVar="row"
+                            paginatorPosition="both"
+                            rowsPerPageTemplate="5,10,15,30,50,100,all"
+                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            rows="15">
+                            <ace:column  headerText="N°" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Custodio" style="text-align: left" 
+                                         filterMatchMode="startsWith">
+                                <h:outputText  value="#{faltantesSobrantes.traerEntidad(item.cicustodio)}"/>
+                            </ace:column>
+                            <ace:column  headerText="CI Custodio" style="text-align: left" 
+                                         filterBy="#{item.cicustodio}"  
+                                         filterMatchMode="startsWith"
+                                         sortBy="#{item.cicustodio}">
+                                <h:outputText  value="#{item.cicustodio}"/>
+                            </ace:column>
+                            <ace:column  headerText="Código del bien" style="text-align: left"  rendered="false"
+                                         filterBy="#{item.codigobien}" 
+                                         filterMatchMode="startsWith"
+                                         sortBy="#{item.codigobien}">
+                                <h:outputText  value="#{item.codigobien}"/>
+                            </ace:column>
+                            <ace:column  headerText="Código de inventario" style="text-align: left" 
+                                         filterBy="#{item.codigo}" 
+                                         filterMatchMode="startsWith"
+                                         sortBy="#{item.codigo}">
+                                <h:outputText  value="#{item.codigo}"/>
+                            </ace:column>
+                            <ace:column  headerText="Descripción" style="text-align: left" 
+                                         filterBy="#{item.descripcion}" 
+                                         filterMatchMode="startsWith"
+                                         sortBy="#{item.descripcion}">
+                                <h:outputText  value="#{item.descripcion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Serie" style="text-align: left" 
+                                         filterBy="#{item.nroserie}" 
+                                         filterMatchMode="startsWith"
+                                         sortBy="#{item.nroserie}">
+                                <h:outputText  value="#{item.nroserie}"/>
+                            </ace:column>
+                            <ace:column  headerText="Color" style="text-align: left" 
+                                         filterBy="#{item.color}" 
+                                         filterMatchMode="startsWith"
+                                         sortBy="#{item.color}">
+                                <h:outputText  value="#{item.color}"/>
+                            </ace:column>
+                            <ace:column  headerText="Estado del bien" style="text-align: left" 
+                                         filterBy="#{item.estadobien}" 
+                                         filterMatchMode="startsWith"
+                                         sortBy="#{item.estadobien}">
+                                <h:outputText  value="#{item.estadobien}"/>
+                            </ace:column>
+                            <ace:column  headerText="Edificio" style="text-align: left"
+                                         sortBy="#{item.nombreEdificio}">
+                                <h:outputText  value="#{item.nombreEdificio}"/>
+                            </ace:column>
+                            <ace:column  headerText="Oficina" style="text-align: left"
+                                         sortBy="#{item.nombreOficina}">
+                                <h:outputText  value="#{item.nombreOficina}"/>
+                            </ace:column>
+                            <ace:column  headerText="Observación" style="text-align: left" 
+                                         filterBy="#{item.observacion}" 
+                                         filterMatchMode="startsWith"
+                                         sortBy="#{item.observacion}">
+                                <h:outputText  value="#{item.observacion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Observación del Sistema" style="text-align: left" 
+                                         filterBy="#{item.observaciones}" 
+                                         filterMatchMode="startsWith"
+                                         sortBy="#{item.observaciones}">
+                                <h:outputText  value="#{item.observaciones}"/>
+                            </ace:column>
+
+                            <ace:column  headerText="Dirección" style="text-align: left"  
+                                         filterMatchMode="startsWith">
+                                <h:outputText  value="#{item.nombreOficina}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="Buscar"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{faltantesSobrantes.formularioBuscar.mostrar}"
+                    visible="#{faltantesSobrantes.formularioBuscar.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dynamicResource 
+                                fileName="Bienes Constatados.pdf"                                            
+                                attachment="true"                                             
+                                label="Bienes Constatados"
+                                mimeType="application/pdf"
+                                resource="#{faltantesSobrantes.constatados}" 
+                                type="button" rendered="#{faltantesSobrantes.constatados ne null}"/>
+                            <ace:dynamicResource 
+                                fileName="Bienes no Constatados.pdf"                                            
+                                attachment="true"                                             
+                                label="Bienes no Constatados"
+                                mimeType="application/pdf"
+                                resource="#{faltantesSobrantes.noConstatados}" 
+                                type="button" rendered="#{faltantesSobrantes.noConstatados ne null}"/>
+                            <ace:dynamicResource 
+                                fileName="Bienes Sobrantes.pdf"                                            
+                                attachment="true"                                             
+                                label="Bienes Sobrantes"
+                                mimeType="application/pdf"
+                                resource="#{faltantesSobrantes.sobrantes}" 
+                                type="button" rendered="#{faltantesSobrantes.sobrantes ne null}"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGroup>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{faltantesSobrantes.formularioBuscar.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                            <h:messages style="color: greenyellow;font-style: italic;font-weight: bold"/> 
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Constatación"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{faltantesSobrantes.formulario.mostrar}"
+                    visible="#{faltantesSobrantes.formulario.mostrar}">
+                    <h:panelGroup>
+                        <ace:tabSet>
+                            <ace:tabPane label="Info. General">
+                                <h:panelGrid columns="2" width="100%" style="text-align: left">
+                                    <h:outputLabel value="Empleado: "/>
+                                    <h:outputText value="#{faltantesSobrantes.empleado.toString()}"/>
+                                    <h:outputLabel value="Codigo del bien: "  rendered="#{!faltantesSobrantes.formulario.nuevo}"/>
+                                    <h:inputText value="#{faltantesSobrantes.constatacion.codigobien}" rendered="#{!faltantesSobrantes.formulario.nuevo}" disabled="#{!faltantesSobrantes.formulario.nuevo}"/>
+                                    <h:outputLabel value="Codigo: "   rendered="#{!faltantesSobrantes.formulario.nuevo}"/>
+                                    <h:inputText value="#{faltantesSobrantes.constatacion.codigo}" rendered="#{!faltantesSobrantes.formulario.nuevo}" disabled="#{!faltantesSobrantes.formulario.nuevo}"/>
+                                    <h:outputLabel value="Descripcion: "/>
+                                    <h:inputText value="#{faltantesSobrantes.constatacion.descripcion}"/>
+                                    <h:outputLabel value="Serie: "/>
+                                    <h:inputText value="#{faltantesSobrantes.constatacion.nroserie}" disabled="#{!faltantesSobrantes.formulario.nuevo}"/>
+                                    <h:outputLabel value="Color: "/>
+                                    <h:inputText value="#{faltantesSobrantes.constatacion.color}"/>
+                                    <h:outputLabel value="Estado del bien: "/>
+                                    <h:selectOneMenu  value="#{faltantesSobrantes.estadoB}" title="Edificio">
+                                        <f:selectItems value="#{codigosSfccbdmq.comboEstadoActivos}"/>
+                                        <ace:ajax execute="@all"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Edificio:" />
+                                    <h:selectOneMenu  value="#{oficinasSfccbdmq.edificio}" title="Edificio">
+                                        <f:selectItems value="#{edificiosSfccbdmq.comboEdificioEspacio}"/>
+                                        <ace:ajax execute="@all"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Oficina:" />
+                                    <h:selectOneMenu  value="#{oficinasSfccbdmq.oficina}" title="Oficina" id="oficina">
+                                        <f:selectItems value="#{oficinasSfccbdmq.comboOficinaEspacio}"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="¿Constatado?" rendered="#{faltantesSobrantes.formulario.modificar and faltantesSobrantes.constatacion.constatado ne null }"/>
+                                    <h:selectBooleanCheckbox value="#{faltantesSobrantes.constatacion.constatado}" rendered="#{faltantesSobrantes.formulario.modificar and faltantesSobrantes.constatacion.constatado ne null}"/>
+                                    <h:outputLabel value="Observación del Sistema: "/>
+                                    <h:outputText value="#{faltantesSobrantes.constatacion.observaciones}"/>
+                                    <h:outputLabel value="Observación: "/>
+                                    <h:inputTextarea value="#{faltantesSobrantes.constatacion.observacion}" rows="3" cols="25"/>
+                                </h:panelGrid>
+                                <ace:messages />
+                            </ace:tabPane>
+                            <ace:tabPane label="Fotografía">
+                                <h:panelGrid columns="6">
+                                    <ace:buttonGroup id="radioGroup" header="El Archivo a subir es: " mutuallyExclusive="true">
+                                        Acta <ace:radioButton id="radio1" value="#{faltantesSobrantes.acta}">
+                                            <ace:ajax execute="radioGroup" event="activate" render="@form"/>
+                                        </ace:radioButton>
+                                        Fotografía <ace:radioButton id="radio2" value="#{faltantesSobrantes.foto}">
+                                            <ace:ajax execute="radioGroup" event="activate" render="@form"/>
+                                        </ace:radioButton>
+                                    </ace:buttonGroup>
+                                </h:panelGrid>
+                                <h:panelGrid width="100%" style="text-align: left">
+                                    <h:panelGrid>
+                                        <ace:graphicImage value="#{faltantesSobrantes.archivoImagen.archivo}"
+                                                          name="#{imagenesSfccbdmq.nombreTms}" height="398px"/>   
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2">
+                                        <ace:fileEntry id="fotografia"
+                                                       relativePath="/files/"
+                                                       maxFileCount="1"
+                                                       maxFileCountMessage="Sólo se puede subir 1 archivo"
+                                                       fileEntryListener="#{faltantesSobrantes.multimediaListener}"
+                                                       maxFileSize="10485760"
+                                                       maxFileSizeMessage="El archivo supera el tamaño predefinido 10 MB"                                                                                                                 
+                                                       useOriginalFilename="true"
+                                                       useSessionSubdir="true" 
+                                                       autoUpload="true"
+                                                       label="Archivo subido con éxito"/>
+                                        <h:commandButton  type="submit" value="Subir Archivo" /> 
+                                    </h:panelGrid>
+                                </h:panelGrid>
+                                <h:message for="fotografia" style="color: darkgreen;font-style: italic;font-weight: bold"/>
+                            </ace:tabPane>
+                        </ace:tabSet>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              rendered="#{faltantesSobrantes.formulario.nuevo}" 
+                                              action="#{faltantesSobrantes.insertar()}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{faltantesSobrantes.grabar()}" 
+                                              rendered="#{faltantesSobrantes.formulario.modificar}" 
+                                              disabled="#{faltantesSobrantes.constatacion.estado}"/>
+                                <ace:menuItem action="#{faltantesSobrantes.borrar()}" 
+                                              value="¿Está seguro de Borrar el registro?" 
+                                              icon="ui-icon ui-icon-trash" 
+                                              rendered="#{faltantesSobrantes.formulario.borrar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{faltantesSobrantes.salir()}"/>
+                            </ace:menuBar>
+
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Finalizar"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{faltantesSobrantes.formularioConfirmacion.mostrar}"
+                    visible="#{faltantesSobrantes.formularioConfirmacion.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2" width="100%" style="text-align: left">
+                            <h:outputLabel value="¿Esta seguro de finalizar? "/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"
+                                              action="#{faltantesSobrantes.grabarFinalizar()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{faltantesSobrantes.formularioConfirmacion.cancelar()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Exportar "
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{faltantesSobrantes.formularioReporte.mostrar}"
+                    visible="#{faltantesSobrantes.formularioReporte.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource  fileName="Constataciones.xls" 
+                                              label="Exportar a XLS"
+                                              mimeType="application/xls" resource="#{faltantesSobrantes.reporte}" 
+                                              style="" type="button"/>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{faltantesSobrantes.formularioReporte.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

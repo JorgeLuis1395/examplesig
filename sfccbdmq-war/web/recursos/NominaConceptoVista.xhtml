@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{nominaConceptoSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <!--<ace:panel header="Parámetros de Búsqueda">-->
+                    <h:panelGrid columns="2" rendered="#{!nominaConceptoSfccbdmq.formulario.mostrar}">
+                        <h:outputText value="Mes" />
+                        <h:inputText value="#{nominaConceptoSfccbdmq.mes}"/>
+                        <h:outputText value="Año:" />
+                        <h:inputText value="#{nominaConceptoSfccbdmq.anio}"/>
+                        <h:outputLabel value="Concepto :"  />
+                        <h:selectOneMenu value="#{nominaConceptoSfccbdmq.concepto}" >
+                            <f:selectItems value="#{conceptosSfccbdmq.comboConceptos}"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{nominaConceptoSfccbdmq.buscar()}" rendered="#{!nominaConceptoSfccbdmq.formulario.mostrar}" />
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{nominaConceptoSfccbdmq.grabar()}" rendered="#{nominaConceptoSfccbdmq.formulario.mostrar}" />
+                            <ace:menuItem value="Grabar Rmu" icon="ui-icon ui-icon-disk"  action="#{nominaConceptoSfccbdmq.grabarRmu()}" rendered="#{nominaConceptoSfccbdmq.formulario.mostrar}" />
+                            <ace:menuItem value="limpiar Valores" icon="ui-icon ui-icon-check"  action="#{nominaConceptoSfccbdmq.limpiar()}" rendered="#{nominaConceptoSfccbdmq.formulario.mostrar}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{nominaConceptoSfccbdmq.cancelar()}" />
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <h:panelGrid columns="5" width="100%" rendered="#{nominaConceptoSfccbdmq.formulario.mostrar}">
+                        <h:outputLabel value="Separador de campos :"/>
+                        <h:inputText value="#{nominaConceptoSfccbdmq.separador}" size="3">
+                            <ace:ajax execute="@all"/>
+                        </h:inputText>
+                        <!--<h:outputLabel value="Archivo a Subir:" />-->
+                        <h:outputLabel value="Seleccionar Archivo de concepto :"/>
+                        <ace:fileEntry id="file-entry" 
+                                       label="Archivo de Concepto"
+                                       autoUpload="true"
+                                       maxFileCount="1" 
+                                       maxFileCountMessage="Máximo un archivo" 
+                                       fileEntryListener="#{nominaConceptoSfccbdmq.archivoListener}" 
+                                       maxFileSize="6291456" 
+                                       maxFileSizeMessage="Tamaño muy grande." 
+                                       maxTotalSize="18874368" 
+                                       maxTotalSizeMessage="Total del tamaño muy grande." 
+                                       useOriginalFilename="true" 
+                                       useSessionSubdir="true"/>
+                        <h:outputLabel value="Seleccionar Archivo de RMU :"/>
+                        <ace:fileEntry id="file-entry1" 
+                                       label="Archivo de RMU"
+                                       autoUpload="true"
+                                       maxFileCount="1" 
+                                       maxFileCountMessage="Máximo un archivo" 
+                                       fileEntryListener="#{nominaConceptoSfccbdmq.archivoListenerRmu}" 
+                                       maxFileSize="6291456" 
+                                       maxFileSizeMessage="Tamaño muy grande." 
+                                       maxTotalSize="18874368" 
+                                       maxTotalSizeMessage="Total del tamaño muy grande." 
+                                       useOriginalFilename="true" 
+                                       useSessionSubdir="true"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="5" width="100%" rendered="#{nominaConceptoSfccbdmq.formulario.mostrar}">
+
+
+
+                        <h:commandButton type="submit" value="Cargar datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable 
+                            value="#{nominaConceptoSfccbdmq.listaPagosempleados}"
+                            var="novedadItem"
+                            binding="#{nominaConceptoSfccbdmq.formulario.fila}">
+                            <f:facet name="header">#{nominaConceptoSfccbdmq.concepto.nombre}</f:facet>
+                            <ace:column  headerText="C.I."  style="text-align: left">
+                                <h:outputText value="#{novedadItem.empleado.entidad.pin}"/>
+                            </ace:column>
+                            <ace:column  headerText="Empleado"  style="text-align: left">
+                                <h:outputText value="#{novedadItem.empleado.entidad.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Valor" style="text-align: left">
+                                <h:inputText   value="#{novedadItem.valor}"/>
+                            </ace:column>
+                            <ace:column  headerText="Subrogación" style="text-align: left">
+                                <h:inputText   value="#{novedadItem.cantidad}" />
+                            </ace:column>
+                            <ace:column  headerText="Encargo" style="text-align: left">
+                                <h:inputText   value="#{novedadItem.encargo}" />
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{nominaConceptoSfccbdmq.buscar()}" rendered="#{!nominaConceptoSfccbdmq.formulario.mostrar}" />
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{nominaConceptoSfccbdmq.grabarRmu()}" rendered="#{nominaConceptoSfccbdmq.formulario.mostrar}" />
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{nominaConceptoSfccbdmq.grabar()}" rendered="#{nominaConceptoSfccbdmq.formulario.mostrar}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{nominaConceptoSfccbdmq.cancelar()}" />
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <ace:messages/>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

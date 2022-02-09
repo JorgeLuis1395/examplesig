@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+        
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{cursosEmpleado.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <ace:panel header="Parámetros de Búsqueda">
+                        <ui:include src="../BuscarEmpleado.xhtml"/>
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{cursosEmpleado.buscar()}"/>
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{cursosEmpleado.nuevo()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <ace:messages/>
+                    </ace:panel> 
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="false"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{cursosEmpleado.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{cursosEmpleado.formulario.pantalla}" 
+                                          target="cursos" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="cursos" 
+                                       value="#{cursosEmpleado.listaCursos}"
+                                       var="curso"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,50"
+
+                                       paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="5"
+                                       binding="#{cursosEmpleado.formulario.fila}">
+
+                            <ace:column  style="text-align: left">
+                                <ace:menuButton  effect="slide" effectDuration="200" value="..." rendered="#{curso.validado==null}">
+                                    <ace:menuItem value="Editar" icon="ui-icon ui-icon-pencil" action="#{cursosEmpleado.modifica(curso)}"  />
+                                    <ace:menuItem value="Verificar" icon="ui-icon ui-icon-check" action="#{cursosEmpleado.verifica(curso)}"  />
+                                    <ace:menuItem value="Negar" icon="ui-icon ui-icon-close" action="#{cursosEmpleado.niega(curso)}"  />
+                                    <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{cursosEmpleado.borra(curso)}"  />
+                                </ace:menuButton>
+                            </ace:column>
+                            <ace:column  headerText="Empresa" style="text-align: left">
+                                <h:outputText value="#{curso.empresa}"/>
+                            </ace:column>
+                            <ace:column  headerText='Nombre'   style="text-align: left">
+                                <h:outputText  value="#{curso.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText='Fecha'   style="text-align: left">
+                                <h:outputText  value="#{curso.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Duración/Horas" style="text-align: right">
+                                <h:outputText value="#{curso.duracion}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="Formación Específica"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{cursosEmpleado.formulario.mostrar}"
+                    visible="#{cursosEmpleado.formulario.mostrar}">
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane >
+                            <f:facet name="label">Inf. General</f:facet>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Empresa:" for="empresas" />
+                                <h:inputText id="empresas" value="#{cursosEmpleado.curso.empresa}" 
+                                               title="Empresa" />
+                                <h:outputLabel value="Nombre:" for="nombrecc" />
+                                <h:inputText id="nombrecc" value="#{cursosEmpleado.curso.nombre}" title="Curso" />
+                                <h:outputLabel value="Fecha:" for="Fecha" />
+                                <ace:dateTimeEntry navigator="true" value="#{cursosEmpleado.curso.fecha}" 
+                                                   popupIcon="ui-icon ui-icon-calendar"    renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                </ace:dateTimeEntry>    
+                                <h:outputLabel value="Duración/Horas:" for="años" />
+                                <h:inputText id="años" value="#{cursosEmpleado.curso.duracion}" title="Duración Cursos"  style="text-align: right"/>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane label="Adjuntos">
+                            <ui:include src="../mostrarImagenes.xhtml" />
+                        </ace:tabPane>
+                    </ace:tabSet>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{cursosEmpleado.insertar()}" rendered="#{cursosEmpleado.formulario.nuevo}" />
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{cursosEmpleado.grabar()}" rendered="#{cursosEmpleado.formulario.modificar}" />
+                        <ace:menuItem value="Está Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{cursosEmpleado.eliminar()}" rendered="#{cursosEmpleado.formulario.borrar}" />
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{cursosEmpleado.formulario.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

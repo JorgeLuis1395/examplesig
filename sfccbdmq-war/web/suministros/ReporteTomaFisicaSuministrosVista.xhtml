@@ -1,0 +1,260 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{reporteTomaFisicaSuministrosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <ace:tabSet style="clear:both;">
+
+                        <ace:tabPane >
+                            <f:facet name="label">Parámetros de Búsqueda</f:facet>
+                            <h:panelGroup>
+                                <h:panelGrid columns="4">
+
+                                    <h:outputLabel value="Familia :" />
+                                    <h:selectOneMenu value="#{reporteTomaFisicaSuministrosSfccbdmq.familia}"  
+                                                     >
+                                        <f:selectItems value="#{codigosSfccbdmq.comboFamiliaSuministros}"/>
+                                        <ace:ajax execute="@all"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Tipo :"  />
+                                    <h:selectOneMenu value="#{reporteTomaFisicaSuministrosSfccbdmq.tipo}"  
+                                                     >
+                                        <f:selectItems value="#{tiposSuministrosSfccbdmq.comboTipoFamiliaEspacio}" />
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Suministro:" for="suministro" />
+                                    <h:selectOneMenu id="suministro" value="#{reporteTomaFisicaSuministrosSfccbdmq.suministro}" title="Suministro" 
+                                                     >
+                                        <f:selectItems value="#{suministrosSfccbdmq.comboSuministroTipo}"/>
+                                        <ace:ajax execute="@all"/>
+
+                                    </h:selectOneMenu>
+                                </h:panelGrid>
+
+
+                                <h:panelGrid columns="4" width="100%">
+                                    <h:outputLabel value="Diferencias:" />
+                                    <h:selectOneMenu  value="#{reporteTomaFisicaSuministrosSfccbdmq.diferencias}"  
+                                                      >
+                                        <f:selectItem itemLabel="---" itemValue="-1"/>
+                                        <f:selectItem itemLabel="SI" itemValue="1"/>
+                                        <f:selectItem itemLabel="NO" itemValue="2"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Nombre:" />
+                                    <h:inputText value="#{reporteTomaFisicaSuministrosSfccbdmq.nombre}" title="Nombre" />
+                                    <h:outputLabel value="Nombre Comercial:" />
+                                    <h:inputText  value="#{reporteTomaFisicaSuministrosSfccbdmq.comercial}" title="Nombre Comercial" />
+                                    <h:outputLabel value="Codigo:" />
+                                    <h:inputText value="#{reporteTomaFisicaSuministrosSfccbdmq.codigo}" title="Codigo" />
+                                    <h:outputLabel value="Código Alterno:" />
+                                    <h:inputText  value="#{reporteTomaFisicaSuministrosSfccbdmq.alterno}" title="Alterno" />
+                                </h:panelGrid>
+                            </h:panelGroup>
+                        </ace:tabPane>
+                    </ace:tabSet>
+                    <h:panelGrid columns="1" width="100%">
+                        <h:panelGrid columns="1" width="100%">
+                            <h:outputLabel value="Observaciones de la Toma:"/>
+                            #{reporteTomaFisicaSuministrosSfccbdmq.toma.observaciones}"
+
+                        </h:panelGrid>
+                        <ace:menuBar autoSubmenuDisplay="true" >
+
+                            <ace:menuItem value="Buscar Suministros" icon="ui-icon ui-icon-search"  action="#{reporteTomaFisicaSuministrosSfccbdmq.buscarSuministros()}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{reporteTomaFisicaSuministrosSfccbdmq.salir()}"/>
+                        </ace:menuBar>
+                        <ace:dynamicResource fileName="Toma.pdf" id="pdf-button1" label="Generar PDF"
+                                             mimeType="application/pdf" 
+                                             rendered="#{reporteTomaFisicaSuministrosSfccbdmq.reporte!=null}"
+                                             resource="#{reporteTomaFisicaSuministrosSfccbdmq.reporte}" 
+                                             style="" type="button"/>
+                        <!--<h:outputConnectionStatus/>-->
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                   for="panel"
+                                   blockUI="panel"
+                                   autoCenter="true"
+                                   activeLabel="Un Momento por favor"/>
+                <ace:tabSet style="clear:both;">
+                    <ace:tabPane >
+                        <f:facet name="label">Registros</f:facet>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{reporteTomaFisicaSuministrosSfccbdmq.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{reporteTomaFisicaSuministrosSfccbdmq.formulario.pantalla}" 
+                                              target="tabla" fileName="datos"/>
+                        </h:panelGrid>
+
+                        <h:panelGrid width="100%" >
+                            <ace:dataTable id="tabla" 
+                                           value="#{reporteTomaFisicaSuministrosSfccbdmq.listaDetalleToma}"
+                                           var="item"
+                                           paginator="true"
+                                           lazy="false"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="15,20,25,50,100,300"
+                                           currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="50"
+                                           style="width: 100%"
+                                           binding="#{reporteTomaFisicaSuministrosSfccbdmq.formulario.fila}"
+                                           scrollHeight="600"
+                                           scrollable="true">
+
+                                <ace:column  headerText="Código Suministro"  style="text-align: right">
+                                    <h:outputText  value="#{item.suministro.codigobarras}"/>
+                                </ace:column>
+                                <ace:column  headerText="Familia"  style="text-align: left">
+                                    <h:outputText  value="#{item.suministro.tipo.familia.nombre}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Tipo"  style="text-align: left">
+                                    <h:outputText  value="#{item.suministro.tipo.nombre}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Nombre"  style="text-align: left">
+                                    <h:outputText  value="#{item.suministro.nombre}"/>
+                                </ace:column>  
+
+                                <ace:column  headerText="Saldo"  style="text-align: right">
+                                    <h:outputText  value="#{item.saldo}">
+                                        <f:convertNumber pattern="###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Constatado"  style="text-align: right">
+                                    <h:outputText  value="#{item.constatado}">
+                                        <f:convertNumber pattern="###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Diferencia"  style="text-align: right">
+                                    <h:outputText  value="#{item.saldo-item.constatado}">
+                                        <f:convertNumber pattern="###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:tabPane>
+
+                </ace:tabSet>
+
+
+                <!--edicion del activo-->
+                <ace:dialog 
+                    header="#{reporteTomaFisicaSuministrosSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{!reporteTomaFisicaSuministrosSfccbdmq.formularioToma.mostrar}"
+                    visible="#{!reporteTomaFisicaSuministrosSfccbdmq.formularioToma.mostrar}">
+
+                    <h:panelGrid columns="4" width="100%">
+                        <h:outputLabel value="Bodega :" />
+                        <h:selectOneMenu  value="#{reporteTomaFisicaSuministrosSfccbdmq.bodega}">
+                            <f:selectItems value="#{bodegasSfccbdmq.comboBodegasSuministros}"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="4" width="100%">
+                        <h:outputLabel value="Desde:"/>
+                        <ace:dateTimeEntry navigator="true"  value="#{reporteTomaFisicaSuministrosSfccbdmq.desde}" id="dos"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Hasta:"/>
+                        <ace:dateTimeEntry navigator="true"  value="#{reporteTomaFisicaSuministrosSfccbdmq.hasta}" id="tres"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteTomaFisicaSuministrosSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{reporteTomaFisicaSuministrosSfccbdmq.cancelar()}"/>
+                        </ace:menuBar>
+                        <!--<h:outputConnectionStatus/>-->
+                        <ace:messages/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tablaO" 
+                                       value="#{reporteTomaFisicaSuministrosSfccbdmq.listaTomas}"
+                                       var="itemTomas"
+                                       paginator="true"
+                                       lazy="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="top"
+                                       rowsPerPageTemplate="5,10,15,30,50,100"
+                                       paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="10">
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{reporteTomaFisicaSuministrosSfccbdmq.modifica()}" value="Ver" icon="ui-icon ui-icon-print" />
+                                </ace:menuButton>
+                            </ace:column>
+                            <ace:column  headerText="Fecha Inicio" style="text-align: left">
+                                <h:outputText  value="#{itemTomas.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Bodega" style="text-align: left">
+                                <h:outputText  value="#{itemTomas.bodega.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Observaciones" style="text-align: left">
+                                <h:outputText  value="#{itemTomas.bodega.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Fecha Fin" style="text-align: left">
+                                <h:outputText  value="#{itemTomas.fechafin}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+
+                        </ace:dataTable>
+                    </h:panelGrid>  
+
+                </ace:dialog>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

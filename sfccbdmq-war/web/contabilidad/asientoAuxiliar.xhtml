@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:panelGroup>
+        <h:panelGrid columns="2" style="text-align: left">
+            <!--                                <h:outputText id="outputText2" value="R.U.C"/>-->
+            <h:outputText value="Buscar por código " />
+            <h:selectBooleanCheckbox value="#{vistaAuxiliaresSfccbdmq.porCodigo}">
+                <ace:ajax execute="@all"/>
+            </h:selectBooleanCheckbox>
+
+        </h:panelGrid>
+        <h:panelGrid columns="1" width="100%">
+            <ace:autoCompleteEntry  listValue="#{vistaAuxiliaresSfccbdmq.auxiliares}" 
+                                    listVar="itemProveedor" 
+                                    rows="8" 
+                                    value="#{vistaAuxiliaresSfccbdmq.codigo}" 
+                                    valueChangeListener="#{vistaAuxiliaresSfccbdmq.cambiaCodigo}" 
+                                    filterBy="#{itemProveedor.codigo}"
+                                    textChangeListener="#{vistaAuxiliaresSfccbdmq.codigoChangeEventHandler}"
+                                    width="400"
+                                    rendered="#{vistaAuxiliaresSfccbdmq.porCodigo}">
+                <f:facet name="row">
+                    <h:panelGrid  columns="3"  width="100%" columnClasses="tipo" style="text-align: left;font-size: xx-small">
+                        <h:outputText value="#{itemProveedor.codigo}"/>
+                        <h:outputText value="#{itemProveedor.nombre}"/>
+                        <h:outputText value="#{itemProveedor.tipo}"/>
+                    </h:panelGrid>
+                </f:facet>
+                <ace:ajax execute="@all"/>
+            </ace:autoCompleteEntry>
+            <ace:autoCompleteEntry  listValue="#{vistaAuxiliaresSfccbdmq.auxiliares}" 
+                                    listVar="itemProveedorNombre" 
+                                    rows="8" 
+                                    value="#{vistaAuxiliaresSfccbdmq.nombre}" 
+                                    valueChangeListener="#{vistaAuxiliaresSfccbdmq.cambiaNombre}" 
+                                    filterBy="#{itemProveedorNombre.nombre}"
+                                    textChangeListener="#{vistaAuxiliaresSfccbdmq.nombreChangeEventHandler}"
+                                    width="400"
+                                    rendered="#{!vistaAuxiliaresSfccbdmq.porCodigo}">
+                <f:facet name="row">
+                    <h:panelGrid  columns="3"  width="100%" columnClasses="tipo" style="text-align: left;font-size: xx-small">
+                        <h:outputText value="#{itemProveedorNombre.nombre}"/>
+                        <h:outputText value="#{itemProveedorNombre.codigo}"/>
+                        <h:outputText value="#{itemProveedorNombre.tipo}"/>
+                    </h:panelGrid>
+                </f:facet>
+                <ace:ajax execute="@all"/>
+            </ace:autoCompleteEntry>
+        </h:panelGrid>
+        <h:panelGrid columns="2" style="text-align: left" width="100%">
+            <h:outputText  value="Código:"/>
+            <h:outputText  value=" #{vistaAuxiliaresSfccbdmq.auxiliar.codigo}"/>
+            <h:outputText  value="Nombre:"/>
+            <h:outputText  value="#{vistaAuxiliaresSfccbdmq.auxiliar.nombre}"/>
+        </h:panelGrid>
+    </h:panelGroup>
+</html>

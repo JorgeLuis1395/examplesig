@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel" header="Productos">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Año: "/>
+                        <h:inputText value="#{proyectosPoa.anio}"/>
+                        <h:outputLabel value="Fecha inicial:" />
+                        <ace:dateTimeEntry navigator="true" value="#{reporteCedulaPoa.desde}" 
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Fecha final:" />
+                        <ace:dateTimeEntry navigator="true" value="#{reporteCedulaPoa.hasta}" 
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry> 
+                        <h:outputLabel value="Direccion:" />
+                        <h:selectOneMenu value="#{reporteCedulaPoa.direccion}">
+                            <f:selectItems value="#{consultasPoa.comboDirecciones}" />
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Fuente:" />
+                        <h:selectOneMenu value="#{reporteCedulaPoa.fuente}" title="Fuente">
+                            <f:selectItems value="#{consultasPoa.comboFuenteFinanciamiento}"/>
+                            <ace:ajax execute="@all"/>    
+                        </h:selectOneMenu>                        
+                    </h:panelGrid>
+                    <ui:include src="BuscarPartida.xhtml"/>
+                    <ui:include src="BuscarProyecto.xhtml"/>
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteCedulaPoa.buscar()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <h:panelGrid columns="4" styleClass="centeredPanelGrid">
+                        <h:commandButton  value="Imprimir">
+                            <ace:printer for="panelImprimir"/>
+                        </h:commandButton>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:messages/>
+                <ace:panel >
+                    <h:panelGrid id="panelImprimir" width="100%" style="text-align: center">                       
+                        <center>
+                            <img src="../resources/images/logo.png" width="80" height="80" alt="logo"/>
+                        </center>
+                        <br/>
+                        <br/>
+                        <center>
+                            <h:outputLabel value="Productos #{reporteCedulaPoa.anio}" style="font-size: 18px; font-weight: bolder"/>                         
+
+                            <h:panelGrid width="100%" columns="4" style="font-size: 14px; text-align: center">
+                                <h:outputLabel value="Desde:"/>
+                                <h:outputLabel value="#{reporteCedulaPoa.desde}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputLabel>
+
+                                <h:outputLabel value="Hasta:"/>
+                                <h:outputLabel value="#{reporteCedulaPoa.hasta}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputLabel>
+                            </h:panelGrid>
+                        </center>
+                        <h:panelGrid width="100%">
+                            <c:forEach items="#{reporteCedulaPoa.proyectos}" var="listaProyectos">
+                                <h:panelGrid columns="1" styleClass="titulo" width="100%" style="text-align: left">
+                                    <h:outputText value="#{listaProyectos.estacion} -  #{listaProyectos.valor}"/>
+                                </h:panelGrid>
+                                <h:panelGrid columns="1" width="100%" rendered="#{listaProyectos.indice>0}">
+                                    <ace:dataTable 
+                                        paginatorAlwaysVisible="true"
+                                        value="#{listaProyectos.asignaciones}"
+                                        var="itemAsignacion"
+                                        rowStyleClass="#{itemAsignacion.fuente eq null ? 'total':''}"
+                                        scrollHeight="600"
+                                           scrollable="true">
+                                        <ace:column  headerText="Partida" style="text-align: left" id="codigo">
+                                            <h:outputText  value="#{itemAsignacion.codigo}" styleClass="#{itemAsignacion.fuente eq null ? 'total':''}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Fuente"  style="text-align: left">
+                                            <h:outputText  value="#{itemAsignacion.fuente}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Asignación" style="text-align: right">
+                                            <h:outputText  value="#{itemAsignacion.asignacion}"  >
+                                                <f:convertNumber pattern="###,###,#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Reformas" style="text-align: right">
+                                            <h:outputText  value="#{itemAsignacion.reforma}"  >
+                                                <f:convertNumber pattern="###,###,#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Asignación Codificada (a)" style="text-align: right">
+                                            <h:outputText  value="#{itemAsignacion.codificado}"  >
+                                                <f:convertNumber pattern="###,###,#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Certificación (b)" style="text-align: right">
+                                            <h:outputText  value="#{itemAsignacion.certificacion}"  >
+                                                <f:convertNumber pattern="###,###,#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="% Ejecución" style="text-align: right">
+                                            <h:outputText  value="#{itemAsignacion.codificado ne 0? (itemAsignacion.certificacion/itemAsignacion.codificado)*100:0}">
+                                                <f:convertNumber pattern="#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Saldo certificación (a-b)" style="text-align: right">
+                                            <h:outputText  value="#{itemAsignacion.certificado}"  >
+                                                <f:convertNumber pattern="###,###,#00.00"/>
+                                            </h:outputText>
+                                        </ace:column> 
+<!--                                        <ace:column  headerText="Certificación R (r)" style="text-align: right">
+                                            <h:outputText  value="#{itemAsignacion.certificacionr}">
+                                                <f:convertNumber pattern="#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>-->
+<!--                                        <ace:column  headerText="Compromisos (c)" style="text-align: right">
+                                            <h:outputText  value="#{itemAsignacion.compromiso}">
+                                                <f:convertNumber pattern="#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+
+                                        <ace:column  headerText="Saldo Compromiso (a-R-c)" style="text-align: right">
+                                            <h:outputText  value="#{itemAsignacion.comprometido}">
+                                                <f:convertNumber pattern="#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>-->
+
+
+
+                                        <!--                                        <ace:column  headerText="Devengado (d)" style="text-align: right" >
+                                                                                    <h:outputText  value="#{itemAsignacion.devengado}" >
+                                                                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                                                                    </h:outputText>
+                                                                                </ace:column>
+                                                                                <ace:column  headerText="Saldo Devengado (a-d)" style="text-align: right">
+                                                                                    <h:outputText  value="#{itemAsignacion.saldoDevengado}" >
+                                                                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                                                                    </h:outputText>
+                                                                                </ace:column>
+                                        <ace:column  headerText="Ejecutado (e)" style="text-align: right">
+                                            <h:outputText  value="#{itemAsignacion.ejecutado}">
+                                                <f:convertNumber pattern="#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>-->
+<!--                                        <ace:column  headerText="% Ejecución" style="text-align: right">
+                                            <h:outputText  value="#{reporteCedulaPoa.traerPorcentajeEjecucion(itemAsignacion.ejecutado, itemAsignacion.codificado)}">
+                                                <f:convertNumber pattern="#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>-->
+<!--                                        <ace:column  headerText="Saldo Ejecución (a-e)" style="text-align: right">
+                                            <h:outputText  value="#{itemAsignacion.saldoEjecutado}">
+                                                <f:convertNumber pattern="#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>-->
+
+
+                                    </ace:dataTable>
+                                </h:panelGrid>
+                            </c:forEach>
+                        </h:panelGrid>
+                    </h:panelGrid>
+
+                </ace:panel>          
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

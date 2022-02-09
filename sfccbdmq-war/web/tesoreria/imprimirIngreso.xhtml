@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+    <ace:panel id="panelImprimir" style="display:block;">
+        <h:panelGrid width="90%">
+            <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+<!--            <h:panelGrid  width="90%" columns="2" style="text-align: right">
+                <h:outputText value="Usuario :"/>
+                <h:outputText value="#{parametrosSfccbdmq.logueado.userid}"/>
+                <h:outputText value="Fecha :"/>
+                <h:outputText value="#{parametrosSfccbdmq.fechaActual}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                </h:outputText>
+            </h:panelGrid>-->
+            <h:panelGrid  width="90%" columns="1" style="text-align: center">
+                <h3>Comprobante de Ingreso No: #{ingresosTesoreriaSfccbdmq.ingreso.id}</h3>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="1" style="text-align: right">
+                <h3>Valor : #{ingresosTesoreriaSfccbdmq.valorAprobarStr}</h3>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                <h:outputLabel value="No documento :" />
+                <h:outputLabel value="#{ingresosTesoreriaSfccbdmq.kardex.egreso}"/>
+                <h:outputLabel value="La suma de :" />
+                <h:outputLabel value="#{ingresosTesoreriaSfccbdmq.cuantoAprovarStr}"/>
+                <h:outputLabel value="Fecha de emisión:" />
+                <h:outputLabel value="#{ingresosTesoreriaSfccbdmq.ingreso.fecha}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputLabel>
+
+            </h:panelGrid>
+
+            <h:panelGrid  width="90%" columns="2" style="text-align: left" rendered="#{ingresosTesoreriaSfccbdmq.kardex!=null}">
+                <h:outputLabel value="Banco:" />
+                <h:outputLabel value="#{ingresosTesoreriaSfccbdmq.kardex.banco.nombre}"/>
+                <h:outputLabel value="Cta No:" />
+                <h:outputLabel value="#{ingresosTesoreriaSfccbdmq.kardex.banco.numerocuenta}"/>
+                <h:outputLabel value="Cheque No:" rendered="#{ingresosTesoreriaSfccbdmq.kardex.formapago.parametros=='C'}"/>
+                <h:outputLabel value="#{ingresosTesoreriaSfccbdmq.kardex.documento}" rendered="#{ingresosTesoreriaSfccbdmq.kardex.formapago.parametros=='C'}"/>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="1" style="text-align: left" rendered="#{ingresosTesoreriaSfccbdmq.kardex!=null}">
+                <h:outputLabel value="No Documento :" />
+                <h:outputLabel value="#{ingresosTesoreriaSfccbdmq.kardex.documento}"/>
+            </h:panelGrid>
+
+            <h:panelGrid  width="90%" columns="1" style="text-align: left" rendered="#{ingresosTesoreriaSfccbdmq.kardex!=null}">
+                <h:outputLabel value="Referencia :" />
+                <p>#{ingresosTesoreriaSfccbdmq.kardex.observaciones}</p>
+            </h:panelGrid>
+            <h:panelGrid columns="1" width="100%">
+                <ace:dataTable 
+                    value="#{ingresosTesoreriaSfccbdmq.renglones}"
+                    var="itemDetalles"
+                    paginator="false"
+                    lazy="false"
+                    resizableColumns="true"
+                    rowIndexVar="row"
+                    paginatorPosition="both"
+                    rowsPerPageTemplate="5,10,15,30,50,100"
+                    paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    >
+                    
+                    <ace:column  headerText="Cuenta"  style="text-align: left">
+                        <h:outputText  value="#{itemDetalles.cuenta}"/>
+                    </ace:column>
+                    <ace:column  headerText="Nombre"  style="text-align: left">
+                        <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemDetalles.cuenta).nombre}"/>
+                    </ace:column>
+                    <ace:column  headerText="Referencia"  style="text-align: left">
+                        <h:outputText  value="#{itemDetalles.referencia}"/>
+                    </ace:column>
+                    <ace:column  headerText="Débitos" style="text-align: right">
+                        <h:outputText  value="#{itemDetalles.valor}" rendered="#{asientosSfccbdmq.isCredito(itemDetalles.valor)}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Créditos" style="text-align: right">
+                        <h:outputText  value="#{itemDetalles.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemDetalles.valor)}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <!--                    <ace:column  headerText="Valor" style="text-align: right">
+                                            <h:outputText  value="#{itemDetalles.valor}">
+                                                <f:convertNumber pattern="###,###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>-->
+
+
+                </ace:dataTable>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="1">
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <!--                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />-->
+
+            </h:panelGrid>
+<!--            <h:panelGrid  width="90%" columns="5">
+                <h:outputLabel value="f." />
+                <h:outputLabel value="" />
+                <h:outputLabel value="f." />
+                <h:outputLabel value="" />
+                <h:outputLabel value="f." />
+                <h:outputLabel value="Preparado por"  />
+                <h:outputLabel value="" />
+                <h:outputLabel value="Revisado"  />
+                <h:outputLabel value="" />
+                <h:outputLabel value="Aprobado por"  />
+
+            </h:panelGrid>-->
+        </h:panelGrid>
+
+    </ace:panel>
+</html>

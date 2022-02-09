@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+    <ace:dialog 
+        header="Descuentos"
+        closable="false"
+        modal="true"
+        draggable="true"
+        showEffect="clip"
+        hideEffect="fade"
+        rendered="#{pagoRetencionesSfccbdmq.formularioDescuento.mostrar}"
+        visible="#{pagoRetencionesSfccbdmq.formularioDescuento.mostrar}">
+        <h:panelGroup>
+
+            <h:panelGrid columns="2">
+                <h:outputLabel  value="Auxiliar Empleado? :"/>
+                <h:selectBooleanCheckbox value="#{pagoRetencionesSfccbdmq.descuento.esEmpleado}">
+                    <ace:ajax execute="@all"/>
+                </h:selectBooleanCheckbox>
+            </h:panelGrid>
+            <h:panelGrid columns="1" rendered="#{pagoRetencionesSfccbdmq.descuento.esEmpleado}">
+                <ui:include src="../BuscarUsuario.xhtml" />
+            </h:panelGrid>
+            <h:panelGrid columns="1">
+                <h:outputLabel  value="Referencia :"/>
+                <h:inputTextarea cols="60" rows="4" value="#{pagoRetencionesSfccbdmq.descuento.referencia}"/>
+            </h:panelGrid>
+            <h:panelGrid columns="2">
+                <h:outputLabel  value="Cuenta proveedor :"/>
+                <h:selectOneMenu value="#{pagoRetencionesSfccbdmq.descuento.cuentaProveedor}" >
+                    <f:selectItems value="#{pagoRetencionesSfccbdmq.comboCuentasProveedor}"/>
+                    <ace:ajax execute="@all"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="Cuenta contable :"/>
+                <h:selectOneMenu value="#{pagoRetencionesSfccbdmq.descuento.cuentaContable}">
+                    <f:selectItems value="#{pagoRetencionesSfccbdmq.comboCuentasDetalle}"/>
+                    <ace:ajax execute="@all"/>
+                </h:selectOneMenu>
+
+                <h:outputLabel  value="Base imponible :"/>
+                <h:inputText value="#{pagoRetencionesSfccbdmq.descuento.valor}">
+                </h:inputText>
+
+            </h:panelGrid>
+
+            <h:panelGrid columns="1" width="100%">
+                <ace:menuBar autoSubmenuDisplay="true" >
+                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{pagoRetencionesSfccbdmq.formularioDescuento.nuevo}" 
+                                  action="#{pagoRetencionesSfccbdmq.insertarDescuento()}"/>
+
+                    <ace:menuItem action="#{pagoRetencionesSfccbdmq.borrarDescuento()}" 
+                                  value="Esta seguro de Borrar el registro?" 
+                                  rendered="#{pagoRetencionesSfccbdmq.formularioDescuento.borrar}"/>
+
+                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                  action="#{pagoRetencionesSfccbdmq.formularioDescuento.cancelar()}"/>
+                </ace:menuBar>
+
+            </h:panelGrid>
+        </h:panelGroup>
+    </ace:dialog>
+
+</html>

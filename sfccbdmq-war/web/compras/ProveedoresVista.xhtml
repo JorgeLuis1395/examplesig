@@ -1,0 +1,276 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{proveedoresSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="4" width="100%">
+                        <h:outputLabel value="R.U.C :"/>
+                        <h:inputText value="#{proveedoresSfccbdmq.ruc}"/>
+                        <h:outputLabel value="Nombre :"/>
+                        <h:inputText value="#{proveedoresSfccbdmq.nombre}"/>
+                        <h:outputLabel value="Razón Social :"/>
+                        <h:inputText value="#{proveedoresSfccbdmq.razon}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{proveedoresSfccbdmq.nuevo()}" />
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{proveedoresSfccbdmq.buscar()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                </ace:panel>
+
+                <ace:panel 
+                    header="Resultado Bùsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{proveedoresSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{proveedoresSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <!--                    <h:panelGrid styleClass="centeredPanelGrid">
+                                            
+                                        </h:panelGrid>-->
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{proveedoresSfccbdmq.empresas}"
+                                       var="item"
+                                       paginator="true"
+                                       lazy="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       >
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{proveedoresSfccbdmq.modifica(item)}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{proveedoresSfccbdmq.elimina(item)}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column> 
+                            <!--                            <ace:column  headerText="Id"  style="text-align: left">
+                                                            <h:outputText  value="#{item.proveedores.id}"/>
+                                                        </ace:column>-->
+                            <ace:column  headerText="Código"  style="text-align: left">
+                                <h:outputText  value="#{item.proveedores.codigo}"/>
+                            </ace:column>
+                            <ace:column  headerText="R.U.C" style="text-align: left">
+                                <h:outputText  value="#{item.ruc}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nombre Comercial" style="text-align: left">
+                                <h:outputText  value="#{item.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Razón Social"  style="text-align: left">
+                                <h:outputText  value="#{item.nombrecomercial}"/>
+                            </ace:column>
+                            <ace:column  headerText="Teléfono"  style="text-align: left">
+                                <h:outputText  value="#{item.telefono1.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="E-mail"  style="text-align: left">
+                                <h:outputText  value="#{item.email}"/>
+                            </ace:column>
+                            <ace:column  headerText="Celular"  style="text-align: left">
+                                <h:outputText  value="#{item.telefono2.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Teléfono 2" style="text-align: left">
+                                <h:outputText  value="#{item.telefono2.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Banco transferencia" style="text-align: left">
+                                <h:outputText  value="#{item.proveedores.banco.nombre}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    id="panel2"
+                    header="#{proveedoresSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{proveedoresSfccbdmq.formulario.mostrar}"
+                    visible="#{proveedoresSfccbdmq.formulario.mostrar}">
+                    <h:panelGrid columns="4">
+                        <h:outputLabel value="Ruc:" for="ruc" />
+                        <h:inputText id="ruc" value="#{proveedoresSfccbdmq.empresa.ruc}" title="Ruc">
+                        <!--<h:inputText id="ruc" value="#{proveedoresSfccbdmq.empresa.ruc}" title="Ruc" disabled="#{!proveedoresSfccbdmq.formulario.nuevo}">-->
+                            <f:validator  validatorId="org.auxiliares.sfccbdmq.ValidadorRuc"/>
+                        </h:inputText>
+                        <h:outputLabel value="Id :"/>
+                        <h:outputLabel value="#{proveedoresSfccbdmq.proveedor.id}">
+                            <f:convertNumber pattern="0000"/>
+                        </h:outputLabel>
+                        <!--                        <h:outputLabel value="Código :"/>
+                                                <h:inputText  value="#{proveedoresSfccbdmq.proveedor.codigo}" title="Código" />-->
+                        <h:outputLabel value="Nombre Comercial:" for="nombre" />
+                        <h:inputText id="nombre" value="#{proveedoresSfccbdmq.empresa.nombre}" title="Nombre" />
+                        <h:outputLabel value="Razón Social:" for="nombrecomercial" />
+                        <h:inputText id="nombrecomercial" value="#{proveedoresSfccbdmq.empresa.nombrecomercial}" title="Razón Social" />
+                        <h:outputLabel value="E-mail:" for="email" />
+                        <h:inputText id="email" value="#{proveedoresSfccbdmq.empresa.email}" title="email" >
+                            <f:validator  validatorId="org.auxiliares.sfccbdmq.ValidadorEmail"/>
+                        </h:inputText>
+                        <h:outputLabel value="Página Web:" for="web" />
+                        <h:inputText id="web" value="#{proveedoresSfccbdmq.empresa.web}" title="Web" />
+                        <h:outputLabel value="Persona natural:" for="personanatural" />
+                        <h:selectBooleanCheckbox id="personanatural" value="#{proveedoresSfccbdmq.empresa.personanatural}" title="Personanatural" />
+                        <h:outputLabel value="Necesita garantías:" />
+                        <h:selectBooleanCheckbox value="#{proveedoresSfccbdmq.proveedor.garantia}"/>
+                        <h:outputLabel value="Contribuyente Especial:" for="especial" />
+                        <h:selectBooleanCheckbox id="especial" value="#{proveedoresSfccbdmq.empresa.especial}" title="Contribuyente Especial" />
+                        <h:outputLabel value="Incluye en SPI:"/>
+                        <h:selectBooleanCheckbox  value="#{proveedoresSfccbdmq.proveedor.spi}" title="Incluye en SPI:">
+                            <ace:ajax execute="@all"/>
+                        </h:selectBooleanCheckbox>
+                    </h:panelGrid>
+                    <h:panelGrid columns="6" rendered="#{!proveedoresSfccbdmq.formulario.borrar}">
+                        <h:outputLabel value="Teléfono:" />
+<!--                        <h:inputText value="#{proveedoresSfccbdmq.telefono1.codigoarea}" size="3"/>
+                        <h:outputLabel value="Número:"  />             -->
+                        <h:inputText value="#{proveedoresSfccbdmq.telefono1.numero}"/>
+                        <h:outputLabel value="Ext:"  />             
+                        <h:inputText value="#{proveedoresSfccbdmq.telefono1.extencion}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" rendered="#{!proveedoresSfccbdmq.formulario.borrar}">
+                        <h:outputLabel value="Celular:"  />             
+                        <h:inputText value="#{proveedoresSfccbdmq.telefono2.numero}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="6" rendered="#{!proveedoresSfccbdmq.formulario.borrar}">
+                        <h:outputLabel value="Teléfono 2 "/>
+<!--                        <h:inputText value="#{proveedoresSfccbdmq.telefono3.codigoarea}" size="3"/>
+                        <h:outputLabel value="Número:"  />             -->
+                        <h:inputText value="#{proveedoresSfccbdmq.telefono3.numero}"/>
+                        <h:outputLabel value="Ext:"  />             
+                        <h:inputText value="#{proveedoresSfccbdmq.telefono3.extencion}"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="1">
+                        <h:outputLabel value="Dirección" />
+                        <h:inputTextarea cols="80" rows="4" 
+                                         value="#{proveedoresSfccbdmq.proveedor.direccion}" title="Observaciones"/>
+                        <h:outputLabel value="Observaciones:" for="observaciones" />
+                        <h:inputTextarea cols="80" rows="4" id="observaciones" 
+                                         value="#{proveedoresSfccbdmq.proveedor.observaciones}" title="Observaciones"/>
+                        <h:outputLabel value="Adicionales:" />
+                        <h:inputTextarea cols="80" rows="4" id="Adicionales" 
+                                         value="#{proveedoresSfccbdmq.proveedor.adicionales}" title="Adicionales"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="4">
+                        <h:outputLabel value="Clasificación:" for="clasificacion" />
+                        <h:selectOneMenu id="clasificacion" value="#{proveedoresSfccbdmq.proveedor.clasificacion}" title="Clasificación">
+                            <f:selectItems value="#{codigosSfccbdmq.comboClasificacionproveedoresf}"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" rendered="#{proveedoresSfccbdmq.proveedor.spi}">
+
+                        <ace:comboBox value="#{proveedoresSfccbdmq.nombreBanco}" 
+                                      listValue="#{codigosSfccbdmq.listaBancosProveedor}"  
+                                      itemValue="#{itemBanco.nombre}"
+                                      filterMatchMode="contains"
+                                      label="Banco : "
+                                      labelPosition="left"
+
+                                      listVar="itemBanco" width="300">
+                            <f:facet name="row">
+                                <h:panelGrid columns="1" width="100%"  style="text-align: left;font-size: xx-small"
+                                             columnClasses="tipo">
+                                    <h:outputText value="#{itemBanco.nombre}" />
+                                </h:panelGrid>
+                            </f:facet>
+                        </ace:comboBox>
+
+                    </h:panelGrid>
+                    <h:panelGrid columns="4" rendered="#{proveedoresSfccbdmq.proveedor.spi}">
+                        <h:outputLabel value="Tipo de Cuenta:" for="tipocta" />
+                        <h:selectOneMenu id="tipocta" value="#{proveedoresSfccbdmq.proveedor.tipocta}" title="Tipo de Cuenta" >
+                            <!-- TODO: update below reference to list of available items-->
+                            <f:selectItems value="#{codigosSfccbdmq.comboTipoCuentaBancaria}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Nombre beneficiario:"/>
+                        <h:inputText value="#{proveedoresSfccbdmq.proveedor.nombrebeneficiario}" title="Nombre beneficiario" />
+                        <h:outputLabel value="RUC beneficiario:"/>
+                        <h:inputText value="#{proveedoresSfccbdmq.proveedor.rucbeneficiario}" title="RUC beneficiario" >
+                            <f:validator  validatorId="org.auxiliares.sfccbdmq.ValidadorRuc"/>
+                        </h:inputText>
+                        <h:outputLabel value="Número de Cuenta bancaria:" for="ctabancaria" />
+                        <h:inputText id="ctabancaria" value="#{proveedoresSfccbdmq.proveedor.ctabancaria}" title="Número de Cuenta bancaria" />
+                        <h:outputLabel value="Límite de transferencia:" for="limitetransferencia" />
+                        <h:inputText id="limitetransferencia" value="#{proveedoresSfccbdmq.proveedor.limitetransferencia}" title="Límite de transferencia" />
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{proveedoresSfccbdmq.formulario.nuevo}" 
+                                          action="#{proveedoresSfccbdmq.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{proveedoresSfccbdmq.grabar()}" 
+                                          rendered="#{proveedoresSfccbdmq.formulario.modificar}" />
+                            <ace:menuItem action="#{proveedoresSfccbdmq.eliminar()}" 
+                                          value="Esta seguro de Borrar el registro?" 
+                                          rendered="#{proveedoresSfccbdmq.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{proveedoresSfccbdmq.formulario.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                        <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel2"
+                                       for="panel2"
+                                       blockUI="panel2"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                </ace:dialog>
+
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{verificaPermisosEmpleadoSfcCBDMQ.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <ace:panel header="Parámetros de Búsqueda">
+                        <ui:include src="../BuscarEmpleado.xhtml"/>
+                        <h:panelGrid columns="6">
+                            <h:outputLabel value="Estado:" />
+                            <h:selectOneMenu  value="#{verificaPermisosEmpleadoSfcCBDMQ.estado}" >
+                                <f:selectItem itemLabel="---Seleccione Uno----" itemValue="-10"/>
+                                <f:selectItem itemLabel="Solicitado" itemValue="0"/>
+                                <f:selectItem itemLabel="Validado" itemValue="1"/>
+                                <f:selectItem itemLabel="Autorizado" itemValue="2"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Esta Aprobado?:" />
+                            <h:selectOneMenu  value="#{verificaPermisosEmpleadoSfcCBDMQ.aprobado}" >
+                                <f:selectItem itemLabel="---Seleccione Uno----" itemValue="-10"/>
+                                <f:selectItem itemLabel="SI" itemValue="1"/>
+                                <f:selectItem itemLabel="NO" itemValue="-1"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Tipo:" />
+                            <h:selectOneMenu  value="#{verificaPermisosEmpleadoSfcCBDMQ.tipoPermiso}" >
+                                <f:selectItems value="#{tipoPermiso.comboPermisos}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="5" width="100%">
+                            <h:selectOneMenu  value="#{verificaPermisosEmpleadoSfcCBDMQ.tipoFecha}" >
+                                <f:selectItem itemLabel="Fecha de Solicitud" itemValue="o.solicitud"/>
+                                <f:selectItem itemLabel="Fecha de inicio" itemValue="o.desde"/>
+                                <f:selectItem itemLabel="Fecha de Fin" itemValue="o.hasta"/>
+                                <f:selectItem itemLabel="Fecha de Verificación" itemValue="o.fvalida"/>
+                                <f:selectItem itemLabel="Fecha de Autorización" itemValue="o.fautoriza"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{verificaPermisosEmpleadoSfcCBDMQ.desde}" id="dos"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{verificaPermisosEmpleadoSfcCBDMQ.haasta}" id="tres"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{verificaPermisosEmpleadoSfcCBDMQ.buscarVerificar()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <ace:messages/>
+                    </ace:panel> 
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="false"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{verificaPermisosEmpleadoSfcCBDMQ.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{verificaPermisosEmpleadoSfcCBDMQ.formulario.pantalla}" 
+                                          target="licencias" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="licencias" 
+                                       value="#{verificaPermisosEmpleadoSfcCBDMQ.listaLicencias}"
+                                       var="licencia"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,50"
+                                       paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="5"
+                                       binding="#{verificaPermisosEmpleadoSfcCBDMQ.formulario.fila}">
+
+                            <ace:column  style="text-align: left" rendered="#{!verificaPermisosEmpleadoSfcCBDMQ.formulario.borrar}" >
+                                <ace:menuButton  effect="slide" effectDuration="200" value="...">
+                                    <ace:menuItem value="Editar" icon="ui-icon ui-icon-pencil" 
+                                                  action="#{verificaPermisosEmpleadoSfcCBDMQ.modifica(licencia,2)}" 
+                                                  rendered="#{licencia.fautoriza!=null and licencia.fvalida==null 
+                                                              and licencia.flegaliza==null}"/>
+                                    <ace:menuItem value="Imprimir" icon="ui-icon ui-icon-print" action="#{imprimePermisoSfccbdmq.imprimir(licencia)}"/>
+                                </ace:menuButton>
+                            </ace:column>
+                            <ace:column  headerText="Tipo" style="text-align: left">
+                                <h:outputText  value="#{licencia.tipo.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="No" style="text-align: left">
+                                <h:outputText  value="#{licencia.numero}"/>
+                            </ace:column>
+                            <ace:column  headerText="Empleado"  style="text-align: left">
+                                <h:outputText value="#{licencia.empleado.entidad.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Observaciones"  style="text-align: left">
+                                <h:outputText value="#{licencia.observaciones}"/>
+                            </ace:column>
+                            <ace:column  headerText="F Desde" style="text-align: left">
+                                <h:outputText  value="#{licencia.inicio}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+
+                            </ace:column>
+                            <ace:column  headerText="F Hasta" style="text-align: left">
+                                <h:outputText  value="#{licencia.fin}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+
+                            </ace:column>
+                            <ace:column  headerText="H Desde" style="text-align: left">
+                                <h:outputText  value="#{licencia.desde}">
+                                    <f:convertDateTime pattern="HH:mm"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="H Hasta" style="text-align: left">
+                                <h:outputText  value="#{licencia.hasta}">
+                                    <f:convertDateTime pattern="HH:mm"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Quien Autoriza" style="text-align: left">
+                                <h:outputText  value="#{licencia.autoriza.entidad.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="F Autorización" style="text-align: left">
+                                <h:outputText  value="#{licencia.fautoriza}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <!--                            <ace:column headerText="Aprobado" style="text-align: left">
+                                                            <h:graphicImage url="../resources/images/si.png" rendered="#{licencia.aprovado}"/>
+                                                            <h:graphicImage url="../resources/images/no.png" rendered="#{!licencia.aprovado}"/>
+                                                        </ace:column> 
+                                                        <ace:column headerText="Cargo a vaciones" style="text-align: left">
+                                                            <h:graphicImage url="../resources/images/si.png" rendered="#{licencia.tipo.cargovacaciones}"/>
+                                                            <h:graphicImage url="../resources/images/no.png" rendered="#{!licencia.tipo.cargovacaciones}"/>
+                                                        </ace:column>
+                                                        <ace:column headerText="Descuenta de Remuneración" style="text-align: left">
+                                                            <h:graphicImage url="../resources/images/si.png" rendered="#{licencia.tipo.rmu}"/>
+                                                            <h:graphicImage url="../resources/images/no.png" rendered="#{!licencia.tipo.rmu}"/>
+                                                        </ace:column>-->
+                            <ace:column  headerText="Validado por" style="text-align: left">
+                                <h:outputText  value="#{licencia.valida.entidad.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="F Validación" style="text-align: left">
+                                <h:outputText  value="#{licencia.fvalida}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="F Legaliza" style="text-align: left">
+                                <h:outputText  value="#{licencia.flegaliza}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Estado" style="text-align: left">
+                                <h:outputText  value="#{verificaPermisosEmpleadoSfcCBDMQ.getEstado(licencia)}" />
+                            </ace:column>
+<!--                            <ace:column  headerText="F Validación" style="text-align: left">
+                                <h:outputText  value="#{licencia.fvalida}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>-->
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.empleado.entidad.toString()}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{verificaPermisosEmpleadoSfcCBDMQ.formulario.mostrar}"
+                    visible="#{verificaPermisosEmpleadoSfcCBDMQ.formulario.mostrar}">
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane >
+                            <f:facet name="label">Inf. General</f:facet>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Aprobado ?  :"  />
+                                <ace:checkboxButton value="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.aprobadog}"/>
+                                <h:outputLabel value="Fecha Autorización :" />
+                                <h:outputText  value="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.fautoriza}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                                <h:outputLabel value="F. Autoriz Gerencia:"/>
+                                <ace:dateTimeEntry navigator="true"  value="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.fgerencia}" 
+                                                   popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                   disabled="true"
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </ace:dateTimeEntry>
+                                <h:outputLabel value="Quien autoriza:" />
+                                <h:outputText  value="#{verificaLicenciasEmpleado.licencia.autoriza.entidad.toString()}"/>
+                                <h:outputLabel value="Observaciones:" for="licencia" />
+                                <h:inputTextarea cols="60" rows="4" id="licencia" value="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.observaciones}" 
+                                                   title="Observaciones" disabled="true"/>
+                                <h:outputLabel value="Tipo:" />
+                                <h:outputLabel value="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.tipo.nombre}" />
+
+                                <h:outputLabel value="Descuenta de Remuneración Básica:" />
+                                <h:outputLabel value="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.tipo.rmu}" />
+                                <h:outputLabel value="Desde:"/>
+                                <h:outputLabel value="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.inicio}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputLabel>
+                                <h:outputLabel value="Hasta:" rendered="#{!verificaPermisosEmpleadoSfcCBDMQ.licencia.tipo.horas}"/>
+                                <h:outputLabel value="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.fin}" rendered="#{!verificaPermisosEmpleadoSfcCBDMQ.licencia.tipo.horas}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputLabel>
+                                <h:outputLabel value="Duración días:" rendered="#{!verificaPermisosEmpleadoSfcCBDMQ.licencia.tipo.horas}"/>
+                                <h:outputLabel value="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.dias}" rendered="#{!verificaPermisosEmpleadoSfcCBDMQ.licencia.tipo.horas}"/>
+<!--                            </h:panelGrid>
+                            <h:panelGrid columns="2" >-->
+                                <h:outputLabel value="Inicio:" rendered="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.tipo.horas}"/>
+                                <h:outputLabel value="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.desde}" rendered="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.tipo.horas}">
+                                    <f:convertDateTime pattern="HH:mm" />
+                                </h:outputLabel>
+                                <h:outputLabel value="Fin:" rendered="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.tipo.horas}"/>
+                                <h:outputLabel value="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.hasta}" rendered="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.tipo.horas}">
+                                    <f:convertDateTime pattern="HH:mm" />
+                                </h:outputLabel>
+                                <h:outputLabel value="Duración minutos:" rendered="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.tipo.horas}"/>
+                                <h:outputLabel value="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.horas}" rendered="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.tipo.horas}"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="4">
+                                <h:outputText value="Duración Máximo en minutos:" rendered="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.tipo.horas}"/>
+                                <h:outputText value="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.tipo.duracion}"
+                                              title="Duracion" rendered="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.tipo.horas}"/>
+                                <h:outputText value="Maximo:"/>
+                                <h:outputText value="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.tipo.maximo}" title="Maximo"/>
+                                <h:outputText value="Duración máxima justificación días:"/>
+                                <h:outputText value="#{verificaPermisosEmpleadoSfcCBDMQ.licencia.tipo.justificacion}" title="Justificacion"/>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane label="Adjuntos">
+                            <ui:include src="../mostrarImagenes.xhtml" />
+                        </ace:tabPane>
+                    </ace:tabSet>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{verificaPermisosEmpleadoSfcCBDMQ.grabarVerificacion()}"/>
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{verificaPermisosEmpleadoSfcCBDMQ.formulario.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{imprimePermisoSfccbdmq.formularioImprimir.mostrar}"
+                    visible="#{imprimePermisoSfccbdmq.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="1">
+                            <h:commandButton  value="Imprimir">
+                                <h:outputText id="printBoth" value="Imprimir"/>
+                                <ace:printer for="panelImprimir"/>
+                            </h:commandButton>
+                        </h:panelGrid>
+                        <ui:include src="../consultaPermiso.xhtml" />
+
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{imprimePermisoSfccbdmq.formularioImprimir.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

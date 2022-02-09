@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{rolEmpleadosConceptoSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <h:panelGrid columns="4" rendered="#{!rolEmpleadosConceptoSfccbdmq.formulario.mostrar}" >
+                        <h:outputText value="Mes" />
+                        <h:inputText value="#{rolEmpleadosConceptoSfccbdmq.mes}"/>
+                        <h:outputText value="Año:" />
+                        <h:inputText value="#{rolEmpleadosConceptoSfccbdmq.anio}"/>
+                        <h:outputText value="Concepto :"/>
+                        <h:selectOneMenu value="#{rolEmpleadosConceptoSfccbdmq.concepto}">
+                            <f:selectItems value="#{conceptosSfccbdmq.comboProvicionesSinProveedor}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" rendered="#{rolEmpleadosConceptoSfccbdmq.formulario.mostrar}" >
+                        <h:outputText value="Rango de fechas: "/>
+                        <h:outputText value="#{rolEmpleadosConceptoSfccbdmq.rangoFechas}"/>
+                        <h:outputText value="Concepto :" />
+                        <h:outputText value="#{rolEmpleadosConceptoSfccbdmq.concepto.toString()}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="4" >
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{rolEmpleadosConceptoSfccbdmq.buscar()}" rendered="#{!rolEmpleadosConceptoSfccbdmq.formulario.mostrar}" />
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                          action="#{rolEmpleadosConceptoSfccbdmq.grabar()}" 
+                                          rendered="#{rolEmpleadosConceptoSfccbdmq.formulario.mostrar}" />
+                            <ace:menuItem value="Hoja Elect." icon="ui-icon ui-icon-calculator" action="#{rolEmpleadosConceptoSfccbdmq.exportar()}" rendered="#{rolEmpleadosConceptoSfccbdmq.formulario.mostrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{rolEmpleadosConceptoSfccbdmq.formulario.cancelar()}" />
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <ace:messages/>
+                    <ace:tabSet style="clear:both;">
+                        <ace:tabPane >
+                            <f:facet name="label">Rol Concepto</f:facet>
+                            <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                <h:outputLabel  value="Exportar a:"/>
+                                <h:selectOneRadio  value="#{rolEmpleadosConceptoSfccbdmq.formulario.pantalla}" required="true">
+                                    <f:ajax disabled="false"/>
+                                    <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                    <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                    <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                    <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                </h:selectOneRadio>
+                                <ace:dataExporter id="rc1" 
+                                                  label="Exportar Archivo" 
+                                                  type="#{rolEmpleadosConceptoSfccbdmq.formulario.pantalla}" 
+                                                  target="tabla" fileName="datos"/>
+                            </h:panelGrid>
+                            <h:panelGrid width="100%">
+                                <ace:dataTable id="tabla" 
+                                               value="#{rolEmpleadosConceptoSfccbdmq.listaEmpleados}"
+                                               var="pagoRol">
+                                    <ace:column  headerText="Cédula"  style="text-align: left">
+                                        <h:outputText value="#{pagoRol.entidad.pin}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Empleado"  style="text-align: left">
+                                        <h:outputText value="#{pagoRol.entidad.toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Fecha Ingreso"  style="text-align: left">
+                                        <h:outputText  value="#{pagoRol.fechaingreso}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="#{rolEmpleadosConceptoSfccbdmq.concepto.nombre}">
+                                        <h:outputText value="#{pagoRol.totalIngresos}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column headerText="retenciones Judiciales" style="text-align: right">
+                                        <h:outputText value="#{pagoRol.encargoTemporal}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column headerText="Anticipos" rendered="#{rolEmpleadosConceptoSfccbdmq.lista13.size() > 0}" style="text-align: right">
+                                        <h:outputText value="#{pagoRol.subrogacionTemporal}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column headerText="Otros Descuentos" style="text-align: right">
+                                        <h:outputText value="#{pagoRol.rmu}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column headerText="Total Egresos" style="text-align: right">
+                                        <h:outputText value="#{pagoRol.totalEgresos}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column headerText="Total a Pagar" style="text-align: right">
+                                        <h:outputText value="#{pagoRol.totalPagar}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane rendered="#{rolEmpleadosConceptoSfccbdmq.lista14.size()>0}">
+                            <f:facet name="label">Detallado Decimo Cuarto</f:facet>
+                            <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                <h:outputLabel  value="Exportar a:"/>
+                                <h:selectOneRadio  value="#{rolEmpleadosConceptoSfccbdmq.formulario.pantalla}" required="true">
+                                    <f:ajax disabled="false"/>
+                                    <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                    <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                    <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                    <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                </h:selectOneRadio>
+                                <ace:dataExporter id="rc2" 
+                                                  label="Exportar Archivo" 
+                                                  type="#{rolEmpleadosConceptoSfccbdmq.formulario.pantalla}" 
+                                                  target="tabla2" fileName="datos"/>
+                            </h:panelGrid>
+                            <h:panelGrid width="100%">
+                                <ace:dataTable id="tabla2" 
+                                               value="#{rolEmpleadosConceptoSfccbdmq.lista14}"
+                                               var="pagoRol">
+                                    <ace:column  headerText="Cédula"  style="text-align: left">
+                                        <h:outputText value="#{pagoRol.cedula}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Empleado"  style="text-align: left">
+                                        <h:outputText value="#{pagoRol.nombre}"/>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Agosto">
+                                        <h:outputText value="#{pagoRol.vivienda}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Septiembre">
+                                        <h:outputText value="#{pagoRol.salud}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Octubre">
+                                        <h:outputText value="#{pagoRol.educacion}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Novienbre">
+                                        <h:outputText value="#{pagoRol.alimentacion}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Diciembre">
+                                        <h:outputText value="#{pagoRol.vestimenta}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Enero">
+                                        <h:outputText value="#{pagoRol.arteCultura}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Febrero">
+                                        <h:outputText value="#{pagoRol.discapacidad}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Marzo">
+                                        <h:outputText value="#{pagoRol.terceraEdad}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Abril">
+                                        <h:outputText value="#{pagoRol.ingresosGrabados}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Mayo">
+                                        <h:outputText value="#{pagoRol.rebajas}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Junio">
+                                        <h:outputText value="#{pagoRol.retenido}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Julio">
+                                        <h:outputText value="#{pagoRol.extra}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Total">
+                                        <h:outputText value="#{pagoRol.total}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane rendered="#{rolEmpleadosConceptoSfccbdmq.lista13.size()>0}">
+                            <f:facet name="label">Detallado Decimo Tercero</f:facet>
+                            <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                <h:outputLabel  value="Exportar a:"/>
+                                <h:selectOneRadio  value="#{rolEmpleadosConceptoSfccbdmq.formulario.pantalla}" required="true">
+                                    <f:ajax disabled="false"/>
+                                    <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                    <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                    <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                    <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                </h:selectOneRadio>
+                                <ace:dataExporter id="rc3" 
+                                                  label="Exportar Archivo" 
+                                                  type="#{rolEmpleadosConceptoSfccbdmq.formulario.pantalla}" 
+                                                  target="tabla3" fileName="datos"/>
+                            </h:panelGrid>
+                            <h:panelGrid width="100%">
+                                <ace:dataTable id="tabla3" 
+                                               value="#{rolEmpleadosConceptoSfccbdmq.lista13}"
+                                               var="pagoRol">
+                                    <ace:column  headerText="Cédula"  style="text-align: left">
+                                        <h:outputText value="#{pagoRol.cedula}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Empleado"  style="text-align: left">
+                                        <h:outputText value="#{pagoRol.nombre}"/>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Enero">
+                                        <h:outputText value="#{pagoRol.arteCultura}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Febrero">
+                                        <h:outputText value="#{pagoRol.discapacidad}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Marzo">
+                                        <h:outputText value="#{pagoRol.terceraEdad}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Abril">
+                                        <h:outputText value="#{pagoRol.ingresosGrabados}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Mayo">
+                                        <h:outputText value="#{pagoRol.rebajas}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Junio">
+                                        <h:outputText value="#{pagoRol.retenido}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Julio">
+                                        <h:outputText value="#{pagoRol.extra}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Agosto">
+                                        <h:outputText value="#{pagoRol.vivienda}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Septiembre">
+                                        <h:outputText value="#{pagoRol.salud}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Octubre">
+                                        <h:outputText value="#{pagoRol.educacion}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Novienbre">
+                                        <h:outputText value="#{pagoRol.alimentacion}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Diciembre">
+                                        <h:outputText value="#{pagoRol.vestimenta}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  style="text-align: right;background-color: #00ffff;" headerText="Total">
+                                        <h:outputText value="#{pagoRol.total}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                    </ace:tabSet>
+                </ace:panel>
+                <ace:dialog 
+                    header="Exportar"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{rolEmpleadosConceptoSfccbdmq.formularioReporte.mostrar}"
+                    visible="#{rolEmpleadosConceptoSfccbdmq.formularioReporte.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource  fileName="rol.xls" id="pdf-botonMayor" label="Exportar a XLS"
+                                              mimeType="application/xls" resource="#{rolEmpleadosConceptoSfccbdmq.reporte}" 
+                                              style="" type="button"/>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{rolEmpleadosConceptoSfccbdmq.formularioReporte.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

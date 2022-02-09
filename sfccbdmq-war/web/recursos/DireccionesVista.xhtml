@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:panelGrid columns="1">
+        <ace:menuBar autoSubmenuDisplay="true" >
+            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{direccionesEmpleado.nuevo()}"/>
+            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" action="#{direccionesEmpleado.formularioPrincipal.cancelar()}"/>
+        </ace:menuBar>
+    </h:panelGrid>
+    <ace:messages/>
+
+    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+        <h:outputLabel  value="Exportar a:"/>
+        <h:selectOneRadio  value="#{direccionesEmpleado.formulario.pantalla}" required="true">
+            <f:ajax disabled="false"/>
+            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+            <f:selectItem itemValue="xml" itemLabel="XML"/>
+        </h:selectOneRadio>
+        <ace:dataExporter 
+            label="Exportar Archivo" 
+            type="#{direccionesEmpleado.formulario.pantalla}" 
+            target="itemDireccions" fileName="datos"/>
+    </h:panelGrid>
+    <h:panelGrid width="100%">
+        <ace:dataTable id="itemDireccions" 
+                       value="#{direccionesEmpleado.listaDirecciones}"
+                       var="itemDireccion"
+                       paginator="true"
+                       resizableColumns="true"
+                       rowIndexVar="row"
+                       paginatorPosition="both"
+                       rowsPerPageTemplate="5,10,15,50"
+
+                       paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                       rows="5"
+                       binding="#{direccionesEmpleado.formulario.fila}">
+            <ace:column style="text-align: left" >
+                <ace:menuButton  effect="slide" effectDuration="200" value="..." >
+                    <ace:menuItem value="Editar" icon="ui-icon ui-icon-document" action="#{direccionesEmpleado.editar(itemDireccion)}"  />
+                    <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{direccionesEmpleado.borrar(itemDireccion)}"  />
+                </ace:menuButton>
+            </ace:column> 
+
+            <ace:column  headerText="Principal" style="text-align: left">
+                <h:outputText value="#{itemDireccion.principal}"/>
+            </ace:column>
+            <ace:column  headerText='Secundaria'   style="text-align: left">
+                <h:outputText  value="#{itemDireccion.secundaria}"/>
+            </ace:column>
+            <ace:column  headerText='Número'   style="text-align: left">
+                <h:outputText  value="#{itemDireccion.numero}"/>
+            </ace:column>
+            <ace:column  headerText='Referencia'   style="text-align: left">
+                <h:outputText  value="#{itemDireccion.referencia}"/>
+            </ace:column>
+            <ace:column  headerText='Teléfonos'   style="text-align: left">
+                <h:outputText  value="#{itemDireccion.telefonos}"/>
+            </ace:column>
+            <ace:column  headerText='Usuario'   style="text-align: left">
+                <h:outputText  value="#{itemDireccion.usuario}"/>
+            </ace:column>
+            <ace:column  headerText='Fecha'   style="text-align: left">
+                <h:outputText  value="#{itemDireccion.fecha}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputText>
+            </ace:column>
+
+        </ace:dataTable>
+    </h:panelGrid>
+
+
+</html>

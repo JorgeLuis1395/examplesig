@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <ace:dialog header="Grupo"
+                modal="true" closable="false" 
+                visible="#{cabecerasEmpleados.formulariogrupocabecera.mostrar}" 
+                rendered="#{cabecerasEmpleados.formulariogrupocabecera.mostrar}" >
+        <h:panelGrid columns="2">
+            <h:outputLabel value="Texto:"/> 
+            <h:inputText value="#{cabecerasEmpleados.grupocabecera.texto}"/>
+            <h:outputLabel value="Editable en Tesorería ? :"/> 
+            <h:selectBooleanCheckbox value="#{cabecerasEmpleados.grupocabecera.tesoreria}"/>
+            <h:outputLabel value="Editable en Personal ? :"/> 
+            <h:selectBooleanCheckbox value="#{cabecerasEmpleados.grupocabecera.personal}"/>
+            <h:outputLabel value="Editable en Contabilidad ? :"/> 
+            <h:selectBooleanCheckbox value="#{cabecerasEmpleados.grupocabecera.contabilidad}"/>
+            <h:outputLabel value="Editable en Activos ? :"/> 
+            <h:selectBooleanCheckbox value="#{cabecerasEmpleados.grupocabecera.activos}"/>
+            <h:outputLabel value="Editable en Suministros ? :"/> 
+            <h:selectBooleanCheckbox value="#{cabecerasEmpleados.grupocabecera.suministros}"/>
+        </h:panelGrid>  
+        <h:panelGrid columns="2">
+            <ace:menuBar autoSubmenuDisplay="true" >               
+                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                              rendered="#{cabecerasEmpleados.formulariogrupocabecera.nuevo}" 
+                              action="#{cabecerasEmpleados.insertargrupocabacera()}"/>
+
+                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                              action="#{cabecerasEmpleados.grabargrupocabecera()}" 
+                              rendered="#{cabecerasEmpleados.formulariogrupocabecera.modificar}" />  
+
+                <ace:menuItem action="#{cabecerasEmpleados.borrargrupocabecera()}" 
+                              value="Está seguro de Borrar el registro?" 
+                              rendered="#{cabecerasEmpleados.formulariogrupocabecera.borrar}"
+                              icon="ui-icon ui-icon-trash" />
+                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                              action="#{cabecerasEmpleados.cancelargrupocabecera()}" immediate="true"/> 
+            </ace:menuBar>
+        </h:panelGrid>
+        <ace:messages/>
+    </ace:dialog>
+
+</html>
+

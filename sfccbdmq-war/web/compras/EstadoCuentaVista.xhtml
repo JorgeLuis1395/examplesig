@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <h:panelGrid width="100%">
+                    <ace:panel id="panel"
+                               header="#{estadoCuentaSfccbdmq.perfil.menu.texto}"
+                               closable="false"
+                               toggleable="false"  >
+                        <ui:include src="../BuscarProveedor.xhtml" />
+                        <h:panelGrid columns="6">
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{estadoCuentaSfccbdmq.desde}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{estadoCuentaSfccbdmq.hasta}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid> 
+
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{estadoCuentaSfccbdmq.buscar()}"/>
+                                <ace:menuItem value="Imprimir" icon="ui-icon ui-icon-search"  action="#{estadoCuentaSfccbdmq.imprimir()}"/>
+                            </ace:menuBar>
+
+                        </h:panelGrid>
+                        <ace:messages />
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="panel"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+
+                        <h:panelGrid width="100%" style="margin-bottom: 20px;">
+
+                            <ace:dataTable id="tablaObligaciones"
+                                           value="#{estadoCuentaSfccbdmq.listadoObligaciones}"
+                                           var="itemObligaciones"
+                                           lazy="true"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="10,15,30,50"
+                                           currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="30"
+                                           style="width: 100%;"
+                                           >
+                                <f:facet name="header">Obligaciones</f:facet>
+                                <ace:column  headerText="Fecha" style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.fechaemision}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Concepto" style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.concepto}"/>
+                                </ace:column>
+                                <ace:column  headerText="Contrato" style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.contrato.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Tipo documento" style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.tipodocumento.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Documento" style="text-align: left">
+                                    <h:outputText  value="#{item.documento}"/>
+                                </ace:column>
+
+                                <ace:column  headerText="Valor documento" style="text-align: left">
+                                    <h:outputText  value="#{estadoCuentaSfccbdmq.valorObligacion}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Retención" style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.numeror}"/>
+                                </ace:column>
+
+                                <f:facet name="footer">
+                                    Total :
+                                    <h:outputText  value="#{estadoCuentaSfccbdmq.totalObligaciones}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </f:facet>
+                            </ace:dataTable>
+                            <ace:dataTable id="tablaAnticipos" 
+                                           value="#{estadoCuentaSfccbdmq.listadoAnticipos}"
+                                           var="itemAnticipos"
+                                           paginator="true"
+                                           lazy="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="15,20,25,50,100"
+                                           currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="15"
+                                           >
+                                <f:facet name="header">Anticipos</f:facet>
+                                <ace:column  headerText="F. Emisión"  style="text-align: left">
+                                    <h:outputText  value="#{itemAnticipos.fechaingreso}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Referencia"  style="text-align: left">
+                                    <h:outputText  value="#{itemAnticipos.referencia}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Contrato"  style="text-align: left">
+                                    <h:outputText  value="#{itemAnticipos.contrato.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valores"  style="text-align: right">
+                                    <h:outputText  value="#{itemAnticipos.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <!--                                <ace:column  headerText="F. Ingreso"  style="text-align: left">
+                                                                    <h:outputText  value="#{itemAnticipos.fechaingreso}">
+                                                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                                    </h:outputText>
+                                                                </ace:column>-->
+
+                                <f:facet name="footer">
+                                    Total :
+                                    <h:outputText  value="#{estadoCuentaSfccbdmq.totalAnticipos}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </f:facet>
+                            </ace:dataTable>
+                            <ace:dataTable id="tablaKardex" 
+                                           value="#{estadoCuentaSfccbdmq.listadoKardex}"
+                                           var="item"
+                                           paginator="true"
+                                           lazy="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="top"
+                                           rowsPerPageTemplate="15,20,25,50,100"
+                                           currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="15"
+                                           >
+                                <f:facet name="header">Transferencias</f:facet>
+                                <ace:column  headerText="Fecha Mov"  style="text-align: left">
+                                    <h:outputText  value="#{item.fechamov}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Banco"  style="text-align: left">
+                                    <h:outputText  value="#{item.banco.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Tipo mov"  style="text-align: left">
+                                    <h:outputText  value="#{item.tipomov.descripcion}"/>
+                                </ace:column>
+                                <ace:column  headerText="Documento"  style="text-align: left">
+                                    <h:outputText  value="#{item.documento}"/>
+                                </ace:column>
+                                <ace:column  headerText="Número Comp. Egreso"  style="text-align: left">
+                                    <h:outputText  value="#{item.egreso}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor"  style="text-align: right">
+                                    <h:outputText  value="#{item.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <!--                                <ace:column  headerText="Fecha Contab"  style="text-align: left">
+                                                                    <h:outputText  value="#{item.fentrega}">
+                                                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                                    </h:outputText>
+                                                                </ace:column>
+                                                                <ace:column  headerText="Fecha grab"  style="text-align: left">
+                                                                    <h:outputText  value="#{item.fechagraba}">
+                                                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                                    </h:outputText>
+                                                                </ace:column>-->
+                                <f:facet name="footer">
+                                    Total :
+                                    <h:outputText  value="#{estadoCuentaSfccbdmq.totalKardex}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </f:facet>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:panel>
+                    <!--</ace:dialog>-->
+                </h:panelGrid>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{estadoCuentaSfccbdmq.formularioImprimir.mostrar}"
+                    visible="#{estadoCuentaSfccbdmq.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="EstadoCuenta.pdf" label="Generar PDF"
+                                             mimeType="application/pdf" resource="#{estadoCuentaSfccbdmq.recurso}" 
+                                             style="" type="button"/>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{estadoCuentaSfccbdmq.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <!--Poner  con include ya que vista demasiado Cargada;-->
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

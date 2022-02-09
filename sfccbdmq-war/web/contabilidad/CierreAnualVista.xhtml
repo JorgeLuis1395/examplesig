@@ -1,0 +1,445 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{cierreAnualSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="2" width="100%">
+                        <h:outputLabel value="Periodo Inicial :"/>
+                        <h:outputLabel value="#{configuracionSfccbdmq.configuracion.pinicial}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputLabel>
+                        <h:outputLabel value="Periodo Final :"/>
+                        <h:outputLabel value="#{configuracionSfccbdmq.configuracion.pfinal}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputLabel>
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{cierreAnualSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Cerrar Periodo" icon="ui-icon ui-icon-disk" disabled="#{cierreAnualSfccbdmq.existenPendientes}" 
+                                          action="#{cierreAnualSfccbdmq.grabar()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <h:panelGrid width="100%">
+                        <ace:tabSet style="clear:both;" clientSide="true">
+                            <ace:tabPane label="Cierre Cuentas de Resultados">
+                                <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                    <h:outputLabel  value="Exportar a:"/>
+                                    <h:selectOneRadio  value="#{cierreAnualSfccbdmq.formulario.pantalla}" required="true">
+                                        <f:ajax disabled="false"/>
+                                        <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                        <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                        <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                        <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                    </h:selectOneRadio>
+                                    <ace:dataExporter id="dataExporter" 
+                                                      label="Exportar Archivo" 
+                                                      type="#{cierreAnualSfccbdmq.formulario.pantalla}" 
+                                                      target="tabla" fileName="datos"/>
+                                </h:panelGrid>
+                                <ace:dataTable  id="tabla"
+                                                value="#{cierreAnualSfccbdmq.listaAsientoUno}"
+                                                var="itemUno"
+                                                paginator="false"
+                                                lazy="false"
+                                                resizableColumns="true"
+                                                rowIndexVar="row"
+                                                paginatorPosition="both"
+                                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                >
+                                    <ace:column  headerText="Cuenta"  style="text-align: left">
+                                        <h:outputText  value="#{itemUno.cuenta}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="N. Cuenta"  style="text-align: left">
+                                        <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemUno.cuenta).nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Referencia"  style="text-align: left">
+                                        <h:outputText  value="#{itemUno.referencia}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Centro Costo"  style="text-align: left">
+                                        <h:outputText  value="#{itemUno.centrocosto}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Auxiliar"  style="text-align: left">
+                                        <h:outputText  value="#{parametrosSfccbdmq.traerAuxiliar(itemUno.auxiliar).toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Débitos" style="text-align: right" >
+                                        <h:outputText  value="#{itemUno.debitos}">
+                                        <!--<h:outputText  value="#{itemUno.valor}" rendered="#{asientosSfccbdmq.isCredito(itemUno.valor)}">-->
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Créditos" style="text-align: right" >
+                                        <h:outputText  value="#{itemUno.creditos}">
+                                        <!--<h:outputText  value="#{itemUno.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemUno.valor)}">-->
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </ace:tabPane>
+                            <ace:tabPane label="Cierre Resultados">
+                                <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                    <h:outputLabel  value="Exportar a:"/>
+                                    <h:selectOneRadio  value="#{cierreAnualSfccbdmq.formulario.pantalla}" required="true">
+                                        <f:ajax disabled="false"/>
+                                        <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                        <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                        <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                        <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                    </h:selectOneRadio>
+                                    <ace:dataExporter id="dataExporter2" 
+                                                      label="Exportar Archivo" 
+                                                      type="#{cierreAnualSfccbdmq.formulario.pantalla}" 
+                                                      target="tabla2" fileName="datos"/>
+                                </h:panelGrid>
+                                <ace:dataTable  id ="tabla2"
+                                                value="#{cierreAnualSfccbdmq.listaAsientoDos}"
+                                                var="itemDos"
+                                                paginator="false"
+                                                lazy="false"
+                                                resizableColumns="true"
+                                                rowIndexVar="row"
+                                                paginatorPosition="both"
+                                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                >
+                                    <ace:column  headerText="Cuenta"  style="text-align: left">
+                                        <h:outputText  value="#{itemDos.cuenta}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="N. Cuenta"  style="text-align: left">
+                                        <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemDos.cuenta).nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Referencia"  style="text-align: left">
+                                        <h:outputText  value="#{itemDos.referencia}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Centro Costo"  style="text-align: left">
+                                        <h:outputText  value="#{itemDos.centrocosto}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Auxiliar"  style="text-align: left">
+                                        <h:outputText  value="#{parametrosSfccbdmq.traerAuxiliar(itemDos.auxiliar).toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Débitos" style="text-align: right" >
+                                        <h:outputText  value="#{itemDos.debitos}">
+                                        <!--<h:outputText  value="#{itemDos.valor}" rendered="#{asientosSfccbdmq.isCredito(itemDos.valor)}">-->
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Créditos" style="text-align: right" >
+                                        <h:outputText  value="#{itemDos.creditos}">
+                                        <!--<h:outputText  value="#{itemDos.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemDos.valor)}">-->
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </ace:tabPane>
+                            <ace:tabPane label="Reclasificación Cuentas de Cierre">
+                                <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                    <h:outputLabel  value="Exportar a:"/>
+                                    <h:selectOneRadio  value="#{cierreAnualSfccbdmq.formulario.pantalla}" required="true">
+                                        <f:ajax disabled="false"/>
+                                        <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                        <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                        <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                        <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                    </h:selectOneRadio>
+                                    <ace:dataExporter id="dataExporter3" 
+                                                      label="Exportar Archivo" 
+                                                      type="#{cierreAnualSfccbdmq.formulario.pantalla}" 
+                                                      target="tabla3" fileName="datos"/>
+                                </h:panelGrid>
+                                <ace:dataTable  id="tabla3"
+                                                value="#{cierreAnualSfccbdmq.listaAsientoTres}"
+                                                var="itemTres"
+                                                paginator="false"
+                                                lazy="false"
+                                                resizableColumns="true"
+                                                rowIndexVar="row"
+                                                paginatorPosition="both"
+                                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                >
+                                    <ace:column  headerText="Cuenta"  style="text-align: left">
+                                        <h:outputText  value="#{itemTres.cuenta}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="N. Cuenta"  style="text-align: left">
+                                        <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemTres.cuenta).nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Referencia"  style="text-align: left">
+                                        <h:outputText  value="#{itemTres.referencia}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Centro Costo"  style="text-align: left">
+                                        <h:outputText  value="#{itemTres.centrocosto}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Auxiliar"  style="text-align: left">
+                                        <h:outputText  value="#{parametrosSfccbdmq.traerAuxiliar(itemTres.auxiliar).toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Débitos" style="text-align: right" >
+                                        <h:outputText  value="#{itemTres.debitos}">
+                                        <!--<h:outputText  value="#{itemTres.valor}" rendered="#{asientosSfccbdmq.isCredito(itemTres.valor)}">-->
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Créditos" style="text-align: right" >
+                                        <h:outputText  value="#{itemTres.creditos}">
+                                        <!--<h:outputText  value="#{itemTres.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemTres.valor)}">-->
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+
+                            </ace:tabPane>
+                            <ace:tabPane label="Reclasificación Cuentas 15292 - 15298">
+                                <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                    <h:outputLabel  value="Exportar a:"/>
+                                    <h:selectOneRadio  value="#{cierreAnualSfccbdmq.formulario.pantalla}" required="true">
+                                        <f:ajax disabled="false"/>
+                                        <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                        <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                        <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                        <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                    </h:selectOneRadio>
+                                    <ace:dataExporter id="dataExporter31" 
+                                                      label="Exportar Archivo" 
+                                                      type="#{cierreAnualSfccbdmq.formulario.pantalla}" 
+                                                      target="tabla31" fileName="datos"/>
+                                </h:panelGrid>
+                                <ace:dataTable  id="tabla31"
+                                                value="#{cierreAnualSfccbdmq.listaAsientoTresReclasi}"
+                                                var="itemTresR"
+                                                paginator="false"
+                                                lazy="false"
+                                                resizableColumns="true"
+                                                rowIndexVar="row"
+                                                paginatorPosition="both"
+                                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                >
+                                    <ace:column  headerText="Cuenta"  style="text-align: left">
+                                        <h:outputText  value="#{itemTresR.cuenta}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="N. Cuenta"  style="text-align: left">
+                                        <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemTresR.cuenta).nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Referencia"  style="text-align: left">
+                                        <h:outputText  value="#{itemTresR.referencia}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Centro Costo"  style="text-align: left">
+                                        <h:outputText  value="#{itemTresR.centrocosto}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Auxiliar"  style="text-align: left">
+                                        <h:outputText  value="#{parametrosSfccbdmq.traerAuxiliar(itemTresR.auxiliar).toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Débitos" style="text-align: right" >
+                                        <h:outputText  value="#{itemTresR.debitos}">
+                                        <!--<h:outputText  value="#{itemTres.valor}" rendered="#{asientosSfccbdmq.isCredito(itemTres.valor)}">-->
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Créditos" style="text-align: right" >
+                                        <h:outputText  value="#{itemTresR.creditos}">
+                                        <!--<h:outputText  value="#{itemTres.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemTres.valor)}">-->
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+
+                            </ace:tabPane>
+<!--                            <ace:tabPane label="Cuarto asiento cierre">
+                                <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                    <h:outputLabel  value="Exportar a:"/>
+                                    <h:selectOneRadio  value="#{cierreAnualSfccbdmq.formulario.pantalla}" required="true">
+                                        <f:ajax disabled="false"/>
+                                        <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                        <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                        <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                        <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                    </h:selectOneRadio>
+                                    <ace:dataExporter id="dataExporter4" 
+                                                      label="Exportar Archivo" 
+                                                      type="#{cierreAnualSfccbdmq.formulario.pantalla}" 
+                                                      target="tabla4" fileName="datos"/>
+                                </h:panelGrid>
+                                <ace:dataTable id="tabla4" 
+                                               value="#{cierreAnualSfccbdmq.listaAsientoCuatro}"
+                                               var="itemCuatro"
+                                               paginator="false"
+                                               lazy="false"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="5,10,15,30,50,100"
+                                               paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               >
+                                    <ace:column  headerText="Cuenta"  style="text-align: left">
+                                        <h:outputText  value="#{itemCuatro.cuenta}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="N. Cuenta"  style="text-align: left">
+                                        <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemCuatro.cuenta).nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Referencia"  style="text-align: left">
+                                        <h:outputText  value="#{itemCuatro.referencia}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Centro Costo"  style="text-align: left">
+                                        <h:outputText  value="#{itemCuatro.centrocosto}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Auxiliar"  style="text-align: left">
+                                        <h:outputText  value="#{parametrosSfccbdmq.traerAuxiliar(itemCuatro.auxiliar).toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Débitos" style="text-align: right" >
+                                        <h:outputText  value="#{itemCuatro.debitos}">
+                                        <h:outputText  value="#{itemCuatro.valor}" rendered="#{asientosSfccbdmq.isCredito(itemCuatro.valor)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Créditos" style="text-align: right" >
+                                        <h:outputText  value="#{itemCuatro.creditos}">
+                                        <h:outputText  value="#{itemCuatro.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemCuatro.valor)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </ace:tabPane>-->
+                            <ace:tabPane label="Asiento Apertura">
+                                <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                    <h:outputLabel  value="Exportar a:"/>
+                                    <h:selectOneRadio  value="#{cierreAnualSfccbdmq.formulario.pantalla}" required="true">
+                                        <f:ajax disabled="false"/>
+                                        <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                        <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                        <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                        <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                    </h:selectOneRadio>
+                                    <ace:dataExporter id="dataExporter5" 
+                                                      label="Exportar Archivo" 
+                                                      type="#{cierreAnualSfccbdmq.formulario.pantalla}" 
+                                                      target="tabla5" fileName="datos"/>
+                                </h:panelGrid>
+                                <ace:dataTable  id="tabla5"
+                                                value="#{cierreAnualSfccbdmq.listaAsientoCinco}"
+                                                var="itemCinco"
+                                                paginator="false"
+                                                lazy="false"
+                                                resizableColumns="true"
+                                                rowIndexVar="row"
+                                                paginatorPosition="both"
+                                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                >
+                                    <ace:column  headerText="Cuenta"  style="text-align: left">
+                                        <h:outputText  value="#{itemCinco.cuenta}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="N. Cuenta"  style="text-align: left">
+                                        <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemCinco.cuenta).nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Referencia"  style="text-align: left">
+                                        <h:outputText  value="#{itemCinco.referencia}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Centro Costo"  style="text-align: left">
+                                        <h:outputText  value="#{itemCinco.centrocosto}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Auxiliar"  style="text-align: left">
+                                        <h:outputText  value="#{parametrosSfccbdmq.traerAuxiliar(itemCinco.auxiliar).toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Débitos" style="text-align: right" >
+                                        <h:outputText  value="#{itemCinco.debitos}">
+                                        <!--<h:outputText  value="#{itemCinco.valor}" rendered="#{asientosSfccbdmq.isCredito(itemCinco.valor)}">-->
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Créditos" style="text-align: right" >
+                                        <h:outputText  value="#{itemCinco.creditos}">
+                                        <!--<h:outputText  value="#{itemCinco.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemCinco.valor)}">-->
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </ace:tabPane>
+<!--                            <ace:tabPane label="Asiento Apertura Resumido">
+                                <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                    <h:outputLabel  value="Exportar a:"/>
+                                    <h:selectOneRadio  value="#{cierreAnualSfccbdmq.formulario.pantalla}" required="true">
+                                        <f:ajax disabled="false"/>
+                                        <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                        <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                        <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                        <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                    </h:selectOneRadio>
+                                    <ace:dataExporter id="dataExporter6" 
+                                                      label="Exportar Archivo" 
+                                                      type="#{cierreAnualSfccbdmq.formulario.pantalla}" 
+                                                      target="tabla5" fileName="datos"/>
+                                </h:panelGrid>
+                                <ace:dataTable  id="tabl6"
+                                                value="#{cierreAnualSfccbdmq.listaResumido}"
+                                                var="itemCincoR"
+                                                paginator="false"
+                                                lazy="false"
+                                                resizableColumns="true"
+                                                rowIndexVar="row"
+                                                paginatorPosition="both"
+                                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                >
+                                    <ace:column  headerText="Cuenta"  style="text-align: left">
+                                        <h:outputText  value="#{itemCincoR.cuenta}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="N. Cuenta"  style="text-align: left">
+                                        <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemCincoR.cuenta).nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Referencia"  style="text-align: left">
+                                        <h:outputText  value="#{itemCincoR.referencia}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Centro Costo"  style="text-align: left">
+                                        <h:outputText  value="#{itemCincoR.centrocosto}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Débitos" style="text-align: right" >
+                                        <h:outputText  value="#{itemCincoR.debitos}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Créditos" style="text-align: right" >
+                                        <h:outputText  value="#{itemCincoR.creditos}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </ace:tabPane>-->
+                        </ace:tabSet>
+
+                    </h:panelGrid>
+                </ace:panel>
+
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

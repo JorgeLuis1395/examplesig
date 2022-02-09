@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <ace:panel style="display:block;">
+        <h:panelGrid width="90%" >
+            
+            <h:panelGrid  width="90%" columns="1" style="text-align: center">
+                <h3>Retención de proveedor : #{pagoRetencionesSfccbdmq.comprobante.infoTributaria.razonSocial}</h3>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                <h:outputLabel value="R.U.C :" />
+                <h:outputLabel value="#{pagoRetencionesSfccbdmq.comprobante.infoTributaria.ruc}"/>
+                <h:outputLabel value="Dirección Matriz :" />
+                <h:outputLabel value="#{pagoRetencionesSfccbdmq.comprobante.infoTributaria.dirMatriz}"/>
+                <h:outputLabel value="Dirección Establecimiento:" />
+                <h:outputLabel value="#{pagoRetencionesSfccbdmq.comprobante.infoTributaria.estab}"/>
+                <h:outputLabel value="Cont. Especial No:  :" />
+                <h:outputLabel value="#{pagoRetencionesSfccbdmq.comprobante.infoCompRetencion.contribuyenteEspecial}"/>
+                <h:outputLabel value="Obligado a llevar Contab :" />
+                <h:outputLabel value="#{pagoRetencionesSfccbdmq.comprobante.infoCompRetencion.obligadoContabilidad}"/>
+                <h:outputLabel value="Ambiente :" />
+                <h:outputLabel value="#{pagoRetencionesSfccbdmq.comprobante.infoTributaria.ambiente}"/>
+                <h:outputLabel value="Clave de Acceso :" />
+                <h:outputLabel value="#{pagoRetencionesSfccbdmq.comprobante.infoTributaria.claveAcceso}"/>
+                <h:outputLabel value="Secuencial :" />
+                <h:outputLabel value="#{pagoRetencionesSfccbdmq.comprobante.infoTributaria.secuencial}"/>
+                <h:outputLabel value="Fecha de emisión :" />
+                <h:outputLabel value="#{pagoRetencionesSfccbdmq.comprobante.infoCompRetencion.fechaEmision}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputLabel>
+
+            </h:panelGrid>
+
+            <h:panelGrid  width="90%" columns="2">
+                <h:panelGrid  width="90%" columns="1">
+                    <ace:dataTable 
+                        value="#{pagoRetencionesSfccbdmq.comprobante.infoAdicional}"
+                        var="itemAdicionales"
+                        paginator="false"
+                        lazy="false"
+                        resizableColumns="true"
+                        rowIndexVar="row"
+                        paginatorPosition="both"
+                        rowsPerPageTemplate="5,10,15,30,50,100"
+                        paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        >
+                        <!--                    <ace:column  headerText="Registro" style="text-align: right">
+                                                <h:outputText value="#{row+1}"/>
+                                            </ace:column>-->
+                        <ace:column  headerText="Info Adicional"  style="text-align: left">
+                            <h:outputText  value="#{itemAdicionales.nombre} = #{itemAdicionales.content}"/>
+                        </ace:column>
+
+
+                    </ace:dataTable>
+                </h:panelGrid>
+                <h:panelGrid  width="90%" columns="1">
+                    <ace:dataTable 
+                        value="#{pagoRetencionesSfccbdmq.comprobante.impuestos}"
+                        var="itemConImpuestos"
+                        paginator="false"
+                        lazy="false"
+                        resizableColumns="true"
+                        rowIndexVar="row"
+                        paginatorPosition="both"
+                        rowsPerPageTemplate="5,10,15,30,50,100"
+                        paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        >
+                        <!--                    <ace:column  headerText="Registro" style="text-align: right">
+                                                <h:outputText value="#{row+1}"/>
+                                            </ace:column>-->
+                        <ace:column  headerText="Impuesto"  style="text-align: left">
+                            <h:outputText  value="#{itemConImpuestos.codigo}"/>
+                        </ace:column>
+                        <ace:column  headerText="Código Ret"  style="text-align: left">
+                            <h:outputText  value="#{itemConImpuestos.codigoRetencion}"/>
+                        </ace:column>
+                        <ace:column  headerText="Cod. Sustento"  style="text-align: left">
+                            <h:outputText  value="#{itemConImpuestos.codDocSustento}"/>
+                        </ace:column>
+                        <ace:column  headerText="Doc. Sustento"  style="text-align: left">
+                            <h:outputText  value="#{itemConImpuestos.numDocSustento}"/>
+                        </ace:column>
+                        <ace:column  headerText="F emisión sustento"  style="text-align: left">
+                            <h:outputText  value="#{itemConImpuestos.fechaEmisionDocSustento}"/>
+                        </ace:column>
+                        <ace:column  headerText="Base Imponible"  style="text-align: right">
+                            <h:outputText  value="#{itemConImpuestos.baseImponible}"/>
+                        </ace:column>
+                        <ace:column  headerText="% retención"  style="text-align: right">
+                            <h:outputText  value="#{itemConImpuestos.porcentajeRetener}"/>
+                        </ace:column>
+                        <ace:column  headerText="Valor Retenido"  style="text-align: right">
+                            <h:outputText  value="#{itemConImpuestos.valorRetenido}"/>
+                        </ace:column>
+
+                    </ace:dataTable>
+
+                </h:panelGrid>
+
+            </h:panelGrid>
+        </h:panelGrid>
+
+    </ace:panel>
+
+</html>

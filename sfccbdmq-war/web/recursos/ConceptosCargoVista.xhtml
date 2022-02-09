@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{conceptosxCargo.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <ace:panel header="Parámetros de Búsqueda">
+                        <h:panelGrid columns="2">
+                            <h:selectOneMenu value="#{conceptosxCargo.cargo}">
+                                <f:selectItems value="#{cargos.comboCargos}"/>
+                            </h:selectOneMenu>
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{conceptosxCargo.buscar()}"/>
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{conceptosxCargo.nuevo()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <ace:messages/>
+                    </ace:panel> 
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="false"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{conceptosxCargo.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{conceptosxCargo.formulario.pantalla}" 
+                                          target="conceptos" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="conceptos" 
+                                       value="#{conceptosxCargo.listaConceptos}"
+                                       var="itemConcepto"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,50"
+
+                                       paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       binding="#{conceptosxCargo.formulario.fila}">
+
+                            <ace:column  style="text-align: left" rendered="#{!conceptosxCargo.formulario.borrar}" >
+                                <ace:menuButton  effect="slide" effectDuration="200" value="...">
+                                    <ace:menuItem value="Editar" icon="ui-icon ui-icon-pencil" action="#{conceptosxCargo.modifica(itemConcepto)}"  />
+                                    <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{conceptosxCargo.borra(itemConcepto)}"  />
+                                </ace:menuButton>
+                            </ace:column>
+
+                            <ace:column  headerText="Concepto"  style="text-align: left">
+                                <h:outputText value="#{itemConcepto.concepto.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Cuenta x Pagar" style="text-align: left">
+                                <h:outputText  value="#{itemConcepto.cuentaporpagar}"/>
+                            </ace:column>
+                            <ace:column  headerText='Valor' style="text-align: left">
+                                <h:outputText  value="#{itemConcepto.valor}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{conceptosxCargo.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{conceptosxCargo.formulario.mostrar}"
+                    visible="#{conceptosxCargo.formulario.mostrar}">
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane >
+                            <f:facet name="label">Inf. General</f:facet>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Concepto :"  />
+                                <h:selectOneMenu value="#{conceptosxCargo.concepto.concepto}" disabled="#{!conceptosxCargo.formulario.nuevo}">
+                                    <f:selectItems value="#{conceptosSfccbdmq.comboConceptos}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                                <h:outputLabel value="Valor:" />
+                                <h:inputText value="#{conceptosxCargo.concepto.valor}" title="Valor" />
+                                <h:outputLabel value="Cuenta x pagar:" for="cuenta" />
+                                <h:inputText  value="#{conceptosxCargo.concepto.cuentaporpagar}" title="Cuenta" />
+                            </h:panelGrid>
+                        </ace:tabPane>
+<!--                        <ace:tabPane label="Adjuntos">
+                            <ui:include src="../mostrarImagenes.xhtml" />
+                        </ace:tabPane>-->
+                    </ace:tabSet>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{conceptosxCargo.insertar()}" rendered="#{conceptosxCargo.formulario.nuevo}" />
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{conceptosxCargo.grabar()}" rendered="#{conceptosxCargo.formulario.modificar}" />
+                        <ace:menuItem value="Está Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{conceptosxCargo.eliminar()}" rendered="#{conceptosxCargo.formulario.borrar}" />
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{conceptosxCargo.formulario.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

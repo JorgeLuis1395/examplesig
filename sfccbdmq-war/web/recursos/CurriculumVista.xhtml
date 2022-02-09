@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:panelGrid columns="2">
+        <ace:menuBar autoSubmenuDisplay="true" >
+            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" action="#{curriculumEmpleado.formularioPrincipal.cancelar()}"/>
+        </ace:menuBar>
+        <h:commandButton value="Imprimir" >
+            <ace:printer for="impresionCur"/>
+        </h:commandButton>
+    </h:panelGrid>
+    <ace:messages/>
+
+    <h:panelGrid width="100%" id="impresionCur" style="display: block" >
+        <h:panelGrid  width="100%" columns="1" style="text-align: center;font-size: small"  >
+            <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+            <h3><strong>EMPRESA PÚBLICA METROPOLITANA DE LOGÍSTICA PARA LA SEGURIDAD Y LA CONVIVENCIA CIUDADANA</strong></h3>
+            <h3><strong>EP SEGURIDAD</strong></h3>
+            <h3><strong>UATH</strong></h3>
+        </h:panelGrid>
+
+        <h:panelGroup>
+            <h:panelGrid columns="2" width="100%" style="border: #aaaaaa 1px solid;" >
+
+                <h:panelGrid columns="4" width="100%" columnClasses="columnA,columnB,columnC,columnD" 
+                             style="text-align: justify ; color: black; font-size: small;  border: 0px;" >
+
+                    <h:outputLabel value="DATOS" styleClass="bold"/>
+                    <h:outputText value="" />
+                    <h:outputText value="" />
+                    <h:outputText value="" />
+
+                    <h:outputLabel value="Cédula" styleClass="bold"/>
+                    <h:outputText value="#{empleados.entidad.pin}" />
+                    <h:outputLabel value="Fecha Nacimiento" styleClass="bold" />
+                    <h:outputText value="#{empleados.entidad.fecha}"  >
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                    <h:outputLabel value="Ocupación:" styleClass="bold" />
+                    <h:outputText value="#{empleados.entidad.ocupacion}" />
+                    <h:outputLabel value="Correo:" styleClass="bold" />
+                    <h:outputText value="#{empleados.entidad.email}"/>
+                    <h:outputLabel value="Cargo Actual:" styleClass="bold" />
+                    <h:outputText value="#{empleados.empleado.cargoactual.cargo.nombre}"/>
+                    <h:outputLabel value="Oficina:" styleClass="bold" />
+                    <h:outputText value="#{empleados.empleado.oficina.nombre}"/>
+                    <h:outputLabel value="Proceso :" styleClass="bold" />
+                    <h:outputText value="#{empleados.empleado.cargoactual.organigrama.codigo} - #{empleados.empleado.cargoactual.organigrama.nombre}"/>
+                    <h:outputLabel value="DIRECCIÓN" styleClass="bold"/>
+                    <h:outputText value="" />
+                    <h:outputText value="" />
+                    <h:outputText value="" />
+                    <h:outputLabel value="Calle Principal :" styleClass="bold" />
+                    <h:outputText value="#{empleados.entidad.direccion.principal}" />
+                    <h:outputLabel value="Calle Secundaria : " styleClass="bold" />
+                    <h:outputText value="#{empleados.entidad.direccion.secundaria}" />
+                    <h:outputLabel value="Número : " styleClass="bold" />
+                    <h:outputText value="#{empleados.entidad.direccion.numero}" />
+                    <h:outputLabel value="Referencia : " styleClass="bold" />
+                    <h:outputText value="#{empleados.entidad.direccion.referencia}" />
+                    <h:outputLabel value="Teléfonos : " styleClass="bold" />
+                    <h:outputText value="#{empleados.entidad.direccion.telefonos}" />
+                </h:panelGrid>
+                <h:panelGrid columns="1" width="100%" rendered="#{empleados.archivoImagen.archivo!=null}">
+                    <h:graphicImage value="#{empleados.archivoImagen.archivo}"  style="height: 100px "  rendered="#{empleados.entidad!=null}"/>
+                </h:panelGrid>
+            </h:panelGrid>
+
+            <h:panelGrid columns="1" width="100%">
+                <ace:dataTable value="#{empleados.listaCabeceraempleado}"  
+                               var="itemEmpleados"
+                               resizableColumns="true"
+                               style="width: 99%;"
+                               scrollHeight="600"
+                               scrollable="true">
+                    <f:facet name="header">Información Adicional</f:facet> 
+                    <ace:row condition="group" groupBy="#{itemEmpleados.cabecera.idgrupo.texto}" pos="before" styleClass="titulo">
+                        <ace:column colspan="7">
+                            #{itemEmpleados.cabecera.idgrupo.texto} 
+                        </ace:column>
+                    </ace:row>   
+                    <ace:column headerText="Información" style="text-align: left">
+                        <h:outputLabel value="#{itemEmpleados.texto}:" />
+                    </ace:column>
+                    <ace:column   headerText="Valores" style="text-align: left" >
+                        <h:outputText value="#{itemEmpleados.valornumerico}" rendered="#{itemEmpleados.tipodato==1}" />
+                        <h:outputText value="#{itemEmpleados.valortexto}" rendered="#{itemEmpleados.tipodato==2}" />
+                        <h:outputText value="#{itemEmpleados.valortexto}" rendered="#{itemEmpleados.tipodato==0}" />
+                        <h:outputText value="#{codigosSfccbdmq.traerCodigo(itemEmpleados.cabecera.codigo, itemEmpleados.codigo).nombre}" rendered="#{itemEmpleados.tipodato==4}" />
+                        <h:outputText value="#{itemEmpleados.valorfecha}" rendered="#{itemEmpleados.tipodato==3}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+                    </ace:column> 
+
+                </ace:dataTable>
+                <!--familia-->
+                <ace:dataTable id="familiasIdCur" 
+                               value="#{curriculumEmpleado.listaFamilias}"
+                               var="familiaItem"
+                               style="width: 99%;">
+                    <f:facet name="header">Familiares</f:facet> 
+                    <ace:column  headerText="Cédula"  style="text-align: left">
+                        <h:outputText value="#{familiaItem.pin}"/>
+                    </ace:column>
+                    <ace:column  headerText="Apellidos y Nombres"  style="text-align: left">
+                        <h:outputText value="#{familiaItem.toString()}"/>
+                    </ace:column>
+                    <ace:column  headerText="Email"  style="text-align: left">
+                        <h:outputText value="#{familiaItem.email}"/>
+                    </ace:column>
+
+                    <ace:column  headerText="Estado Civil"  style="text-align: left">
+                        <h:outputText value="#{familiaItem.estadocivil.nombre}"/>
+                    </ace:column>
+                    <ace:column  headerText="Género"  style="text-align: left">
+                        <h:outputText value="#{familiaItem.genero.nombre}"/>
+                    </ace:column>
+                    <ace:column  headerText="Grupo Sanguineo"  style="text-align: left">
+                        <h:outputText value="#{familiaItem.tiposangre.nombre}"/>
+                    </ace:column>
+                    <ace:column  headerText="Parentesco"  style="text-align: left">
+                        <h:outputText value="#{familiaItem.parentesco.nombre}"/>
+                    </ace:column>
+                    <ace:column  headerText="Fecha Nacimiento"  style="text-align: left">
+                        <h:outputText  value="#{familiaItem.fechanacimiento}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </ace:column>
+
+
+                </ace:dataTable>
+                <ace:dataTable id="estudiosCur" 
+                               value="#{curriculumEmpleado.listaEstudios}"
+                               var="estudio"
+                               style="width: 99%;" >
+
+                    <f:facet name="header">Estudios</f:facet> 
+                    <ace:column  headerText="Título"  style="text-align: left">
+                        <h:outputText value="#{estudio.titulo}"/>
+                    </ace:column>
+                    <ace:column  headerText='Universidad' style="text-align: left">
+                        <h:outputText  value="#{estudio.universidad}"/>
+                    </ace:column>
+                    <ace:column  headerText='País' style="text-align: left">
+                        <h:outputText  value="#{estudio.pais}"/>
+                    </ace:column>
+                    <ace:column  headerText='Nivel' style="text-align: left">
+                        <h:outputText  value="#{estudio.nivel}"/>
+                    </ace:column>
+                </ace:dataTable>
+                <ace:dataTable id="idiomasCur" 
+                               value="#{curriculumEmpleado.listaIdiomas}"
+                               var="idioma"
+                               binding="#{idiomasEmpleado.formulario.fila}"
+                               style="width: 99%;">
+
+                    <f:facet name="header">Idiomas</f:facet> 
+                    <ace:column  headerText="Idioma" style="text-align: left">
+                        <h:outputText value="#{idioma.idioma}"/>
+                    </ace:column>
+                    <ace:column  headerText='%Escrito'   style="text-align: left">
+                        <h:outputText  value="#{idioma.escrito}"/>
+                    </ace:column>
+                    <ace:column  headerText='%Hablado'   style="text-align: left">
+                        <h:outputText  value="#{idioma.hablado}"/>
+                    </ace:column>
+
+                </ace:dataTable>
+                <ace:dataTable id="cursosCur" 
+                               paginatorAlwaysVisible="true"
+                               value="#{curriculumEmpleado.listaCursos}"
+                               var="curso"
+                               style="width: 99%;">
+
+                    <f:facet name="header">Cursos</f:facet> 
+                    <ace:column  headerText="Empresa" style="text-align: left">
+                        <h:outputText value="#{curso.empresa}"/>
+                    </ace:column>
+                    <ace:column  headerText='Nombre'   style="text-align: left">
+                        <h:outputText  value="#{curso.nombre}"/>
+                    </ace:column>
+                    <ace:column  headerText='Fecha'   style="text-align: left">
+                        <h:outputText  value="#{curso.fecha}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Duración/Horas" style="text-align: right">
+                        <h:outputText value="#{curso.duracion}"/>
+                    </ace:column>
+                </ace:dataTable>
+                <!--EXPERIENCIAS-->
+                <ace:dataTable id="experienciasCur" 
+                               value="#{curriculumEmpleado.listaExperiencias}"
+                               var="experiencia"
+                               style="width: 99%;">
+
+                    <f:facet name="header">Experiencia Laboral</f:facet> 
+                    <ace:column  headerText="Empresa" style="text-align: left">
+                        <h:outputText value="#{experiencia.empresa}"/>
+                    </ace:column>
+                    <ace:column  headerText='Cargo'   style="text-align: left">
+                        <h:outputText  value="#{experiencia.cargo}"/>
+                    </ace:column>
+                    <ace:column  headerText='Desde-Hasta'   style="text-align: left">
+                        <h:outputText  value="#{experiencia.desde}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>-
+                        <h:outputText  value="#{experiencia.hasta}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Informate" style="text-align: left">
+                        <h:outputText value="#{experiencia.noombre}"/>
+                    </ace:column>
+                    <ace:column  headerText="Cargo Informante" style="text-align: left">
+                        <h:outputText value="#{experiencia.cargocontacto}"/>
+                    </ace:column>
+                    <ace:column headerText="Descripción" style="text-align: left"  >
+                        <h:outputText  value="#{experiencia.descripcion}"  />
+                    </ace:column>
+                </ace:dataTable>
+                <!--REFERENCIAS PERSONALES-->
+                <ace:dataTable id="recomendacionsCur" 
+                               value="#{curriculumEmpleado.listaRecomendaciones}"
+                               var="recomendacion"
+                               style="width: 99%;">
+
+                    <f:facet name="header">Referencias</f:facet> 
+                    <ace:column  headerText="Referencia" style="text-align: left">
+                        <h:outputText value="#{recomendacion.empresa}"/>
+                    </ace:column>
+                    <ace:column  headerText="Empresa" style="text-align: left">
+                        <h:outputText value="#{recomendacion.empresa}"/>
+                    </ace:column>
+                    <ace:column  headerText='Cargo'   style="text-align: left">
+                        <h:outputText  value="#{recomendacion.cargo}"/>
+                    </ace:column>
+                    <ace:column  headerText='Teléfono'   style="text-align: left">
+                        <h:outputText  value="#{recomendacion.telefono}"/>
+                    </ace:column>
+                </ace:dataTable>
+                <ace:dataTable id="historialCur" 
+                               value="#{curriculumEmpleado.listaHistotialCargos}"
+                               style="width: 99%;"
+                               var="historialCargos">
+
+                    <f:facet name="header">Cargos en la empresa</f:facet> 
+                    <ace:column  headerText="Motivo"  style="text-align: left">
+                        <h:outputText value="#{historialCargos.motivo}"/>
+                    </ace:column>
+                    <ace:column  headerText="Cargo" style="text-align: left">
+                        <h:outputText  value="#{historialCargos.cargo.cargo.descripcion}"/>
+                    </ace:column>
+                    <ace:column  headerText='Proceso' style="text-align: left">
+                        <h:outputText  value="#{historialCargos.cargo.organigrama.nombre}"/>
+                    </ace:column>
+                    <ace:column  headerText="Encargo" style="text-align: left">
+                        <h:outputText  value="#{historialCargos.vigente}"/>
+                    </ace:column>
+                    <ace:column  headerText="Desde" style="text-align: left">
+                        <h:outputText  value="#{historialCargos.desde}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Hasta" style="text-align: left">
+                        <h:outputText  value="#{historialCargos.hasta}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </ace:column>
+                </ace:dataTable>
+                <ace:dataTable id="historialSancionCur" 
+                               value="#{curriculumEmpleado.listaHistorial}"
+                               var="historialSancion"
+                               style="width: 99%;"
+                               >
+                    <f:facet name="header">Sanciones</f:facet> 
+
+                    <ace:column  headerText="Motivo"  style="text-align: left">
+                        <h:outputText value="#{historialSancion.motivo}"/>
+                    </ace:column>
+                    <ace:column  headerText="Tipo" style="text-align: left">
+                        <h:outputText  value="#{historialSancion.tipo.nombre}"/>
+                    </ace:column>
+                    <ace:column  headerText='Grado' style="text-align: left">
+                        <h:outputText  value="#{historialSancion.tipo.tipo.nombre}"/>
+                    </ace:column>
+                    <ace:column  headerText="Valor" style="text-align: left">
+                        <h:outputText  value="#{historialSancion.valor}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="F sanción" style="text-align: left">
+                        <h:outputText  value="#{historialSancion.fsancion}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="F.  Aprob" style="text-align: left">
+                        <h:outputText  value="#{historialSancion.faprobacion}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="F.  Aplicación" style="text-align: left">
+                        <h:outputText  value="#{historialSancion.faplicacion}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </ace:column>
+                </ace:dataTable>
+            </h:panelGrid>
+        </h:panelGroup>
+    </h:panelGrid>
+</html>

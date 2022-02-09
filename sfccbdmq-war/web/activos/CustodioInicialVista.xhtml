@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel
+                    id="panel"
+                    closable="false"
+                    header="#{custodioIncialActivosSfccbdmq.perfil.menu.texto}">
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="@all"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Usuario externo:"/>
+                            <ace:checkboxButton value="#{custodioIncialActivosSfccbdmq.esExterno}">
+                                <ace:ajax execute="@all"/>
+                            </ace:checkboxButton>
+                        </h:panelGrid>
+                        <h:panelGrid rendered="#{custodioIncialActivosSfccbdmq.esExterno}">
+                            <ui:include src="../BuscarExterno.xhtml"/>
+                        </h:panelGrid>
+                        <h:panelGrid rendered="#{!custodioIncialActivosSfccbdmq.esExterno}">
+                            <h:panelGrid columns="2" >
+                                <ace:autoCompleteEntry 
+                                    value="#{entidadesSfccbdmq.apellidos}"
+                                    rows="50" width="300"
+                                    listVar="empleadoSeleccionar"
+                                    filterBy="#{empleadoSeleccionar.toString()}"
+                                    listValue="#{entidadesSfccbdmq.listaEntidades}"
+                                    valueChangeListener="#{entidadesSfccbdmq.cambiaApellido}"
+                                    textChangeListener="#{entidadesSfccbdmq.entidadChangeEventHandler}"
+                                    label="Apellidos Responsable :"
+                                    labelPosition="left">
+                                    <f:facet name="row">
+                                        <h:panelGrid columns="3" width="100%"  style="text-align: left;font-size: xx-small" columnClasses="tipo">
+                                            <h:outputText value="#{empleadoSeleccionar.apellidos}"/>
+                                            <h:outputText value="#{empleadoSeleccionar.nombres}"/>
+                                            <h:outputText value="#{empleadoSeleccionar.pin}"/>
+                                        </h:panelGrid>
+                                    </f:facet>
+                                    <ace:ajax execute="@all"/>
+                                </ace:autoCompleteEntry>
+                            </h:panelGrid>
+                            <h:panelGrid columns="2" rendered="#{entidadesSfccbdmq.entidad!=null}">
+                                <h:outputLabel value="Nombres:" />
+                                <h:outputLabel value="#{entidadesSfccbdmq.entidad.nombres}" />
+
+                                <h:outputLabel value="Email:" />
+                                <h:outputLabel  value="#{entidadesSfccbdmq.entidad.email}"/>
+                            </h:panelGrid>
+                        </h:panelGrid>
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="Grupo:" />
+                            <h:selectOneMenu  value="#{subGruposActivosSfccbdmq.grupo}" title="Grupo">
+                                <f:selectItems value="#{gruposActivosSfccbdmq.comboGrupoEspacio}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Sub Grupo:"/>
+                            <h:selectOneMenu  value="#{subGruposActivosSfccbdmq.subGrupo}" title="Grupo">
+                                <f:selectItems value="#{subGruposActivosSfccbdmq.comboSubGrupo}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Código:" />
+                            <h:inputText value="#{custodioIncialActivosSfccbdmq.codigo}"/>
+                            <h:outputLabel value="Descripción:" />
+                            <h:inputText value="#{custodioIncialActivosSfccbdmq.descripcion}"/>
+
+                            <h:outputLabel value="Fecha Adquisición:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{custodioIncialActivosSfccbdmq.fechaAdquisicion}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Valor Adquisición:" />
+                            <h:inputText value="#{custodioIncialActivosSfccbdmq.valorAdquisicion}" title="Nombre" />
+                            <h:outputLabel value="Edificio:" />
+                            <h:selectOneMenu  value="#{oficinasSfccbdmq.edificio}" title="Edificio">
+                                <f:selectItems value="#{edificiosSfccbdmq.comboEdificioEspacioCarapungo}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Oficina:" />
+                            <h:selectOneMenu  value="#{custodioIncialActivosSfccbdmq.oficina}" title="Edificio" id="oficina">
+                                <f:selectItems value="#{oficinasSfccbdmq.comboOficinaEspacio}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Número de serie:" />
+                            <h:inputText value="#{custodioIncialActivosSfccbdmq.serie}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="3">
+                            <h:outputLabel value="Archivo a Subir:" />
+                            <ace:fileEntry id="file-entry" 
+                                           maxFileCount="1" 
+                                           maxFileCountMessage="Máximo un archivo" 
+                                           fileEntryListener="#{custodioIncialActivosSfccbdmq.archivoListener}" 
+                                           maxFileSize="6291456" 
+                                           maxFileSizeMessage="Tamaño muy grande." 
+                                           maxTotalSize="18874368" 
+                                           maxTotalSizeMessage="Total del tamaño muy grande." 
+                                           useOriginalFilename="true" 
+                                           useSessionSubdir="true"/>
+                            <h:commandButton type="submit" value="Cargar datos"/>
+                        </h:panelGrid>
+
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-disk" 
+                                          action="#{custodioIncialActivosSfccbdmq.buscar()}"/>
+                        </ace:menuBar>
+                        <h:panelGrid columns="2" width="100%">
+                            <h:outputLabel value="Tipo de Acta:" />
+                            <h:selectOneMenu  value="#{custodioIncialActivosSfccbdmq.tipoActas}" >
+                                <f:selectItem itemLabel="---Seleccione Uno----" itemValue="3"/>
+                                <f:selectItem itemLabel="Usuario Inicial" itemValue="0"/>
+                                <f:selectItem itemLabel="Cambio de Usuario de un Responsable" itemValue="1"/>
+                                <f:selectItem itemLabel="Cambio de Usuario de varios Responsables" itemValue="2"/>
+                                <f:selectItem itemLabel="Devolución de Bienes" itemValue="4"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%"  rendered="#{custodioIncialActivosSfccbdmq.tipoActas ne 4}">
+                            <ui:include src="../BuscarEmpleado.xhtml"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="5"  rendered="#{custodioIncialActivosSfccbdmq.tipoActas ne 4}">
+                            <h:outputLabel value="Localización: "/>
+                            <h:outputLabel value="Edificio:"/>
+                            <h:selectOneMenu  value="#{oficinasSfccbdmq.edificio2}" title="Edificio">
+                                <f:selectItems value="#{edificiosSfccbdmq.comboEdificioEspacio}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Oficina:" />
+                            <h:selectOneMenu  value="#{custodioIncialActivosSfccbdmq.localizacion}" title="Oficina" id="oficina1">
+                                <f:selectItems value="#{oficinasSfccbdmq.comboOficinaEspacio2}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="5"  rendered="#{custodioIncialActivosSfccbdmq.tipoActas eq 4}">
+                            <h:outputLabel value="Localización: "/>
+                            <h:outputLabel value="Edificio:"/>
+                            <h:selectOneMenu  value="#{oficinasSfccbdmq.edificio2}" title="Edificio">
+                                <f:selectItems value="#{edificiosSfccbdmq.comboEdificioEspacioCarapungo}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Oficina:" />
+                            <h:selectOneMenu  value="#{custodioIncialActivosSfccbdmq.localizacion}" title="Oficina" id="oficina2">
+                                <f:selectItems value="#{oficinasSfccbdmq.comboOficinaEspacio2}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Nueva Estado"/>
+                            <h:selectOneMenu  value="#{custodioIncialActivosSfccbdmq.estado}" title="Estado">
+                                <f:selectItems value="#{codigosSfccbdmq.comboEstadoActivos}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Observación:" />
+                            <h:inputTextarea value="#{custodioIncialActivosSfccbdmq.observacion}" cols="80" rows="5" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="3">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar Todo" icon="ui-icon ui-icon-disk" 
+                                              action="#{custodioIncialActivosSfccbdmq.insertar()}"/>
+                                <!--                                <ace:menuItem value="Grabar Parcial" icon="ui-icon ui-icon-disk" 
+                                                                              action="#{custodioIncialActivosSfccbdmq.insertarParcial()}"/>-->
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{custodioIncialActivosSfccbdmq.salir()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <h:panelGrid columns="3">
+                            <h:commandButton action="#{custodioIncialActivosSfccbdmq.seleccionado()}" value="Pasar Seleccionados" />
+                            <h:commandButton action="#{custodioIncialActivosSfccbdmq.seleccionar()}" value="Pasar Todo" />
+                            <h:commandButton action="#{custodioIncialActivosSfccbdmq.quitar()}" value="Quitar Todo"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:splitPane  columnDivider="55"
+                                            scrollable="true"
+                                            style="width: 100%;height: 800px">
+                                <f:facet name="left">
+                                    <h:panelGrid columns="1" width="100%">
+                                        <ace:dataTable id="tablaDepActivos" 
+                                                       value="#{custodioIncialActivosSfccbdmq.activosSeleccionar2}"
+                                                       var="itemActivos"
+                                                       lazy="false"
+                                                       paginator="true"
+                                                       resizableColumns="true"
+                                                       rowIndexVar="row"
+                                                       paginatorPosition="both"
+                                                       rowsPerPageTemplate="10,15,30,50,100,200,500"
+                                                       currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                       rows="30"
+                                                       selectionMode="simple"
+                                                       binding="#{custodioIncialActivosSfccbdmq.formulario.fila}"
+                                                       >
+                                            <f:facet name="header">Activos Fijos / Bienes de control</f:facet>
+                                            <ace:column  headerText="Selec." style="text-align: left" >
+                                                <ace:checkboxButton value="#{itemActivos.escojer}">
+                                                    <ace:ajax execute="@all"/>
+                                                </ace:checkboxButton>
+                                            </ace:column>
+                                            <ace:column  headerText="Pasar" style="text-align: right">
+                                                <ace:menuBar autoSubmenuDisplay="true">
+                                                    <ace:menuItem action="#{custodioIncialActivosSfccbdmq.selecciona()}" value="" icon="ui-icon ui-icon-seek-next"/>
+                                                </ace:menuBar>
+                                            </ace:column>
+                                            <ace:column  headerText="N°" style="text-align: right">
+                                                <h:outputText  value="#{row+1}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Código"  style="text-align: left"
+                                                         sortBy="#{itemActivos.codigo}"
+                                                         filterBy="#{itemActivos.codigo}" 
+                                                         filterMatchMode="startsWith">
+                                                <h:outputText  value="#{itemActivos.codigo}"/>
+                                            </ace:column>  
+                                            <ace:column  headerText="Inventario"  style="text-align: left" 
+                                                         sortBy="#{itemActivos.inventario}"
+                                                         filterBy="#{itemActivos.inventario}" 
+                                                         filterMatchMode="startsWith">
+                                                <h:outputText  value="#{itemActivos.inventario}"/>
+                                            </ace:column>  
+                                            <ace:column  headerText="Descripción"  style="text-align: left" 
+                                                         sortBy="#{itemActivos.descripcion}"
+                                                         filterBy="#{itemActivos.descripcion}" 
+                                                         filterMatchMode="startsWith">
+                                                <h:outputText  value="#{itemActivos.descripcion}"/>
+                                            </ace:column> 
+                                            <ace:column  headerText="Serie"  style="text-align: left" 
+                                                         sortBy="#{itemActivos.numeroserie}"
+                                                         filterBy="#{itemActivos.numeroserie}" 
+                                                         filterMatchMode="startsWith">
+                                                <h:outputText  value="#{itemActivos.numeroserie}"/>
+                                            </ace:column> 
+                                            <ace:column  headerText="Usuario"  style="text-align: left" >
+                                                <h:outputText  value="#{itemActivos.custodio ne null ? itemActivos.custodio.toString() : (itemActivos.externo ne null ? itemActivos.externo.nombre : '')}"/>
+                                            </ace:column>  
+                                            <ace:column  headerText="Valor Adquisición"  style="text-align: right">
+                                                <h:outputText  value="#{itemActivos.valoralta}">
+                                                    <f:convertNumber pattern="###,##0.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                            <ace:column  headerText="Fecha Adquisición"  style="text-align: left">
+                                                <h:outputText  value="#{itemActivos.fechaingreso}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                            <ace:column  headerText="Grupo"  style="text-align: left" 
+                                                         sortBy="#{itemActivos.grupo.nombre}"
+                                                         filterBy="#{itemActivos.grupo.nombre}" 
+                                                         filterMatchMode="startsWith">
+                                                <h:outputText  value="#{itemActivos.grupo.nombre}"/>
+                                            </ace:column>  
+                                            <ace:column  headerText="Oficina"  style="text-align: left" 
+                                                         sortBy="#{itemActivos.localizacion.nombre}"
+                                                         filterBy="#{itemActivos.localizacion.nombre}" 
+                                                         filterMatchMode="startsWith">
+                                                <h:outputText  value="#{itemActivos.localizacion.nombre}"/>
+                                            </ace:column>  
+                                            <ace:column  headerText="Factura"  style="text-align: left" 
+                                                         sortBy="#{itemActivos.factura}"
+                                                         filterBy="#{itemActivos.factura}" 
+                                                         filterMatchMode="startsWith">
+                                                <h:outputText  value="#{itemActivos.factura}"/>
+                                            </ace:column>  
+                                            <ace:column  headerText="Control"  style="text-align: left">
+                                                <h:outputText  value="#{itemActivos.control?'Bien de control':'Activo Fijo'}"/>
+                                            </ace:column>  
+                                        </ace:dataTable>
+                                    </h:panelGrid>
+                                </f:facet>
+                                <f:facet name="right">
+                                    <h:panelGrid columns="1" width="100%">
+                                        <ace:dataTable id="tablaActasActivos" 
+                                                       value="#{custodioIncialActivosSfccbdmq.listadoActivos}"
+                                                       var="itemActivosActas"
+                                                       lazy="false"
+                                                       paginator="true"
+                                                       pageCount="5"
+                                                       rowIndexVar="row"
+                                                       paginatorPosition="both"
+                                                       rowsPerPageTemplate="5,10,30,50,all"
+                                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                                       paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                       rows="30"
+                                                       binding="#{custodioIncialActivosSfccbdmq.formularioActivos.fila}"
+                                                       >
+                                            <ace:ajax event="editSubmit" render="facesMsgs"/>
+                                            <f:facet name="header">Seleccionados</f:facet>
+                                            <ace:column  headerText="Retira" style="text-align: right">
+                                                <ace:menuBar autoSubmenuDisplay="true" >
+                                                    <ace:menuItem action="#{custodioIncialActivosSfccbdmq.retirar()}" icon="ui-icon ui-icon-seek-prev" />
+                                                </ace:menuBar>
+                                            </ace:column>
+                                            <ace:column  headerText="N°" style="text-align: right">
+                                                <h:outputText  value="#{row+1}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Código"  style="text-align: left"
+                                                         sortBy="#{itemActivosActas.activo.codigo}"
+                                                         filterMatchMode="contains">
+                                                <h:outputText  value="#{itemActivosActas.activo.codigo}"/>
+                                            </ace:column> 
+                                            <ace:column  headerText="Descripción"  style="text-align: left" 
+                                                         sortBy="#{itemActivos.descripcion}"
+                                                         filterMatchMode="contains">
+                                                <h:outputText  value="#{itemActivosActas.activo.descripcion}"/>
+                                            </ace:column> 
+                                            <ace:column  headerText="Serie"  style="text-align: left" 
+                                                         sortBy="#{itemActivos.numeroserie}"
+                                                         filterMatchMode="contains">
+                                                <h:outputText  value="#{itemActivosActas.activo.numeroserie}"/>
+                                            </ace:column> 
+                                            <ace:column  headerText="Valor Adquisición"  style="text-align: right">
+                                                <h:outputText  value="#{itemActivosActas.activo.valoralta}">
+                                                    <f:convertNumber pattern="###,##0.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                            <ace:column  headerText="Localidad"  style="text-align: left">
+                                                <h:outputText value="#{itemActivosActas.activo.localizacion.nombre}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Estado"  style="text-align: left">
+                                                <h:outputText value="#{itemActivosActas.activo.estado.nombre}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Usuario"  style="text-align: left" >
+                                                <h:outputText  value="#{itemActivosActas.activo.custodio ne null ? itemActivosActas.activo.custodio.toString() : (itemActivosActas.activo.externo ne null ? itemActivosActas.activo.externo.nombre : '')}"/>
+                                            </ace:column>  
+                                            <ace:column headerText="Editar">
+                                                <ace:menuBar autoSubmenuDisplay="true" >
+                                                    <ace:menuItem value="" icon="ui-icon ui-icon-pencil"  action="#{custodioIncialActivosSfccbdmq.editarActivos(itemActivosActas.activo)}"/>
+                                                </ace:menuBar>
+                                            </ace:column>
+                                        </ace:dataTable>
+                                    </h:panelGrid>
+                                </f:facet>
+                            </ace:splitPane>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:panel> 
+                <!--Imprimir Custodio Inicial-->
+                <ace:dialog 
+                    header="Imprimir Asignación de Usuario"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{actasActivosSfccbdmq.formularioImprimir.mostrar}"
+                    visible="#{actasActivosSfccbdmq.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="1">
+                            <h:commandButton  value="Imprimir">
+                                <!--<h:outputText id="printBoth" value="Imprimir"/>-->
+                                <ace:printer for="panelImprimir"/>
+                            </h:commandButton>
+                        </h:panelGrid>
+                        <ui:include src="imprimirActa.xhtml" />
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{custodioIncialActivosSfccbdmq.salir()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <!--Imprimir Cambio de  Custodio-->
+                <ace:dialog 
+                    header="Imprimir Cambio de Usuario"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{actasActivosSfccbdmq.formularioImprimirCambio.mostrar}"
+                    visible="#{actasActivosSfccbdmq.formularioImprimirCambio.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="1">
+                            <h:commandButton  value="Imprimir">
+                                <!--<h:outputText id="printBoth" value="Imprimir"/>-->
+                                <ace:printer for="panelImprimir2"/>
+                            </h:commandButton>
+                        </h:panelGrid>
+                        <ui:include src="imprimirCambioCustodio.xhtml" />
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{custodioIncialActivosSfccbdmq.salir()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <!--editar Localidad-->
+                <ace:dialog 
+                    header="Editar Localidad"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{custodioIncialActivosSfccbdmq.formularioLocalidad.mostrar}"
+                    visible="#{custodioIncialActivosSfccbdmq.formularioLocalidad.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Nueva localidad"/>
+                            <h:selectOneMenu  value="#{custodioIncialActivosSfccbdmq.nuevaLocalizacion}">
+                                <f:selectItems value="#{oficinasSfccbdmq.comboOficinaEspacio2}"/>
+                            </h:selectOneMenu>
+                            <h:outputText value="Nueva Estado"/>
+                            <h:selectOneMenu  value="#{custodioIncialActivosSfccbdmq.nuevaEstado}" title="Estado">
+                                <f:selectItems value="#{codigosSfccbdmq.comboEstadoActivos}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-close" 
+                                              action="#{custodioIncialActivosSfccbdmq.grabarActivos()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{custodioIncialActivosSfccbdmq.formularioLocalidad.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Custodio Externo"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{cambioCustodioActivosSfccbdmq.formularioExterno.mostrar}"
+                    visible="#{cambioCustodioActivosSfccbdmq.formularioExterno.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="Nombre:" />
+                            <h:inputText  value="#{cambioCustodioActivosSfccbdmq.externoEntidad.nombre}" title="Nombre" />
+                            <h:outputLabel value="Correo:" />
+                            <h:inputText  value="#{cambioCustodioActivosSfccbdmq.externoEntidad.email}" title="email" />
+                            <h:outputLabel value="Teléfonos:" />
+                            <h:inputText  value="#{cambioCustodioActivosSfccbdmq.externoEntidad.telefonos}" title="email" />
+                            <h:outputLabel value="Institución:" />
+                            <h:selectOneMenu  value="#{cambioCustodioActivosSfccbdmq.externoEntidad.institucion}">
+                                <f:selectItems value="#{codigosSfccbdmq.comboInstituciones}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Edificio:" />
+                            <h:selectOneMenu  value="#{cambioCustodioActivosSfccbdmq.externoEntidad.edificio}">
+                                <f:selectItems value="#{edificiosSfccbdmq.comboEdificioEspacioExterno}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{cambioCustodioActivosSfccbdmq.formularioExterno.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <!--Imprimir devolucion-->
+                <ace:dialog 
+                    header="Imprimir Devolución Bienes"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{actasActivosSfccbdmq.formularioDevolucion.mostrar}"
+                    visible="#{actasActivosSfccbdmq.formularioDevolucion.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="1">
+                            <h:commandButton  value="Imprimir">
+                                <!--<h:outputText id="printBoth" value="Imprimir"/>-->
+                                <ace:printer for="panelImprimir5"/>
+                            </h:commandButton>
+                        </h:panelGrid>
+                        <ui:include src="imprimirDevolucion.xhtml" />
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{actasActivosSfccbdmq.formularioDevolucion.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

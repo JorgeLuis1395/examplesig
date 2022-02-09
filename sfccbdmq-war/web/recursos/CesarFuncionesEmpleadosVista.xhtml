@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{cesarFuncionesEmpleadoSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+
+
+                    <h:panelGrid columns="2" rendered="#{!cesarFuncionesEmpleadoSfccbdmq.formulario.mostrar}">
+                        <h:outputLabel value="Empleado : " />
+                        <h:selectOneMenu value="#{empleados.empleadoSeleccionado}" >
+                            <f:selectItems  value="#{empleados.comboEmpleadosSalientes}"/>
+                        </h:selectOneMenu>
+                       
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document"
+                                          action="#{cesarFuncionesEmpleadoSfccbdmq.nuevo()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <ace:messages/>
+                    <!--</ace:panel>--> 
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                   for="panel"
+                                   blockUI="panel"
+                                   autoCenter="true"
+                                   activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Empleado: #{empleados.empleadoSeleccionado.toString()}"
+                    closable="false"
+                    toggleable="false"
+                    rendered="#{cesarFuncionesEmpleadoSfccbdmq.formulario.mostrar}">
+                    <h:panelGrid width="100%" columns="1">
+                        <ace:tabSet style="clear:both;width: 100%" clientSide="true">
+                            <ace:tabPane >
+                                <f:facet name="label">Inf. General</f:facet>
+                                <h:panelGrid columns="3">
+                                    <h:outputLabel value="Cargo Anterior:" />
+                                    <h:outputLabel value="#{cesarFuncionesEmpleadoSfccbdmq.cargoAnterior.cargo.organigrama.nombre} -"/>
+                                    <h:outputLabel value="#{cesarFuncionesEmpleadoSfccbdmq.cargoAnterior.cargo.descripcion}"/>
+                                </h:panelGrid>
+                                <h:panelGrid columns="2">
+
+                                    <h:outputLabel value="Fecha de Cesasión:"/>
+                                    <ace:dateTimeEntry navigator="true"  value="#{cesarFuncionesEmpleadoSfccbdmq.fecha}" 
+                                                       popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true"  disabled="true"
+                                                       pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </ace:dateTimeEntry>
+
+                                </h:panelGrid>
+                                <h:panelGrid columns="2">
+                                    <h:outputLabel value="R.M.U.:" />
+                                    <h:outputLabel value="#{cesarFuncionesEmpleadoSfccbdmq.rmu}">
+                                        <f:convertNumber pattern="###,##0.00"/>
+                                    </h:outputLabel>
+                                    <h:outputLabel value="Total Ingresos:" />
+                                    <h:outputLabel value="#{cesarFuncionesEmpleadoSfccbdmq.valorIngresos}">
+                                        <f:convertNumber pattern="###,##0.00"/>
+                                    </h:outputLabel>
+                                    <h:outputLabel value="Total Anticipos:" />
+                                    <h:outputLabel value="#{cesarFuncionesEmpleadoSfccbdmq.valorPrestamos}">
+                                        <f:convertNumber pattern="###,##0.00"/>
+                                    </h:outputLabel>
+                                    <h:outputLabel value="Total Multas:" />
+                                    <h:outputLabel value="#{cesarFuncionesEmpleadoSfccbdmq.multas}">
+                                        <f:convertNumber pattern="###,##0.00"/>
+                                    </h:outputLabel>
+                                    <h:outputLabel value="Total Egresos:" />
+                                    <h:outputLabel value="#{cesarFuncionesEmpleadoSfccbdmq.valorEgresos}">
+                                        <f:convertNumber pattern="###,##0.00"/>
+                                    </h:outputLabel>
+                                    <h:outputLabel value="A pagar:" />
+                                    <h:outputLabel value="#{cesarFuncionesEmpleadoSfccbdmq.valorIngresos-(cesarFuncionesEmpleadoSfccbdmq.valorEgresos)}">
+                                        <f:convertNumber pattern="###,##0.00"/>
+                                    </h:outputLabel>
+                                </h:panelGrid>
+                                <ace:splitPane columnDivider="50"
+                                               scrollable="true"
+                                               style="width: 100%;height: 50%">
+                                    <f:facet name="left">
+                                        <ace:dataTable id="tablaIngresos" 
+                                                       value="#{cesarFuncionesEmpleadoSfccbdmq.listaIngresos}"
+                                                       var="pagosIngresos"
+                                                       paginator="false"
+                                                       resizableColumns="true"
+                                                       rowIndexVar="row"
+                                                       paginatorPosition="both"
+                                                       rowsPerPageTemplate="5,10,15,50"
+                                                       paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                       >
+
+                                            <f:facet name="header">Ingresos</f:facet>
+
+                                            <ace:column  headerText="Concepto"  style="text-align: left;width: 20%" groupBy="#{pagosIngresos.concepto.toString()}" >
+                                                <h:outputText value="#{pagosIngresos.concepto.toString()}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Periodo"  style="text-align: left;width: 20%">
+                                                <h:outputText value="#{pagosIngresos.tituloTemporal}"/>
+                                            </ace:column>
+
+                                            <ace:column  headerText="Valor" style="text-align: right;width: 20%">
+                                                <h:outputText  value="#{pagosIngresos.valor}">
+                                                    <f:convertNumber pattern="###,##0.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                        </ace:dataTable>
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <ace:dataTable id="tablaEgresos" 
+                                                       value="#{cesarFuncionesEmpleadoSfccbdmq.listaEgresos}"
+                                                       var="pagosEgresos"
+                                                       paginator="false"
+                                                       resizableColumns="true"
+                                                       rowIndexVar="row"
+                                                       paginatorPosition="both"
+                                                       rowsPerPageTemplate="5,10,15,50"
+                                                       paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                       >
+
+                                            <f:facet name="header">Egresos</f:facet>
+
+                                            <ace:column  headerText="Concepto"  style="text-align: left;width: 20%" groupBy="#{pagosIngresos.concepto.toString()}">
+                                                <h:outputText value="#{pagosEgresos.concepto.toString()}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Periodo"  style="text-align: left;width: 20%">
+                                                <h:outputText value="#{pagosEgresos.tituloTemporal}"/>
+                                            </ace:column>
+
+                                            <ace:column  headerText="Valor" style="text-align: right;width: 20%">
+                                                <h:outputText  value="#{pagosEgresos.valor}">
+                                                    <f:convertNumber pattern="###,##0.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                        </ace:dataTable>
+                                    </f:facet>
+                                </ace:splitPane>
+                            </ace:tabPane>
+                            <ace:tabPane label="Historial">
+                                <h:panelGrid width="100%">
+                                    <ace:dataTable id="historial" 
+                                                   value="#{cesarFuncionesEmpleadoSfccbdmq.listaHistorial}"
+                                                   var="historial"
+                                                   paginator="true"
+                                                   resizableColumns="true"
+                                                   rowIndexVar="row"
+                                                   paginatorPosition="both"
+                                                   rowsPerPageTemplate="5,10,15,50"
+
+                                                   paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                   rows="5"
+                                                   binding="#{cesarFuncionesEmpleadoSfccbdmq.formulario.fila}">
+
+
+                                        <ace:column  headerText="Motivo"  style="text-align: left">
+                                            <h:outputText value="#{historial.motivo}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Puesto" style="text-align: left">
+                                            <h:outputText  value="#{historial.cargo.cargo.descripcion}"/>
+                                        </ace:column>
+                                        <ace:column  headerText='Proceso' style="text-align: left">
+                                            <h:outputText  value="#{historial.cargo.organigrama.nombre}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Encargo" style="text-align: left">
+                                            <h:outputText  value="#{historial.vigente}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Desde" style="text-align: left">
+                                            <h:outputText  value="#{historial.desde}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Hasta" style="text-align: left">
+                                            <h:outputText  value="#{historial.hasta}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                    </ace:dataTable>
+                                </h:panelGrid>
+
+                            </ace:tabPane>
+                            <ace:tabPane label="Adjuntos">
+                                <ui:include src="../mostrarImagenes.xhtml" />
+                            </ace:tabPane>
+                        </ace:tabSet>
+
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{cesarFuncionesEmpleadoSfccbdmq.insertar()}" rendered="#{cesarFuncionesEmpleadoSfccbdmq.formulario.nuevo}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{cesarFuncionesEmpleadoSfccbdmq.formulario.cancelar()}" />
+                        </ace:menuBar>
+                        <ace:dynamicResource fileName="Finiquito.pdf" id="pdf-buttonxx" label="Generar PDF"
+                                             mimeType="application/pdf" 
+                                             rendered="#{cesarFuncionesEmpleadoSfccbdmq.recurso!=null}"
+                                             resource="#{cesarFuncionesEmpleadoSfccbdmq.recurso}" 
+                                             style="" type="button"/>
+                        <ace:messages/>
+                    </h:panelGrid>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

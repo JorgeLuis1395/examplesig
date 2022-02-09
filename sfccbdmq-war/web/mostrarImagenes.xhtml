@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:panelGrid columns="2">
+        <h:outputText value="Tipo:" styleClass="bold"/>
+        <h:selectOneMenu  value="#{imagenesSfccbdmq.tipo}" >
+            <f:selectItems value="#{codigosSfccbdmq.comboTipoArchivos}"/>
+        </h:selectOneMenu>
+        <ace:fileEntry 
+            relativePath="/files/"
+            maxFileCount="1"
+            maxFileCountMessage="Sólo se puede subir 1 archivo"
+            fileEntryListener="#{imagenesSfccbdmq.imagenListener}"
+            maxFileSizeMessage="El archivo supera el tamaño predefinido 10 MB"                                                                                                                 
+            useOriginalFilename="true"
+            autoUpload="true"
+            useSessionSubdir="true" />
+        <!--<h:commandButton  type="submit" value="Subir Adjunto" />-->
+    </h:panelGrid>
+    <h:panelGrid width="60%" >
+        <ace:dataTable  
+            value="#{imagenesSfccbdmq.imagenes}"
+            var="itemAdjunto"
+            >
+            <f:facet name="header">Adjuntos</f:facet>
+            <ace:column style="text-align: left">
+                <ace:menuButton  effect="slide" effectDuration="200" value="..." >
+                    <ace:menuItem action="#{imagenesSfccbdmq.verImagen(itemAdjunto)}" value="Editar" icon="ui-icon ui-icon-search"/>
+                    <ace:menuItem action="#{imagenesSfccbdmq.borrarImagen(itemAdjunto)}" value="Borrar" icon="ui-icon ui-icon-trash" />
+                </ace:menuButton>
+            </ace:column>      
+            <ace:column  headerText="Fecha Ingreso"  style="text-align: left">
+                <h:outputText  value="#{itemAdjunto.fechaingreso}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputText>
+            </ace:column>
+            <ace:column  headerText="Archivo"  style="text-align: left">
+                <h:outputText  value="#{itemAdjunto.nombre}"/>
+            </ace:column>
+            <ace:column  headerText="Tipo"  style="text-align: left">
+                <h:outputText  value="#{itemAdjunto.tipo}"/>
+            </ace:column>
+        </ace:dataTable>
+    </h:panelGrid>
+    <ace:dialog header="Descargar documento" modal="false" closable="false" 
+                visible="#{imagenesSfccbdmq.formularioAdjunto.mostrar}" 
+                rendered="#{imagenesSfccbdmq.formularioAdjunto.mostrar}">
+        <h:panelGrid columns="2" width="100%">
+
+            <h:panelGrid columns="2"> 
+
+                <h:outputText value="Archivo:" styleClass="bold"/>
+                <h:outputText value="#{imagenesSfccbdmq.adjunto.nombre}"/>
+                <ace:dynamicResource fileName="#{imagenesSfccbdmq.adjunto.nombre}" 
+                                     attachment="false" 
+                                     label="Descargar documento"
+                                     resource="#{imagenesSfccbdmq.archivoAnexo}" 
+                                     type="button"/>
+                <h:outputText value=" "/>
+                <ace:menuBar>
+                    <ace:menuItem value="Cerrar" icon="ui-icon ui-icon-close" 
+                                  action="#{imagenesSfccbdmq.formularioAdjunto.cancelar()}"/>
+                </ace:menuBar>
+            </h:panelGrid>
+        </h:panelGrid>
+        <ace:messages/>
+    </ace:dialog>
+
+</html>

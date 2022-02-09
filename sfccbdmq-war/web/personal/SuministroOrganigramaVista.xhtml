@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaPersonal.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="Aprobar suministros"
+                           closable="false"
+                           toggleable="false"  >
+                    <h:panelGrid columns="6" rendered="#{!aprobarSuministroEmpleado.formulario.mostrar}">
+                        <h:outputLabel value="Año :"  />
+                        <h:inputText value="#{aprobarSuministroEmpleado.anio}"/>
+
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{aprobarSuministroEmpleado.buscar()}" rendered="#{!aprobarSuministroEmpleado.formulario.mostrar}" />
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{aprobarSuministroEmpleado.grabar()}" rendered="#{aprobarSuministroEmpleado.formulario.mostrar}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{aprobarSuministroEmpleado.cancelar()}" rendered="#{aprobarSuministroEmpleado.formulario.mostrar}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable 
+                            value="#{aprobarSuministroEmpleado.listaEmpleadosuministros}"
+                            var="novedadItem"
+                            >
+                            <ace:column  headerText="Suministro"  style="text-align: left">
+                                <h:outputText value="#{novedadItem.suministro.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Unidad de medida"  style="text-align: left">
+                                <h:outputText value="#{novedadItem.suministro.unidad.equivalencia}"/>
+                            </ace:column>
+                            <ace:column  headerText="Cantidad Solicitada" style="text-align: right">
+                                <h:outputText   value="#{novedadItem.cantidad}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Cantidad Solicitada Inv." style="text-align: right">
+                                <h:outputText   value="#{novedadItem.cantidadinv}">
+                                     <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Explicación" style="text-align: left">
+                                <h:outputText   value="#{novedadItem.explicacion}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{aprobarSuministroEmpleado.buscar()}" rendered="#{!aprobarSuministroEmpleado.formulario.mostrar}" />
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{aprobarSuministroEmpleado.grabar()}" rendered="#{aprobarSuministroEmpleado.formulario.mostrar}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{aprobarSuministroEmpleado.cancelar()}" rendered="#{aprobarSuministroEmpleado.formulario.mostrar}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <ace:messages/>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

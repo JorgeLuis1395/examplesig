@@ -1,0 +1,195 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{reporteProveedorSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <ui:include src="../BuscarProveedor.xhtml" />
+
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteProveedorSfccbdmq.buscar()}"/>
+                        </ace:menuBar>
+                        <ace:dynamicResource fileName="Proveedor.pdf" id="pdf-buttonxx" label="Generar PDF"
+                                             mimeType="application/pdf" 
+                                             rendered="#{reporteProveedorSfccbdmq.recurso!=null}"
+                                             resource="#{reporteProveedorSfccbdmq.recurso}" 
+                                             style="" type="button"/>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                </ace:panel>
+                <ace:panel id="panelImprimir"
+                           header="Contrato"
+                           closable="false"
+                           toggleable="false"
+                           >
+                    <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+                    <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                        <h:outputText value="Usuario :"/>
+                        <h:outputText value="#{parametrosSfccbdmq.logueado.userid}"/>
+                        <h:outputText value="Fecha :"/>
+                        <h:outputText value="#{parametrosSfccbdmq.fechaActual}">
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                        </h:outputText>
+                    </h:panelGrid>
+
+
+                    <h:panelGrid width="100%">
+                        <h:panelGrid columns="2" style="text-align: left" width="100%">
+                            <h:outputText  value="Còdigo :"/>
+                            <h:outputText  value=" #{proveedoresSfccbdmq.proveedor.codigo}"/>
+                            <h:outputText  value="Nombre:"/>
+                            <h:outputText  value=" #{proveedoresSfccbdmq.proveedor.empresa.nombre}"/>
+                            <h:outputText  value="Razon Social:"/>
+                            <h:outputText  value="#{proveedoresSfccbdmq.proveedor.empresa.nombrecomercial}"/>
+                            <h:outputText value="R.U.C.:"/>
+                            <h:outputText  value="#{proveedoresSfccbdmq.proveedor.empresa.ruc}"/>
+                        </h:panelGrid>
+                        <ace:dataTable id="tablaCert" 
+                                       value="#{reporteProveedorSfccbdmq.certificaciones}"
+                                       var="itemCertificacion"
+                                       >
+                            <f:facet name="header">Certificaciones</f:facet>
+                            <ace:column  headerText="Nro."  style="text-align: left">
+                                <h:outputText  value="#{itemCertificacion.id}"/>
+                            </ace:column>
+                            <ace:column  headerText="Fecha"  style="text-align: left">
+                                <h:outputText  value="#{itemCertificacion.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Concepto"  style="text-align: left">
+                                <h:outputText  value="#{itemCertificacion.motivo}"/>
+                            </ace:column>
+                            <ace:column  headerText="Valor"  style="text-align: right">
+                                <h:outputText  value="#{itemCertificacion.monto}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+
+                        </ace:dataTable>
+                        <ace:dataTable id="tabla2" 
+                                       value="#{reporteProveedorSfccbdmq.compromisos}"
+                                       var="itemCompromiso"
+                                       >
+                            <f:facet name="header">Compromisos</f:facet>
+                            <ace:column  headerText="Nro."  style="text-align: left">
+                                <h:outputText  value="#{itemCompromiso.id}"/>
+                            </ace:column>
+                            <ace:column  headerText="Fecha"  style="text-align: left">
+                                <h:outputText  value="#{itemCompromiso.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Concepto"  style="text-align: left">
+                                <h:outputText  value="#{itemCompromiso.motivo}"/>
+                            </ace:column>
+
+
+                            <ace:column  headerText="Valor"  style="text-align: right">
+                                <h:outputText  value="#{itemCompromiso.total}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Saldo"  style="text-align: right">
+                                <h:outputText  value="#{itemCompromiso.saldo}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>
+                        <ace:dataTable  value="#{reporteProveedorSfccbdmq.obligaciones}" var="item">
+                            <f:facet name="header">Obligaciones</f:facet>
+                            <ace:column  headerText="Fecha"  style="text-align: left">
+                                <h:outputText  value="#{item.fechaemision}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Concepto" style="text-align: left">
+                                <h:outputText  value="#{item.concepto}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nro Compromiso" style="text-align: left">
+                                <h:outputText  value="#{item.noCompromiso}"/>
+                            </ace:column>
+                            <ace:column  headerText="Tipo documento" style="text-align: left">
+                                <h:outputText  value="#{item.tipodocumento.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Número" style="text-align: left">
+                                <h:outputText  value="#{item.documento}"/>
+                            </ace:column>
+                            <ace:column  headerText="Moto" style="text-align: right">
+                                <h:outputText  value="#{item.monto}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column> 
+                            <ace:column  headerText="No Retención" style="text-align: left">
+                                <h:outputText  value="#{item.numeror}"/>
+                            </ace:column>
+                            <ace:column  headerText="Valor Ret." style="text-align: right">
+                                <h:outputText  value="#{item.valorRetenciones}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column> 
+                        </ace:dataTable>
+                        <ace:dataTable value="#{reporteProveedorSfccbdmq.pagos}" var="itemPagos">
+                            <f:facet name="header">Pagos</f:facet>
+                            <ace:column  headerText="Fecha" style="text-align: left">
+                                <h:outputText  value="#{itemPagos.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>  
+                            <ace:column  headerText="Comprobante de egreso" style="text-align: left">
+                                <h:outputText  value="#{itemPagos.kardexbanco.egreso}"/>
+                            </ace:column>
+                            <ace:column  headerText="No SPI" style="text-align: left">
+                                <h:outputText  value="#{itemPagos.kardexbanco.spi.id}"/>
+                            </ace:column>
+                            <ace:column  headerText="Concepto" style="text-align: left">
+                                <h:outputText  value="#{itemPagos.kardexbanco.observaciones}"/>
+                            </ace:column>
+                            <ace:column  headerText="Valor" style="text-align: right">
+                                <h:outputText  value="#{itemPagos.valor}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>  
+                            <ace:column  headerText="Usuario" style="text-align: left">
+                                <h:outputText  value="#{itemAvance.usuario}"/>
+                            </ace:column>
+                        </ace:dataTable>
+
+                    </h:panelGrid>
+
+                </ace:panel>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

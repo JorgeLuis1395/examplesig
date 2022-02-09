@@ -1,0 +1,361 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+
+                <ace:panel id="panel"
+                           header="#{liquidacionViaticosReembolsoSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGroup>
+
+                        <h:panelGrid columns="2" width="100%">
+                            <h:outputLabel value="Empleado:" />
+                            <h:selectOneMenu  value="#{liquidacionViaticosReembolsoSfccbdmq.viaticoEmpleado}" >
+                                <f:selectItems value="#{liquidacionViaticosReembolsoSfccbdmq.comboEmpleadosViaticosDirecto}"/>
+                                <ace:ajax execute="@all" />
+                            </h:selectOneMenu>
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Reembolso" icon="ui-icon ui-icon-document" 
+                                              action="#{liquidacionViaticosReembolsoSfccbdmq.modificar()}"/>
+                                <ace:menuItem value="Regresar a Validar" icon="ui-icon ui-icon-document" 
+                                              action="#{liquidacionViaticosReembolsoSfccbdmq.regresar()}"/>
+                            </ace:menuBar>
+                            <ace:submitMonitor id="submitMonitorPanel"
+                                               for="panel"
+                                               blockUI="@all"
+                                               autoCenter="true"
+                                               activeLabel="Un Momento por favor"/>
+                        </h:panelGrid>
+
+                    </h:panelGroup>
+                    <!--dialogo para editar cada linea-->
+                    <ace:dialog 
+                        header="Liquidar Viático"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{liquidacionViaticosReembolsoSfccbdmq.formulario.mostrar}"
+                        visible="#{liquidacionViaticosReembolsoSfccbdmq.formulario.mostrar}">
+                        <h:panelGroup>
+                            <ace:tabSet style="clear:both;" >
+                                <ace:tabPane label="Información General">
+                                    <h:panelGrid width="100%">
+                                        <h:panelGrid columns="4" style="width: 100%" >
+                                            <h:outputLabel value="Detalle : "/>
+                                            <h:outputText value="#{liquidacionViaticosReembolsoSfccbdmq.viaticoEmpleado.toString()}" />
+                                            <h:outputLabel value="Valor viaticos asignado : "/>
+                                            <h:outputText  value="#{liquidacionViaticosReembolsoSfccbdmq.viaticoEmpleado.valor}">
+                                                <f:convertNumber pattern="###,###,##0.00"/>
+                                            </h:outputText>
+                                        </h:panelGrid>
+                                        <h:panelGrid columns="4" style="width: 100%" >
+                                            <h:outputLabel value="Fecha Movimiento:"/>
+                                            <ace:dateTimeEntry navigator="true" id="fechaMovimiento" value="#{liquidacionViaticosReembolsoSfccbdmq.fecha}" 
+                                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </ace:dateTimeEntry>
+                                        </h:panelGrid> 
+                                        <h:panelGrid width="100%">
+                                            <ace:dataTable id="detalle" 
+                                                           value="#{liquidacionViaticosReembolsoSfccbdmq.listaDetalles}"
+                                                           var="detalle"
+                                                           paginator="true"
+                                                           resizableColumns="true"
+                                                           rowIndexVar="row"
+                                                           paginatorPosition="both"
+                                                           rowsPerPageTemplate="5,10,15,50"
+                                                           paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                           rows="5"
+                                                           binding="#{liquidacionViaticosReembolsoSfccbdmq.formulario.fila}">
+                                                <ace:row condition="group" groupBy="#{detalle.tipo}" pos="before" styleClass="tipo">
+                                                    <ace:column colspan="10"  >
+                                                        #{detalle.tipo eq true ? 'HOSPEDAJE':'ALIMENTACIÓN'}
+                                                    </ace:column>
+                                                </ace:row>
+                                                <ace:column  headerText="Tipo Consumo" style="text-align: left">
+                                                    <h:outputText value="#{detalle.tipo==true ? 'HOSPEDAJE' : 'ALIMENTACIÓN'}" />
+                                                </ace:column>
+                                                <ace:column  headerText='Fecha'   style="text-align: left">
+                                                    <h:outputText  value="#{detalle.fecha}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                    </h:outputText>
+                                                </ace:column>
+                                                <ace:column  headerText="Lugar" style="text-align: left">
+                                                    <h:outputText value="#{detalle.lugar}"/>
+                                                </ace:column>
+                                                <ace:column  headerText="Tipo comprobante" style="text-align: left">
+                                                    <h:outputText value="#{detalle.tipocomprobante}"/>
+                                                </ace:column>
+                                                <ace:column  headerText="N° Comprobante" style="text-align: left">
+                                                    <h:outputText value="#{detalle.nrocomprobante}"/>
+                                                </ace:column>
+                                                <ace:column  headerText="Proveedor" style="text-align: left">
+                                                    <h:outputText value="#{detalle.proveedor}"/>
+                                                </ace:column>
+                                                <ace:column  headerText="Valor" style="text-align: left">
+                                                    <h:outputText  value="#{detalle.valor}">
+                                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                                    </h:outputText>
+                                                </ace:column>
+                                                <ace:column  headerText="Valor Validado" style="text-align: left">
+                                                    <h:outputText  value="#{detalle.valorvalidado}">
+                                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                                    </h:outputText>
+                                                </ace:column>
+                                                <ace:column  headerText="Detalle Validado" style="text-align: left">
+                                                    <h:outputText  value="#{detalle.detallevalidado}" />
+                                                </ace:column>
+                                                <ace:column  headerText="Validado" style="text-align: left">
+                                                    <h:outputText value="#{detalle.validado==true ? 'VALIDADO' : 'PENDIENTE'}" />
+                                                </ace:column>
+                                            </ace:dataTable>
+                                        </h:panelGrid>
+                                    </h:panelGrid>
+                                </ace:tabPane>
+                                <ace:tabPane label="Contabilización">
+                                    <h:panelGrid columns="1" width="100%">
+                                        <ace:dataTable 
+                                            value="#{liquidacionViaticosReembolsoSfccbdmq.listaReglonesPreliminar}"
+                                            var="itemRasInt"
+                                            >
+                                            <ace:column  headerText="Cuenta"  style="text-align: left">
+                                                <h:outputText  value="#{itemRasInt.cuenta}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Nombre"  style="text-align: left">
+                                                <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemRasInt.cuenta).nombre}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Auxiliar"  style="text-align: left">
+                                                <h:outputText  value="#{proveedoresSfccbdmq.taerRuc(itemRasInt.auxiliar)}" rendered="#{proveedoresSfccbdmq.taerRuc(itemRasInt.auxiliar)!=null}"/>
+                                                <h:outputText  value="#{empleados.traerCedula(itemRasInt.auxiliar)}" rendered="#{empleados.traerCedula(itemRasInt.auxiliar)!=null}"/>
+                                                <h:outputText  value="#{itemRasInt.auxiliar}" rendered="#{empleados.traerCedula(itemRasInt.auxiliar)==null and proveedoresSfccbdmq.taerRuc(itemRasInt.auxiliar)==null}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Referencia"  style="text-align: left">
+                                                <h:outputText  value="#{itemRasInt.referencia}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Débitos" style="text-align: right">
+                                                <h:outputText  value="#{itemRasInt.positivos}" >
+                                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                            <ace:column  headerText="Créditos" style="text-align: right">
+                                                <h:outputText  value="#{itemRasInt.negativos}" >
+                                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                        </ace:dataTable>
+                                    </h:panelGrid>
+                                </ace:tabPane>
+                                <ace:tabPane >
+                                    <f:facet name="label">Liquidación / Factura</f:facet>
+                                    <h:panelGrid columns="2" width="100%">
+                                        <h:outputLabel value="Tipo de Documento:" for="tipo" />
+                                        <h:selectOneMenu value="#{liquidacionViaticosReembolsoSfccbdmq.reposicion.documento}" title="Tipo" >
+                                            <f:selectItems value="#{codigosSfccbdmq.comboDocumentos}"/>
+                                            <ace:ajax execute="@all"/>
+                                        </h:selectOneMenu>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="3" width="100%"  rendered="#{liquidacionViaticosReembolsoSfccbdmq.reposicion.documento.codigo eq 'FACT'}">
+                                        <h:outputLabel value="Autorizaciones :"/>
+                                        <h:selectOneMenu  value="#{liquidacionViaticosReembolsoSfccbdmq.autorizacion2}" id="autorizacion">
+                                            <f:selectItems value="#{liquidacionViaticosReembolsoSfccbdmq.comboAutorizaciones2}"/>
+                                            <ace:ajax execute="@all"/>
+                                        </h:selectOneMenu>
+                                        <h:commandButton value="Nueva Autorización" action="#{liquidacionViaticosReembolsoSfccbdmq.crearAutorizacion()}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" width="100%" >
+                                        <h:outputLabel value="Número de Documento :"/>
+                                        <h:inputText  value="#{liquidacionViaticosReembolsoSfccbdmq.reposicion.numerodocumento}"/>
+                                        <h:outputLabel value="Fecha:"/>
+                                        <ace:dateTimeEntry navigator="true"
+                                                           value="#{liquidacionViaticosReembolsoSfccbdmq.reposicion.fecha}" 
+                                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </ace:dateTimeEntry>
+                                        <h:outputLabel value="Base Imponible 0:" />
+                                        <h:inputText  value="#{liquidacionViaticosReembolsoSfccbdmq.reposicion.base0}" />
+
+                                        <h:outputLabel value="Base Imponible :" />
+                                        <h:inputText  value="#{liquidacionViaticosReembolsoSfccbdmq.reposicion.base}" >
+                                            <ace:ajax execute="@all"/>
+                                        </h:inputText>
+                                        <h:outputLabel  value="Impuesto :"/>
+                                        <h:selectOneMenu value="#{liquidacionViaticosReembolsoSfccbdmq.impuesto}" >
+                                            <f:selectItems value="#{impuestosSfccbdmq.comboImpuestos}"/>
+                                            <ace:ajax execute="@all"/>
+                                        </h:selectOneMenu>
+
+                                        <h:outputLabel value="IVA :" />
+                                        <h:panelGrid columns="3" width="50%" style="text-align: left">
+                                            <h:outputLabel value="#{liquidacionViaticosReembolsoSfccbdmq.reposicion.ajuste/100+(liquidacionViaticosReembolsoSfccbdmq.reposicion.base*
+                                                                    liquidacionViaticosReembolsoSfccbdmq.impuesto.porcentaje/100)}">
+                                                <f:convertNumber pattern="###,##0.00"/>
+                                            </h:outputLabel>
+                                            <h:commandButton value="+" action="#{liquidacionViaticosReembolsoSfccbdmq.sube()}"/>
+                                            <h:commandButton value="-" action="#{liquidacionViaticosReembolsoSfccbdmq.baja()}"/>
+                                        </h:panelGrid>
+                                        <h:outputLabel value="Sucursal de emisión :" rendered="#{liquidacionViaticosReembolsoSfccbdmq.reposicion.documento.codigo ne 'FACT'}"/>
+                                        <h:selectOneMenu  value="#{liquidacionViaticosReembolsoSfccbdmq.sucursal}" rendered="#{liquidacionViaticosReembolsoSfccbdmq.reposicion.documento.codigo ne 'FACT'}">
+                                            <f:selectItems value="#{liquidacionViaticosReembolsoSfccbdmq.comboSucursales}"/>
+                                            <ace:ajax execute="@all"/>
+                                        </h:selectOneMenu>
+                                        <h:outputLabel value="Punto de emisión :" rendered="#{liquidacionViaticosReembolsoSfccbdmq.reposicion.documento.codigo ne 'FACT'}"/>
+                                        <h:selectOneMenu  value="#{liquidacionViaticosReembolsoSfccbdmq.puntoemision}" rendered="#{liquidacionViaticosReembolsoSfccbdmq.reposicion.documento.codigo ne 'FACT'}">
+                                            <f:selectItems value="#{liquidacionViaticosReembolsoSfccbdmq.comboPuntoemision}"/>
+                                            <ace:ajax execute="@all"/>
+                                        </h:selectOneMenu>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" width="100%">
+                                        <h:outputLabel value="Descripción:" />
+                                        <h:inputTextarea cols="60" rows="6" value="#{liquidacionViaticosReembolsoSfccbdmq.reposicion.descripcion}"/>
+                                    </h:panelGrid>
+                                </ace:tabPane>
+                            </ace:tabSet>
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-document" 
+                                                  action="#{liquidacionViaticosReembolsoSfccbdmq.insertar()}"/>
+
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{liquidacionViaticosReembolsoSfccbdmq.formulario.cancelar()}"/>
+                                </ace:menuBar>
+                            </h:panelGrid>
+
+                        </h:panelGroup>
+                    </ace:dialog>
+                    <ace:dialog 
+                        header="Imprimir"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{liquidacionViaticosReembolsoSfccbdmq.formularioReportes.mostrar}"
+                        visible="#{liquidacionViaticosReembolsoSfccbdmq.formularioReportes.mostrar}">
+                        <h:panelGroup>
+                            <ace:dynamicResource fileName="Reembolso.pdf"  label="Liquidacion PDF"
+                                                 mimeType="application/pdf" 
+                                                 rendered="#{liquidacionViaticosReembolsoSfccbdmq.reporte!=null}"
+                                                 resource="#{liquidacionViaticosReembolsoSfccbdmq.reporte}" 
+                                                 style="" type="button"/>
+                            <ace:dynamicResource fileName="Compromiso.pdf"  label="Compromiso PDF"
+                                                 mimeType="application/pdf" 
+                                                 rendered="#{liquidacionViaticosReembolsoSfccbdmq.reporteComp!=null}"
+                                                 resource="#{liquidacionViaticosReembolsoSfccbdmq.reporteComp}" 
+                                                 style="" type="button"/>
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{liquidacionViaticosReembolsoSfccbdmq.formularioReportes.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                    <ace:dialog 
+                        header="Autorización"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{liquidacionViaticosReembolsoSfccbdmq.formularioAuto.mostrar}"
+                        visible="#{liquidacionViaticosReembolsoSfccbdmq.formularioAuto.mostrar}">
+                        <h:panelGroup>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Tipo de Documento:" for="tipo" />
+                                <h:selectOneMenu id="tipo" value="#{liquidacionViaticosReembolsoSfccbdmq.autorizacionProveedor.tipodocumento}" title="Tipo" >
+                                    <f:selectItems value="#{codigosSfccbdmq.comboDocumentos}"/>
+                                </h:selectOneMenu>
+                                <h:outputLabel value="Autorización:"/>
+                                <h:inputText value="#{liquidacionViaticosReembolsoSfccbdmq.autorizacionProveedor.autorizacion}" title="Autorizacion">
+                                    <f:validateLength maximum="10" minimum="10"/>
+                                </h:inputText>
+                                <h:outputLabel value="Sucursal/establecimiento:"/>
+                                <h:inputText value="#{liquidacionViaticosReembolsoSfccbdmq.autorizacionProveedor.establecimiento}" title="Serie Inicial" size="3">
+                                    <f:validateLength maximum="3" minimum="3"/>
+                                </h:inputText>
+                                <h:outputLabel value="Punto emisión:"/>
+                                <h:inputText value="#{liquidacionViaticosReembolsoSfccbdmq.autorizacionProveedor.puntoemision}" title="Serie Inicial" size="3">
+                                    <f:validateLength maximum="3" minimum="3"/>
+                                </h:inputText>
+                                <h:outputLabel value="Serie Inicial:"/>
+                                <h:inputText value="#{liquidacionViaticosReembolsoSfccbdmq.autorizacionProveedor.inicio}" title="Serie Inicial" />
+                                <h:outputLabel value="Serie Final:"/>
+                                <h:inputText value="#{liquidacionViaticosReembolsoSfccbdmq.autorizacionProveedor.fin}" title="Serie Inicial" />
+                                <h:outputLabel value="Fecha de Emisión:" />
+                                <ace:dateTimeEntry navigator="true" id="fecha" value="#{liquidacionViaticosReembolsoSfccbdmq.autorizacionProveedor.fechaemision}" 
+                                                   popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </ace:dateTimeEntry>
+                                <h:outputLabel value="Fecha de Vencimiento :" />
+                                <ace:dateTimeEntry navigator="true"  value="#{liquidacionViaticosReembolsoSfccbdmq.autorizacionProveedor.fechacaducidad}" 
+                                                   popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </ace:dateTimeEntry>
+                            </h:panelGrid>
+
+                        </h:panelGroup>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"
+                                              action="#{liquidacionViaticosReembolsoSfccbdmq.insertarAutorizacion()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{liquidacionViaticosReembolsoSfccbdmq.formularioAuto.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                            <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                        </h:panelGrid>
+                    </ace:dialog>
+                    <ace:dialog 
+                        header="Borrar Liquidacion"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{liquidacionViaticosReembolsoSfccbdmq.formularioRegresar.mostrar}"
+                        visible="#{liquidacionViaticosReembolsoSfccbdmq.formularioRegresar.mostrar}">
+                        <h:panelGroup>
+                            <h:panelGrid>
+                                <h:outputLabel value="¿Está seguro de regresar el Viático a validar? "/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="2" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                                  action="#{liquidacionViaticosReembolsoSfccbdmq.grabarRegresar()}"/>
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{liquidacionViaticosReembolsoSfccbdmq.formularioRegresar.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

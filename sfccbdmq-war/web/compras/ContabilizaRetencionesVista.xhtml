@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{contabilizaRetencionesSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+
+                    <h:panelGrid columns="4" >
+                        <h:outputText value="Mes" />
+                        <h:inputText value="#{contabilizaRetencionesSfccbdmq.mes}"/>
+                        <h:outputText value="Año:" />
+                        <h:inputText value="#{contabilizaRetencionesSfccbdmq.anio}"/>
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{contabilizaRetencionesSfccbdmq.buscarNuevo()}" rendered="#{!contabilizaRetencionesSfccbdmq.formulario.mostrar}" />
+                            <ace:menuItem value="Grabar Renta" icon="ui-icon ui-icon-disk"  action="#{contabilizaRetencionesSfccbdmq.grabar()}" rendered="#{contabilizaRetencionesSfccbdmq.formulario.nuevo}" />
+                            <ace:menuItem value="Grabar Iva" icon="ui-icon ui-icon-disk"  action="#{contabilizaRetencionesSfccbdmq.grabarIva()}" rendered="#{contabilizaRetencionesSfccbdmq.formulario.nuevo}" />
+                            <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash"  action="#{contabilizaRetencionesSfccbdmq.borrar()}" rendered="#{contabilizaRetencionesSfccbdmq.formulario.borrar}" />
+                            <!--<ace:menuItem value="Imprimir Asiento Retención" icon="ui-icon ui-icon-print" action="#{contabilizaRetencionesSfccbdmq.imprimeRetencion()}" rendered="#{contabilizaRetencionesSfccbdmq.renglones.size()>0}" />-->
+                            <!--<ace:menuItem value="Imprimir Asiento Retención Iva" icon="ui-icon ui-icon-print" action="#{contabilizaRetencionesSfccbdmq.imprimeReteImp()}" rendered="#{contabilizaRetencionesSfccbdmq.renglonesIva.size()>0}" />-->
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{contabilizaRetencionesSfccbdmq.cancelar()}" rendered="#{contabilizaRetencionesSfccbdmq.formulario.mostrar}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                        <!--                        <ace:submitMonitor id="submitMonitorPanel"
+                                                                   for="panel"
+                                                                   blockUI="panel"
+                                                                   autoCenter="true"
+                                                                   activeLabel="Un Momento por favor"/>-->
+                    </h:panelGrid>
+                    <!--                    <h:panelGrid columns="1" >
+                                            <h:outputText value="Observaciones" rendered="#{contabilizaRetencionesSfccbdmq.formulario.nuevo}"/>
+                                            <ace:textAreaEntry cols="60" rows="4" value="#{contabilizaRetencionesSfccbdmq.observaciones}" rendered="#{contabilizaRetencionesSfccbdmq.formulario.nuevo}"/>
+                                        </h:panelGrid>-->
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+
+
+
+
+                    <ace:tabSet style="clear:both;" rendered="#{contabilizaRetencionesSfccbdmq.formulario.nuevo}">
+                        <ace:tabPane >
+                            <f:facet name="label">Asiento Retenciones</f:facet>
+                            <!--                            <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                                            <h:outputLabel  value="Exportar a:"/>
+                                                            <h:selectOneRadio  value="#{contabilizaRetencionesSfccbdmq.formulario.pantalla}" required="true">
+                                                                <f:ajax disabled="false"/>
+                                                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                                            </h:selectOneRadio>
+                                                            <ace:dataExporter id="dataExporter" 
+                                                                              label="Exportar Archivo" 
+                                                                              type="#{contabilizaRetencionesSfccbdmq.formulario.pantalla}" 
+                                                                              target="tablaRolesResumido" fileName="datos"/>
+                                                        </h:panelGrid>-->
+                            <h:panelGrid width="100%">
+                                <ace:dataTable  id="tablaRolesResumido"
+                                                value="#{contabilizaRetencionesSfccbdmq.renglones}"
+                                                var="itemRenglonesResumido"
+                                                paginator="false"
+                                                lazy="false"
+                                                resizableColumns="true"
+                                                rowIndexVar="row"
+                                                paginatorPosition="both"
+                                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                >
+                                    <f:facet name="header">Total Renta:
+                                        <h:outputText  value="#{contabilizaRetencionesSfccbdmq.totalRenta}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </f:facet>
+
+                                    <ace:column  headerText="Cuenta"  style="text-align: left">
+                                        <h:outputText  value="#{itemRenglonesResumido.cuenta}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="N. Cuenta"  style="text-align: left">
+                                        <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemRenglonesResumido.cuenta).nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Debe" style="text-align: right" >
+                                        <h:outputText  value="#{itemRenglonesResumido.valor}" rendered="#{asientosSfccbdmq.isCredito(itemRenglonesResumido.valor)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Haber" style="text-align: right" >
+                                        <h:outputText  value="#{itemRenglonesResumido.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemRenglonesResumido.valor)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane >
+                            <f:facet name="label">Asiento Retenciones IVA</f:facet>
+
+                            <h:panelGrid width="100%">
+                                <ace:dataTable  id="tablaRoles"
+                                                value="#{contabilizaRetencionesSfccbdmq.renglonesIva}"
+                                                var="itemRenglones"
+                                                paginator="false"
+                                                lazy="false"
+                                                resizableColumns="true"
+                                                rowIndexVar="row"
+                                                paginatorPosition="both"
+                                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                >
+                                    <f:facet name="header">Total IVA:
+                                        <h:outputText  value="#{contabilizaRetencionesSfccbdmq.totalIva}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </f:facet> 
+
+                                    <ace:column  headerText="Cuenta"  style="text-align: left">
+                                        <h:outputText  value="#{itemRenglones.cuenta}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="N. Cuenta"  style="text-align: left">
+                                        <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemRenglones.cuenta).nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Debe" style="text-align: right" >
+                                        <h:outputText  value="#{itemRenglones.valor}" rendered="#{asientosSfccbdmq.isCredito(itemRenglones.valor)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Haber" style="text-align: right" >
+                                        <h:outputText  value="#{itemRenglones.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemRenglones.valor)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+
+                    </ace:tabSet>
+                    <!--pagoo con bancos-->
+                    <ace:dialog 
+                        header="#{contabilizaRetencionesSfccbdmq.perfil.menu.texto}"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        rendered="#{contabilizaRetencionesSfccbdmq.formularioBanco.modificar}"
+                        visible="#{contabilizaRetencionesSfccbdmq.formularioBanco.modificar}">
+
+                        <h:panelGrid columns="4">
+                            <h:outputText value="Tipo de Movimiento Bancario:"/>
+                            <h:selectOneMenu value="#{contabilizaRetencionesSfccbdmq.kardexIva.tipomov}" title="Tipo de Movimiento">
+                                <f:selectItems value="#{tipoMovBancosSfccbdmq.comboObligacionesBancos}"/>
+                            </h:selectOneMenu>
+                            <h:outputText value="Banco:"/>
+                            <h:selectOneMenu value="#{contabilizaRetencionesSfccbdmq.kardexIva.banco}" title="Banco" >
+                                <f:selectItems value="#{bancosSfccbdmq.comboBancosf}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputText value="Forma de pago:"/>
+                            <h:selectOneMenu value="#{contabilizaRetencionesSfccbdmq.kardexIva.formapago}" title="Formapago">
+                                <f:selectItems value="#{codigosSfccbdmq.comboFormaDePago}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputText value="Valor : "/>
+                            <h:outputText value="#{contabilizaRetencionesSfccbdmq.kardexIva.valor}">
+                                <f:convertNumber pattern="###,##0.00"/>
+                            </h:outputText>
+                            <!--                            <h:outputText value="No SPI : "/>
+                                                        <h:inputText value="#{contabilizaRetencionesSfccbdmq.numeroSpi}" title="No Documento">
+                                                            <ace:ajax execute="@all"/>
+                                                        </h:inputText>-->
+                            <h:outputLabel value="Fecha Movimiento:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{contabilizaRetencionesSfccbdmq.kardexIva.fechamov}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                <ace:ajax execute="@all"/>
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1">
+
+                            <h:outputLabel value="Observaciones:"/>
+                            <h:inputTextarea cols="60" rows="4" value="#{contabilizaRetencionesSfccbdmq.kardexIva.observaciones}">
+                                <ace:ajax execute="@all"/>
+                            </h:inputTextarea>
+
+                        </h:panelGrid>
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Pagar" icon="ui-icon ui-icon-check"  action="#{contabilizaRetencionesSfccbdmq.apruebaIva()}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{contabilizaRetencionesSfccbdmq.formularioBanco.cancelar()}" />
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </ace:dialog>
+                    <ace:dialog 
+                        header="#{contabilizaRetencionesSfccbdmq.perfil.menu.texto}"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        rendered="#{contabilizaRetencionesSfccbdmq.formularioBanco.nuevo}"
+                        visible="#{contabilizaRetencionesSfccbdmq.formularioBanco.nuevo}">
+
+                        <h:panelGrid columns="4">
+                            <h:outputText value="Tipo de Movimiento Bancario:"/>
+                            <h:selectOneMenu value="#{contabilizaRetencionesSfccbdmq.kardex.tipomov}" title="Tipo de Movimiento">
+                                <f:selectItems value="#{tipoMovBancosSfccbdmq.comboObligacionesBancos}"/>
+                            </h:selectOneMenu>
+                            <h:outputText value="Banco:"/>
+                            <h:selectOneMenu value="#{contabilizaRetencionesSfccbdmq.kardex.banco}" title="Banco" >
+                                <f:selectItems value="#{bancosSfccbdmq.comboBancosf}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputText value="Forma de pago:"/>
+                            <h:selectOneMenu value="#{contabilizaRetencionesSfccbdmq.kardex.formapago}" title="Formapago">
+                                <f:selectItems value="#{codigosSfccbdmq.comboFormaDePago}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputText value="Valor : "/>
+                            <h:outputText value="#{contabilizaRetencionesSfccbdmq.kardex.valor}">
+                                <f:convertNumber pattern="###,##0.00"/>
+                            </h:outputText>
+                            <!--                            <h:outputText value="No SPI : "/>
+                                                        <h:inputText value="#{contabilizaRetencionesSfccbdmq.numeroSpi}" title="No Documento">
+                                                            <ace:ajax execute="@all"/>
+                                                        </h:inputText>-->
+                            <h:outputLabel value="Fecha Movimiento:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{contabilizaRetencionesSfccbdmq.kardex.fechamov}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                <ace:ajax execute="@all"/>
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1">
+
+                            <h:outputLabel value="Observaciones:"/>
+                            <h:inputTextarea cols="60" rows="4" value="#{contabilizaRetencionesSfccbdmq.kardex.observaciones}">
+                                <ace:ajax execute="@all"/>
+                            </h:inputTextarea>
+
+                        </h:panelGrid>
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Pagar" icon="ui-icon ui-icon-check"  action="#{contabilizaRetencionesSfccbdmq.apruebaRenta()}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{contabilizaRetencionesSfccbdmq.formularioBanco.cancelar()}" />
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </ace:dialog>
+                    <!--fin de pago con bancos-->
+                </ace:panel>
+                <ace:dialog 
+                    header="Imprimir "
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{contabilizaRetencionesSfccbdmq.formularioReporte.mostrar}"
+                    visible="#{contabilizaRetencionesSfccbdmq.formularioReporte.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="#{contabilizaRetencionesSfccbdmq.nombreReporte}" 
+                                             id="pdf-button1" label="Generar PDF"
+                                             mimeType="application/pdf" resource="#{contabilizaRetencionesSfccbdmq.reporte}" 
+                                             style="" type="button"/>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{contabilizaRetencionesSfccbdmq.formularioReporte.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

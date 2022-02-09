@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+
+    <h:panelGrid>
+        <h:panelGrid columns="4">
+            <h:outputLabel value="Partidas :" />
+            <h:selectOneMenu value="#{partidasPoa.tipoBuscar}">
+                <f:selectItem itemLabel="Código" itemValue="1"/>
+                <f:selectItem itemLabel="Nombre" itemValue="2"/>
+                <ace:ajax execute="@all"/>
+            </h:selectOneMenu>
+            <ace:autoCompleteEntry 
+                rendered="#{partidasPoa.tipoBuscar eq 1}"
+                value="#{partidasPoa.codigo}"
+                rows="10" width="400"
+                listVar="clasificador"
+                filterBy="#{clasificador.codigo}"
+                filterMatchMode="startsWith"
+                listValue="#{partidasPoa.partidasLista}"
+                valueChangeListener="#{partidasPoa.cambiaCodigo}"
+                textChangeListener="#{partidasPoa.codigoEgresoChangeEventHandler}"
+                labelPosition="left"
+                id="partidaCodigo">
+                <f:facet name="row">
+                    <h:panelGrid columns="3" width="100%" columnClasses="tipo">
+                        <h:outputText value="#{clasificador.codigo}"/>
+                        <h:outputText value="#{clasificador.nombre}"/>
+                    </h:panelGrid>
+                </f:facet>
+                <ace:ajax execute="@all"/>
+            </ace:autoCompleteEntry>
+            <ace:autoCompleteEntry 
+                rendered="#{partidasPoa.tipoBuscar eq 2}"
+                value="#{partidasPoa.codigo}"
+                rows="10" width="400"
+                listVar="clasificador"
+                filterBy="#{clasificador.nombre}"
+                filterMatchMode="contains"
+                listValue="#{partidasPoa.partidasLista}"
+                valueChangeListener="#{partidasPoa.cambiaCodigo}"
+                textChangeListener="#{partidasPoa.codigoChangeEventHandler}"
+                labelPosition="left"
+                id="partidaNombre">
+                <f:facet name="row">
+                    <h:panelGrid columns="3" width="100%" columnClasses="tipo">
+                        <h:outputText value="#{clasificador.codigo}"/>
+                        <h:outputText value="#{clasificador.nombre}"/>
+                    </h:panelGrid>
+                </f:facet>
+                <ace:ajax execute="@all"/>
+            </ace:autoCompleteEntry>
+        </h:panelGrid>
+        <ace:panel rendered="#{partidasPoa.partidaPoa!=null}">
+            <h:panelGrid columns="2" >
+                <h:outputLabel value="Partida:"/>
+                <h:outputLabel value="#{partidasPoa.partidaPoa.toString()}"  />
+                <h:outputLabel value="Ingreso" rendered="#{partidasPoa.partidaPoa.ingreso}" style="color: green;"/>
+                <h:outputLabel value="Egreso"  rendered="#{!partidasPoa.partidaPoa.ingreso}" style="color: red;"/>
+            </h:panelGrid>
+        </ace:panel>
+    </h:panelGrid>
+</html>

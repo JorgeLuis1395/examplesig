@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{cambiaCargosEmpleadoSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <ui:include src="../BuscarEmpleado.xhtml"/>
+                    <h:panelGrid columns="2" rendered="#{!cambiaCargosEmpleadoSfccbdmq.formulario.mostrar}">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{cambiaCargosEmpleadoSfccbdmq.nuevo()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <ace:messages/>
+                    <!--</ace:panel>--> 
+                </ace:panel>
+                <ace:panel 
+                    header="Registro"
+                    closable="false"
+                    toggleable="false"
+                    rendered="#{cambiaCargosEmpleadoSfccbdmq.formulario.mostrar}">
+                    <h:panelGrid width="100%" columns="1">
+                        <ace:splitPane columnDivider="50"
+                                       scrollable="true"
+                                       style="width: 100%;">
+                            <f:facet name="left">
+                                <ace:tabSet style="clear:both;" clientSide="true">
+                                    <ace:tabPane >
+                                        <h:panelGrid columns="2">
+
+                                            <h:outputLabel value="Cargo Actual :" />
+                                            <h:outputLabel value="#{empleados.empleadoSeleccionado.cargoactual.cargo.nombre}" />
+                                            <h:outputLabel value=" Fecha de Elaboracion y Registro:"/>
+                                            <ace:dateTimeEntry navigator="true"  value="#{cambiaCargosEmpleadoSfccbdmq.cargo.creacion}" 
+                                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </ace:dateTimeEntry>
+                                            <h:outputLabel value="Tipo de acción de personal :" />
+                                            <h:selectOneMenu value="#{cambiaCargosEmpleadoSfccbdmq.cargo.tipoacciones}">
+                                                <f:selectItems value="#{codigosSfccbdmq.comboTipoAcciones}"/>
+                                                <f:ajax execute="@all"/>
+                                            </h:selectOneMenu>
+
+                                            <h:outputLabel value="Genera acción de personal? :" />
+                                            <h:selectBooleanCheckbox value="#{cambiaCargosEmpleadoSfccbdmq.accion}">
+                                                <ace:ajax execute="@all"/>
+                                            </h:selectBooleanCheckbox>
+                                            <h:outputLabel value="Imprime :" />
+                                            <h:selectOneMenu value="#{cambiaCargosEmpleadoSfccbdmq.cargo.propuesta}">
+                                                <f:selectItem itemLabel="Situación Actual" itemValue="0"/>
+                                                <f:selectItem itemLabel="Situación Propuesta" itemValue="1"/>
+                                                <f:selectItem itemLabel="Todas" itemValue="2"/>
+                                            </h:selectOneMenu>
+                                        </h:panelGrid>
+                                        <f:facet name="label">Inf. General</f:facet>
+                                        <ui:include src="../BuscarOrganigrama.xhtml" />
+                                        <h:panelGrid columns="3" rendered="#{cambiaCargosEmpleadoSfccbdmq.cargo.tipoacciones.parametros!='10'}">
+                                            <h:outputLabel value="Puesto Anterior:" />
+                                            <h:outputLabel value="#{cambiaCargosEmpleadoSfccbdmq.cargoAnterior.cargo.organigrama.nombre} - "/>
+                                            <h:outputLabel value="#{cambiaCargosEmpleadoSfccbdmq.cargoAnterior.cargo.descripcion}"/>
+                                        </h:panelGrid>
+                                        <!--<h:panelGrid columns="2" rendered="#{cambiaCargosEmpleadoSfccbdmq.cargo.tipoacciones.parametros!='10'}">-->
+                                        <h:panelGrid columns="2">
+                                            <h:outputLabel value="Puesto:" rendered="#{cambiaCargosEmpleadoSfccbdmq.cargo.tipoacciones.parametros!='10'}"/>
+                                            <h:outputLabel value="Reporta:" rendered="#{cambiaCargosEmpleadoSfccbdmq.cargo.tipoacciones.parametros =='10'}"/>
+                                            <h:selectOneMenu value="#{cambiaCargosEmpleadoSfccbdmq.cargo.cargo}">
+                                                <f:selectItems value="#{cargoxorganigrama.comboCargosOrganigrama}"/>
+                                            </h:selectOneMenu>
+                                        </h:panelGrid>
+                                        <h:panelGrid columns="1">
+                                            <h:outputLabel value="Motivo:" for="historial" />
+                                            <h:inputTextarea cols="80" rows="10" value="#{cambiaCargosEmpleadoSfccbdmq.cargo.motivo}" 
+                                                             title="Motivo" />
+                                            <!--                                            <h:outputLabel value="Referencia:" for="historial" />
+                                                                                        <h:inputTextarea cols="80" rows="10" value="#{cambiaCargosEmpleadoSfccbdmq.cargo.referencia}" 
+                                                                                                         title="Motivo" />-->
+                                        </h:panelGrid>
+                                        <h:panelGrid columns="2">
+                                            <h:outputLabel value="Indefinido [Si] - Con fecha de retorno [No] :" />
+                                            <h:selectBooleanCheckbox value="#{cambiaCargosEmpleadoSfccbdmq.cargo.aprobacion}">
+                                                <ace:ajax execute="@all"/>
+                                            </h:selectBooleanCheckbox>
+                                            <h:outputLabel value="Desde:"/>
+                                            <ace:dateTimeEntry navigator="true"  value="#{cambiaCargosEmpleadoSfccbdmq.cargo.desde}" id="dos"
+                                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </ace:dateTimeEntry>
+                                            <h:outputLabel value="Hasta:"/>
+                                            <ace:dateTimeEntry navigator="true"  value="#{cambiaCargosEmpleadoSfccbdmq.cargo.hasta}" id="tres"
+                                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" rendered="#{!cambiaCargosEmpleadoSfccbdmq.cargo.aprobacion}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </ace:dateTimeEntry>
+                                        </h:panelGrid>
+                                    </ace:tabPane>
+                                    <ace:tabPane label="Adjuntos">
+                                        <ui:include src="../mostrarImagenes.xhtml" />
+                                    </ace:tabPane>
+                                </ace:tabSet>
+                            </f:facet>
+                            <f:facet name="right">
+                                <ace:dataTable id="historial" 
+                                               value="#{cambiaCargosEmpleadoSfccbdmq.listaHistorial}"
+                                               var="historial"
+                                               paginator="true"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="5,10,15,50"
+                                               paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="5"
+                                               binding="#{cambiaCargosEmpleadoSfccbdmq.formulario.fila}">
+                                    <ace:column style="text-align: left">
+                                        <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                            <ace:menuItem action="#{cambiaCargosEmpleadoSfccbdmq.borraAccion(historial)}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                            <ace:menuItem action="#{cambiaCargosEmpleadoSfccbdmq.finalizarAccion(historial)}" 
+                                                          value="Finalizar" icon="ui-icon ui-icon-check"/>
+                                        </ace:menuButton>
+                                    </ace:column>
+                                    <ace:column  headerText="No Acción"  style="text-align: left">
+                                        <h:outputText value="#{historial.numero}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Activo"  style="text-align: left">
+                                        <h:outputText value="SI" rendered="#{historial.activo}"/>
+                                        <h:outputText value="NO" rendered="#{!historial.activo}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Fecha acción"  style="text-align: left">
+                                        <h:outputText value="#{historial.creacion}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Fecha registro" style="text-align: left">
+                                        <h:outputText  value="#{historial.fecha}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Motivo"  style="text-align: left">
+                                        <h:outputText value="#{historial.motivoPeque}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Puesto" style="text-align: left">
+                                        <h:outputText  value="#{historial.cargo.toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Modalidad de Contratación" style="text-align: left">
+                                        <h:outputText  value="#{historial.tipocontrato.nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Tipo de Acción" style="text-align: left">
+                                        <h:outputText  value="#{historial.tipoacciones.nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText='Proceso' style="text-align: left">
+                                        <h:outputText  value="#{historial.cargo.organigrama.nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Desde" style="text-align: left">
+                                        <h:outputText  value="#{historial.desde}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Hasta" style="text-align: left">
+                                        <h:outputText  value="#{historial.hasta}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </f:facet>
+                        </ace:splitPane>
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{cambiaCargosEmpleadoSfccbdmq.insertar()}" rendered="#{cambiaCargosEmpleadoSfccbdmq.formulario.nuevo}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{cambiaCargosEmpleadoSfccbdmq.formulario.cancelar()}" />
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{cambiaCargosEmpleadoSfccbdmq.formularioImprimir.mostrar}"
+                    visible="#{cambiaCargosEmpleadoSfccbdmq.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="1">
+                            <ace:dynamicResource fileName="AccionPersonal.xls" label="Acción de Personal"
+                                                 mimeType="application/xls" 
+                                                 rendered="#{cambiaCargosEmpleadoSfccbdmq.accionPersonal!=null}"
+                                                 resource="#{cambiaCargosEmpleadoSfccbdmq.accionPersonal}" 
+                                                 style="" type="button"/>
+                        </h:panelGrid>
+
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{cambiaCargosEmpleadoSfccbdmq.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Finalizar/Borrar Acción"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{cambiaCargosEmpleadoSfccbdmq.formularioBorrar.mostrar}"
+                    visible="#{cambiaCargosEmpleadoSfccbdmq.formularioBorrar.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid  width="100%" columns="3" style="text-align: left"  border="1" cellpadding="0" cellspacing="0">
+                            <h:panelGrid  width="100%" columns="1" style="text-align: left" >
+                                <h:outputText value="Acción de personal  No: " style="font-weight: bold"/>
+                                <h:outputText value="#{cambiaCargosEmpleadoSfccbdmq.cargoBorrar.id}"/>
+                            </h:panelGrid>
+                            <h:panelGrid  width="100%" columns="1" style="text-align: left" >
+                                <h:outputText value="Fecha : " style="font-weight: bold"/>
+                                <h:outputText value="#{cambiaCargosEmpleadoSfccbdmq.cargoBorrar.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </h:panelGrid>
+                        </h:panelGrid>
+                        <h:panelGrid  width="100%" columns="1" style="text-align: center" border="1" cellpadding="0" cellspacing="0">
+                            <h:panelGrid  width="100%" columns="1" style="text-align: center" >
+                                <h:outputText value="APELLIDOS Y NOMBRES" style="font-weight: bold"/>
+                                <h:outputText value="#{cambiaCargosEmpleadoSfccbdmq.cargoBorrar.empleado.entidad.toString()}" style="font-weight: bold"/>
+                            </h:panelGrid>
+                        </h:panelGrid>
+                        <h:panelGrid  width="100%" columns="4" style="text-align: left"  border="1" cellpadding="0" cellspacing="0">
+                            <h:panelGrid  width="50%" columns="1" style="text-align: right" >
+                                <h:outputText value="No. Cédula de Ciudadanía" style="font-weight: bold"/>
+                                <h:outputText value="#{cambiaCargosEmpleadoSfccbdmq.cargoBorrar.empleado.entidad.pin}"/>
+                            </h:panelGrid>
+                            <h:panelGrid  width="50%" columns="1" style="text-align: right">
+                                <h:outputText value="RIGE A PARTIR DE" style="font-weight: bold"/>
+                                <h:outputLabel value="#{cambiaCargosEmpleadoSfccbdmq.cargoBorrar.desde}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputLabel>
+                            </h:panelGrid>
+                            <h:panelGrid  width="50%" columns="1" style="text-align: right">
+                                <h:outputText value="HASTA :" style="font-weight: bold"/>
+                                <ace:dateTimeEntry navigator="true" value="#{cambiaCargosEmpleadoSfccbdmq.cargoBorrar.hasta}" 
+                                                   popupIcon="ui-icon ui-icon-calendar"    renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield"  
+                                                   >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </ace:dateTimeEntry>
+                <!--                                <h:outputLabel value="#{cambiaCargosEmpleadoSfccbdmq.cargoBorrar.hasta}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                </h:outputLabel>-->
+                            </h:panelGrid>
+                            <h:panelGrid  width="50%" columns="1" style="text-align: right">
+                                <h:outputText value="TIPO :" style="font-weight: bold"/>
+                                <h:outputLabel value="#{cambiaCargosEmpleadoSfccbdmq.cargoBorrar.tipoacciones.nombre}">
+                                </h:outputLabel>
+                            </h:panelGrid>
+                        </h:panelGrid>
+
+
+
+                        <h:panelGrid  width="100%" columns="2" style="text-align: left">
+                            <ace:panel  header ="Situación Actual">
+                                <h:panelGrid  width="100%" columns="2" style="text-align: left">
+                                    <h:outputLabel value="Dirección:" style="font-weight: bold"/>
+                                    <h:outputLabel value="#{cambiaCargosEmpleadoSfccbdmq.cargoBorrar.empleado.cargoactual.organigrama.superior.nombre}" rendered="#{cambiaCargosEmpleadoSfccbdmq.mostrar}"/>
+                                    <h:outputLabel value="" rendered="#{!cambiaCargosEmpleadoSfccbdmq.mostrar}"/>
+                                    <h:outputLabel value="Cargo:" style="font-weight: bold"/>
+                                    <h:outputLabel value="#{cambiaCargosEmpleadoSfccbdmq.cargoBorrar.empleado.cargoactual.cargo.nombre}" rendered="#{cambiaCargosEmpleadoSfccbdmq.mostrar}"/>
+                                    <h:outputLabel value="" rendered="#{!cambiaCargosEmpleadoSfccbdmq.mostrar}"/>
+                                    <h:outputLabel value="Lugar de Trabajo :" style="font-weight: bold"/>
+                                    <h:outputLabel value="Quito" rendered="#{cambiaCargosEmpleadoSfccbdmq.mostrar}"/>
+                                    <h:outputLabel value="" rendered="#{!cambiaCargosEmpleadoSfccbdmq.mostrar}"/>
+                                    <h:outputLabel value="Grado:" style="font-weight: bold"/>
+                                    <h:outputLabel value="#{cambiaCargosEmpleadoSfccbdmq.cargoBorrar.empleado.cargoactual.cargo.escalasalarial.codigo}" rendered="#{cambiaCargosEmpleadoSfccbdmq.mostrar}"/>
+                                    <h:outputLabel value="" rendered="#{!cambiaCargosEmpleadoSfccbdmq.mostrar}"/>
+                                    <h:outputLabel value="Remuneración Unificada:" style="font-weight: bold"/>
+                                    <h:outputLabel value="#{cambiaCargosEmpleadoSfccbdmq.cargoBorrar.empleado.cargoactual.cargo.escalasalarial.sueldobase}" rendered="#{cambiaCargosEmpleadoSfccbdmq.mostrar}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputLabel>
+                                    <h:outputLabel value="" rendered="#{!cambiaCargosEmpleadoSfccbdmq.mostrar}"/>
+                                    <h:outputLabel value="Partida presupuestaria:" style="font-weight: bold" />
+                                    <h:outputLabel value="#{cambiaCargosEmpleadoSfccbdmq.cargoBorrar.partidaindividual}"/>
+                                    <h:outputLabel value="" rendered="#{!cambiaCargosEmpleadoSfccbdmq.mostrar}"/>
+                                </h:panelGrid>
+                            </ace:panel>
+                            <ace:panel  header="Situación Propuesta">
+                                <h:panelGrid  width="100%" columns="2" style="text-align: left">
+                                    <h:outputLabel value="Dirección:" style="font-weight: bold"/>
+                                    <h:outputLabel value="#{cambiaCargosEmpleadoSfccbdmq.cargoBorrar.cargo.organigrama.superior.nombre}"/>
+                                    <h:outputLabel value="Cargo:" style="font-weight: bold"/>
+                                    <h:outputLabel value="#{cambiaCargosEmpleadoSfccbdmq.cargoBorrar.cargo.cargo.nombre}"/>
+                                    <h:outputLabel value="Lugar de Trabajo :" style="font-weight: bold"/>
+                                    <h:outputLabel value="Quito"/>
+                                    <h:outputLabel value="Grado:" style="font-weight: bold"/>
+                                    <h:outputLabel value="#{cambiaCargosEmpleadoSfccbdmq.cargoBorrar.cargo.cargo.escalasalarial.codigo}"/>
+                                    <h:outputLabel value="Remuneración Unificada:" style="font-weight: bold"/>
+                                    <h:outputLabel value="#{cambiaCargosEmpleadoSfccbdmq.cargoBorrar.sueldobase}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputLabel>
+                                    <h:outputLabel value="Partida presupuestaria:" style="font-weight: bold"/>
+                                    <h:outputLabel value="#{cambiaCargosEmpleadoSfccbdmq.cargoBorrar.empleado.partidaindividual}"/>
+                                </h:panelGrid>
+                            </ace:panel>
+                        </h:panelGrid>
+
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem action="#{cambiaCargosEmpleadoSfccbdmq.borrarAccion()}" 
+                                              value="¿Está seguro de Borrar el registro?" 
+                                              icon="ui-icon ui-icon-trash"
+                                              rendered="#{cambiaCargosEmpleadoSfccbdmq.formularioBorrar.borrar}"/>
+                                <ace:menuItem value="Grabar" 
+                                              icon="ui-icon ui-icon-disk"  action="#{cambiaCargosEmpleadoSfccbdmq.terminarAccion()}" 
+                                              rendered="#{cambiaCargosEmpleadoSfccbdmq.formularioBorrar.modificar}" />
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{cambiaCargosEmpleadoSfccbdmq.formularioBorrar.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

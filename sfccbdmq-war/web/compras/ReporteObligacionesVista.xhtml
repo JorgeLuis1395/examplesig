@@ -1,0 +1,341 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+
+                <ace:panel id="panel"
+                           header="#{reporteObligacionesSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGroup>
+                        <ui:include src="../BuscarProveedor.xhtml" />
+                        <h:panelGrid columns="2" width="100%">
+                            <h:outputLabel value="Contrato :" />
+                            <h:selectOneMenu  value="#{reporteObligacionesSfccbdmq.contrato}">
+                                <f:selectItems value="#{contratosSfccbdmq.comboContratosverdadero}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Tipo de Documento :"/>
+                            <h:selectOneMenu  value="#{reporteObligacionesSfccbdmq.tipoDocumento}">
+                                <f:selectItems value="#{codigosSfccbdmq.comboDocumentos}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Número de Documento :"/>
+                            <h:inputText  value="#{reporteObligacionesSfccbdmq.numero}"/>
+                            <h:outputLabel value="Estado :"/>
+                            <h:selectOneMenu  value="#{reporteObligacionesSfccbdmq.estado}">
+                                <f:selectItem  itemLabel="INGRESADO"  itemValue="1"/>
+                                <f:selectItem  itemLabel="CONTABILIZADO" itemValue="2"/>
+                                <f:selectItem  itemLabel="ANULADO" itemValue="-1"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="5" width="60%">
+                            <h:selectOneMenu value="#{reporteObligacionesSfccbdmq.tipoFecha}">
+                                <f:selectItem itemLabel="Fecha de Emisión" itemValue="o.fechaemision"/>
+                                <f:selectItem itemLabel="Fecha de Ingreso" itemValue="o.fechaingreso"/>
+                                <f:selectItem itemLabel="Fecha de Vencimiento" itemValue="o.fechavencimiento"/>
+                                <f:selectItem itemLabel="Fecha de Contabilización" itemValue="o.fechacontable"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{reporteObligacionesSfccbdmq.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{reporteObligacionesSfccbdmq.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+
+
+                            <h:outputLabel value="Concepto:"/>
+                            <h:inputTextarea cols="60" rows="4" value="#{reporteObligacionesSfccbdmq.concepto}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteObligacionesSfccbdmq.buscar()}"/>
+                                <ace:menuItem value="Reprocesar fecha de emisión" 
+                                              icon="ui-icon ui-icon-search"  action="#{reporteObligacionesSfccbdmq.verificarRetencion()}"/>
+                                <ace:menuItem value="Imprimir" icon="ui-icon ui-icon-print"  action="#{reporteObligacionesSfccbdmq.imprimir()}"/>
+                            </ace:menuBar>
+                            <ace:messages/>
+                            <ace:submitMonitor id="submitMonitorPanel"
+                                               for="panel"
+                                               blockUI="panel"
+                                               autoCenter="true"
+                                               activeLabel="Un Momento por favor"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{reporteObligacionesSfccbdmq.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{reporteObligacionesSfccbdmq.formulario.pantalla}" 
+                                              target="tabla" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%">
+                            <ace:dataTable id="tabla" 
+                                           value="#{reporteObligacionesSfccbdmq.obligaciones}"
+                                           var="item"
+                                           paginator="true"
+                                           lazy="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="top"
+                                           rowsPerPageTemplate="15,20,25,50,100"
+                                           currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="15"
+                                           scrollHeight="600"
+                                           scrollable="true">
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{reporteObligacionesSfccbdmq.borradorRetencion()}" 
+                                                      value="Borrador" icon="ui-icon ui-icon-print"/>
+                                        <ace:menuItem action="#{reporteObligacionesSfccbdmq.imprimirRetencion()}" 
+                                                      value="Imprimir" icon="ui-icon ui-icon-print"/>
+                                        <ace:menuItem action="#{reporteObligacionesSfccbdmq.consultarRetencion()}" 
+                                                      value="Consultar" icon="ui-icon ui-icon-search"/>
+                                        <ace:menuItem action="#{reporteObligacionesSfccbdmq.pedirAutorizacion()}" 
+                                                      value="Autorizar" icon="ui-icon ui-icon-search"/>
+                                        <ace:menuItem action="#{reporteObligacionesSfccbdmq.reenviar()}" 
+                                                      value="Correo" icon="ui-icon ui-icon-mail-open"/>
+                                        <ace:menuItem action="#{reporteObligacionesSfccbdmq.reNumerar()}" 
+                                                      value="Re-numerar" icon="ui-icon ui-icon-folder-open"/>
+                                        <ace:menuItem action="#{reporteObligacionesSfccbdmq.anular()}" 
+                                                      value="Anular" icon="ui-icon ui-icon-close"/>
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column  headerText="Fecha de emisión" style="text-align: left">
+                                    <h:outputText  value="#{item.fechaemision}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Estado"  style="text-align: right">
+                                    <h:outputText  value="#{item.estadoSri}"/>
+                                </ace:column>
+                                <ace:column  headerText="Concepto" style="text-align: left">
+                                    <h:outputText  value="#{item.conceptoCorto}"/>
+                                </ace:column>
+                                <ace:column  headerText="Proveedor" style="text-align: left">
+                                    <h:outputText  value="#{item.proveedor.empresa.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Contrato" style="text-align: left">
+                                    <h:outputText  value="#{item.contrato.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Tipo de Documento" style="text-align: left">
+                                    <h:outputText  value="#{item.tipodocumento.nombre}"/>
+                                </ace:column>
+
+                                <ace:column  headerText="Número" style="text-align: left">
+                                    <h:outputText  value="#{item.documento}"/>
+                                </ace:column>
+                                <ace:column  headerText="Etab ret"  filterBy="#{item.establecimientor}"  
+                                             sortBy="#{item.establecimientor}" style="text-align: left">
+                                    <h:outputText  value="#{item.establecimientor}"/>
+                                </ace:column>
+                                <ace:column  headerText="Punto r."  filterBy="#{item.puntor}"
+                                             sortBy="#{item.puntor}" style="text-align: left">
+                                    <h:outputText  value="#{item.puntor}"/>
+                                </ace:column>
+                                <ace:column  headerText="Número de Retención" style="text-align: left"
+                                             filterBy="#{item.numeror}"
+                                             sortBy="#{item.numeror}">
+                                    <h:outputText  value="#{item.numeror}"/>
+                                </ace:column>
+                                <ace:column  headerText="Autorización" 
+                                             filterBy="#{item.claver}"
+                                             sortBy="#{item.claver}" style="text-align: left">
+                                    <h:outputText  value="#{item.claver}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor a pagar"  style="text-align: right">
+                                    <h:outputText  value="#{item.apagar}">
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Valor Total"  style="text-align: right">
+                                    <h:outputText  value="#{reporteObligacionesSfccbdmq.totalValor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Impuestos "  style="text-align: right">
+                                    <h:outputText  value="#{reporteObligacionesSfccbdmq.totalValorImpuesto}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Retenciones"  style="text-align: right">
+                                    <h:outputText  value="#{reporteObligacionesSfccbdmq.totalValorRet}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Retenciones Impuesto"  style="text-align: right">
+                                    <h:outputText  value="#{reporteObligacionesSfccbdmq.totalValorRetImpuesto}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>  
+                    </h:panelGroup>
+                </ace:panel>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteObligacionesSfccbdmq.formularioImprimir.mostrar}"
+                    visible="#{reporteObligacionesSfccbdmq.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="Obligaciones.pdf" id="pdf-button1" label="Generar PDF"
+                                             mimeType="application/pdf" resource="#{reporteObligacionesSfccbdmq.reporte}" 
+                                             style="" type="button"/>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteObligacionesSfccbdmq.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Re-numerar"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteObligacionesSfccbdmq.formularioAnulacion.mostrar}"
+                    visible="#{reporteObligacionesSfccbdmq.formularioAnulacion.mostrar}">
+                    <h:panelGroup>
+
+                        <h:panelGrid columns="2" width="100%">
+                            <h:outputLabel value="Retención Estab."/>
+                            <h:outputLabel value="#{reporteObligacionesSfccbdmq.obligacion.establecimientor}"/>
+                            <h:outputLabel value="Retención Punto emi."/>
+                            <h:outputLabel value="#{reporteObligacionesSfccbdmq.obligacion.puntor}"/>
+                            <h:outputLabel value="No."/>
+                            <h:outputLabel value="#{reporteObligacionesSfccbdmq.obligacion.numeror}"/>
+                            <h:outputLabel value="Autorización"/>
+                            <h:outputLabel value="#{reporteObligacionesSfccbdmq.obligacion.claver}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Seguro renumerar" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteObligacionesSfccbdmq.grabarReNumerar()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteObligacionesSfccbdmq.formularioAnulacion.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteObligacionesSfccbdmq.formularioRetencion.mostrar}"
+                    visible="#{reporteObligacionesSfccbdmq.formularioRetencion.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="Retencion.pdf"  label="Generar PDF"
+                                             mimeType="application/pdf" resource="#{reporteObligacionesSfccbdmq.reporte}" 
+                                             style="" type="button"/>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteObligacionesSfccbdmq.formularioRetencion.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Correo"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteObligacionesSfccbdmq.formularioCorreo.mostrar}"
+                    visible="#{reporteObligacionesSfccbdmq.formularioCorreo.mostrar}">
+                    <h:panelGroup>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <h:outputLabel value="Dirección de correo:"/>
+                            <h:inputTextarea cols="60" rows="4" value="#{reporteObligacionesSfccbdmq.correo}"/>
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Enviar" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteObligacionesSfccbdmq.reenviarCorreo()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-mail-closed" 
+                                              action="#{reporteObligacionesSfccbdmq.formularioCorreo.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Anular"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteObligacionesSfccbdmq.formularioAnular.mostrar}"
+                    visible="#{reporteObligacionesSfccbdmq.formularioAnular.mostrar}">
+                    <h:panelGroup>
+
+                        <h:panelGrid columns="2" width="100%">
+                            <h:outputLabel value="¿Está seguro de anular?"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{reporteObligacionesSfccbdmq.grabaranular()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteObligacionesSfccbdmq.formularioAnular.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

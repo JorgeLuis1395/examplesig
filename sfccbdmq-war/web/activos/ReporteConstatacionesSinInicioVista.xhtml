@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel 
+                    id="panel"
+                    header="#{constatacionessininicio.perfil.menu.texto}"
+                    closable="false"
+                    toggleable="true">    
+                    <h:panelGrid columns="4">
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ui:include src="../BuscarEmpleado.xhtml"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Año: " />
+                        <h:inputText value="#{constatacionessininicio.anio}" title="Año" />
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{constatacionessininicio.buscar()}"/>
+
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <!--                </ace:panel>
+                                    <ace:panel>-->
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{constatacionessininicio.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{constatacionessininicio.formulario.pantalla}" 
+                                          target="tablaf" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:dataTable 
+                            id="tablaf"
+                            paginatorAlwaysVisible="true"
+                            value="#{constatacionessininicio.listaConsta}"
+                            var="item"
+                            paginator="true"
+                            lazy="false"
+                            resizableColumns="true"
+                            rowIndexVar="row"
+                            paginatorPosition="both"
+                            rowsPerPageTemplate="5,10,15,30,50,100,all"
+                            currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            rows="50">
+                            <ace:column  headerText="N°" style="text-align: left">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column> 
+
+                            <ace:column  headerText="Empleado" style="text-align: left">
+                                <h:outputText value="#{constatacionessininicio.traerEmpleado(item.cicustodio)}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Nro de Bienes a cargo" style="text-align: left">
+                                <h:outputText value="#{constatacionessininicio.contarProcesos(item.cicustodio)}"/>
+                            </ace:column>
+
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

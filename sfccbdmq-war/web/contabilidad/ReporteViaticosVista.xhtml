@@ -1,0 +1,367 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+
+                <ace:panel id="panel"
+                           header="#{reporteViaticosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Tipo:" />
+                        <h:selectOneMenu  value="#{reporteViaticosSfccbdmq.tipoPartida}" >
+                            <f:selectItem  itemLabel="--- Seleccione uno ---" itemValue=""/>
+                            <f:selectItem  itemLabel="INTERNO" itemValue="0" />
+                            <f:selectItem  itemLabel="EXTERNO" itemValue="1" />
+                            <ace:ajax execute="@all" />
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Viaje:" />
+                        <h:selectOneMenu  value="#{reporteViaticosSfccbdmq.viatico}" >
+                            <f:selectItems value="#{reporteViaticosSfccbdmq.comboViaticos}"/>
+                            <ace:ajax execute="@all" />
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Estado:" />
+                        <h:selectOneMenu  value="#{reporteViaticosSfccbdmq.estado}" >
+                            <f:selectItem  itemLabel="--- Seleccione uno ---" itemValue=""/>
+                            <f:selectItem  itemLabel="ASIGNADO" itemValue="0" />
+                            <f:selectItem  itemLabel="PAGADO" itemValue="1" />
+                            <f:selectItem  itemLabel="VALIDADO" itemValue="2" />
+                            <f:selectItem  itemLabel="LIQUIDADO" itemValue="3" />
+                            <ace:ajax execute="@all" />
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="6">
+                        <h:outputLabel value="Fecha de :" />
+                        <h:selectOneMenu value="#{reporteViaticosSfccbdmq.tipoFecha}" id="ecivilbusqueda" >
+                            <f:selectItem itemLabel="Inicio" itemValue="o.viatico.desde"/>
+                            <f:selectItem itemLabel="Fin" itemValue="o.viatico.hasta"/>
+                        </h:selectOneMenu>
+
+                        <h:outputLabel value="Desde:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{reporteViaticosSfccbdmq.desde}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Hasta:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{reporteViaticosSfccbdmq.hasta}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteViaticosSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Imprimir Pago" icon="ui-icon ui-icon-print"  action="#{reporteViaticosSfccbdmq.imprimirKardex()}"/>
+                            <ace:menuItem value="Imprimir Liquidación Viatico" icon="ui-icon ui-icon-print"  action="#{reporteViaticosSfccbdmq.imprimirLiquidacionViatico()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{reporteViaticosSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{reporteViaticosSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                </ace:panel>
+
+                <ace:panel id="panelImprimir" style="display: block">
+                    <ace:dataTable id="tabla"
+                                   value="#{reporteViaticosSfccbdmq.listadoEmpleados}"
+                                   var="item"
+                                   lazy="false"
+                                   paginator="true"
+                                   resizableColumns="true"
+                                   rowIndexVar="row"
+                                   paginatorPosition="both"
+                                   rowsPerPageTemplate="10,15,30,50,100,200,500"
+                                   currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                   paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                   rows="30"
+                                   selectionMode="simple"
+                                   style="width: 100%;"
+                                   binding="#{origen}"
+                                   scrollHeight="600"
+                                   scrollable="true">
+                        <!--                        <ace:column style="text-align: left">
+                                                    <ace:menuBar autoSubmenuDisplay="true" >
+                                                        <ace:menuItem action="#{reporteViaticosSfccbdmq.detalle(item)}" 
+                                                                      value="Detalles" icon="ui-icon ui-icon-seek-next" >
+                                                            <ace:ajax execute="@all"/>
+                                                        </ace:menuItem>
+                                                    </ace:menuBar>
+                                                </ace:column> -->
+                        <ace:column style="text-align: left">
+                            <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                <ace:menuItem action="#{reporteViaticosSfccbdmq.detalle(item)}" value="Detalles" icon="ui-icon ui-icon-pencil"/>
+                                <ace:menuItem action="#{reporteViaticosSfccbdmq.imprimirLiq(item)}" value="Imprimir Liquidación" icon="ui-icon ui-icon-print"/>
+                                <ace:menuItem action="#{reporteViaticosSfccbdmq.borrarLiquidacion(item)}" value="Borrar Liquidacion" icon="ui-icon ui-icon-trash" />
+                            </ace:menuButton>
+                        </ace:column> 
+                        <ace:column  headerText="Apellidos "  style="text-align: left" 
+                                     filterBy="#{item.empleado.entidad.apellidos}" 
+                                     filterMatchMode="startsWith">
+                            <h:outputText value="#{item.empleado.entidad.apellidos}"/>
+                        </ace:column>
+                        <ace:column  headerText="Nombres"  style="text-align: left">
+                            <h:outputText value="#{item.empleado.entidad.nombres}"/>
+                        </ace:column>
+                        <ace:column  headerText="Fecha Inicio" style="text-align: left">
+                            <h:outputText  value="#{item.viatico.desde}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Fecha Fin" style="text-align: left">
+                            <h:outputText  value="#{item.viatico.hasta}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Valor Asignado" style="text-align: left">
+                            <h:outputText  value="#{item.valor}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Observaciones"  style="text-align: left">
+                            <h:outputText value="#{item.viatico.motivo}"/>
+                        </ace:column>
+                        <ace:column  headerText="Estado"  style="text-align: left">
+                            <h:outputText value="#{reporteViaticosSfccbdmq.traerEstado(item.estado)}"/>
+                        </ace:column>
+                        <ace:column  headerText="Tipo"  style="text-align: left">
+                            <h:outputText value="#{reporteViaticosSfccbdmq.traerTipo(item.viatico.partida)}"/>
+                        </ace:column>
+                        <ace:column  headerText="Compromiso"  style="text-align: left">
+                            <h:outputText value="#{reporteViaticosSfccbdmq.traerCompromiso(item.detallecompromiso.toString())}"/>
+                        </ace:column>
+                        <ace:column  headerText="Certificación"  style="text-align: left">
+                            <h:outputText value="#{item.viatico.certificacion.numerocert}"/>
+                        </ace:column>
+                    </ace:dataTable>
+                </ace:panel>
+
+                <ace:dialog 
+                    header="Liquidar Viaticos"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteViaticosSfccbdmq.formulario.mostrar}"
+                    visible="#{reporteViaticosSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <ace:tabPane label="Información General">
+                            <h:panelGrid width="100%">
+                                <h:panelGrid columns="4" style="width: 100%" >
+                                    <h:outputLabel value="Detalle : "/>
+                                    <h:outputText value="#{reporteViaticosSfccbdmq.viaticoEmpleado.toString()}" />
+                                    <h:outputLabel value=" "/>
+                                    <h:outputLabel value=" "/>
+                                    <h:outputLabel value="Valor viaticos asignado : "/>
+                                    <h:outputText  value="#{reporteViaticosSfccbdmq.viaticoEmpleado.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                    <h:outputLabel value="Valor a justificar 70% : "/>
+                                    <h:outputText  value="#{reporteViaticosSfccbdmq.viaticoEmpleado.valor*0.7}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                    <h:outputLabel value="Valor asignado por ley 30% : "/>
+                                    <h:outputText  value="#{reporteViaticosSfccbdmq.viaticoEmpleado.valor*0.3}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                    <h:outputLabel value="Liquidación según facturas adjuntas : "/>
+                                    <h:outputText  value="#{validaViaticosSfccbdmq.getTotalViaticos(reporteViaticosSfccbdmq.listaDetalles)}" >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                    <h:outputLabel value="Liquidación validada según facturas adjuntas : " />
+                                    <h:outputText  value="#{validaViaticosSfccbdmq.getTotalViaticosValidados(reporteViaticosSfccbdmq.listaDetalles)}" >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                    <h:outputLabel value="Diferencia : " />
+<!--                                    <h:outputText  value="#{validaViaticosSfccbdmq.getTotalDiferencia(reporteViaticosSfccbdmq.listaDetalles)}" >-->
+                                    <h:outputText  value="#{reporteViaticosSfccbdmq.viaticoEmpleado.valor - validaViaticosSfccbdmq.getTotalViaticosValidados(reporteViaticosSfccbdmq.listaDetalles) }" >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </h:panelGrid> 
+                                <h:panelGrid width="100%">
+                                    <ace:dataTable id="detalle" 
+                                                   value="#{reporteViaticosSfccbdmq.listaDetalles}"
+                                                   var="detalle"
+                                                   paginator="true"
+                                                   resizableColumns="true"
+                                                   rowIndexVar="row"
+                                                   paginatorPosition="both"
+                                                   rowsPerPageTemplate="5,10,15,50"
+                                                   paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                   rows="5"
+                                                   binding="#{reporteViaticosSfccbdmq.formulario.fila}">
+                                        <ace:row condition="group" groupBy="#{detalle.tipo}" pos="before" styleClass="tipo">
+                                            <ace:column colspan="10"  >
+                                                #{detalle.tipo eq true ? 'HOSPEDAJE':'ALIMENTACIÓN'}
+                                            </ace:column>
+                                        </ace:row>
+                                        <ace:column  headerText="Tipo Consumo" style="text-align: left">
+                                            <h:outputText value="#{detalle.tipo==true ? 'HOSPEDAJE' : 'ALIMENTACIÓN'}" />
+                                        </ace:column>
+                                        <ace:column  headerText='Fecha'   style="text-align: left">
+                                            <h:outputText  value="#{detalle.fecha}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Lugar" style="text-align: left">
+                                            <h:outputText value="#{detalle.lugar}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Tipo comprobante" style="text-align: left">
+                                            <h:outputText value="#{detalle.tipocomprobante}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="N° Comprobante" style="text-align: left">
+                                            <h:outputText value="#{detalle.nrocomprobante}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Proveedor" style="text-align: left">
+                                            <h:outputText value="#{detalle.proveedor}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Valor" style="text-align: left">
+                                            <h:outputText  value="#{detalle.valor}">
+                                                <f:convertNumber pattern="###,###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Valor Validado" style="text-align: left">
+                                            <h:outputText  value="#{detalle.valorvalidado}">
+                                                <f:convertNumber pattern="###,###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Detalle Validado" style="text-align: left">
+                                            <h:outputText  value="#{detalle.detallevalidado}" />
+                                        </ace:column>
+                                        <ace:column  headerText="Validado" style="text-align: left">
+                                            <h:outputText value="#{detalle.validado==true ? 'VALIDADO' : 'PENDIENTE'}" />
+                                        </ace:column>
+                                    </ace:dataTable>
+                                </h:panelGrid>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteViaticosSfccbdmq.formulario.cancelar()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteViaticosSfccbdmq.formularioReportes.mostrar}"
+                    visible="#{reporteViaticosSfccbdmq.formularioReportes.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="Egreso.pdf" id="pdf-button1" label="Generar PDF"
+                                             mimeType="application/pdf" 
+                                             rendered="#{reporteViaticosSfccbdmq.reporteKardex!=null}"
+                                             resource="#{reporteViaticosSfccbdmq.reporteKardex}" 
+                                             style="" type="button"/>
+                        <ace:dynamicResource fileName="Propuesta.pdf"  label="Generar Propuesta"
+                                             mimeType="application/pdf" 
+                                             rendered="#{reporteViaticosSfccbdmq.reportePropuesta!=null}"
+                                             resource="#{reporteViaticosSfccbdmq.reportePropuesta}" 
+                                             style="" type="button"/>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteViaticosSfccbdmq.formularioReportes.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Imprimir Liquidacion"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteViaticosSfccbdmq.formularioLiquidacion.mostrar}"
+                    visible="#{reporteViaticosSfccbdmq.formularioLiquidacion.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="Liquidacion.pdf" id="pdf-button" label="Liquidacion PDF"
+                                             mimeType="application/pdf" 
+                                             rendered="#{reporteViaticosSfccbdmq.reporteLiq!=null}"
+                                             resource="#{reporteViaticosSfccbdmq.reporteLiq}" 
+                                             style="" type="button"/>
+                        <ace:dynamicResource fileName="Compromiso.pdf"  label="Compromiso PDF"
+                                             mimeType="application/pdf" 
+                                             rendered="#{reporteViaticosSfccbdmq.reporteComp!=null}"
+                                             resource="#{reporteViaticosSfccbdmq.reporteComp}" 
+                                             style="" type="button"/>
+                        <ace:dynamicResource fileName="DetalleViatico.pdf"  label="Detalle Viatico PDF"
+                                             mimeType="application/pdf" 
+                                             rendered="#{reporteViaticosSfccbdmq.reporteDetalle!=null}"
+                                             resource="#{reporteViaticosSfccbdmq.reporteDetalle}" 
+                                             style="" type="button"/>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteViaticosSfccbdmq.formularioLiquidacion.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Borrar Liquidacion"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteViaticosSfccbdmq.formularioBorrar.mostrar}"
+                    visible="#{reporteViaticosSfccbdmq.formularioBorrar.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid>
+                            <h:outputLabel value="¿Está seguro de Borrar la liquidación? "/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{reporteViaticosSfccbdmq.grabarBorrarLiquidacion()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteViaticosSfccbdmq.formularioBorrar.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

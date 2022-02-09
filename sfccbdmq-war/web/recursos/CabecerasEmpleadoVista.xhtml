@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel header="#{areasSeleccion.perfil.menu.texto}">
+                    <h:panelGrid width="100%">
+
+
+                        <ace:tabSet>
+                            <ace:tabPane label="Grupos Datos ">
+                                <ace:panel header="Parámetros de Búsqueda">
+
+                                    <h:panelGrid columns="2"  >
+                                        <h:outputText value="Nombre Grupo: "/>
+                                        <h:inputText value="#{cabecerasEmpleados.nombregrupo}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2"  >
+                                        <ace:menuBar autoSubmenuDisplay="true">
+                                            <ace:menuItem value="Nuevo Grupo Dato" 
+                                                          icon="ui-icon ui-icon-document" 
+                                                          action="#{cabecerasEmpleados.nuevogrupocabecera()}" />
+                                            <ace:menuItem value="Buscar"
+                                                          icon="ui-icon ui-icon-search"  
+                                                          action="#{cabecerasEmpleados.buscar()}"/>
+                                        </ace:menuBar>
+                                    </h:panelGrid>
+                                    <ace:messages/>
+                                </ace:panel>
+                                <ace:panel header="Resultado Búsqueda">
+                                    <ace:dataTable value="#{cabecerasEmpleados.listagrupocabecera}"
+                                                   var="cabeceragrup"
+                                                   resizableColumns="true"
+                                                   lazy="false"
+                                                   rowIndexVar="row"
+                                                   paginator="true"
+                                                   paginatorPosition="both"
+                                                   rowsPerPageTemplate="10,15,50,100"
+                                                   currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages}"
+                                                   paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                   rows="10" 
+                                                   style="width: 99%;"
+                                                   >
+                                        <ace:column style="text-align: left">
+                                            <ace:menuButton  effect="slide" effectDuration="200" value="..." >
+                                                <ace:menuItem action="#{cabecerasEmpleados.modificagrupocabecera(cabeceragrup)}"
+                                                              value="Editar"
+                                                              icon="ui-icon ui-icon-pencil"/>
+                                                <ace:menuItem action="#{cabecerasEmpleados.borragrupocabecera(cabeceragrup)}"
+                                                              value="Borrar"
+                                                              icon="ui-icon ui-icon-trash"/>
+                                            </ace:menuButton>
+                                        </ace:column>
+                                        <ace:column  headerText="Nro." style="text-align: left">
+                                            <h:outputText value="#{row+1}" />
+                                        </ace:column>
+                                        <ace:column  headerText="Texto" style="text-align: left" >
+                                            <h:outputText value="#{cabeceragrup.texto}" />
+                                        </ace:column>
+                                        <ace:column  headerText="Editable Tesoreria" style="text-align: left" >
+                                            <h:outputText value="SI" rendered="#{cabeceragrup.tesoreria}"/>
+                                            <h:outputText value="NO" rendered="#{!cabeceragrup.tesoreria}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Editable Personal" style="text-align: left" >
+                                            <h:outputText value="SI" rendered="#{cabeceragrup.personal}"/>
+                                            <h:outputText value="NO" rendered="#{!cabeceragrup.personal}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Editable Contab." style="text-align: left" >
+                                            <h:outputText value="SI" rendered="#{cabeceragrup.contabilidad}"/>
+                                            <h:outputText value="NO" rendered="#{!cabeceragrup.contabilidad}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Editable Activos" style="text-align: left" >
+                                            <h:outputText value="SI" rendered="#{cabeceragrup.activos}"/>
+                                            <h:outputText value="NO" rendered="#{!cabeceragrup.activos}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Editable Suministros" style="text-align: left" >
+                                            <h:outputText value="SI" rendered="#{cabeceragrup.suministros}"/>
+                                            <h:outputText value="NO" rendered="#{!cabeceragrup.suministros}"/>
+                                        </ace:column>
+                                    </ace:dataTable> 
+                                </ace:panel>
+                            </ace:tabPane>    
+                            <ace:tabPane label="Datos">
+
+                                <ace:panel header="Parámetros de Búsqueda">
+                                    <h:panelGrid columns="2"  >
+                                        
+                                        <h:outputText value="Nombre Dato: "/>
+                                        <h:inputText value="#{cabecerasEmpleados.nombrecab}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2">
+                                        <ace:menuBar autoSubmenuDisplay="true" >
+                                            <ace:menuItem value="Nuevo Dato"
+                                                          icon="ui-icon ui-icon-document"  
+                                                          action="#{cabecerasEmpleados.nuevacab()}"/>
+                                            <ace:menuItem value="Buscar"
+                                                          icon="ui-icon ui-icon-search"  
+                                                          action="#{cabecerasEmpleados.buscar()}"/>
+                                        </ace:menuBar>
+                                    </h:panelGrid>
+
+                                    <ace:messages/>
+                                </ace:panel>   
+                                <ace:panel header="Resultado Búsqueda">
+                                    <h:panelGrid columns="1" width="100%">
+                                        <ace:dataTable value="#{cabecerasEmpleados.listacabeceras}" 
+                                                       var="item"
+                                                       paginator="true"
+                                                       resizableColumns="true"
+                                                       lazy="false"
+                                                       rowIndexVar="row"
+                                                       paginatorPosition="both"
+                                                       rowsPerPageTemplate="10,15,50,100"
+                                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages}"
+                                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                       rows="10" 
+                                                       style="width: 99%;"
+                                                       binding="#{table}">
+                                            <ace:column style="text-align: left; width: 10%;">
+                                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                                    <ace:menuItem action="#{cabecerasEmpleados.modificacab(item)}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                                    <ace:menuItem action="#{cabecerasEmpleados.borracab(item)}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                                </ace:menuButton>
+                                            </ace:column>
+                                            <ace:row condition="group" groupBy="#{item.idgrupo.id}" pos="before" styleClass="grupo">
+                                                <ace:column colspan="8">
+                                                    #{item.idgrupo.texto}
+                                                </ace:column>
+                                            </ace:row>
+                                            <ace:column headerText="Nro."  style="text-align: left;" >
+                                                <h:outputText value="#{table.rowIndex+1}"/>
+                                            </ace:column>
+                                            
+                                            <ace:column headerText="Texto" style="text-align: left;"  >
+                                                <h:outputText value="#{item.texto}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Tipos  de Datos" style="text-align: left" >
+                                                <h:outputText value="Lista para Escojer"  rendered="${item.tipodato==0}"/>
+                                                <h:outputText value="Texto"  rendered="${item.tipodato==2}"/>
+                                                <h:outputText value="Numérico"  rendered="${item.tipodato==1}"/>
+                                                <h:outputText value="Fecha"  rendered="${item.tipodato==3}"/>
+                                                <h:outputText value="Código: #{maestrosSfccbdmq.traerNombreMaestro(item.codigo)}"  rendered="${item.tipodato==4}"/>
+                                            </ace:column>
+                                            
+                                            <ace:column headerText="Explicación" style="text-align: left; "  >
+                                                <h:outputText value="#{item.ayuda}"/>
+                                            </ace:column>
+                                        </ace:dataTable> 
+                                    </h:panelGrid>
+                                </ace:panel>
+                            </ace:tabPane> 
+                        </ace:tabSet> 
+                    </h:panelGrid>
+                </ace:panel>
+
+                <ui:include src="CrearCabeceraEmpleado.xhtml"/>
+                <ui:include src="CrearGrupoCabeceraEmpleado.xhtml"/>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

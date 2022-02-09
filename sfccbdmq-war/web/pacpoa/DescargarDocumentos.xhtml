@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <ace:dialog header="Documentos" modal="true" closable="false" 
+                visible="#{imagenesPoa.formularioConsulta.nuevo}" 
+                draggable="false"
+                rendered="#{imagenesPoa.formularioConsulta.nuevo}" >
+        <h:panelGrid columns="1" width="100%">
+            <ace:dataTable value="#{imagenesPoa.listaDocumentos}" 
+                           var="itemDocumento"
+                           style="width: 99%;"
+                           paginator="true"
+                           paginatorAlwaysVisible="true"
+                           paginatorPosition="both"
+                           rowsPerPageTemplate="5,10"
+                           currentPageReportTemplate="Documento {startRecord}/{totalRecords} Página {currentPage}/{totalPages}"
+                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                           rows="10"
+                           rowIndexVar="row"> 
+                <ace:column headerText="N°" style="text-align: right" >
+                    <h:outputText value="#{row + 1}"/>
+                </ace:column>
+                <ace:column headerText="Nombre Documento" style="text-align: left" >
+                    <h:outputText value="#{itemDocumento.nombrearchivo}"/>
+                </ace:column>
+                <ace:column  headerText="Doc. Digital" style="text-align: left">
+                    <h:commandLink value="Ver Documento"  action="#{imagenesPoa.traerImagen(itemDocumento.path, itemDocumento.nombrearchivo, itemDocumento.tipo)}" rendered="#{itemDocumento.path ne null}" />
+                </ace:column>
+            </ace:dataTable>
+            <ace:menuBar>
+                <ace:menuItem value="Cerrar" icon="ui-icon ui-icon-close" 
+                              action="#{imagenesPoa.formularioConsulta.cancelar()}"/>
+            </ace:menuBar>
+        </h:panelGrid>
+    </ace:dialog>
+    <ace:dialog                       
+        header="Borrar Archivo"
+        closable="false"
+        modal="true"
+        draggable="false"
+        rendered="#{imagenesPoa.formulario.borrar}"
+        visible="#{imagenesPoa.formulario.borrar}"
+        zindex="1350">
+        <h:panelGrid columns="1" >
+            <h:outputText value="¿Está seguro de eliminar el archivo seleccionado?" style="text-align: center;"/>
+        </h:panelGrid>
+        <ace:menuBar autoSubmenuDisplay="true"  >
+            <ace:menuItem value="Borrar" 
+                          icon="ui-icon ui-icon-trash" 
+                          action="#{imagenesPoa.eliminarDocumento()}"/>
+            <ace:menuItem value="Salir" 
+                          icon="ui-icon ui-icon-close" 
+                          action="#{imagenesPoa.formulario.cancelar()}"/>
+        </ace:menuBar>
+    </ace:dialog>
+    <ace:dialog header="Descargar archivo" modal="true" closable="false" 
+                visible="#{imagenesPoa.formulario.nuevo}" 
+                draggable="false"
+                rendered="#{imagenesPoa.formulario.nuevo}" >
+        <h:panelGrid columns="1" width="100%">
+            <!--<ace:messages/>-->
+            <ace:dynamicResource 
+                fileName="#{imagenesPoa.nombreArchivo}"                                            
+                attachment="true"                                             
+                label="Descargar archivo"
+                mimeType="#{imagenesPoa.tipoArchivo}"
+                resource="#{imagenesPoa.recurso}" 
+                type="button" rendered="#{imagenesPoa.recurso ne null}"/>
+            <ace:menuBar>
+                <ace:menuItem value="Cerrar" icon="ui-icon ui-icon-close" 
+                              action="#{imagenesPoa.formulario.cancelar()}"/>
+            </ace:menuBar>
+        </h:panelGrid>
+    </ace:dialog>
+
+</html>
+

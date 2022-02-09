@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{reporteInformacionBiometricoSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"  >
+                    <h:panelGrid>
+                        <ui:include src="../BuscarOrganigrama.xhtml"/>
+
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="Apellidos : "/>
+                            <h:inputText value="#{reporteInformacionBiometricoSfccbdmq.codigo}"/>
+                            <h:outputLabel value="Nombres : "/>
+                            <h:inputText value="#{reporteInformacionBiometricoSfccbdmq.nombre}"/>
+                            <h:outputLabel value="Operativo : "/>
+                            <h:selectOneMenu value="#{horariosxEmpleado.operativo}">
+                                <f:selectItem itemLabel="Seleccione uno" itemValue="0"/>
+                                <f:selectItem itemLabel="Operativos" itemValue="1"/>
+                                <f:selectItem itemLabel="Administrativos" itemValue="2"/>
+                                <f:selectItem itemLabel="CEMAC" itemValue="3"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Fecha inicio:"/>
+                        <ace:dateTimeEntry navigator="true"  value="#{reporteInformacionBiometricoSfccbdmq.fecha}" id="dos"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Fecha fin"/>
+                        <ace:dateTimeEntry navigator="true"  value="#{reporteInformacionBiometricoSfccbdmq.fechaHasta}" 
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                    </h:panelGrid>
+
+                    <h:panelGrid>
+                        <h:panelGrid columns="4">
+
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteInformacionBiometricoSfccbdmq.buscar()}"/>
+                                <ace:menuItem value="Actualizar" icon="ui-icon ui-icon-arrowrefresh-1-s" action="#{reporteInformacionBiometricoSfccbdmq.actualizarBiometrico()}" />s
+                            </ace:menuBar>
+                        </h:panelGrid>
+                    </h:panelGrid>
+
+                    <ace:messages/>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{reporteInformacionBiometricoSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{reporteInformacionBiometricoSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+
+                        <ace:dataTable id="tablaEmpleados"
+                                       value="#{reporteInformacionBiometricoSfccbdmq.listadoEmpleados}"
+                                       var="itemEmpleado"
+                                       style="width: 100%;"
+                                       paginator="true"
+                                       lazy="false"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="30,45,60,100,200,300,400"
+                                       paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="50" 
+                                       binding="#{fila}">
+                            <ace:row condition="group" groupBy="#{itemEmpleado.organigrama.nombre} " pos="before" styleClass="titulo">
+                                <ace:column colspan="17">
+                                    #{itemEmpleado.organigrama.nombre} 
+                                </ace:column>
+                            </ace:row>
+                            <ace:row condition="group" groupBy="#{itemEmpleado.empleado.entidad.toString() } " pos="before" styleClass="titulo">
+                                <ace:column colspan="17">
+                                    #{itemEmpleado.empleado.entidad.toString()} 
+                                </ace:column>
+                            </ace:row>
+
+
+                            <ace:column  headerText="No"  style="text-align: left">
+                                <h:outputText value="#{fila.rowIndex+1}"/>
+                            </ace:column>
+
+                            <!--                            <ace:column  headerText="Apellidos "  style="text-align: left">
+                                                            <h:outputText value="#{itemEmpleado.empleado.entidad.apellidos}"/>
+                                                        </ace:column>
+                                                        <ace:column  headerText="Nombres"  style="text-align: left">
+                                                            <h:outputText value="#{itemEmpleado.empleado.entidad.nombres}"/>
+                                                        </ace:column>-->
+
+
+                            <ace:column  headerText="Fecha" style="text-align: left">
+                                <h:outputText  value="#{itemEmpleado.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+
+                            </ace:column>
+
+                            <ace:column  headerText="Dispositivo"  style="text-align: left">
+                                <h:outputText value="#{itemEmpleado.dondeUno}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Hora Entrada"  style="text-align: right">
+                                <h:outputText value="#{itemEmpleado.entrada}">
+                                    <f:convertDateTime pattern="HH:mm"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Timbre Entrada"  style="text-align: right">
+                                <h:outputText value="#{itemEmpleado.entradaLeida}">
+                                    <f:convertDateTime pattern="HH:mm"/>
+                                </h:outputText>
+                            </ace:column>
+
+                            <ace:column  headerText="Diferencia"  style="text-align: left;background-color: #{reporteInformacionBiometricoSfccbdmq.getColor(itemEmpleado.cuantoUno)}">
+                                <h:outputText value="#{itemEmpleado.cuantoUno} minutos">
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Dispositivo"  style="text-align: left">
+                                <h:outputText value="#{itemEmpleado.dondeDos}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Timbre Salida Almuerzo"  style="text-align: right">
+                                <h:outputText value="#{itemEmpleado.salidaLeidaUno}">
+                                    <f:convertDateTime pattern="HH:mm"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Dispositivo"  style="text-align: left">
+                                <h:outputText value="#{itemEmpleado.dondeTres}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Timbre Entrada Almuerzo"  style="text-align: right">
+                                <h:outputText value="#{itemEmpleado.entradaLeidaDos}">
+                                    <f:convertDateTime pattern="HH:mm"/>
+                                </h:outputText>
+                            </ace:column>
+
+                            <ace:column  headerText="Diferencia" style="text-align: left;background-color: #{reporteInformacionBiometricoSfccbdmq.getColor(itemEmpleado.cuantoDos)}">
+                                <h:outputText value="#{itemEmpleado.cuantoDos} minutos">
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Dispositivo"  style="text-align: left">
+                                <h:outputText value="#{itemEmpleado.dondeCuatro}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Hora Salida"  style="text-align: right">
+                                <h:outputText value="#{itemEmpleado.salida}">
+                                    <f:convertDateTime pattern="HH:mm"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Timbre Salida"  style="text-align: right">
+                                <h:outputText value="#{itemEmpleado.salidaLeida}">
+                                    <f:convertDateTime pattern="HH:mm"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Diferencia" 
+                                         style="text-align: left;background-color: #{reporteInformacionBiometricoSfccbdmq.getColor(itemEmpleado.cuantoTres)}">
+                                <h:outputText value="#{itemEmpleado.cuantoTres} minutos">
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Permisos"  style="text-align: left" >
+                                <h:outputText value="#{itemEmpleado.observaciones}" escape="false"/>
+                            </ace:column> 
+                        </ace:dataTable>
+                    </h:panelGrid>
+
+                </ace:panel>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

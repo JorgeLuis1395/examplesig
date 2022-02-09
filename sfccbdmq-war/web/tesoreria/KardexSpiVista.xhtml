@@ -1,0 +1,219 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{reporteKardexSpiSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGroup>
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="Banco :" />
+                            <h:selectOneMenu  value="#{reporteKardexSpiSfccbdmq.banco}">
+                                <f:selectItems value="#{bancosSfccbdmq.comboBancos}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="No. Comp:"/>
+                            <h:inputText value="#{reporteKardexSpiSfccbdmq.egreso}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="4" width="100%">
+
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{reporteKardexSpiSfccbdmq.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{reporteKardexSpiSfccbdmq.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteKardexSpiSfccbdmq.buscar()}"/>
+                                <ace:menuItem value="Hoja Elect." 
+                                              icon="ui-icon ui-icon-calculator" action="#{reporteKardexSpiSfccbdmq.exportar()}" 
+                                              rendered="#{reporteKardexSpiSfccbdmq.listakardex.rowCount>0}" />
+                            </ace:menuBar>
+                            <ace:messages/>
+                        </h:panelGrid>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="panel"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{reporteKardexSpiSfccbdmq.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{reporteKardexSpiSfccbdmq.formulario.pantalla}" 
+                                              target="tabla" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%">
+                            <ace:dataTable id="tabla" 
+                                           value="#{reporteKardexSpiSfccbdmq.listakardex}"
+                                           var="item"
+                                           paginator="true"
+                                           lazy="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="top"
+                                           rowsPerPageTemplate="15,20,25,50,100"
+                                           currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="15"
+                                           scrollHeight="600"
+                                           scrollable="true">
+                                <!--                                <f:facet name="header"> Saldo Inicial :
+                                                                    <h:outputText  value="#{reporteKardexSpiSfccbdmq.saldoInicial}" >
+                                                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                                                    </h:outputText>
+                                                                </f:facet>-->
+                                <ace:column  headerText="Fecha SPI"   filterBy="#{item.spi.fecha}"  
+                                             sortBy="#{item.spi.fecha}"
+                                             style="text-align: left">
+                                    <h:outputText  value="#{item.spi.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Número SPI"  filterBy="#{item.spi.id}"  
+                                             sortBy="#{item.spi.id}"
+                                             style="text-align: left">
+                                    <h:outputText  value="#{item.spi.id}"/>
+                                </ace:column>
+                                <ace:column  headerText="Estado"  filterBy="#{item.spi.estado}"  
+                                             sortBy="#{item.spi.estado}"
+                                             style="text-align: left">
+                                    <h:outputText  value="0.- INGRESADO" rendered="#{item.spi.estado==0}"/>
+                                    <h:outputText  value="1.- GENERADO" rendered="#{item.spi.estado==0}"/>
+                                </ace:column>
+                                <ace:column  headerText="Concepto" filterBy="#{item.observaciones}"  
+                                             sortBy="#{item.observaciones}"
+                                             filterMatchMode="contains"
+                                             style="text-align: left">
+                                    <h:outputText  value="#{item.observaciones}"/>
+                                </ace:column>
+                                <ace:column  headerText="Origen" filterBy="#{item.origen}"  
+                                             sortBy="#{item.origen}"
+                                             filterMatchMode="contains"
+                                             style="text-align: left">
+                                    <h:outputText  value="#{item.origen}"/>
+                                </ace:column>
+                                <ace:column  headerText="Tipo de pago"  style="text-align: left" 
+                                             filterBy="#{item.codigospi}"  
+                                             sortBy="#{item.codigospi}"
+                                             filterMatchMode="contains">
+                                    <h:outputText  value="#{item.codigospi}"/>
+                                </ace:column>
+
+                                <ace:column  headerText="Proveedor" style="text-align: left" 
+                                             filterBy="#{item.beneficiario}"  
+                                             sortBy="#{item.beneficiario}"
+                                             filterMatchMode="contains">
+                                    <h:outputText  value="#{item.beneficiario}" rendered="#{item.proveedor==null}"/>
+                                    <h:outputText  value="#{item.proveedor.empresa.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Contrato" style="text-align: left"
+                                             filterBy="#{item.anticipo.contrato.numero}"  
+                                             sortBy="#{item.anticipo.contrato.numero}"
+                                             filterMatchMode="contains">
+                                    <h:outputText  value="#{item.anticipo.contrato.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Fecha" style="text-align: left" 
+                                             filterBy="#{item.fechamov}"  
+                                             sortBy="#{item.fechamov}"
+                                             filterMatchMode="contains">
+                                    <h:outputText  value="#{item.fechamov}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Valor"  style="text-align: right">
+                                    <h:outputText  value="#{item.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Débito"  style="text-align: right">
+                                    <h:outputText  value="#{item.valor}" rendered="#{item.tipomov.ingreso}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value="0.00" rendered="#{!item.tipomov.ingreso}"/>
+                                </ace:column>
+                                <ace:column  headerText="Crédito"  style="text-align: right">
+                                    <h:outputText  value="#{item.valor}" rendered="#{!item.tipomov.ingreso}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value="0.00" rendered="#{item.tipomov.ingreso}"/>
+                                </ace:column>
+
+
+                                <!--                                <f:facet name="footer"> Saldo Final :
+                                                                    <h:outputText  value="#{reporteKardexSpiSfccbdmq.saldoFinal}">
+                                                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                                                    </h:outputText>
+                                                                </f:facet>-->
+                            </ace:dataTable>
+                        </h:panelGrid>  
+                    </h:panelGroup>
+                </ace:panel>
+                <ace:dialog 
+                    header="Imprimir/exportar "
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteKardexSpiSfccbdmq.formularioReporte.mostrar}"
+                    visible="#{reporteKardexSpiSfccbdmq.formularioReporte.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="#{reporteKardexSpiSfccbdmq.nombreArchivo}"
+                                             id="pdf-botonMayor" label="#{reporteKardexSpiSfccbdmq.tipoArchivo}"
+                                             mimeType="#{reporteKardexSpiSfccbdmq.tipoMime}" resource="#{reporteKardexSpiSfccbdmq.reporte}" 
+                                             style="" type="button"/>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteKardexSpiSfccbdmq.formularioReporte.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

@@ -1,0 +1,147 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{vidaUtilActivosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{vidaUtilActivosSfccbdmq.buscar()}"/>
+                        </ace:menuBar>
+                        <ace:dynamicResource  fileName="Bienes.pdf" id="pdf-button1" label="Imprimir"
+                                              mimeType="application/pdf" 
+                                              resource="#{vidaUtilActivosSfccbdmq.reporte}" 
+                                              rendered="#{vidaUtilActivosSfccbdmq.reporte!=null}" 
+                                              style="" type="button"/>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                </ace:panel>
+                <ace:panel 
+                    header="Resultado Bùsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{vidaUtilActivosSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{vidaUtilActivosSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid width="100%" >
+                        <ace:dataTable id="tabla" 
+                                       value="#{vidaUtilActivosSfccbdmq.activos}"
+                                       var="item"
+                                       paginator="true"
+                                       lazy="false"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       binding="#{vidaUtilActivosSfccbdmq.formulario.fila}"
+                                       scrollHeight="600"
+                                       scrollable="true">
+                            <ace:column  headerText="Fecha Ingreso"  style="text-align: right">
+                                <h:outputText  value="#{item.fechaingreso}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Fecha Alta"  style="text-align: right">
+                                <h:outputText  value="#{item.fechaalta}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="C. Costo"  style="text-align: left">
+                                <h:outputText  value="#{ccostoSfccbdmq.traerNombre( item.ccosto)}"/>
+                            </ace:column>  
+                            <ace:column  headerText="Grupo"  style="text-align: left">
+                                <h:outputText  value="#{item.grupo.nombre}"/>
+                            </ace:column>  
+                            <ace:column  headerText="Clasificación"  style="text-align: left">
+                                <h:outputText  value="#{item.clasificacion.nombre}"/>
+                            </ace:column>  
+                            <ace:column  headerText="Código"  style="text-align: left">
+                                <h:outputText  value="#{item.codigo}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nombre"  style="text-align: left">
+                                <h:outputText  value="#{item.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Descripción"  style="text-align: left">
+                                <h:outputText  value="#{item.descripcion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Marca"  style="text-align: left">
+                                <h:outputText  value="#{item.marca}"/>
+                            </ace:column>
+                            <ace:column  headerText="Modelo"  style="text-align: left">
+                                <h:outputText  value="#{item.modelo}"/>
+                            </ace:column>
+                            <ace:column  headerText="No Serie"  style="text-align: left">
+                                <h:outputText  value="#{item.numeroserie}"/>
+                            </ace:column>
+                            <ace:column  headerText="Código Alterno"  style="text-align: left">
+                                <h:outputText  value="#{item.alterno}"/>
+                            </ace:column>
+                            <ace:column  headerText="Código de barras"  style="text-align: left">
+                                <h:outputText  value="#{item.barras}"/>
+                            </ace:column>
+                            <ace:column  headerText="Estado"  style="text-align: left">
+                                <h:outputText  value="#{item.estado.nombre}"/>
+                            </ace:column>  
+                            <ace:column  headerText="Valor Alta"  style="text-align: right">
+                                <h:outputText  value="#{item.valoralta}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Depreciación Acumulada"  style="text-align: right">
+                                <h:outputText  value="#{item.depreciacionAcumulada}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

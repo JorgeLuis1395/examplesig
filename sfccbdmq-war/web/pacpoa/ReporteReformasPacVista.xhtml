@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+
+    </h:head>
+    <h:body>
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel1"
+                           header="Reporte Reformas PAC"
+                           closable="false"
+                           toggleable="true">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+<!--                            <h:outputLabel value="Año:" />
+                            <h:inputText value="#{reporteReformasPac.anio}" title="Año" />-->
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{reporteReformasPac.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{reporteReformasPac.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteReformasPac.buscar()}"/>
+                            </ace:menuBar>
+                            <ace:submitMonitor id="submitMonitorPanel"
+                                               for="panel1"
+                                               blockUI="@all"
+                                               autoCenter="true"
+                                               activeLabel="Un Momento por favor"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable 
+                                paginatorAlwaysVisible="true"
+                                value="#{reporteReformasPac.listaTrakings}"
+                                var="item"
+                                paginator="true"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="both"
+                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rows="30">
+                                <ace:column  headerText="N°" style="text-align: right">
+                                    <h:outputText value="#{row+1}"/>
+                                </ace:column>
+                                <ace:column  headerText="Proyecto"  style="text-align: left">
+                                    <h:outputText  value="#{item.proyecto.codigo}"/>
+                                </ace:column>
+                                <ace:column  headerText="CPC" style="text-align: left">
+                                    <h:outputText  value="#{item.proyecto.cpc}"/>
+                                </ace:column>
+                                <ace:column  headerText="Tipo de Compra"  style="text-align: left">
+                                    <h:outputText  value="#{consultasPoa.traerTipoCompra(item.proyecto.tipocompra)}"/>
+                                </ace:column>
+                                <ace:column  headerText="Detalle"  style="text-align: left">
+                                    <h:outputText  value="#{item.proyecto.detalle}"/>
+                                </ace:column>
+                                <ace:column  headerText="Cuatrimestre 1"  style="text-align: left">
+                                    <h:outputText  value="#{item.proyecto.cuatrimestre1?'S':''}"/>
+                                </ace:column>
+                                <ace:column  headerText="Cuatrimestre 2"  style="text-align: left">
+                                    <h:outputText  value="#{item.proyecto.cuatrimestre2?'S':''}"/>
+                                </ace:column>
+                                <ace:column  headerText="Cuatrimestre 3"  style="text-align: left">
+                                    <h:outputText  value="#{item.proyecto.cuatrimestre3?'S':''}"/>
+                                </ace:column>
+                                <ace:column  headerText="Tipo de Producto"  style="text-align: left">
+                                    <h:outputText  value="#{consultasPoa.traerTipoProducto(item.proyecto.tipoproducto)}"/>
+                                </ace:column>
+                                <ace:column  headerText="Procedimiento Contratacion"  style="text-align: left">
+                                    <h:outputText  value="#{consultasPoa.traerTipoProcedimiento(item.proyecto.procedimientocontratacion)}"/>
+                                </ace:column>
+                                <ace:column  headerText="Regimen"  style="text-align: left">
+                                    <h:outputText  value="#{consultasPoa.traerTipoRegimen(item.proyecto.regimen)}"/>
+                                </ace:column>
+                                <ace:column  headerText="Modificación"  style="text-align: left">
+                                    <h:outputText  value="#{item.proyecto.modificacion}"/>
+                                </ace:column>
+                                <ace:column  headerText="Responsable"  style="text-align: left">
+                                    <h:outputText  value="#{item.responsable}"/>
+                                </ace:column>
+                                <ace:column  headerText="Documento"  style="text-align: left">
+                                    <h:outputText  value="#{item.proyecto.documento}"/>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

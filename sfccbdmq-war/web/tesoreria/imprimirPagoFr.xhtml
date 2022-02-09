@@ -1,0 +1,216 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+    <ace:panel id="panelImprimir" style="display:block;">
+        <h:panelGrid width="90%">
+            <h:panelGrid  width="90%" columns="2" style="text-align: right">
+                <h:outputText value="Usuario :"/>
+                <h:outputText value="#{parametrosSfccbdmq.logueado.userid}"/>
+                <h:outputText value="Fecha :"/>
+                <h:outputText value="#{parametrosSfccbdmq.fechaActual}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                </h:outputText>
+                <!--<h:outputText value="RE-Impresión" rendered="#{kardexPagosFrSfccbdmq.imprimir}"/>-->
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="1" style="text-align: center">
+                <h3>#{kardexPagosFrSfccbdmq.comprobanteEgreso} No: #{kardexPagosFrSfccbdmq.kardex.id}</h3>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="1" style="text-align: right">
+                <h3>Valor : #{kardexPagosFrSfccbdmq.valorStr}</h3>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                <h:outputLabel value="No documento :" />
+                <h:outputLabel value="#{kardexPagosFrSfccbdmq.kardex.egreso}"/>
+                <h:outputLabel value="Pagese a la orden de :" />
+                <h:outputLabel value="#{kardexPagosFrSfccbdmq.kardex.beneficiario}"/>
+                <h:outputLabel value="La suma de :" />
+                <h:outputLabel value="#{kardexPagosFrSfccbdmq.cuantoStr}"/>
+                <h:outputLabel value="Fecha de emisión:" />
+                <h:outputLabel value="#{kardexPagosFrSfccbdmq.kardex.fechamov}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputLabel>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                <ace:panel  header ="Origen">
+                    <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                        <h:outputLabel value="Banco:" />
+                        <h:outputLabel value="#{kardexPagosFrSfccbdmq.kardex.banco.nombre}"/>
+                        <h:outputLabel value="Cta No:" />
+                        <h:outputLabel value="#{kardexPagosFrSfccbdmq.kardex.banco.numerocuenta}"/>
+                        <h:outputLabel value="Cheque No:" rendered="#{kardexPagosFrSfccbdmq.kardex.formapago.parametros=='C'}"/>
+                        <h:outputLabel value="#{kardexPagosFrSfccbdmq.kardex.documento}" rendered="#{kardexPagosFrSfccbdmq.kardex.formapago.parametros=='C'}"/>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:panel  header="Destino">
+                    <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                        <h:outputLabel value="Banco:" />
+                        <h:outputLabel value="#{kardexPagosFrSfccbdmq.kardex.bancotransferencia.nombre}"/>
+                        <h:outputLabel value="Cta No:" />
+                        <h:outputLabel value="#{kardexPagosFrSfccbdmq.kardex.cuentatrans}"/>
+                    </h:panelGrid>
+                </ace:panel>
+            </h:panelGrid>
+
+            <h:panelGrid  width="90%" columns="1" style="text-align: left">
+                <h:outputLabel value="Referencia :" />
+                <p>#{kardexPagosFrSfccbdmq.kardex.observaciones}</p>
+            </h:panelGrid>
+            <h:panelGrid width="100%" rendered="#{kardexPagosFrSfccbdmq.pagos.size()>0}">
+                <ace:dataTable id="tabla" 
+                               value="#{kardexPagosFrSfccbdmq.pagos}"
+                               var="itemPagos"
+                               paginator="false"
+                               lazy="false"
+                               resizableColumns="true"
+                               rowIndexVar="row"
+                               paginatorPosition="top"
+                               rowsPerPageTemplate="5,10,15,30,50,100"
+                               paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                               >
+                    <f:facet name="header">Obligaciones</f:facet>
+                    <ace:column  headerText="Concepto"  style="text-align: left">
+                        <h:outputText  value="#{itemPagos.obligacion.concepto}"/>
+                        <h:outputText  value="#{itemPagos.compromiso.motivo}"/>
+                    </ace:column>
+                    <ace:column  headerText="Proveedor" style="text-align: left">
+                        <h:outputText  value="#{itemPagos.obligacion.proveedor.empresa.toString()}"/>
+                    </ace:column>
+                    <ace:column  headerText="Tipo de Documento" style="text-align: left">
+                        <h:outputText  value="#{itemPagos.obligacion.tipodocumento.nombre}"/>
+                    </ace:column>
+                    <ace:column  headerText="Número"  style="text-align: left">
+                        <h:outputText  value="#{itemPagos.obligacion.documento}"/>
+                    </ace:column>
+
+                    <ace:column  headerText="Contrato" style="text-align: left">
+                        <h:outputText  value="#{itemPagos.obligacion.contrato.toString()}"/>
+                    </ace:column>
+                    <ace:column  headerText="Valor"  style="text-align: right">
+                        <h:outputText  value="#{itemPagos.valor}">
+                            <f:convertNumber pattern="###,###,#00.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Fecha de pago" style="text-align: right">
+                        <h:outputText  value="#{itemPagos.fecha}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </ace:column>
+                </ace:dataTable>
+            </h:panelGrid>  
+            <h:panelGrid columns="1" width="100%">
+                <ace:dataTable 
+                    value="#{kardexPagosFrSfccbdmq.renglones}"
+                    var="itemDetalles"
+                    paginator="false"
+                    lazy="false"
+                    resizableColumns="true"
+                    rowIndexVar="row"
+                    paginatorPosition="both"
+                    rowsPerPageTemplate="5,10,15,30,50,100"
+                    paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    >
+                    <f:facet name="header">Contabilización</f:facet>
+                    <ace:column  headerText="Cuenta"  style="text-align: left">
+                        <h:outputText  value="#{itemDetalles.cuenta}"/>
+                    </ace:column>
+                    <ace:column  headerText="Nombre"  style="text-align: left">
+                        <h:outputText  value="#{cuentasSfccbdmq.traerNombre(itemDetalles.cuenta)}"/>
+                    </ace:column>
+                    <ace:column  headerText="Auxiliar"  style="text-align: left">
+                        <h:outputText  value="#{parametrosSfccbdmq.traerAuxiliar(itemDetalles.auxiliar).toString()}"/>
+                    </ace:column>
+                    <ace:column  headerText="Referencia"  style="text-align: left">
+                        <h:outputText  value="#{itemDetalles.referencia}"/>
+                    </ace:column>
+
+                    <ace:column  headerText="Débitos" style="text-align: right">
+                        <h:outputText  value="#{itemDetalles.valor}" rendered="#{asientosSfccbdmq.isCredito(itemDetalles.valor)}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Créditos" style="text-align: right">
+                        <h:outputText  value="#{itemDetalles.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemDetalles.valor)}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+
+                </ace:dataTable>
+            </h:panelGrid>
+            <h:panelGrid columns="1" width="100%" rendered="#{kardexPagosFrSfccbdmq.rasReclasificaion.size()>0}">
+                <ace:dataTable 
+                    value="#{kardexPagosFrSfccbdmq.rasReclasificaion}"
+                    var="itemReclasificacion"
+                    paginator="false"
+                    lazy="false"
+                    resizableColumns="true"
+                    rowIndexVar="row"
+                    paginatorPosition="both"
+                    rowsPerPageTemplate="5,10,15,30,50,100"
+                    paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    >
+                    <f:facet name="header">Reclasificación Retenciones</f:facet>
+                    <ace:column  headerText="Cuenta"  style="text-align: left">
+                        <h:outputText  value="#{itemReclasificacion.cuenta}"/>
+                    </ace:column>
+                    <ace:column  headerText="Nombre"  style="text-align: left">
+                        <h:outputText  value="#{cuentasSfccbdmq.traerNombre(itemReclasificacion.cuenta)}"/>
+                    </ace:column>
+                    <ace:column  headerText="Auxiliar"  style="text-align: left">
+                        <h:outputText  value="#{parametrosSfccbdmq.traerAuxiliar(itemReclasificacion.auxiliar).toString()}"/>
+                    </ace:column>
+                    <ace:column  headerText="Referencia"  style="text-align: left">
+                        <h:outputText  value="#{itemReclasificacion.referencia}"/>
+                    </ace:column>
+
+                    <ace:column  headerText="Débitos" style="text-align: right">
+                        <h:outputText  value="#{itemReclasificacion.valor}" rendered="#{asientosSfccbdmq.isCredito(itemReclasificacion.valor)}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Créditos" style="text-align: right">
+                        <h:outputText  value="#{itemReclasificacion.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemReclasificacion.valor)}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+
+                </ace:dataTable>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="1">
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="5">
+                <h:outputLabel value="f.----------------------------" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="f.----------------------------" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="f.----------------------------" />
+
+                <h:outputLabel value="Preparado por"  />
+                <h:outputLabel value="" />
+                <h:outputLabel value="Revisado"  />
+                <h:outputLabel value="" />
+                <h:outputLabel value="Aprobado por"  />
+
+            </h:panelGrid>
+        </h:panelGrid>
+
+    </ace:panel>
+</html>

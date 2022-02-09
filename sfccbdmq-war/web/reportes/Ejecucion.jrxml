@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="84c5b8bd-1ae1-4e1d-af05-b26e3a609054">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="empresa" class="java.lang.String"/>
+	<parameter name="expresado" class="java.lang.String"/>
+	<parameter name="usuario" class="java.lang.String"/>
+	<parameter name="nombrelogo" class="java.lang.String"/>
+	<parameter name="filtro" class="java.lang.String"/>
+	<field name="codigo" class="java.lang.String"/>
+	<field name="nombre" class="java.lang.String"/>
+	<field name="codificado" class="java.lang.Double"/>
+	<field name="ejecutado" class="java.lang.Double"/>
+	<field name="valor" class="java.lang.Double"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="95" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="453" y="18" width="100" height="20" uuid="abe54570-0e64-45e2-aaa7-9f0cc8549997"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="105" y="0" width="348" height="20" uuid="33720ebc-90d9-42c8-8c63-891948be98bb"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$P{expresado}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="-2" y="0" width="106" height="54" uuid="1cb1abf7-ad56-4e8d-b7b0-aab0eebd649d"/>
+				<imageExpression><![CDATA[$P{nombrelogo}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="105" y="74" width="448" height="20" uuid="1842f4e6-9a02-43be-ae2b-61198eb14345"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{filtro}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="453" y="0" width="100" height="20" uuid="1dccb948-ce75-4618-837b-ee929e81d20f"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{usuario}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="104" y="38" width="449" height="36" uuid="0258bcf0-d7e4-451a-b64a-3a4d30cc7a6d"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{empresa}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="17" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="555" height="15" uuid="0ba13539-d64d-4968-b81d-3bf1768f24f7"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<staticText>
+					<reportElement x="0" y="0" width="40" height="10" uuid="84da1b0a-74d7-48a3-8040-2bcd9b66550b"/>
+					<textElement>
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Grupo]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="40" y="0" width="111" height="10" uuid="152cbd64-2349-4a9f-b7a0-d80df67d371c"/>
+					<textElement>
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Concepto]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="441" y="0" width="56" height="10" uuid="a11fc9aa-2637-4903-9862-d5ca84e144f8"/>
+					<textElement textAlignment="Right">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Devengado]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="497" y="0" width="56" height="10" uuid="13105919-e32f-41c8-a158-e7c5eea06b4b"/>
+					<textElement textAlignment="Right">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Diferencia]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="378" y="0" width="56" height="10" uuid="e6420813-dc6f-40d0-ac86-dab25c297dbe"/>
+					<textElement textAlignment="Right">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Codificado]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="40" height="10" uuid="4d5cb86d-c603-4ca0-8192-73b8b9e69bfe"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="40" y="0" width="345" height="10" uuid="e34ca588-733e-4f89-afa1-8628ca9b5d2e"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###,##0.00" isBlankWhenNull="true">
+				<reportElement x="378" y="0" width="56" height="10" uuid="3e84a4f1-5740-4f9d-ad69-ed1190af1d36"/>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codificado}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###,##0.00" isBlankWhenNull="true">
+				<reportElement x="441" y="0" width="56" height="10" uuid="f38c692b-adae-46c5-a40e-997c218d87a0"/>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ejecutado}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###,##0.00" isBlankWhenNull="true">
+				<reportElement x="497" y="0" width="56" height="10" uuid="e9aa4c27-b052-4a39-84e7-91b9fa1b101d"/>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="32" splitType="Stretch">
+			<textField evaluationTime="Report">
+				<reportElement x="515" y="10" width="40" height="20" uuid="3f3c6e0b-3d8d-4058-a187-ab05ed3f3a87"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="10" width="80" height="20" uuid="f6c59ab5-79a5-4ba4-9a32-78183c6e9085"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página  "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+         <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{cierresSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{cierresSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{cierresSfccbdmq.crear()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Bùsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{cierresSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{cierresSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <!--                    <h:panelGrid styleClass="centeredPanelGrid">
+                                            
+                                        </h:panelGrid>-->
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{cierresSfccbdmq.cierres}"
+                                       var="item"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       binding="#{cierresSfccbdmq.formulario.fila}">
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{cierresSfccbdmq.modificar()}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{cierresSfccbdmq.eliminar()}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="Año" sortBy="#{item.anio}" style="text-align: left">
+                                <h:outputText  value="#{item.anio}"/>
+                            </ace:column>
+                            <ace:column  headerText="Ene." style="text-align: left">
+                                <h:outputText  value="C" rendered="#{item.enero}"/>
+                                <h:outputText  value="A" rendered="#{!item.enero}"/>
+                            </ace:column>
+                            <ace:column  headerText="Feb." style="text-align: left">
+                                <h:outputText  value="C" rendered="#{item.febrero}"/>
+                                <h:outputText  value="A" rendered="#{!item.febrero}"/>
+                            </ace:column>
+                            <ace:column  headerText="Mar." style="text-align: left">
+                                <h:outputText  value="C" rendered="#{item.marzo}"/>
+                                <h:outputText  value="A" rendered="#{!item.marzo}"/>
+                            </ace:column>
+                            <ace:column  headerText="Abr." style="text-align: left">
+                                <h:outputText  value="C" rendered="#{item.abril}"/>
+                                <h:outputText  value="A" rendered="#{!item.abril}"/>
+                            </ace:column>
+                            <ace:column  headerText="May" style="text-align: left">
+                                <h:outputText  value="C" rendered="#{item.mayo}"/>
+                                <h:outputText  value="A" rendered="#{!item.mayo}"/>
+                            </ace:column>
+                            <ace:column  headerText="Jun." style="text-align: left">
+                                <h:outputText  value="C" rendered="#{item.junio}"/>
+                                <h:outputText  value="A" rendered="#{!item.junio}"/>
+                            </ace:column>
+                            <ace:column  headerText="Jul." style="text-align: left">
+                                <h:outputText  value="C" rendered="#{item.julio}"/>
+                                <h:outputText  value="A" rendered="#{!item.julio}"/>
+                            </ace:column>
+                            <ace:column  headerText="Ago." style="text-align: left">
+                                <h:outputText  value="C" rendered="#{item.agosto}"/>
+                                <h:outputText  value="A" rendered="#{!item.agosto}"/>
+                            </ace:column>
+                            <ace:column  headerText="Sep." style="text-align: left">
+                                <h:outputText  value="C" rendered="#{item.septiembre}"/>
+                                <h:outputText  value="A" rendered="#{!item.septiembre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Oct." style="text-align: left">
+                                <h:outputText  value="C" rendered="#{item.octubre}"/>
+                                <h:outputText  value="A" rendered="#{!item.octubre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nov." style="text-align: left">
+                                <h:outputText  value="C" rendered="#{item.noviembre}"/>
+                                <h:outputText  value="A" rendered="#{!item.noviembre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Dic." style="text-align: left">
+                                <h:outputText  value="C" rendered="#{item.diciembre}"/>
+                                <h:outputText  value="A" rendered="#{!item.diciembre}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{cierresSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{cierresSfccbdmq.formulario.mostrar}"
+                    visible="#{cierresSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="8">
+                            <h:outputLabel value="Año:" for="codigo" />
+                            <h:inputText id="codigo" value="#{cierresSfccbdmq.cierre.anio}" title="Código" disabled="#{!cierresSfccbdmq.formulario.nuevo}"/>
+                           <h:outputLabel value="Enero:"/>
+                           <h:selectBooleanCheckbox value="#{cierresSfccbdmq.cierre.enero}"/>
+                           <h:outputLabel value="Febrero:"/>
+                           <h:selectBooleanCheckbox value="#{cierresSfccbdmq.cierre.febrero}"/>
+                           <h:outputLabel value="Marzo:"/>
+                           <h:selectBooleanCheckbox value="#{cierresSfccbdmq.cierre.marzo}"/>
+                           <h:outputLabel value="Abril:"/>
+                           <h:selectBooleanCheckbox value="#{cierresSfccbdmq.cierre.abril}"/>
+                           <h:outputLabel value="Mayo:"/>
+                           <h:selectBooleanCheckbox value="#{cierresSfccbdmq.cierre.mayo}"/>
+                           <h:outputLabel value="Junio:"/>
+                           <h:selectBooleanCheckbox value="#{cierresSfccbdmq.cierre.junio}"/>
+                           <h:outputLabel value="Julio:"/>
+                           <h:selectBooleanCheckbox value="#{cierresSfccbdmq.cierre.julio}"/>
+                           <h:outputLabel value="Agosto:"/>
+                           <h:selectBooleanCheckbox value="#{cierresSfccbdmq.cierre.agosto}"/>
+                           <h:outputLabel value="Septiembre:"/>
+                           <h:selectBooleanCheckbox value="#{cierresSfccbdmq.cierre.septiembre}"/>
+                           <h:outputLabel value="Octubre:"/>
+                           <h:selectBooleanCheckbox value="#{cierresSfccbdmq.cierre.octubre}"/>
+                           <h:outputLabel value="Noviembre:"/>
+                           <h:selectBooleanCheckbox value="#{cierresSfccbdmq.cierre.noviembre}"/>
+                           <h:outputLabel value="Diciembre:"/>
+                           <h:selectBooleanCheckbox value="#{cierresSfccbdmq.cierre.diciembre}"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{cierresSfccbdmq.formulario.nuevo}" 
+                                          action="#{cierresSfccbdmq.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{cierresSfccbdmq.grabar()}" 
+                                          rendered="#{cierresSfccbdmq.formulario.modificar}" />
+                            <ace:menuItem action="#{cierresSfccbdmq.borrar()}" 
+                                          value="Esta seguro de Borrar el registro?" 
+                                          rendered="#{cierresSfccbdmq.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{cierresSfccbdmq.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                        <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                    </h:panelGrid>
+                </ace:dialog>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

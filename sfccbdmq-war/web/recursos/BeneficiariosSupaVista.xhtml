@@ -1,0 +1,680 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="Beneficiarios SUPA"
+                           closable="false"
+                           toggleable="false">
+
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Mes :"/>
+                        <h:inputText value="#{beneficiariosSupaSfccbdmq.mes}"/>
+                        <h:outputLabel value="Año :"/>
+                        <h:inputText value="#{beneficiariosSupaSfccbdmq.anio}"/>
+                        <h:outputText value="Concepto :"/>
+                        <h:selectOneMenu value="#{beneficiariosSupaSfccbdmq.conceptoExtra}">
+                            <f:selectItems value="#{conceptosSfccbdmq.comboProvicionesSinProveedor}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{beneficiariosSupaSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{beneficiariosSupaSfccbdmq.nuevo()}"/>
+                            <ace:menuItem value="Copiar" icon="ui-icon ui-icon-script" action="#{beneficiariosSupaSfccbdmq.copiar()}"/>
+                            <ace:menuItem value="Cargar Archivo" icon="ui-icon ui-icon-script" action="#{beneficiariosSupaSfccbdmq.cargar()}"/>
+                            <ace:menuItem value="Descargar Archivo" icon="ui-icon ui-icon-calculator" action="#{beneficiariosSupaSfccbdmq.exportar()}"/>
+                            <ace:menuItem value="Contabilizar" icon="ui-icon ui-icon-document" action="#{beneficiariosSupaSfccbdmq.contalizar()}"/>
+                            <ace:menuItem value="Imprimir" icon="ui-icon ui-icon-document" action="#{beneficiariosSupaSfccbdmq.imprimirKardex()}"/>
+                            <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{beneficiariosSupaSfccbdmq.borrarTodo()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <ace:messages/>
+
+                    <ace:submitMonitor id="submitMonitorPanel2"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel2"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <ace:panel id="panel2"
+                               header="Resultado Búsqueda"
+                               closable="false"
+                               toggleable="false"
+                               rendered="#{(!beneficiariosSupaSfccbdmq.formulario.mostrar) or (!beneficiariosSupaSfccbdmq.formularioCopiar.mostrar) 
+                                           or (!beneficiariosSupaSfccbdmq.formularioCargar.mostrar) or (!beneficiariosSupaSfccbdmq.formularioDescargar.mostrar)
+                                           or (!beneficiariosSupaSfccbdmq.formularioContabilizar.mostrar) or (!beneficiariosSupaSfccbdmq.formularioImprimir.mostrar)}"
+                               visible="#{!beneficiariosSupaSfccbdmq.formulario.mostrar}">
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{beneficiariosSupaSfccbdmq.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{beneficiariosSupaSfccbdmq.formulario.pantalla}" 
+                                              target="detalle1" fileName="datos"/>
+                        </h:panelGrid>
+                        <!--                    <ace:tabSet style="clear:both;">
+                                                <ace:tabPane label="Cruzan">-->
+                        <h:panelGrid width="100%">
+                            <ace:dataTable id="detalle1" 
+                                           value="#{beneficiariosSupaSfccbdmq.listaSupa}"
+                                           var="itemBeneficiario"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="10,20,50,100,500,all"
+                                           paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="10"
+                                           paginatorAlwaysVisible="true"
+                                           binding="#{beneficiariosSupaSfccbdmq.formulario.fila}">
+                                <ace:column  style="text-align: left" rendered="#{!beneficiariosSupaSfccbdmq.formulario.borrar}" >
+                                    <ace:menuButton  effect="slide" effectDuration="200" value="...">
+                                        <ace:menuItem value="Editar" icon="ui-icon ui-icon-pencil" action="#{beneficiariosSupaSfccbdmq.modificar(itemBeneficiario)}" />
+                                        <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{beneficiariosSupaSfccbdmq.borrar(itemBeneficiario)}"  />
+                                    </ace:menuButton>
+                                </ace:column>
+                                <ace:column  headerText="N°" style="text-align: left">
+                                    <h:outputText value="#{row + 1}" />
+                                </ace:column>
+                                <ace:column  headerText="Empleado" style="text-align: left">
+                                    <h:outputText value="#{itemBeneficiario.empleado.entidad.toString()}" />
+                                </ace:column>
+                                <ace:column  headerText="Cédula Beneficiario" style="text-align: left">
+                                    <h:outputText value="#{itemBeneficiario.cedulabeneficiario}" />
+                                </ace:column>
+                                <ace:column  headerText="Nombre Beneficiario" style="text-align: left">
+                                    <h:outputText value="#{itemBeneficiario.nombrebeneficiario}" />
+                                </ace:column>
+                                <ace:column  headerText="Código SUPA" style="text-align: left">
+                                    <h:outputText value="#{itemBeneficiario.codigossupa}" />
+                                </ace:column>
+                                <ace:column  headerText="Valor" style="text-align: right" >
+                                    <h:outputText  value="#{itemBeneficiario.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Rol" style="text-align: right" >
+                                    <h:outputText  value="#{beneficiariosSupaSfccbdmq.traerValorRol(itemBeneficiario.concepto, itemBeneficiario)}" rendered="#{itemBeneficiario.nombrebeneficiario ne 'Total'}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value="#{itemBeneficiario.rol}" rendered="#{itemBeneficiario.nombrebeneficiario eq 'Total'}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Saldo Anterior" style="text-align: right" >
+                                    <h:outputText  value="#{beneficiariosSupaSfccbdmq.traerSaldoAnterior(itemBeneficiario)}" rendered="#{itemBeneficiario.nombrebeneficiario ne 'Total'}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value="#{itemBeneficiario.saldo}" rendered="#{itemBeneficiario.nombrebeneficiario eq 'Total'}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Diferencia" style="text-align: right" >
+                                    <h:outputText  value="#{itemBeneficiario.valor - (beneficiariosSupaSfccbdmq.traerValorRol(itemBeneficiario.concepto, itemBeneficiario))}" rendered="#{itemBeneficiario.nombrebeneficiario ne 'Total'}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value="#{itemBeneficiario.valor - itemBeneficiario.rol}" rendered="#{itemBeneficiario.nombrebeneficiario eq 'Total'}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:panel>
+                    <ace:dialog 
+                        header="Beneficiario"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        rendered="#{beneficiariosSupaSfccbdmq.formulario.mostrar}"
+                        visible="#{beneficiariosSupaSfccbdmq.formulario.mostrar}">
+                        <h:panelGroup>
+                            <h:panelGrid rendered="#{!beneficiariosSupaSfccbdmq.formulario.modificar}" >
+                                <ui:include src="../BuscarEmpleadoAdicional.xhtml" />
+                            </h:panelGrid>
+                            <h:panelGrid rendered="#{beneficiariosSupaSfccbdmq.formulario.modificar}">
+                                <h:outputLabel value="Empleado : " />
+                                <h:outputText value="#{beneficiariosSupaSfccbdmq.beneficiario.empleado.entidad.toString()}" />
+                            </h:panelGrid>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Tipo de beneficiario: " />
+                                <h:selectOneMenu  value="#{beneficiariosSupaSfccbdmq.tipoBenef}" >
+                                    <f:selectItem itemLabel="---Seleccione Uno----" itemValue="0"/>
+                                    <f:selectItem itemLabel="EMPLEADO" itemValue="1"/>
+                                    <f:selectItem itemLabel="PROVEEDOR" itemValue="-1"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                            </h:panelGrid>
+                            <h:panelGrid>
+                                <h:panelGrid rendered="#{beneficiariosSupaSfccbdmq.tipoBenef eq 1}" >
+                                    <h:panelGrid columns="2">
+                                        <ace:autoCompleteEntry 
+                                            value="#{beneficiariosSupaSfccbdmq.apellidos}"
+                                            rows="50" width="300"
+                                            listVar="empleadoSeleccionar"
+                                            filterBy="#{empleadoSeleccionar.entidad.toString()}"
+                                            listValue="#{beneficiariosSupaSfccbdmq.listaUsuarios}"
+                                            valueChangeListener="#{beneficiariosSupaSfccbdmq.cambiaApellido}"
+                                            textChangeListener="#{beneficiariosSupaSfccbdmq.empleadoChangeEventHandler}"
+                                            label="Apellidos Beneficiario:"
+                                            labelPosition="left">
+                                            <f:facet name="row">
+                                                <h:panelGrid columns="3" width="100%"  style="text-align: left;font-size: xx-small" columnClasses="tipo">
+                                                    <h:outputText value="#{empleadoSeleccionar.entidad.apellidos}"/>
+                                                    <h:outputText value="#{empleadoSeleccionar.entidad.nombres}"/>
+                                                    <h:outputText value="#{empleadoSeleccionar.entidad.pin}"/>
+                                                </h:panelGrid>
+                                            </f:facet>
+                                            <ace:ajax execute="@all"/>
+                                        </ace:autoCompleteEntry>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{beneficiariosSupaSfccbdmq.empleadoSeleccionado!=null}">
+                                        <h:outputLabel value="Nombres:" />
+                                        <h:outputLabel value="#{beneficiariosSupaSfccbdmq.empleadoSeleccionado.entidad.nombres}" />
+                                        <h:outputLabel value="C.I.:" />
+                                        <h:outputLabel  value="#{beneficiariosSupaSfccbdmq.empleadoSeleccionado.entidad.pin}"/>
+                                    </h:panelGrid>
+                                </h:panelGrid>
+                                <h:panelGrid rendered="#{beneficiariosSupaSfccbdmq.tipoBenef eq -1}" >
+                                    <ui:include src="../BuscarProveedor.xhtml" />
+                                </h:panelGrid>
+                            </h:panelGrid> <h:panelGrid columns="2">
+                                <h:outputLabel value="Código SUPA"/>
+                                <h:inputText id="codigoS" value="#{beneficiariosSupaSfccbdmq.beneficiario.codigossupa}" title="Código Supa" />
+                                <h:outputText value="Concepto :"/>
+                                <h:selectOneMenu value="#{beneficiariosSupaSfccbdmq.beneficiario.concepto}">
+                                    <f:selectItems value="#{conceptosSfccbdmq.comboRetencion}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                                <h:outputLabel value="Mes :"/>
+                                <h:inputText value="#{beneficiariosSupaSfccbdmq.beneficiario.mes}" size="5" rendered="#{!beneficiariosSupaSfccbdmq.formulario.modificar}">
+                                    <f:validateLength maximum="2" minimum="1"/>
+                                </h:inputText>
+                                <h:outputLabel value="#{beneficiariosSupaSfccbdmq.beneficiario.mes}" rendered="#{beneficiariosSupaSfccbdmq.formulario.modificar}"/>
+                                <h:outputLabel value="Año :"/>
+                                <h:inputText value="#{beneficiariosSupaSfccbdmq.beneficiario.anio}" size="5" rendered="#{!beneficiariosSupaSfccbdmq.formulario.modificar}">
+                                    <f:validateLength maximum="4" minimum="1"/>
+                                </h:inputText>
+                                <h:outputLabel value="#{beneficiariosSupaSfccbdmq.beneficiario.anio}" rendered="#{beneficiariosSupaSfccbdmq.formulario.modificar}"/>
+                                <h:outputLabel value="Valor:" for="valor" />
+                                <h:inputText id="valor" value="#{beneficiariosSupaSfccbdmq.beneficiario.valor}" title="Valor"  style="text-align: right"/>
+                                <h:outputText value="Concepto :"/>
+                                <h:selectOneMenu value="#{beneficiariosSupaSfccbdmq.beneficiario.conceptoextra}">
+                                    <f:selectItems value="#{conceptosSfccbdmq.comboProvicionesSinProveedor}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{beneficiariosSupaSfccbdmq.insertar()}" rendered="#{beneficiariosSupaSfccbdmq.formulario.nuevo}" />
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{beneficiariosSupaSfccbdmq.grabar()}" rendered="#{beneficiariosSupaSfccbdmq.formulario.modificar}" />
+                            <ace:menuItem value="Está Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{beneficiariosSupaSfccbdmq.eliminar()}" rendered="#{beneficiariosSupaSfccbdmq.formulario.borrar}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{beneficiariosSupaSfccbdmq.formulario.cancelar()}" />
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </ace:dialog>
+
+                    <ace:dialog 
+                        header="Copiar Beneficiarios"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        rendered="#{beneficiariosSupaSfccbdmq.formularioCopiar.mostrar}"
+                        visible="#{beneficiariosSupaSfccbdmq.formularioCopiar.mostrar}">
+                        <h:panelGroup>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Está seguro de copiar los registros del mes: #{beneficiariosSupaSfccbdmq.mesAnterior} y del año: #{beneficiariosSupaSfccbdmq.anioAnterior}"/>
+                            </h:panelGrid>
+                            <h:outputText value="Concepto :"/>
+                            <h:selectOneMenu value="#{beneficiariosSupaSfccbdmq.conceptoExtra}">
+                                <f:selectItems value="#{conceptosSfccbdmq.comboProvicionesSinProveedor}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                        </h:panelGroup>
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{beneficiariosSupaSfccbdmq.grabarCopiar()}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{beneficiariosSupaSfccbdmq.formularioCopiar.cancelar()}" />
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </ace:dialog>
+                    <ace:dialog 
+                        header="Cargar Beneficiarios"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        rendered="#{beneficiariosSupaSfccbdmq.formularioCargar.mostrar}"
+                        visible="#{beneficiariosSupaSfccbdmq.formularioCargar.mostrar}">
+                        <h:panelGroup>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Mes :"/>
+                                <h:inputText value="#{beneficiariosSupaSfccbdmq.mesNuevo}"/>
+                                <h:outputLabel value="Año :"/>
+                                <h:inputText value="#{beneficiariosSupaSfccbdmq.anioNuevo}"/>
+                            </h:panelGrid>
+                            <h:outputText value="Concepto :"/>
+                            <h:selectOneMenu value="#{beneficiariosSupaSfccbdmq.conceptoExtra}">
+                                <f:selectItems value="#{conceptosSfccbdmq.comboProvicionesSinProveedor}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:panelGrid columns="2" width="30%">
+                                <h:outputLabel value="Separador de campos :"/>
+                                <h:inputText value="#{beneficiariosSupaSfccbdmq.separador}"  size="3">
+                                    <ace:ajax execute="@all"/>
+                                </h:inputText>
+                                <h:outputLabel value="Archivo a Subir:" />
+                            </h:panelGrid>
+                            <h:panelGrid columns="3" width="30%">
+                                <ace:fileEntry id="file-entry" 
+                                               maxFileCount="1" 
+                                               maxFileCountMessage="Máximo un archivo" 
+                                               fileEntryListener="#{beneficiariosSupaSfccbdmq.archivoListener}" 
+                                               maxFileSize="6291456" 
+                                               maxFileSizeMessage="Tamaño muy grande." 
+                                               maxTotalSize="18874368" 
+                                               maxTotalSizeMessage="Total del tamaño muy grande." 
+                                               useOriginalFilename="true" 
+                                               useSessionSubdir="true"/>
+                                <h:commandButton type="submit" value="Cargar datos"/>
+                            </h:panelGrid>
+                            <h:panelGrid>
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{beneficiariosSupaSfccbdmq.grabarCarga()}" />
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{beneficiariosSupaSfccbdmq.formularioCargar.cancelar()}" />
+                                </ace:menuBar>
+                            </h:panelGrid>
+                            <ace:tabSet style="clear:both;">
+                                <ace:tabPane label="Beneficiarios">
+                                    <h:panelGrid width="100%">
+                                        <ace:dataTable id="detalle" 
+                                                       value="#{beneficiariosSupaSfccbdmq.listaCarga}"
+                                                       var="item"
+                                                       paginator="true"
+                                                       resizableColumns="true"
+                                                       rowIndexVar="row"
+                                                       paginatorPosition="both"
+                                                       rowsPerPageTemplate="5,10,20,50,100,200"
+                                                       paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                       rows="40"
+                                                       binding="#{beneficiariosSupaSfccbdmq.formularioCargar.fila}">
+                                            <ace:column  headerText="Empleado" style="text-align: left">
+                                                <h:outputText value="#{item.empleado.entidad.toString()}" />
+                                            </ace:column>
+                                            <ace:column  headerText="Cédula Beneficiario" style="text-align: left">
+                                                <h:outputText value="#{item.cedulabeneficiario}" />
+                                            </ace:column>
+                                            <ace:column  headerText="Nombre Beneficiario" style="text-align: left">
+                                                <h:outputText value="#{item.nombrebeneficiario}" />
+                                            </ace:column>
+                                            <ace:column  headerText="Código SUPA" style="text-align: left">
+                                                <h:outputText value="#{item.codigossupa}" />
+                                            </ace:column>
+                                            <ace:column  headerText="Tipo beneficiario" style="text-align: left">
+                                                <h:outputText value="#{item.tipobeneficiario}" />
+                                            </ace:column>
+                                            <ace:column  headerText="Concepto" style="text-align: left">
+                                                <h:outputText value="#{item.concepto.nombre}" />
+                                            </ace:column>
+                                            <ace:column  headerText="Valor" style="text-align: right" >
+                                                <h:outputText  value="#{item.valor}">
+                                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                        </ace:dataTable>
+                                    </h:panelGrid>
+                                </ace:tabPane>
+                                <ace:tabPane label="Errores de Carga">
+                                    <ace:dataTable id="tablaErrores" 
+                                                   value="#{beneficiariosSupaSfccbdmq.errores}"
+                                                   var="error"
+                                                   paginator="true"
+                                                   lazy="false"
+                                                   resizableColumns="true"
+                                                   rowIndexVar="row2"
+                                                   paginatorPosition="top"
+                                                   paginatorAlwaysVisible="true"
+                                                   rowsPerPageTemplate="5,10,15,30,50,100"
+                                                   paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                   rows="10"
+                                                   style="width: 100%">
+                                        <ace:column  headerText="Error" style="text-align: left">
+                                            <h:outputText  value="#{error}">
+                                            </h:outputText>
+                                        </ace:column>
+                                    </ace:dataTable>
+                                </ace:tabPane>
+                            </ace:tabSet>
+                        </h:panelGroup>
+                        <h:panelGrid>
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{beneficiariosSupaSfccbdmq.grabarCarga()}" />
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{beneficiariosSupaSfccbdmq.formularioCargar.cancelar()}" />
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <ace:messages/>
+                    </ace:dialog>
+                    <ace:dialog 
+                        header="Exportar"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{beneficiariosSupaSfccbdmq.formularioDescargar.mostrar}"
+                        visible="#{beneficiariosSupaSfccbdmq.formularioDescargar.mostrar}">
+                        <h:panelGroup>
+                            <ace:dynamicResource fileName="Beneficiarios.xls" id="pdf-botonMayor" label="Exportar a XLS"
+                                                 mimeType="application/xls" resource="#{beneficiariosSupaSfccbdmq.reporteXls}" 
+                                                 style="" type="button"/>
+
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{beneficiariosSupaSfccbdmq.formularioDescargar.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                    <!--Contabilizar-->
+                    <ace:dialog 
+                        header="Contabilizar Beneficiarios"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        rendered="#{beneficiariosSupaSfccbdmq.formularioContabilizar.mostrar}"
+                        visible="#{beneficiariosSupaSfccbdmq.formularioContabilizar.mostrar}">
+                        <h:panelGroup>
+                            <h:panelGrid columns="2">
+                                <h:outputText value="Forma de pago:"/>
+                                <h:selectOneMenu value="#{beneficiariosSupaSfccbdmq.kardex.formapago}" title="Formapago" >
+                                    <f:selectItems value="#{codigosSfccbdmq.comboFormaDePago}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                                <h:outputLabel value="Fecha Movimiento:" />
+                                <ace:dateTimeEntry navigator="true" value="#{beneficiariosSupaSfccbdmq.kardex.fechamov}" 
+                                                   popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </ace:dateTimeEntry>
+                                <h:outputText value="No SPI : "/>
+                                <h:inputText value="#{beneficiariosSupaSfccbdmq.numeroSpi}" title="No Documento" size="5">
+                                    <f:validateLength maximum="5"/>
+                                </h:inputText>
+                                <h:outputText value="Observaciones:"/>
+                                <h:inputTextarea cols="60" rows="4" value="#{beneficiariosSupaSfccbdmq.kardex.observaciones}" title="Observaciones"/>
+                                <h:outputText value="Tipo de Movimiento:"/>
+                                <h:selectOneMenu value="#{beneficiariosSupaSfccbdmq.kardex.tipomov}" title="Tipo de Movimiento">
+                                    <f:selectItems value="#{tipoMovBancosSfccbdmq.comboObligacionesBancos}"/>
+                                </h:selectOneMenu>
+                                <h:outputText value="Banco:"/>
+                                <h:selectOneMenu value="#{beneficiariosSupaSfccbdmq.kardex.banco}" title="Banco">
+                                    <f:selectItems value="#{bancosSfccbdmq.comboBancos}"/>
+                                </h:selectOneMenu>
+                            </h:panelGrid>
+                            <h:panelGrid columns="2" width="100%">
+                                <h:outputText value="Valor A pagar:" />
+                                <h:outputText value="#{beneficiariosSupaSfccbdmq.total}" >
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </h:panelGrid>
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                                  action="#{beneficiariosSupaSfccbdmq.insertarKardex()}" />
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{beneficiariosSupaSfccbdmq.formularioContabilizar.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+
+                            <ace:submitMonitor id="submitMonitorPanel1"
+                                               for="panel"
+                                               blockUI="panel"
+                                               autoCenter="true"
+                                               activeLabel="Un Momento por favor"/>
+                            <ace:tabSet style="clear:both;" rendered="#{beneficiariosSupaSfccbdmq.formularioContabilizar.nuevo}">
+                                <ace:tabPane >
+                                    <f:facet name="label">Contabilización</f:facet>
+                                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                        <h:outputLabel  value="Exportar a:"/>
+                                        <h:selectOneRadio  value="#{beneficiariosSupaSfccbdmq.formularioContabilizar.pantalla}" required="true">
+                                            <f:ajax disabled="false"/>
+                                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                        </h:selectOneRadio>
+                                        <ace:dataExporter id="dataExporter2" 
+                                                          label="Exportar Archivo" 
+                                                          type="#{beneficiariosSupaSfccbdmq.formularioContabilizar.pantalla}" 
+                                                          target="tablaCont" fileName="datos"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid width="100%">
+                                        <ace:dataTable  id="tablaCont"
+                                                        paginatorAlwaysVisible="true"
+                                                        value="#{beneficiariosSupaSfccbdmq.renglonesBeneficiarios}"
+                                                        var="itemContabilizacion"
+                                                        paginator="false"
+                                                        lazy="falase"
+                                                        resizableColumns="true"
+                                                        rowIndexVar="row"
+                                                        paginatorPosition="both"
+                                                        rowsPerPageTemplate="5,10,15,30,50,100"
+                                                        paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                        >
+                                            <f:facet name="header">Renglones</f:facet> 
+
+                                            <ace:column  headerText="Cuenta"  style="text-align: left">
+                                                <h:outputText  value="#{itemContabilizacion.cuenta}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="N. Cuenta"  style="text-align: left">
+                                                <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemContabilizacion.cuenta).nombre}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Referencia"  style="text-align: left">
+                                                <h:outputText  value="#{itemContabilizacion.referencia}"/>
+                                            </ace:column>
+
+                                            <ace:column  headerText="Debe" style="text-align: right" >
+                                                <h:outputText  value="#{itemContabilizacion.debitos}" >
+                                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                            <ace:column  headerText="Haber" style="text-align: right" >
+                                                <h:outputText  value="#{itemContabilizacion.creditos}" >
+                                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                        </ace:dataTable>
+                                    </h:panelGrid>
+                                </ace:tabPane>
+                                <ace:tabPane >
+                                    <f:facet name="label">Prestamo</f:facet>
+                                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                        <h:outputLabel  value="Exportar a:"/>
+                                        <h:selectOneRadio  value="#{beneficiariosSupaSfccbdmq.formularioContabilizar.pantalla}" required="true">
+                                            <f:ajax disabled="false"/>
+                                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                        </h:selectOneRadio>
+                                        <ace:dataExporter id="dataExporterP" 
+                                                          label="Exportar Archivo" 
+                                                          type="#{beneficiariosSupaSfccbdmq.formularioContabilizar.pantalla}" 
+                                                          target="tablaP" fileName="datos"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid width="100%">
+                                        <ace:dataTable  id="tablaP"
+                                                        paginatorAlwaysVisible="true"
+                                                        value="#{beneficiariosSupaSfccbdmq.renglonesPrestado}"
+                                                        var="itemPrestamo"
+                                                        paginator="false"
+                                                        lazy="falase"
+                                                        resizableColumns="true"
+                                                        rowIndexVar="row"
+                                                        paginatorPosition="both"
+                                                        rowsPerPageTemplate="5,10,15,30,50,100"
+                                                        paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                        >
+                                            <f:facet name="header">Renglones</f:facet> 
+
+                                            <ace:column  headerText="Cuenta"  style="text-align: left">
+                                                <h:outputText  value="#{itemPrestamo.cuenta}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="N. Cuenta"  style="text-align: left">
+                                                <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemPrestamo.cuenta).nombre}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Referencia"  style="text-align: left">
+                                                <h:outputText  value="#{itemPrestamo.referencia}"/>
+                                            </ace:column>
+
+                                            <ace:column  headerText="Debe" style="text-align: right" >
+                                                <h:outputText  value="#{itemPrestamo.debitos}" >
+                                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                            <ace:column  headerText="Haber" style="text-align: right" >
+                                                <h:outputText  value="#{itemPrestamo.creditos}" >
+                                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                        </ace:dataTable>
+                                    </h:panelGrid>
+                                </ace:tabPane>
+                                <ace:tabPane >
+                                    <f:facet name="label">Años Anteriores</f:facet>
+                                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                        <h:outputLabel  value="Exportar a:"/>
+                                        <h:selectOneRadio  value="#{beneficiariosSupaSfccbdmq.formularioContabilizar.pantalla}" required="true">
+                                            <f:ajax disabled="false"/>
+                                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                        </h:selectOneRadio>
+                                        <ace:dataExporter id="dataExporterA" 
+                                                          label="Exportar Archivo" 
+                                                          type="#{beneficiariosSupaSfccbdmq.formularioContabilizar.pantalla}" 
+                                                          target="tablaA" fileName="datos"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid width="100%">
+                                        <ace:dataTable  id="tablaA"
+                                                        paginatorAlwaysVisible="true"
+                                                        value="#{beneficiariosSupaSfccbdmq.renglonesAñosAnteriores}"
+                                                        var="itemA"
+                                                        paginator="false"
+                                                        lazy="falase"
+                                                        resizableColumns="true"
+                                                        rowIndexVar="row"
+                                                        paginatorPosition="both"
+                                                        rowsPerPageTemplate="5,10,15,30,50,100"
+                                                        paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                        >
+                                            <f:facet name="header">Renglones</f:facet> 
+
+                                            <ace:column  headerText="Cuenta"  style="text-align: left">
+                                                <h:outputText  value="#{itemA.cuenta}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="N. Cuenta"  style="text-align: left">
+                                                <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemA.cuenta).nombre}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Referencia"  style="text-align: left">
+                                                <h:outputText  value="#{itemA.referencia}"/>
+                                            </ace:column>
+
+                                            <ace:column  headerText="Debe" style="text-align: right" >
+                                                <h:outputText  value="#{itemA.debitos}" >
+                                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                            <ace:column  headerText="Haber" style="text-align: right" >
+                                                <h:outputText  value="#{itemA.creditos}" >
+                                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                        </ace:dataTable>
+                                    </h:panelGrid>
+                                </ace:tabPane>
+                            </ace:tabSet>
+                        </h:panelGroup>
+                        <ace:messages/>
+                    </ace:dialog>
+                    <!--Imprimir Propuesta y egreso-->
+                    <ace:dialog 
+                        header="Imprimir"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{beneficiariosSupaSfccbdmq.formularioImprimir.mostrar}"
+                        visible="#{beneficiariosSupaSfccbdmq.formularioImprimir.mostrar}">
+                        <h:panelGroup>
+                            <ace:dynamicResource fileName="Egreso.pdf" id="pdf-boton" label="Egreso"
+                                                 mimeType="application/pdf" resource="#{beneficiariosSupaSfccbdmq.reporte}" 
+                                                 style="" type="button"/>
+                            <ace:dynamicResource fileName="Propuesta.pdf" id="pdf-botonP" label="Propuesta"
+                                                 mimeType="application/pdf" resource="#{beneficiariosSupaSfccbdmq.reportePropuesta}" 
+                                                 style="" type="button"/>
+
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{beneficiariosSupaSfccbdmq.formularioImprimir.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                    <ace:dialog 
+                        header="Borrar Todo"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{beneficiariosSupaSfccbdmq.formularioBorrar.mostrar}"
+                        visible="#{beneficiariosSupaSfccbdmq.formularioBorrar.mostrar}">
+                        <h:panelGroup>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Está seguro de borrar los registros del mes: #{beneficiariosSupaSfccbdmq.mes} y del año: #{beneficiariosSupaSfccbdmq.anio}"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                                  action="#{beneficiariosSupaSfccbdmq.eliminarTodo()}" />
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{beneficiariosSupaSfccbdmq.formularioBorrar.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                </ace:panel>
+            </ui:define>
+        </ui:composition>
+    </h:body>  
+</html>

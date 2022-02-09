@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <h:panelGrid width="100%">
+                    <ace:panel id="panel"
+                               header="#{reportePermisosSfccbdmq.perfil.menu.texto}"
+                               closable="false"
+                               toggleable="false"  >
+
+                        <ui:include src="../BuscarOrganigrama.xhtml"/>
+                        <h:panelGrid columns="5" width="100%">
+                            <h:selectOneMenu  value="#{reportePermisosSfccbdmq.tipoFecha}" >
+                                <f:selectItem itemLabel="Fecha de Solicitud" itemValue="o.solicitud"/>
+                                <f:selectItem itemLabel="Fecha de inicio" itemValue="o.desde"/>
+                                <f:selectItem itemLabel="Fecha de Fin" itemValue="o.hasta"/>
+                                <f:selectItem itemLabel="Fecha de Verificación" itemValue="o.fvalida"/>
+                                <f:selectItem itemLabel="Fecha de Autorización" itemValue="o.fautoriza"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{reportePermisosSfccbdmq.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{reportePermisosSfccbdmq.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Cédula:"/>
+                            <h:inputText value="#{reportePermisosSfccbdmq.buscarCedula}" />
+                            <h:outputLabel value="Nombres:"/>
+                            <h:inputText value="#{reportePermisosSfccbdmq.nombres}" />
+                            <h:outputLabel value="Apellidos:"/>
+                            <h:inputText value="#{reportePermisosSfccbdmq.apellidos}" />
+                            <h:outputLabel value="Email:"/>
+                            <h:inputText value="#{reportePermisosSfccbdmq.email}" />
+                            <h:outputLabel value="Estado Civil:" />
+                            <h:selectOneMenu value="#{reportePermisosSfccbdmq.ecivil}" >
+                                <f:selectItems value="#{codigosSfccbdmq.comboEstadoCivil}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Cargo:" />
+                            <h:selectOneMenu value="#{reportePermisosSfccbdmq.cargo}" >
+                                <f:selectItems value="#{cargoxorganigrama.comboCargosOrganigrama}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Género:" />
+                            <h:selectOneMenu value="#{reportePermisosSfccbdmq.genero}" >
+                                <f:selectItems value="#{codigosSfccbdmq.comboGenero}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Grupo Sanguineo:" />
+                            <h:selectOneMenu value="#{reportePermisosSfccbdmq.tipsang}">
+                                <f:selectItems value="#{codigosSfccbdmq.comboGrpSanguineo}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Modalidad de Contratación : " />
+                            <h:selectOneMenu value="#{reportePermisosSfccbdmq.contratoL}" >
+                                <f:selectItems value="#{tipoContrato.comboTiposContrato}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Edificio:"  />
+                            <h:selectOneMenu value="#{oficinasSfccbdmq.edificio}">
+                                <f:selectItems value="#{edificiosSfccbdmq.comboEdificioEspacio}" />
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Oficina:" />
+                            <h:selectOneMenu value="#{reportePermisosSfccbdmq.oficina}" >
+                                <f:selectItems value="#{oficinasSfccbdmq.comboOficinaEspacio}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Nombramiento : " />
+                            <h:selectOneRadio value="#{reportePermisosSfccbdmq.nombramiento}" style="border: 0px" >
+                                <f:selectItem itemValue="1" itemLabel="SI" />
+                                <f:selectItem itemValue="2" itemLabel="NO" />
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneRadio>
+                            <h:outputLabel value="Estado:" />
+                            <h:selectOneMenu value="#{reportePermisosSfccbdmq.estadoBuscar}" >
+                                <f:selectItems value="#{reportePermisosSfccbdmq.comboEstado}" />
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="5">
+<!--                            <h:outputLabel value="Fecha de Nacimiento:" />
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{reportePermisosSfccbdmq.desde}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{reportePermisosSfccbdmq.hasta}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>-->
+                            <h:outputLabel value="Tipo de Permiso:"  />
+                            <h:selectOneMenu value="#{reportePermisosSfccbdmq.tipoPermisos}" >
+                                <f:selectItems value="#{tipoPermiso.comboTiposPermiso}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu> 
+                        </h:panelGrid> 
+
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reportePermisosSfccbdmq.buscar()}"/>
+                            </ace:menuBar>
+
+                        </h:panelGrid>
+                        <ace:messages />
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="panel"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{reportePermisosSfccbdmq.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter  
+                                label="Exportar Archivo" 
+                                type="#{reportePermisosSfccbdmq.formulario.pantalla}" 
+                                target="tablaEmpleados" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%" style="margin-bottom: 20px;">
+
+                            <ace:dataTable id="tablaEmpleados"
+                                           value="#{reportePermisosSfccbdmq.listaLicencias}"
+                                           var="item"
+                                           lazy="false"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="10,15,30,50"
+                                           currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="30"
+                                           style="width: 100%;"
+                                           scrollHeight="600"
+                                           scrollable="true">
+                                <ace:column  headerText="F. Solicitud"  style="text-align: left">
+                                    <h:outputText  value="#{item.solicitud}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="No."  style="text-align: left">
+                                    <h:outputText value="#{item.id}"/>
+                                </ace:column>
+                                <ace:column  headerText="Tipo"  style="text-align: left">
+                                    <h:outputText value="#{item.tipo.toString()}"/>
+                                </ace:column>
+                                 <ace:column  headerText="Quien Autoriza"  style="text-align: left">
+                                     <h:outputText value="#{item.autoriza.toString()}"/>
+                                </ace:column>
+                                <ace:column id="fechaIngreso" headerText="Desde"  style="text-align: left">
+                                    <h:outputText  value="#{item.inicio}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Hasta"  style="text-align: left">
+                                    <h:outputText  value="#{item.fin}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+<!--                                <ace:column  headerText="F. retorno"  style="text-align: left">
+                                    <h:outputText  value="#{item.fretorno}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>-->
+                                <ace:column  headerText="H inicio"  style="text-align: left">
+                                    <h:outputText  value="#{item.desde}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="H fin"  style="text-align: left">
+                                    <h:outputText  value="#{item.hasta}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Cuanto"  style="text-align: left">
+                                    <h:outputText value="#{reporteSaldoVacaionesSfccbdmq.traerSaldoDias(item.cuanto)}"/>
+                                </ace:column>
+                                <ace:column  headerText="Factor"  style="text-align: left">
+                                    <h:outputText value="#{item.cantidad}"/>
+                                </ace:column>
+                                <ace:column  headerText="Cédula"  style="text-align: left">
+                                    <h:outputText value="#{item.empleado.entidad.pin}"/>
+                                </ace:column>
+                                <ace:column  id="apellidos" headerText="Apellidos "  style="text-align: left">
+                                    <h:outputText value="#{item.empleado.entidad.apellidos}"/>
+                                </ace:column>
+                                <ace:column id="nombres" headerText="Nombres"  style="text-align: left">
+                                    <h:outputText value="#{item.empleado.entidad.nombres}"/>
+                                </ace:column>
+                                <ace:column id="proceso" headerText="Proceso"  style="text-align: left">
+                                    <h:outputText value="#{item.empleado.cargoactual.organigrama.superior.nombre}"/>
+                                </ace:column>
+                                <ace:column id="cargo" headerText="Cargo "  style="text-align: left">
+                                    <h:outputText value="#{item.empleado.cargoactual.cargo.nombre}"/>
+                                </ace:column>
+
+                                <ace:column id="unidadAdministrativa" headerText="Unidad Administrativa"  style="text-align: left">
+                                    <h:outputText value="#{item.empleado.cargoactual.organigrama.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Estado" style="text-align: left">
+                                    <h:outputText  value="#{reportePermisosSfccbdmq.getEstado(item)}" />
+                                </ace:column>
+
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:panel>
+                    <!--</ace:dialog>-->
+                </h:panelGrid>
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

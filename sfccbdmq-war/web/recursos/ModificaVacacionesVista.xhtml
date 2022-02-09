@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaPersonal.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <h:panelGrid width="100%">
+                    <ace:panel id="panel"
+                               header="#{modificaVacacionesEmpleadoSfcCBDMQ.perfil.menu.texto}"
+                               closable="false"
+                               toggleable="false"  >
+                        <ui:include src="../BuscarEmpleado.xhtml"/>
+                        <ace:messages />
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{modificaVacacionesEmpleadoSfcCBDMQ.buscar()}"/>
+                        </ace:menuBar>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="panel"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{modificaVacacionesEmpleadoSfcCBDMQ.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{modificaVacacionesEmpleadoSfcCBDMQ.formulario.pantalla}" 
+                                              target="tablaEmpleados" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%" style="margin-bottom: 20px;">
+
+                            <ace:dataTable id="tablaEmpleados"
+                                           value="#{modificaVacacionesEmpleadoSfcCBDMQ.listaVacaciones}"
+                                           var="item"
+                                           lazy="false"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="10,15,30,50"
+                                           currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="30"
+                                           style="width: 100%;"
+                                           binding="#{modificaVacacionesEmpleadoSfcCBDMQ.formulario.fila}">
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{modificaVacacionesEmpleadoSfcCBDMQ.ver()}" value="Ver" icon="ui-icon ui-icon-search"/>
+                                    </ace:menuButton>
+                                </ace:column>
+                                <ace:column  headerText="Mes "  style="text-align: left">
+                                    <h:outputText value="#{item.mes}">
+                                        <f:convertNumber pattern="00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Año"  style="text-align: left">
+                                    <h:outputText value="#{item.anio}">
+                                        <f:convertNumber pattern="00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Ganado "  style="text-align: left">
+                                    <h:outputText value="#{modificaVacacionesEmpleadoSfcCBDMQ.ganado}"/>
+                                </ace:column>
+<!--                                <ace:column  headerText="Ganado Fin de semana"  style="text-align: left">
+                                    <h:outputText value="#{modificaVacacionesEmpleadoSfcCBDMQ.ganadofs}"/>
+                                </ace:column>-->
+                                <ace:column  headerText="Proporcional"  style="text-align: left">
+                                    <h:outputText value="#{modificaVacacionesEmpleadoSfcCBDMQ.proporcional}"/>
+                                </ace:column>
+                                <ace:column  headerText="Utilizado"  style="text-align: left">
+                                    <h:outputText value="#{modificaVacacionesEmpleadoSfcCBDMQ.utilizado}"/>
+                                </ace:column>
+<!--                                <ace:column  headerText="Utilizado Fin de semana"  style="text-align: left">
+                                    <h:outputText value="#{modificaVacacionesEmpleadoSfcCBDMQ.utilizadofs}"/>
+                                </ace:column>-->
+
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:panel>
+                    <!--</ace:dialog>-->
+                </h:panelGrid>
+                <ace:dialog 
+                    header="#{modificaVacacionesEmpleadoSfcCBDMQ.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{modificaVacacionesEmpleadoSfcCBDMQ.formulario.mostrar}"
+                    visible="#{modificaVacacionesEmpleadoSfcCBDMQ.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid width="100%" columns="4">
+                            <h:outputLabel value="Días:" />
+                            <h:inputText  value="#{modificaVacacionesEmpleadoSfcCBDMQ.dias}" title="Días" />
+                            <h:outputLabel value="Días Fin de Semana:" />
+                            <h:inputText  value="#{modificaVacacionesEmpleadoSfcCBDMQ.diasfs}" title="Días fin de semana" />
+                            <h:outputLabel value="Horas:" />
+                            <h:inputText  value="#{modificaVacacionesEmpleadoSfcCBDMQ.horas}" title="Horas" />
+                            <h:outputLabel value="Horas Fin de Semana:" />
+                            <h:inputText  value="#{modificaVacacionesEmpleadoSfcCBDMQ.horasfs}" title="Horas Fin de Semana" />
+                            <h:outputLabel value="Minutos:" />
+                            <h:inputText  value="#{modificaVacacionesEmpleadoSfcCBDMQ.minutos}" title="Minutos" />
+                            <h:outputLabel value="Minutos Fin de Semana:" />
+                            <h:inputText  value="#{modificaVacacionesEmpleadoSfcCBDMQ.minutosfs}" title="Minutos Fin de Semana" />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" 
+                                          icon="ui-icon ui-icon-disk"  action="#{modificaVacacionesEmpleadoSfcCBDMQ.grabar()}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{modificaVacacionesEmpleadoSfcCBDMQ.formulario.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+                <!--Poner  con include ya que vista demasiado Cargada;-->
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

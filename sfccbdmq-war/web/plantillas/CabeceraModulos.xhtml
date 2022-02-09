@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+
+    <body >
+        <ui:composition>
+          <h:panelGrid columns="2" width="100%" style="text-align: center;margin-top:-13px ">
+                <ace:graphicImage alt="EMSEG" url="../resources/SFC90.png" value="../resources/SFC90.png"/>
+                 <h:panelGrid columns="6" width="100%" style="text-align: center;margin-top:-13px ">
+                        <ace:menuBar  style="text-align: left; margin-top:0px;  height: 36px; width: 100%; border: 0"  autoSubmenuDisplay="true"  >
+                            <ace:menuItem>
+                                <a target="_blank" href="#">
+                                    <h:graphicImage alt="EMSEG" url="../resources/FACEBOOK.png" value="../resources/FACEBOOK.png"/>  
+                                </a>
+                            </ace:menuItem>
+                            <ace:menuItem>
+                                <a target="_blank" href="#">
+                                    <h:graphicImage alt="EMSEG" url="../resources/twitter.png" value="../resources/twitter.png"/>  
+                                </a>
+                            </ace:menuItem>
+                            <ace:menuItem>
+                                <a target="_blank" href="#">
+                                    <h:graphicImage alt="EMSEG" url="../resources/youtube.png" value="../resources/youtube.png"/>  
+                                </a>
+                            </ace:menuItem>
+                            <ace:menuItem>
+                                <a target="_blank" href="#">
+                                    <h:graphicImage alt="EMSEG" url="../resources/inst.png" value="../resources/inst.png"/>  
+                                </a>
+                            </ace:menuItem>
+                            <ace:menuItem>
+                                <a target="_blank" href="#">
+                                    <h:graphicImage alt="EMSEG" url="../resources/flickr.png" value="../resources/flickr.png"/>  
+                                </a>
+                            </ace:menuItem>
+                        </ace:menuBar>
+                    </h:panelGrid>
+            </h:panelGrid>   
+            <h:panelGrid columns="3">
+
+                <!--<img src="../resources/images/logo.png" alt="logo"/>-->
+                <!--<img src="../resources/images/logoEm.png" width="182" height="90" alt="logo"/>-->
+                <h:panelGrid columns="1">
+                    <ace:menuBar  autoSubmenuDisplay="true">
+                        <ace:menuItem  value="Activos Fijos" action="#{menusSfccbdmq.iralModulo('ACT')}" icon="ui-icon ui-icon-clipboard" />
+                        <ace:menuItem   value="Compras" action="#{menusSfccbdmq.iralModulo('COM')}" icon="ui-icon ui-icon-tag" />
+                        <ace:menuItem  value="Contabilidad" action="#{menusSfccbdmq.iralModulo('CONT')}" icon="ui-icon ui-icon-script" />
+                        <ace:menuItem  value="Presupuesto" action="#{menusSfccbdmq.iralModulo('PRE')}" icon="ui-icon ui-icon-image" />
+                        <ace:menuItem  value="Tesorería" action="#{menusSfccbdmq.iralModulo('TES')}" icon="ui-icon ui-icon-calculator" />
+                        <ace:menuItem  value="Seguridad" action="#{menusSfccbdmq.iralModulo('SEG')}" icon="ui-icon ui-icon-key" />
+                        <ace:menuItem  value="Suministros" action="#{menusSfccbdmq.iralModulo('SUM')}" icon="ui-icon ui-icon-cart"/>
+                        <ace:menuItem  value="Talento Humano" action="#{menusSfccbdmq.iralModulo('RRHH')}" icon="ui-icon ui-icon-person" />
+                        <ace:menuItem  value="Personal" action="#{menusSfccbdmq.iralModulo('PER')}" icon="ui-icon ui-icon-heart" />
+                        <ace:menuItem  value="PACPOA" action="#{menusSfccbdmq.iralModulo('PACPOA')}" icon="ui-icon ui-icon-check" />
+                        <ace:menuItem  value="Procesos" action="#{menusSfccbdmq.iralModulo('FLU')}" icon="ui-icon ui-icon-link" />
+                        <!--<ace:menuItem  value="Fichas" action="#{menusSfccbdmq.iralModuloInicio('FICHAS')}" icon="ui-icon ui-icon-circle-plus" />-->
+
+                        <ace:menuItem  value="Ejecutar" action="#{parametrosSfccbdmq.ejecutarCalculo()}" icon="ui-icon ui-icon-check" 
+                                       rendered="#{parametrosSfccbdmq.logueado.userid=='admin'}"/>
+                        <ace:menuItem  value="Cerrar Sesión" action="#{parametrosSfccbdmq.logout()}" style="color: red" icon="ui-icon ui-icon-power"/>
+                    </ace:menuBar>
+                    <ace:menuBar autoSubmenuDisplay="true"
+                                 model="#{menusSfccbdmq.menuOpciones}"
+                                 style="text-align: left;">
+                        <!--<f:setPropertyActionListener target="#{menussistema.nombreForma}" value="mkyong" />-->
+                    </ace:menuBar>
+
+                </h:panelGrid>
+                <h:panelGrid columns="1"  style="width: 100%;height: 100%;color: navy;background-color: white">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Módulo Actual:" /> 
+                        <h:outputLabel value="#{menusSfccbdmq.menuSeleccionado.nombre}"/> 
+                        <h:outputLabel value="Usuario:" /> 
+                        <h:outputLabel value="#{parametrosSfccbdmq.logueado.userid}"/> 
+                        <h:outputLabel value="Versión:"/> 
+                        <h:outputLabel value="#{parametrosSfccbdmq.version}"/> 
+<!--                    </h:panelGrid>
+                    <h:panelGrid columns="1">-->
+                        <ace:menuBar autoSubmenuDisplay="false" >
+                            <ace:menuItem value="Cambio de clave" icon="ui-icon ui-icon-key"  action="#{parametrosSfccbdmq.cambiarClaveNueva()}"/>
+                        </ace:menuBar>
+                        <!--<h:commandButton value="Cambio de clave" action="#{parametrosSfccbdmq.cambiarClaveNueva()}"/>-->
+
+<!--                        <ace:themeSelect value="#{menusSfccbdmq.tema}" label="Select new theme: ">
+    <ace:ajax render="@all"/>
+</ace:themeSelect>-->
+                    </h:panelGrid>
+                </h:panelGrid>
+            </h:panelGrid>
+            <h:panelGrid columns="1">
+                <!--<ace:messages/>-->
+                <ace:growlMessages  id="allMsgsGrowl" autoHide="false"
+                               closeAll="true"
+                               maxVisibleMessages="3"
+                               position="top-right" header="Información"/>
+            </h:panelGrid>
+            <ace:dialog 
+                header="Cambio de Clave"
+                closable="false"
+                modal="true"
+                draggable="true"
+                showEffect="clip"
+                hideEffect="fade"
+                rendered="#{parametrosSfccbdmq.formulario.mostrar}"
+                visible="#{parametrosSfccbdmq.formulario.mostrar}">
+                <h:panelGroup>
+
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Clave Actual :"/>
+                        <h:inputSecret value="#{parametrosSfccbdmq.clave}"/>
+                        <h:outputLabel  value="Clave Nueva:"/>
+                        <h:inputSecret value="#{parametrosSfccbdmq.claveNueva}"/>
+                        <h:outputLabel  value="Re-tipee Clave Nueva:"/>
+                        <h:inputSecret value="#{parametrosSfccbdmq.claveNuevaRetipeada}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Cambiar" icon="ui-icon ui-icon-key"  action="#{parametrosSfccbdmq.cambiarClave()}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{parametrosSfccbdmq.formulario.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                </h:panelGroup>
+            </ace:dialog>
+            <ace:dialog 
+                header="Cambio de Clave"
+                closable="false"
+                modal="true"
+                draggable="true"
+                showEffect="clip"
+                hideEffect="fade"
+                rendered="#{parametrosSfccbdmq.formularioProceso.mostrar}"
+                visible="#{parametrosSfccbdmq.formularioProceso.mostrar}">
+                <h:panelGroup>
+
+                    <h:panelGrid columns="2">
+<!--                        <h:outputLabel value="Día :"/>
+                        <h:inputText value="#{parametrosSfccbdmq.dia}"/>-->
+                        <h:outputLabel value="Mes :"/>
+                        <h:inputText value="#{parametrosSfccbdmq.mes}"/>
+                        <h:outputLabel value="Año :"/>
+                        <h:inputText value="#{parametrosSfccbdmq.anio}"/>
+                        <h:outputLabel value="Cédula :"/>
+                        <h:inputText value="#{parametrosSfccbdmq.cedula}"/>
+                        
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Calcula Ganado" icon="ui-icon ui-icon-key"  action="#{parametrosSfccbdmq.calculaGanado()}"/>
+                            <ace:menuItem value="Cambiar Total" icon="ui-icon ui-icon-key"  action="#{parametrosSfccbdmq.ejecutaProceso()}"/>
+                            <ace:menuItem value="Cambiar Cédula" icon="ui-icon ui-icon-key"  action="#{parametrosSfccbdmq.ejecutarCedula()}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{parametrosSfccbdmq.formularioProceso.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                </h:panelGroup>
+            </ace:dialog>
+<!--            <h:panelGrid columns="1">
+                <ace:messages/>
+            </h:panelGrid>-->
+        </ui:composition>
+    </body>
+</html>

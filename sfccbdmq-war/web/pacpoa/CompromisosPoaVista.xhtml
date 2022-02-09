@@ -1,0 +1,207 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : Ejecución Presupuestaria
+    Created on : Agt 30, 2017, 16:34:19
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:body>
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="Compromisos Presupuestos"
+                           closable="false"
+                           toggleable="true">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Desde:"/>
+                        <ace:dateTimeEntry navigator="true"  value="#{compromisosPoa.desde}" 
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Hasta:"/>
+                        <ace:dateTimeEntry navigator="true"  value="#{compromisosPoa.hasta}" 
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Direccion:" />
+                        <h:selectOneMenu value="#{proyectosPoa.direccion}">
+                            <f:selectItems value="#{consultasPoa.comboDirecciones}" />
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Fuente:" />
+                        <h:selectOneMenu value="#{compromisosPoa.fuente}" title="Fuente">
+                            <f:selectItems value="#{consultasPoa.comboFuenteFinanciamiento}"/>
+                            <ace:ajax execute="@all"/>    
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <ui:include src="BuscarPartida.xhtml" />
+                    <ui:include src="BuscarProyecto.xhtml" />
+
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{compromisosPoa.nuevo()}" />
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{compromisosPoa.buscar()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+
+                </ace:panel>
+                <ace:panel 
+                    header="Partidas encontradas"
+                    closable="false"
+                    toggleable="true">
+
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{compromisosPoa.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{compromisosPoa.formulario.pantalla}" 
+                                          target="tabla" fileName="Asignaciones"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       paginatorAlwaysVisible="true"
+                                       value="#{compromisosPoa.listadoEjecucion}"
+                                       var="item"
+                                       paginator="true"
+                                       lazy="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100,500"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15">
+                            <ace:tableConfigPanel
+                                dragHandle=".ui-tableconf-header"
+                                columnNameConfigurable="true"
+                                columnVisibilityConfigurable="true"
+                                columnOrderingConfigurable="true"
+                                modal="true"
+                                type="last-col"/>
+                            <ace:column headerText="Registro"  style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column headerText="Acciones"  style="text-align: left">
+                                <ace:menuButton effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{compromisosPoa.modificar()}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{compromisosPoa.eliminar()}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column headerText="Cod. Dirección" style="text-align: left" rendered="false">
+                                <h:outputText  value="#{item.proyecto.direccion}"/>  
+                            </ace:column>
+                            <ace:column headerText="Dirección" style="text-align: left" rendered="false">
+                                <h:outputText  value="#{consultasPoa.traerDireccion(item.proyecto.direccion)}"/>    
+                            </ace:column>
+                            <ace:column headerText="Cod. Partida" style="text-align: left">
+                                <h:outputText  value="#{item.partida.codigo}"/>  
+                            </ace:column>
+                            <ace:column headerText="Partida" style="text-align: left">
+                                <h:outputText  value="#{item.partida.nombre}"/>  
+                            </ace:column>
+                            <ace:column headerText="Cod. Fuente" style="text-align: left" rendered="false">
+                                <h:outputText  value="#{item.fuente}"/>
+                            </ace:column>
+                            <ace:column headerText="Fuente" style="text-align: left">
+                                <h:outputText  value="#{consultasPoa.traerFuenteFinanciamiento(item.fuente)}"/>
+                            </ace:column>
+                            <ace:column headerText="Cod. Producto" style="text-align: left">
+                                <h:outputText  value="#{item.proyecto.codigo}"/>  
+                            </ace:column>                            
+                            <ace:column headerText="Producto" style="text-align: left">
+                                <h:outputText  value="#{item.proyecto.nombre}"/>  
+                            </ace:column>                            
+                            <ace:column headerText="Comprometido" style="text-align: right">
+                                <h:outputText  value="#{item.comprometido}">
+                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="Compromisos"
+                    closable="false"
+                    modal="true"
+                    draggable="false"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{compromisosPoa.formulario.mostrar}"
+                    visible="#{compromisosPoa.formulario.mostrar}">
+                    <ace:panel>
+                        <h:panelGrid columns="2" style="text-align: left;">
+                            <h:outputLabel value="Fuente:" />
+                            <h:selectOneMenu value="#{asignacionesPoa.fuente}" title="Fuente" disabled="#{!compromisosPoa.formulario.nuevo}">
+                                <f:selectItems value="#{consultasPoa.comboFuenteFinanciamientoFalse}"/>
+                                <ace:ajax execute="@all"/>    
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Producto:" />
+                            <ace:comboBox value="#{asignacionesPoa.claveBuscar}" 
+                                          listValue="#{asignacionesPoa.listaAsignaciones}"  
+                                          itemValue="#{itemAsignacion.proyecto.codigo}"
+                                          filterMatchMode="exact"
+                                          width="400"
+                                          listVar="itemAsignacion">
+                                <f:facet name="row">
+                                    <h:panelGrid columns="5" width="100%" style="text-align: left;">
+                                        <h:outputText value="#{itemAsignacion.proyecto.codigo}" style="text-align: left;"/>
+                                        <h:outputText value="-" style="text-align: left;"/>
+                                        <h:outputText value="#{itemAsignacion.proyecto.nombre}" style="text-align: left;"/>
+                                    </h:panelGrid>
+                                </f:facet>
+                                <ace:ajax execute="@all"/>    
+                            </ace:comboBox>
+                            <h:outputLabel value="Comprometido:" />
+                            <h:inputText value="#{compromisosPoa.ejecucion.comprometido}" title="Valor"/>
+                            <h:outputLabel value="Fecha"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{compromisosPoa.ejecucion.fecha}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+
+
+                        </h:panelGrid>
+
+                    </ace:panel>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{compromisosPoa.formulario.nuevo}" 
+                                          action="#{compromisosPoa.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{compromisosPoa.grabar()}" 
+                                          rendered="#{compromisosPoa.formulario.modificar}" />
+                            <ace:menuItem action="#{compromisosPoa.borrar()}" 
+                                          value="Esta seguro de Borrar el registro?" 
+                                          rendered="#{compromisosPoa.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{compromisosPoa.formulario.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

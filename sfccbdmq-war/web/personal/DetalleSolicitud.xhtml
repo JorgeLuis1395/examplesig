@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <!--    <ace:tabSet>
+            <ace:tabPane label="Suministros">-->
+
+            <h:panelGrid columns="1" width="100%" >
+                <h:outputLabel value="Solicitado Por:" />
+                <h:outputText value="#{solicitudTxSfccbdmq.cabecera.empleadosolicita.entidad.toString()}"/>
+                <h:outputLabel value="Observaciones :" />
+                <h:inputTextarea cols="60" rows="6" value="#{solicitudTxSfccbdmq.cabecera.observaciones}"/>
+                <!--            </h:panelGrid> 
+                        </ace:tabPane>
+                        <ace:tabPane label="Suministros" >-->
+                <!--<h:panelGrid width="100%">-->
+                    <ace:dataTable 
+                        value="#{solicitudTxSfccbdmq.listaKardex}"
+                        var="itemKardex"
+                        lazy="false"
+                        paginator="true"
+                        resizableColumns="true"
+                        rowIndexVar="row"
+                        paginatorPosition="both"
+                        rowsPerPageTemplate="10,15,30,50"
+                        currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        rows="10"
+                        style="width: 100%;"
+                        binding="#{solicitudTxSfccbdmq.formularioRenglones.fila}">
+                        <ace:column style="text-align: left" >
+                            <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                <ace:menuItem value="Editar" icon="ui-icon ui-icon-document" action="#{solicitudTxSfccbdmq.modificaKardex(itemKardex)}"  />
+                                <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{solicitudTxSfccbdmq.borraKardex(itemKardex)}"/>                                   </ace:menuButton>
+                        </ace:column> 
+                        <ace:column  headerText="Suministro"  style="text-align: left">
+                            <h:outputText value="#{itemKardex.suministro.nombre}"/>
+                        </ace:column>
+                        <ace:column  headerText="Cantidad"  style="text-align: left">
+                            <h:outputText value="#{itemKardex.cantidad}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Cantidad inversión"  style="text-align: left">
+                            <h:outputText value="#{itemKardex.cantidadinvercion}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Cantidad Aprobada"  style="text-align: left">
+                            <h:outputText value="#{itemKardex.aprobado}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Cantidad inversión Aprobada"  style="text-align: left">
+                            <h:outputText value="#{itemKardex.aprobadoinversion}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Unidad"  style="text-align: left">
+                            <h:outputText value="#{itemKardex.suministro.unidad.equivalencia}"/>
+                        </ace:column>
+                    </ace:dataTable>
+                </h:panelGrid>
+        <!--</ace:tabPane>--> 
+<!--        <ace:tabPane label="Adjuntos" rendered="#{solicitudTxSfccbdmq.cabecera.id!=null}">
+            
+        </ace:tabPane>-->
+    <!--</ace:tabSet>-->
+    <h:panelGrid columns="1">
+        <ace:menuBar autoSubmenuDisplay="true" >
+            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{solicitudTxSfccbdmq.insertar()}" rendered="#{solicitudTxSfccbdmq.formulario.nuevo}"/>
+            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" action="#{solicitudTxSfccbdmq.grabar()}" rendered="#{solicitudTxSfccbdmq.formulario.modificar}" />
+            <ace:menuItem value="Esta Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{solicitudTxSfccbdmq.borrar()}" rendered="#{solicitudTxSfccbdmq.formulario.borrar}" />
+            <ace:menuItem value="Nuevo Suministro" icon="ui-icon ui-icon-document"  action="#{solicitudTxSfccbdmq.nuevoKardex()}" rendered="#{solicitudTxSfccbdmq.empleado}"/>
+            <ace:menuItem value="Adjuntos" icon="ui-icon ui-icon-tag"  action="#{imagenesSfccbdmq.formularioMostrar.activar()}"/>
+            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" action="#{solicitudTxSfccbdmq.formulario.cancelar()}" />
+        </ace:menuBar>
+        <ace:messages />
+    </h:panelGrid>
+    <ui:include src="../mostrarImagenesFormulario.xhtml" />
+</html>
+

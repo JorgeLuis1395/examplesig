@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaPersonal.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="Reporte Rol"
+                           closable="false"
+                           toggleable="false"  >
+                    <!--<ace:panel header="Parámetros de Búsqueda">-->
+
+                    <h:panelGrid columns="4">
+                        <h:outputText value="Mes:"/>
+                        <h:inputText value="#{rolIndividualEmpleadoSfccbdmq.mes}"/>
+                        <h:outputText value="Anio:"/>
+                        <h:inputText value="#{rolIndividualEmpleadoSfccbdmq.anio}"/>
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{rolIndividualEmpleadoSfccbdmq.buscar()}" />
+                        </ace:menuBar>
+                        <h:outputText value=""/>
+                        <ace:dynamicResource fileName="Rol.pdf" id="pdf-buttonxx" label="Generar PDF"
+                                             mimeType="application/pdf" 
+                                             rendered="#{rolIndividualEmpleadoSfccbdmq.recurso!=null}"
+                                             resource="#{rolIndividualEmpleadoSfccbdmq.recurso}" 
+                                             style="" type="button"/>
+<!--                        <ace:dynamicResource fileName="CertificadoLaboral.pdf" id="pdf-buttonxxx" label="Generar Certificado Laboral PDF"
+                                             mimeType="application/pdf" 
+                                             rendered="#{rolIndividualEmpleadoSfccbdmq.recursoCert!=null}"
+                                             resource="#{rolIndividualEmpleadoSfccbdmq.recursoCert}" 
+                                             style="" type="button"/>
+                        <ace:dynamicResource fileName="CertificadoIngresos.pdf" id="pdf-buttonxxxx" label="Generar Certificado Ingresos PDF"
+                                             mimeType="application/pdf" 
+                                             rendered="#{rolIndividualEmpleadoSfccbdmq.recursoCertIng!=null}"
+                                             resource="#{rolIndividualEmpleadoSfccbdmq.recursoCertIng}" 
+                                             style="" type="button"/>-->
+                    </h:panelGrid>
+                    <ace:messages/>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane >
+                            <f:facet name="label">Rol Individual</f:facet>
+                            <h:outputText value="Mes:"/>
+                            <h:outputText value="#{rolIndividualEmpleadoSfccbdmq.mes}"/>
+                            <h:outputText value="Anio:"/>
+                            <h:outputText value="#{rolIndividualEmpleadoSfccbdmq.anio}"/>
+                            <h:panelGrid width="100%">
+                                <ace:dataTable 
+                                    value="#{rolIndividualEmpleadoSfccbdmq.listaRoles}"
+                                    var="pagoItem"
+                                    binding="#{rolIndividualEmpleadoSfccbdmq.formulario.fila}">
+                                    <ace:row condition="group" groupBy="#{pagoItem.empleado}" pos="before">
+                                        <ace:column  colspan="4" style="background-color: #0099CC;text-align: left;color: #FFF">
+                                            <h:panelGrid columns="4">
+                                                <h:outputText value="C.I. :" />
+                                                <h:outputText value="#{pagoItem.cedula}" />
+                                                <h:outputText value="Apellidos Nombres" />
+                                                <h:outputText value="#{pagoItem.empleado}" />
+                                                <h:outputText value="Proceso :" />
+                                                <h:outputText value="#{pagoItem.proceso}" />
+                                                <h:outputText value="Cargo :" />
+                                                <h:outputText value="#{pagoItem.cargo}" />
+                                                <h:outputText value="Modalidad de Contratación :" />
+                                                <h:outputText value="#{pagoItem.contrato}" />
+                                            </h:panelGrid>
+                                        </ace:column>
+                                    </ace:row>
+                                    <ace:columnGroup  type="header">
+                                        <ace:row>
+                                            <ace:column headerText="Ingresos" colspan="2"/>
+                                            <ace:column headerText="Egresos" colspan="2"/>
+                                        </ace:row>
+                                    </ace:columnGroup>
+
+                                    <ace:column  headerText="Concepto"  style="text-align: left;width:25% " >
+                                        <h:outputText value="#{pagoItem.conceptoIngreso}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Valor" style="text-align: right;width:25%">
+                                        <h:outputText   value="#{pagoItem.ingreso}" rendered="#{pagoItem.ingreso!=0}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+
+                                    <ace:column  headerText="Concepto"  style="text-align: left;width:25%">
+                                        <h:outputText value="#{pagoItem.conceptoEgreso}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Valor" style="text-align: right;width:25%">
+                                        <h:outputText   value="#{pagoItem.egreso}" rendered="#{pagoItem.egreso!=0}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+
+                    </ace:tabSet>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

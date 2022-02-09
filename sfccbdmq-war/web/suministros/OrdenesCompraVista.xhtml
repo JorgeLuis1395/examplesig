@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{ordenesCompraTxSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  
+                           >
+
+                    <ui:include src="../BuscarProveedor.xhtml" />
+<!--                    <h:panelGrid columns="4" width="90%" rendered="#{proveedoresSfccbdmq.proveedor!=null}">
+                        <h:outputLabel value="Contrato :" />
+                        <h:selectOneMenu  value="#{ordenesCompraTxSfccbdmq.contrato}">
+                            <f:selectItems value="#{contratosSfccbdmq.comboContratos}"/>
+                        </h:selectOneMenu>
+
+                    </h:panelGrid>-->
+                    <h:panelGrid columns="4">
+                        <h:outputLabel value="Número" />
+                        <h:inputText value="#{ordenesCompraTxSfccbdmq.numero}"/>
+                        <h:outputLabel value="Número de factura" />
+                        <h:inputText value="#{ordenesCompraTxSfccbdmq.numeroFactura}"/>
+                        <h:outputLabel value="Definitivo :" />
+                        <h:selectOneMenu  value="#{ordenesCompraTxSfccbdmq.estado}">
+                            <f:selectItem itemLabel="---" itemValue="-11"/>
+                            <f:selectItem itemLabel="SI" itemValue="1"/>
+                            <f:selectItem itemLabel="NO" itemValue="0"/>
+                        </h:selectOneMenu>
+                        <!--                        <h:outputLabel value="Edificio:" />
+                                                <h:selectOneMenu  value="#{oficinasSfccbdmq.edificio}" title="Edificio" partialSubmit="true">
+                                                    <f:selectItems value="#{edificiosSfccbdmq.comboEdificioEspacio}"/>
+                                                </h:selectOneMenu>
+                                                <h:outputLabel value="Oficina:" />
+                                                <h:selectOneMenu  value="#{ordenesCompraTxSfccbdmq.oficina}" title="Oficina" >
+                                                    <f:selectItems value="#{oficinasSfccbdmq.comboOficinaEspacio}"/>
+                                                </h:selectOneMenu>-->
+                    </h:panelGrid>
+                    <h:panelGrid columns="1">
+                        <h:outputLabel value="Observaciones" />
+                        <h:inputTextarea cols="80" rows="4" value="#{ordenesCompraTxSfccbdmq.observaciones}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="5">
+                        <h:outputLabel value="Fecha :"  />
+                        <h:outputLabel value="Desde:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{ordenesCompraTxSfccbdmq.desde}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Hasta:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{ordenesCompraTxSfccbdmq.hasta}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                    </h:panelGrid> 
+
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{ordenesCompraTxSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document"  action="#{ordenesCompraTxSfccbdmq.nuevo()}"/>
+                        </ace:menuBar>
+
+                    </h:panelGrid>
+                    <ace:messages />
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{solicitudesCargo.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{solicitudesCargo.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%" style="margin-bottom: 20px;">
+
+                        <ace:dataTable id="tabla"
+                                       value="#{ordenesCompraTxSfccbdmq.cabeceras}"
+                                       var="item"
+                                       lazy="true"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="10,15,30,50"
+                                       currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="30"
+                                       style="width: 100%;"
+                                       >
+                            <ace:column style="text-align: left" >
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem value="Editar" icon="ui-icon ui-icon-document" action="#{ordenesCompraTxSfccbdmq.modifica()}"  rendered="#{ordenesCompraTxSfccbdmq.pudeModificar}"/>
+                                    <ace:menuItem value="Convertir" icon="ui-icon ui-icon-document" action="#{ordenesCompraTxSfccbdmq.convierte()}" rendered="#{item.fechadefinitiva==null}" />
+                                    <ace:menuItem value="Imprimir" icon="ui-icon ui-icon-print" action="#{ordenesCompraTxSfccbdmq.imprimir()}"  />
+                                    <!--<ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{ordenesCompraTxSfccbdmq.elimina()}"  />-->
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="Fecha"  style="text-align: left">
+                                <h:outputText  value="#{item.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Proveedor"  style="text-align: left">
+                                <h:outputText value="#{item.proveedor.empresa.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Contrato"  style="text-align: left">
+                                <h:outputText value="#{item.compromiso.proveedor.empresa.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Número "  style="text-align: left">
+                                <h:outputText value="#{item.id}"/>
+                            </ace:column>
+                            <ace:column  headerText="Compromiso"  style="text-align: left">
+                                <h:outputText value="#{item.compromiso.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Observaciones"  style="text-align: left">
+                                <h:outputText value="#{item.observaciones}"/>
+                            </ace:column>
+                            <ace:column  headerText="Fecha Ingreso"  style="text-align: left">
+                                <h:outputText  value="#{item.fechaelaboracion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                </h:outputText>
+                            </ace:column>
+
+                            <ace:column  headerText="Fecha Definitiva"  style="text-align: left">
+                                <h:outputText  value="#{item.fechadefinitiva}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Elaborado por"  style="text-align: left">
+                                <h:outputText value="#{item.empleado.entidad.toString()}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <!--</ace:dialog>-->
+                <!--                <ace:panel id="panel1"
+                                           header="#{ordenesCompraTxSfccbdmq.perfil.menu.texto}"
+                                           closable="false"
+                                           toggleable="false"  
+                                           rendered="#{ordenesCompraTxSfccbdmq.formulario.mostrar}">
+                                    <ui:include src="DetalleOrden.xhtml"/>
+                                </ace:panel>-->
+                <ace:dialog
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    header="#{ordenesCompraTxSfccbdmq.perfil.menu.texto}"
+                    rendered="#{ordenesCompraTxSfccbdmq.formulario.mostrar}"
+                    visible="#{ordenesCompraTxSfccbdmq.formulario.mostrar}">
+                    <ui:include src="DetalleOrden.xhtml"/>
+
+                </ace:dialog> 
+                <!--convertir en transaccion-->
+                <ace:dialog
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    header="Convertir en Movimiento"
+                    rendered="#{ordenesCompraTxSfccbdmq.formularioConvertir.mostrar}"
+                    visible="#{ordenesCompraTxSfccbdmq.formularioConvertir.mostrar}">
+                    <h:panelGrid columns="2" width="90%"  >
+                        <h:outputLabel value="Transacción :" />
+                        <h:selectOneMenu  value="#{ordenesCompraTxSfccbdmq.cabeceraInventario.txid}">
+                            <f:selectItems value="#{txSuministrosSfccbdmq.comboIngresoProveedor}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Bodega"  />
+                        <h:selectOneMenu value="#{ordenesCompraTxSfccbdmq.cabeceraInventario.bodega}">
+                            <f:selectItems value="#{bodegasSfccbdmq.comboBodegasSuministros}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Contrato:" />
+                        <h:selectOneMenu  value="#{ordenesCompraTxSfccbdmq.cabeceraInventario.contrato}">
+                            <f:selectItems value="#{contratosSfccbdmq.comboContratosProveedor}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Factura:" />
+                        <h:inputText  value="#{ordenesCompraTxSfccbdmq.cabeceraInventario.factura}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="90%"  >
+                        <h:outputLabel value="Observaciones"  />
+                        <h:inputTextarea cols="60" rows="6" value="#{ordenesCompraTxSfccbdmq.cabeceraInventario.observaciones}"/>
+                    </h:panelGrid>
+                    <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                        <h:outputLabel value="Proveedor:" />
+                        <h:outputText value="#{ordenesCompraTxSfccbdmq.cabecera.proveedor.empresa.toString()}"/>
+                        <h:outputLabel value="Compromiso:" />
+                        <h:outputText value="#{ordenesCompraTxSfccbdmq.cabecera.compromiso.toString()}"/>
+                        <h:outputLabel value="Fecha de emisión:" />
+                        <h:outputLabel value="#{ordenesCompraTxSfccbdmq.cabecera.fecha}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputLabel>
+                    </h:panelGrid>
+                    <h:panelGrid  width="90%" columns="1" style="text-align: left">
+                        <h:outputLabel value="Observaciones:" />
+                        <p>#{ordenesCompraTxSfccbdmq.cabecera.observaciones}</p>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:dataTable 
+                            value="#{ordenesCompraTxSfccbdmq.listaKardex}"
+                            var="itemDetallesI"
+                            paginator="true"
+                            lazy="false"
+                            resizableColumns="true"
+                            rowIndexVar="row"
+                            paginatorPosition="both"
+                            rowsPerPageTemplate="5,10,15,30,50,100"
+                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            rows="5">
+                            <!--                    <ace:column  headerText="Registro" style="text-align: right">
+                                                    <h:outputText value="#{row+1}"/>
+                                                </ace:column>-->
+                            <ace:column  headerText="Suministro"  style="text-align: left">
+                                <h:outputText  value="#{itemDetallesI.suministro.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Cantidad"  style="text-align: right">
+                                <h:outputText  value="#{itemDetallesI.cantidad}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Cantidad Inv."  style="text-align: right">
+                                <h:outputText  value="#{itemDetallesI.cantidadinv}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="PvP"  style="text-align: right">
+                                <h:outputText  value="#{itemDetallesI.pvp}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <!--                            <ace:column  headerText="Entregado"  style="text-align: right">
+                                                            <h:outputText  value="#{itemDetallesI.consumido}">
+                                                                <f:convertNumber pattern="###,###,##0.00"/>
+                                                            </h:outputText>
+                                                        </ace:column>
+                                                        <ace:column  headerText="Solicitado"  style="text-align: right">
+                                                            <h:inputText  value="#{itemDetallesI.solicitado}"/>
+                                                        </ace:column>-->
+                            <ace:column  headerText="Unidades"  style="text-align: left">
+                                <h:outputText  value="#{itemDetallesI.suministro.unidad.equivalencia}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{ordenesCompraTxSfccbdmq.grabarConvertir()}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" action="#{ordenesCompraTxSfccbdmq.formularioConvertir.cancelar()}" />
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog> 
+                <ace:dialog
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    header="Modificar/Crear Registro"
+                    rendered="#{ordenesCompraTxSfccbdmq.formularioRenglones.mostrar}"
+                    visible="#{ordenesCompraTxSfccbdmq.formularioRenglones.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2" width="90%" rendered="#{ordenesCompraTxSfccbdmq.formularioRenglones.nuevo}">
+                            <h:outputLabel value="Familia :" />
+                            <h:selectOneMenu value="#{tiposSuministrosSfccbdmq.familiaSuministros}" 
+                                             >
+                                <f:selectItems value="#{codigosSfccbdmq.comboFamiliaSuministros}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Tipo :"  />
+                            <h:selectOneMenu value="#{suministrosSfccbdmq.tipo}"  
+                                             >
+                                <f:selectItems value="#{tiposSuministrosSfccbdmq.comboTipoFamiliaEspacio}" />
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Suministro:"  />
+                            <h:selectOneMenu  value="#{ordenesCompraTxSfccbdmq.kardex.suministro}" title="Suministro" 
+                                              >
+                                <f:selectItems value="#{suministrosSfccbdmq.comboSuministroTipo}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>    
+                        <h:panelGrid columns="2" width="90%" rendered="#{!ordenesCompraTxSfccbdmq.formularioRenglones.nuevo}">
+                            <h:outputLabel value="Suministro:"/>
+                            <h:outputLabel value="#{ordenesCompraTxSfccbdmq.kardex.suministro.toString()}"  />
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" width="90%">
+                            <h:outputLabel value="Cantidad:" />
+                            <h:inputText value="#{ordenesCompraTxSfccbdmq.kardex.cantidad}" title="Cantidad" />
+                            <h:outputLabel value="Cantidad inv:" />
+                            <h:inputText value="#{ordenesCompraTxSfccbdmq.kardex.cantidadinv}" title="Cantidad" />
+                            <h:outputLabel value="PvP Unitario:"  />
+                            <h:inputText  value="#{ordenesCompraTxSfccbdmq.kardex.pvp}" />
+
+                            <h:outputLabel value="Unidad:" for="unidad" />
+                            <h:outputLabel value="#{ordenesCompraTxSfccbdmq.kardex.suministro.unidad.equivalencia}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{ordenesCompraTxSfccbdmq.insertarRenglon()}" rendered="#{ordenesCompraTxSfccbdmq.formularioRenglones.nuevo}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" action="#{ordenesCompraTxSfccbdmq.grabarRenglon()}" rendered="#{ordenesCompraTxSfccbdmq.formularioRenglones.modificar}" />
+                                <ace:menuItem value="Esta Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{ordenesCompraTxSfccbdmq.borrarRenglon()}" rendered="#{ordenesCompraTxSfccbdmq.formularioRenglones.borrar}" />
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" action="#{ordenesCompraTxSfccbdmq.formularioRenglones.cancelar()}" />
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog> 
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{ordenesCompraTxSfccbdmq.formularioImprimir.mostrar}"
+                    visible="#{ordenesCompraTxSfccbdmq.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <!--                        <h:panelGrid columns="1">
+                                                    <h:commandButton  value="Imprimir">
+                                                        <h:outputText id="printBoth" value="Imprimir"/>
+                                                        <ace:printer for="panelImprimir"/>
+                                                    </h:commandButton>
+                                                </h:panelGrid>
+                                                <ui:include src="imprimirOrden.xhtml" />-->
+                        <ace:dynamicResource fileName="OrdendeCompra.pdf" id="pdf-buttonxx" label="Generar PDF"
+                                             mimeType="application/pdf" resource="#{ordenesCompraTxSfccbdmq.recurso}" 
+                                             style="" type="button"/>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{ordenesCompraTxSfccbdmq.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <!--Poner  con include ya que vista demasiado Cargada;-->
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

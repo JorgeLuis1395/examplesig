@@ -1,0 +1,242 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{reproteRetencionesSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGroup>
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="Tipo:"/>
+                            <h:selectOneMenu  value="#{reproteRetencionesSfccbdmq.tipo}">
+                                <f:selectItem itemLabel="Todos" itemValue="-1"/>
+                                <f:selectItem itemLabel="Retenciones" itemValue="1"/>
+                                <f:selectItem itemLabel="Impuestos" itemValue="0"/>
+
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Retención :" />
+                            <h:selectOneMenu  value="#{reproteRetencionesSfccbdmq.retencion}">
+                                <f:selectItems value="#{retencionesSfccbdmq.comboRetenciones}"/>
+                            </h:selectOneMenu>
+
+                            <h:outputLabel value="Impuesto :" />
+                            <h:selectOneMenu  value="#{reproteRetencionesSfccbdmq.impuesto}">
+                                <f:selectItems value="#{impuestosSfccbdmq.comboImpuestos}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Retención sobre impuesto :" />
+                            <h:selectOneMenu  value="#{reproteRetencionesSfccbdmq.retencionImpuesto}">
+                                <f:selectItems value="#{retencionesSfccbdmq.comboRetencionesImpuestos}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="4" width="100%">
+
+                            <h:outputLabel value="Año:"/>
+                            <h:inputText value="#{reproteRetencionesSfccbdmq.anio}"/>
+                            <h:outputLabel value="Mes:"/>
+                            <h:inputText value="#{reproteRetencionesSfccbdmq.mes}"/>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reproteRetencionesSfccbdmq.buscar()}"/>
+                                <ace:menuItem value="Generar ATS" icon="ui-icon ui-icon-caret-2-e-w"  action="#{reproteRetencionesSfccbdmq.generaAts()}"/>
+                                <ace:menuItem value="Generar Formulario 103" icon="ui-icon ui-icon-search"  action="#{reproteRetencionesSfccbdmq.grabarEnHoja()}"/>
+                                <ace:menuItem value="Imprimir" icon="ui-icon ui-icon-print"  action="#{reproteRetencionesSfccbdmq.imprimir()}"/>
+                                <ace:menuItem value="Exportar" icon="ui-icon ui-icon-calculator"  action="#{reproteRetencionesSfccbdmq.hojaElectronica()}"/>
+                            </ace:menuBar>
+                            <ace:dynamicResource fileName="Formulario103.xls" id="f103" label="Generar Formulario 103"
+                                                mimeType="application/xls" 
+                                                rendered="#{reproteRetencionesSfccbdmq.formulario103!=null}"
+                                                resource="#{reproteRetencionesSfccbdmq.formulario103}" 
+                                                style="" type="button"/>
+                            <ace:messages/>
+                        </h:panelGrid>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                        <h:panelGrid width="100%">
+                            <ace:dataTable id="tabla" 
+                                           value="#{reproteRetencionesSfccbdmq.listadoRetencionescompras}"
+                                           var="itemDetalle"
+                                           paginator="true"
+                                           lazy="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="top"
+                                           rowsPerPageTemplate="15,20,25,50,100"
+                                           currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="15"
+                                           scrollHeight="600"
+                                           scrollable="true">
+                                <ace:column  headerText="Fecha" style="text-align: left">
+                                    <h:outputText  value="#{itemDetalle.obligacion.fechar}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Concepto" style="text-align: left">
+                                    <h:outputText  value="#{itemDetalle.obligacion.concepto}"/>
+                                </ace:column>
+                                <ace:column  headerText="Proveedor" style="text-align: left">
+                                    <h:outputText  value="#{itemDetalle.obligacion.proveedor.empresa.toString()}"/>
+                                </ace:column>
+                                <!--                                <ace:column  headerText="Tipo de Documento" style="text-align: left">
+                                                                    <h:outputText  value="#{itemDetalle.obligacion.tipodocumento.nombre}"/>
+                                                                </ace:column>-->
+                                <ace:column  headerText="Factura" style="text-align: left">
+                                    <h:outputText  value="#{itemDetalle.obligacion.establecimiento}-#{itemDetalle.obligacion.puntoemision}-#{itemDetalle.obligacion.documento}"/>
+                                </ace:column>
+                                <ace:column  headerText="Base imponible"  style="text-align: right">
+                                    <h:outputText  value="#{itemDetalle.baseimponible}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Base imponible 0"  style="text-align: right">
+                                    <h:outputText  value="#{itemDetalle.baseimponible0}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Valor"  style="text-align: right">
+                                    <h:outputText  value="#{itemDetalle.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Impuesto"  style="text-align: left">
+                                    <h:outputText  value="#{itemDetalle.impuesto.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor Impuesto "  style="text-align: right">
+                                    <h:outputText  value="#{itemDetalle.iva}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Total"  style="text-align: right">
+                                    <h:outputText  value="#{itemDetalle.valor+itemDetalle.iva}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                               
+                                <ace:column  headerText="Número Retención" style="text-align: left">
+                                    <h:outputText  value="#{itemDetalle.obligacion.establecimientor}-#{itemDetalle.obligacion.puntor}-#{itemDetalle.obligacion.numeror}"/>
+                                </ace:column>
+                                
+                                <ace:column  headerText="Ret. Fuente"  style="text-align: right">
+                                    <h:outputText  value="#{itemDetalle.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText=" Ret. Impuesto "  style="text-align: right">
+                                    <h:outputText  value="#{itemDetalle.valoriva}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Total Ret."  style="text-align: right">
+                                    <h:outputText  value="#{itemDetalle.valor+itemDetalle.valoriva}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>  
+                    </h:panelGroup>
+                </ace:panel>
+                <ace:dialog header="Descargar documento" modal="false" closable="false" 
+                            visible="#{reproteRetencionesSfccbdmq.formularioReporte.mostrar}" 
+                            rendered="#{reproteRetencionesSfccbdmq.formularioReporte.mostrar}">
+                    <h:panelGrid columns="2" width="100%">
+
+                        <h:panelGrid columns="2"> 
+                            <h:outputText value="Archivo:" styleClass="bold"/>
+                            <h:outputText value="ATS#{reproteRetencionesSfccbdmq.mes}#{reproteRetencionesSfccbdmq.anio}.xml"/>
+                            <ace:dynamicResource fileName="ATS#{reproteRetencionesSfccbdmq.mes}#{reproteRetencionesSfccbdmq.anio}.xml" 
+                                                attachment="true" 
+                                                label="Descargar documento"
+                                                resource="#{reproteRetencionesSfccbdmq.archivoAnexo}" 
+                                                type="button"/>
+                            <h:outputText value=" "/>
+                            <ace:menuBar>
+                                <ace:menuItem value="Cerrar" icon="ui-icon ui-icon-close" 
+                                              action="#{reproteRetencionesSfccbdmq.formularioReporte.cancelar()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                    <ace:messages/>
+                </ace:dialog>
+                <ace:dialog header="Descargar reporte" modal="false" closable="false" 
+                            visible="#{reproteRetencionesSfccbdmq.formularioImprimir.mostrar}" 
+                            rendered="#{reproteRetencionesSfccbdmq.formularioImprimir.mostrar}">
+                    <h:panelGrid columns="2" width="100%">
+
+                        <h:panelGrid columns="2"> 
+                            
+                            <ace:dynamicResource fileName="Retenciones.pdf" 
+                                                attachment="true" 
+                                                label="Descargar PDF"
+                                                mimeType="application/pdf"
+                                                resource="#{reproteRetencionesSfccbdmq.reporte}" 
+                                                type="button"/>
+                            <h:outputText value=" "/>
+                            <ace:menuBar>
+                                <ace:menuItem value="Cerrar" icon="ui-icon ui-icon-close" 
+                                              action="#{reproteRetencionesSfccbdmq.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                    <ace:messages/>
+                </ace:dialog>
+                
+                <!--FM26SEP2018-->
+                
+                <ace:dialog 
+                    header="Exportar"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reproteRetencionesSfccbdmq.formularioReporteXls.mostrar}"
+                    visible="#{reproteRetencionesSfccbdmq.formularioReporteXls.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="Retenciones.xls" 
+                                             id="pdf-botonMayor" 
+                                             label="Exportar a XLS"
+                                             mimeType="application/xls" 
+                                             resource="#{reproteRetencionesSfccbdmq.reporteXls}" 
+                                             style="" type="button"/>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reproteRetencionesSfccbdmq.formularioReporteXls.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

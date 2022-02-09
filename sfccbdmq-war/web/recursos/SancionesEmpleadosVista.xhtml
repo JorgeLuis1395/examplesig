@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{sancionesEmpleado.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <ui:include src="../BuscarEmpleado.xhtml"/>
+
+                    <h:panelGrid columns="2" rendered="#{!sancionesEmpleado.formulario.mostrar}">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{sancionesEmpleado.nuevo()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <ace:messages/>
+                    <!--</ace:panel>--> 
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Registro"
+                    closable="false"
+                    toggleable="false"
+                    rendered="#{sancionesEmpleado.formulario.mostrar}">
+                    <ace:splitPane columnDivider="50"
+                                   scrollable="true"
+                                   style="width: 100%;">
+                        <f:facet name="left">
+                            <ace:tabSet style="clear:both;" clientSide="true">
+                                <ace:tabPane >
+                                    <f:facet name="label">Inf. General</f:facet>
+                                    <!--<ui:include src="../BuscarOrganigrama.xhtml" />-->
+
+                                    <h:panelGrid columns="2">
+                                        <h:outputLabel value="Tipo:" />
+                                        <h:selectOneMenu value="#{sancionesEmpleado.sancion.tipo}">
+                                            <f:selectItems value="#{tipoSancion.comboTiposSancion}"/>
+                                            <ace:ajax execute="@all"/>
+                                        </h:selectOneMenu>
+                                        <h:outputLabel value="Es Leve?:" />
+                                        <h:graphicImage url="../resources/images/si.png" rendered="#{sancionesEmpleado.sancion.tipo.esleve}"/>
+                                        <h:graphicImage url="../resources/images/no.png" rendered="#{!sancionesEmpleado.sancion.tipo.esleve}"/>
+                                        <h:outputLabel value="Es pecunaria?:" />
+                                        <h:graphicImage url="../resources/images/si.png" rendered="#{sancionesEmpleado.sancion.tipo.especunaria}"/>
+                                        <h:graphicImage url="../resources/images/no.png" rendered="#{!sancionesEmpleado.sancion.tipo.especunaria}"/>
+                                        <h:outputLabel value="% del RMU :" />
+                                        <h:inputText value="#{sancionesEmpleado.sancion.valor}"/>
+                                        <h:outputLabel value="Motivo:" for="historial" />
+                                        <h:inputTextarea cols="60" rows="4" value="#{sancionesEmpleado.sancion.motivo}" 
+                                                         title="Motivo" />
+
+                                    </h:panelGrid>
+                                </ace:tabPane>
+                                <ace:tabPane label="Adjuntos">
+                                    <ui:include src="../mostrarImagenes.xhtml" />
+                                </ace:tabPane>
+                            </ace:tabSet>
+                        </f:facet>
+                        <f:facet name="right">
+                            <ace:dataTable id="historial" 
+                                           value="#{sancionesEmpleado.listaHistorial}"
+                                           var="historial"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="5,10,15,50"
+
+                                           paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="5"
+                                           binding="#{sancionesEmpleado.formulario.fila}">
+
+
+                                <ace:column  headerText="Motivo"  style="text-align: left">
+                                    <h:outputText value="#{historial.motivo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Tipo" style="text-align: left">
+                                    <h:outputText  value="#{historial.tipo.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText='Grado' style="text-align: left">
+                                    <h:outputText  value="#{historial.tipo.tipo.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText='Leve?' style="text-align: left">
+                                    <h:graphicImage url="../resources/images/si.png" rendered="#{historial.esleve}"/>
+                                    <h:graphicImage url="../resources/images/no.png" rendered="#{!historial.esleve}"/>
+                                </ace:column>
+                                <ace:column  headerText='Es pecunaria?' style="text-align: left">
+                                    <h:graphicImage url="../resources/images/si.png" rendered="#{historial.especunaria}"/>
+                                    <h:graphicImage url="../resources/images/no.png" rendered="#{!historial.especunaria}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor" style="text-align: left">
+                                    <h:outputText  value="#{historial.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="F sanción" style="text-align: left">
+                                    <h:outputText  value="#{historial.fsancion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="F.  Aprob" style="text-align: left">
+                                    <h:outputText  value="#{historial.faprobacion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="F.  Aplicación" style="text-align: left">
+                                    <h:outputText  value="#{historial.faplicacion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </f:facet>
+                    </ace:splitPane>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{sancionesEmpleado.insertar()}" rendered="#{sancionesEmpleado.formulario.nuevo}" />
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{sancionesEmpleado.formulario.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

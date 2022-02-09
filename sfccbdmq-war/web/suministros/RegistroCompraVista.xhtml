@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{registroCompraSuministroSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <ui:include src="../BuscarProveedor.xhtml"/>
+                    <h:panelGrid columns="6" >
+                        <h:outputLabel value="Año :"  />
+                        <h:inputText value="#{registroCompraSuministroSfccbdmq.anio}" disabled="#{registroCompraSuministroSfccbdmq.formulario.mostrar}"/>
+                        <h:outputLabel value="Cuatrimestre :"  />
+                        <h:selectOneMenu value="#{registroCompraSuministroSfccbdmq.cuatrimestre}" disabled="#{registroCompraSuministroSfccbdmq.formulario.mostrar}">
+                            <f:selectItem itemLabel="Primer" itemValue="1"/>
+                            <f:selectItem itemLabel="Segundo" itemValue="2"/>
+                            <f:selectItem itemLabel="Tercero" itemValue="3"/>
+                        </h:selectOneMenu>
+
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" rendered="#{registroCompraSuministroSfccbdmq.formulario.mostrar}">
+                        <h:outputLabel value="Observaciones : "  />
+                        <h:inputTextarea cols="60" rows="6" value="#{registroCompraSuministroSfccbdmq.cabecera.observaciones}"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{registroCompraSuministroSfccbdmq.buscar()}"  rendered="#{!registroCompraSuministroSfccbdmq.formulario.mostrar}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{registroCompraSuministroSfccbdmq.insertar()}" rendered="#{registroCompraSuministroSfccbdmq.formulario.mostrar}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{registroCompraSuministroSfccbdmq.cancelar()}" rendered="#{registroCompraSuministroSfccbdmq.formulario.mostrar}"/>
+                        </ace:menuBar>
+                        <!--                        <h:outputResource fileName="Planificacion.pdf" id="pdf-button1" label="Imprimir"
+                                                                    mimeType="application/pdf" resource="#{registroCompraSuministroSfccbdmq.reporte}" 
+                                                                    style="" type="button"/>-->
+                        <ace:messages/>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <h:panelGrid width="100%" rendered="#{registroCompraSuministroSfccbdmq.formulario.mostrar}">
+                        <ace:splitPane columnDivider="50"
+                                       scrollable="true"
+                                          style="width: 100%;">
+                            <f:facet name="left">
+                                <ace:dataTable 
+                                    value="#{registroCompraSuministroSfccbdmq.listaCompra}"
+                                    var="novedadItem"
+                                    binding="#{registroCompraSuministroSfccbdmq.formulario.fila}">
+                                    <ace:column style="text-align: left" >
+                                        <ace:menuBar id="menuButton" effect="slide" effectDuration="200">
+                                            <ace:menuItem value="Agregar" icon="ui-icon ui-icon-document" action="#{registroCompraSuministroSfccbdmq.agregar(novedadItem)}"  rendered="#{novedadItem.fechauso==null}">
+                                                <ace:ajax execute="@all"/>
+                                            </ace:menuItem>
+                                        </ace:menuBar>
+                                    </ace:column> 
+                                    <ace:column  headerText="Partida"  style="text-align: left" 
+                                                 filterBy="#{novedadItem.partida}"  
+                                                 sortBy="#{novedadItem.partida}"
+                                                 filterMatchMode="contains">
+                                        <h:outputText value="#{novedadItem.partida}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Suministro"  style="text-align: left" 
+                                                 filterBy="#{novedadItem.suministro.nombre}"  
+                                                 sortBy="#{novedadItem.suministro.nombre}"
+                                                 filterMatchMode="contains">
+                                        <h:outputText value="#{novedadItem.suministro.nombre}"/>
+                                    </ace:column>
+
+                                    <ace:column  headerText="Cantidad" style="text-align: right">
+                                        <h:outputText   value="#{novedadItem.cantidad}">
+                                            <f:convertNumber pattern="###,##0"/>
+                                        </h:outputText>
+                                    </ace:column>
+
+                                </ace:dataTable>
+                            </f:facet>
+                            <f:facet name="right">
+                                <ace:dataTable 
+                                    value="#{registroCompraSuministroSfccbdmq.listaKardex}"
+                                    var="itemKardex"
+                                    lazy="false"
+                                    paginator="true"
+                                    resizableColumns="true"
+                                    rowIndexVar="row"
+                                    paginatorPosition="both"
+                                    rowsPerPageTemplate="10,15,30,50"
+                                    currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                    rows="10"
+                                    style="width: 100%;"
+                                    binding="#{registroCompraSuministroSfccbdmq.formularioOrden.fila}">
+                                    <ace:column style="text-align: left" >
+                                        <ace:menuBar id="menuButton" effect="slide" effectDuration="200"  >
+                                            <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{registroCompraSuministroSfccbdmq.borraKardex(itemKardex)}">
+                                                <ace:ajax execute="@all"/>
+                                            </ace:menuItem>
+                                        </ace:menuBar>
+                                    </ace:column> 
+                                    <ace:column  headerText="Suministro"  style="text-align: left"
+                                                 filterBy="#{itemKardex.suministro.nombre}"  
+                                                 sortBy="#{itemKardex.suministro.nombre}"
+                                                 filterMatchMode="contains">
+                                        <h:outputText value="#{itemKardex.suministro.nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Cantidad"  style="text-align: left">
+                                        <h:outputText value="#{itemKardex.cantidad}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Cantidad inv."  style="text-align: left">
+                                        <h:outputText value="#{itemKardex.cantidadinv}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="PvP"  style="text-align: left">
+                                        <h:outputText value="#{itemKardex.pvp}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Unidad"  style="text-align: left">
+                                        <h:outputText value="#{itemKardex.suministro.unidad.equivalencia}"/>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </f:facet>
+                        </ace:splitPane>
+                    </h:panelGrid>
+                    <ace:dialog
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        header="Modificar/Crear Registro"
+                        rendered="#{registroCompraSuministroSfccbdmq.formularioOrden.mostrar}"
+                        visible="#{registroCompraSuministroSfccbdmq.formularioOrden.mostrar}">
+                        <h:panelGroup>
+                            <h:panelGrid columns="2" width="90%" >
+                                <h:outputLabel value="Suministro:"  />
+                                <h:outputLabel value="#{registroCompraSuministroSfccbdmq.kardex.suministro.nombre}"/>
+                                <h:outputLabel value="Cantidad:" />
+                                <h:inputText value="#{registroCompraSuministroSfccbdmq.kardex.cantidad}" title="Cantidad" disabled="true"/>
+                                <h:outputLabel value="Cantidad inv:" />
+                                <h:inputText value="#{registroCompraSuministroSfccbdmq.kardex.cantidadinv}" title="Cantidad" disabled="true"/>
+                                <h:outputLabel value="PvP Unitario:"  />
+                                <h:inputText  value="#{registroCompraSuministroSfccbdmq.kardex.pvp}" />
+                                <h:outputLabel value="Unidad:" for="unidad" />
+                                <h:outputLabel value="#{registroCompraSuministroSfccbdmq.kardex.suministro.unidad.equivalencia}"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="1">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{registroCompraSuministroSfccbdmq.insertarRenglon()}" rendered="#{registroCompraSuministroSfccbdmq.formularioOrden.nuevo}"/>
+                                    <ace:menuItem value="Esta Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{registroCompraSuministroSfccbdmq.borrarRenglon()}" rendered="#{registroCompraSuministroSfccbdmq.formularioOrden.borrar}" />
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" action="#{registroCompraSuministroSfccbdmq.formularioOrden.cancelar()}" />
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog> 
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

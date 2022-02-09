@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaPersonal.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="Solicitud de Garante"
+                           closable="false"
+                           toggleable="false"  >
+                    <ace:panel header="Parámetros de Búsqueda">
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{aprobarGarante.buscar()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <ace:messages/>
+                    </ace:panel> 
+
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <ace:panel 
+                        header="Resultado Búsqueda"
+                        closable="false"
+                        toggleable="false"
+                        >
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{aprobarGarante.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{aprobarGarante.formulario.pantalla}" 
+                                              target="prestamoItems" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%">
+                            <ace:dataTable id="prestamoItems" 
+                                           value="#{aprobarGarante.listaPrestamos}"
+                                           var="prestamoItem"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="5,10,15,50"
+                                           paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="5"
+                                           binding="#{aprobarGarante.formulario.fila}">
+                                <ace:column  style="text-align: left" rendered="#{!aprobarGarante.formulario.borrar}" >
+                                    <ace:menuButton  effect="slide" effectDuration="200" value="...">
+
+
+                                        <ace:menuItem value="Editar" icon="ui-icon ui-icon-pencil" action="#{aprobarGarante.modifica(prestamoItem)}" 
+                                                      disabled="#{prestamoItem.aprobadogarante eq true or prestamoItem.niegagarante eq true}" />
+                                        <ace:menuItem value="Pagaré" icon="ui-icon ui-icon-script" action="#{aprobarGarante.mostrarPagare(prestamoItem)}" rendered="#{prestamoItem.aprobadoFinanciero eq true and prestamoItem.fechaFinanciero ne null}" />
+    <!--                                    <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{aprobarGarante.borra(prestamoItem)}" disabled="#{prestamoItem.aprobado!=null}" />-->
+                                    </ace:menuButton>
+                                </ace:column>
+                                <ace:column  headerText="Solicitante"  style="text-align: left">
+                                    <h:outputText value="#{prestamoItem.empleado.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor" style="text-align: right">
+                                    <h:outputText  value="#{prestamoItem.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+
+                                <!--                            FM 05OCT2018-->
+
+                                <ace:column  headerText="Valor de Décimo" style="text-align: right">
+                                    <h:outputText  value="#{prestamoItem.valordiciembre}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Número de Meses" style="text-align: right">
+                                    <h:outputText  value="#{prestamoItem.couta}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Valor Cuota" style="text-align: right">
+                                    <h:outputText  value="#{aprobarGarante.valorCuota(prestamoItem)}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Fecha de Solicitud" style="text-align: left">
+                                    <h:outputText  value="#{prestamoItem.fechasolicitud}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column headerText="Tipo" style="text-align: left">
+                                    <h:outputText value="#{prestamoItem.tipo.nombre}"/>
+                                </ace:column>
+                                <ace:column headerText="Aprobación por Garante" style="text-align: left">
+                                    <h:graphicImage url="../resources/images/si.png" rendered="#{prestamoItem.aprobadogarante}"/>
+                                    <h:graphicImage url="../resources/images/no.png" rendered="#{prestamoItem.niegagarante}"/>
+                                </ace:column>
+                                <ace:column headerText="Estado Préstamo" style="text-align: left">
+                                    <h:graphicImage url="../resources/images/si.png" rendered="#{prestamoItem.aprobado}"/>
+                                    <h:graphicImage url="../resources/images/no.png" rendered="#{!prestamoItem.aprobado}"/>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:panel>
+                    <ace:dialog 
+                        header="#{empleados.empleadoSeleccionado.entidad.apellidos} - #{empleados.empleadoSeleccionado.entidad.nombres}"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        rendered="#{aprobarGarante.formulario.mostrar}"
+                        visible="#{aprobarGarante.formulario.mostrar}">
+                        <ace:tabSet style="clear:both;" clientSide="true">
+                            <ace:tabPane >
+                                <f:facet name="label">Inf. General</f:facet>
+                                <h:panelGrid columns="1">
+                                    <h:outputLabel value="#{aprobarGarante.periodo}" escape="false"/>
+                                </h:panelGrid>
+                                <h:panelGrid columns="2">
+                                    <h:outputLabel value="Empleado Solicitante : " />
+                                    <h:outputLabel value="#{aprobarGarante.prestamo.empleado.toString()}" />
+                                    <h:outputLabel value="Fecha Solicitud:" />
+                                    <h:outputText value="#{aprobarGarante.prestamo.fechasolicitud}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                    <h:outputLabel value="Valor:" />
+                                    <h:outputText  value="#{aprobarGarante.prestamo.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                    <!--                                FM05OCT2018-->
+                                    <h:outputLabel value="Valor de Décimo" />
+                                    <h:outputText  value="#{aprobarGarante.prestamo.valordiciembre}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText> 
+
+
+                                    <h:outputLabel value="Número de Meses:" />
+                                    <h:outputText value="#{aprobarGarante.prestamo.couta}" />
+                                    <h:outputLabel value="Valor cuotas:" />
+                                    <h:outputText  value="#{aprobarGarante.valorCuota(aprobarGarante.prestamo)}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                    <h:outputLabel value="Garantía:" />
+    <!--                                <h:selectOneRadio value="#{aprobarGarante.prestamo.aprobadogarante}" >
+                                        <f:selectItem itemValue="" itemLabel="Aprobar" />
+                                        <f:selectItem itemValue="" itemLabel="Negar" />
+                                    </h:selectOneRadio>-->
+
+                                    <ace:buttonGroup id="radioGroup"  mutuallyExclusive="true">
+                                        Aprobar <ace:radioButton id="radio1" value="#{aprobarGarante.prestamo.aprobadogarante}">
+                                            <ace:ajax execute="radioGroup" event="activate" render="@form"/>
+                                        </ace:radioButton>
+                                        Negar <ace:radioButton id="radio2" value="#{aprobarGarante.prestamo.niegagarante}">
+                                            <ace:ajax execute="radioGroup" event="activate" render="@form"/>
+                                        </ace:radioButton>
+                                    </ace:buttonGroup>
+
+                                    <h:outputLabel value="Descripción:" for="nombre" />
+                                    <h:inputTextarea cols="60" rows="4" value="#{aprobarGarante.prestamo.observaciongarante}" title="Descripción" />
+                                </h:panelGrid>
+                            </ace:tabPane>
+
+                        </ace:tabSet>
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{aprobarGarante.grabar()}" rendered="#{aprobarGarante.formulario.modificar}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{aprobarGarante.formulario.cancelar()}" />
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </ace:dialog>
+
+                    <ace:dialog 
+                        header="Imprimir"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{aprobarGarante.formularioImprimir.mostrar}"
+                        visible="#{aprobarGarante.formularioImprimir.mostrar}">
+                        <h:panelGroup>
+                            <h:panelGrid columns="1">
+                                <h:commandButton  value="Imprimir">
+                                    <!--<h:outputText id="printBoth" value="Imprimir"/>-->
+                                    <ace:printer for="panelImprimir"/>
+                                </h:commandButton>
+                                <!--<h:commandButton  value="Generar PDF" action="#{prestamosEmpleado.pdfAnticipo(prestamosEmpleado.prestamo)}"/>-->
+                            </h:panelGrid>
+                            <ui:include src="imprimirPagareGarante.xhtml" />
+
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{aprobarGarante.formularioImprimir.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+
+                    <!--                FM 14 ENE 2019 -->
+
+                    <ace:dialog 
+                        header="Confirmación"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        rendered="#{aprobarGarante.formularioAceptar.mostrar}"
+                        visible="#{aprobarGarante.formularioAceptar.mostrar}"
+                        width="400">
+                        <h:panelGroup>
+                            <h:panelGrid columns="1" width="100%" style="text-align: justify ;">
+                                <h:outputLabel value="Mediante el presente ACEPTO voluntariamente a 
+                                               constituirme en garante solidario en cumplimiento de la 
+                                               obligación con el CB-DMQ, haciendo la deuda ajena propia 
+                                               y renunciando reclamo y negociación alguna; quedando sometido 
+                                               a cancelar obligatoriamente la TOTALIDAD que faltare mediante 
+                                               descuentos en mis roles de pagos mensuales con las mismas condiciones 
+                                               establecidas por mi garantizado o de la liquidación de haberes en el caso 
+                                               de desvinculación con la institución, cuando este no haya cumplido con el 
+                                               pago al CB-DMQ por dos o más cuotas consecutivas." />
+                            </h:panelGrid>
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Aceptar" icon="ui-icon ui-icon-disk"  action="#{aprobarGarante.aceptarGarante()}"/>
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{aprobarGarante.formularioAceptar.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+    <ace:panel id="panelImprimir" style="display:block;">
+        <h:panelGrid width="90%" rendered="#{imprimePermisoSfccbdmq.licencia.tipo.horas}">
+            <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+            <h:panelGrid  width="90%" columns="2" style="text-align: right">
+                <h:outputText value="Usuario :"/>
+                <h:outputText value="#{parametrosSfccbdmq.logueado.userid}"/>
+                <h:outputText value="Fecha :"/>
+                <h:outputText value="#{parametrosSfccbdmq.fechaActual}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                </h:outputText>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="1" style="text-align: center">
+                <h3>SOLICITUD PARA AUSENTARSE DEL LUGAR DE TRABAJO POR HORAS No : #{imprimePermisoSfccbdmq.licencia.numero}</h3>
+            </h:panelGrid>
+
+            <h:panelGrid  width="90%" columns="2" style="text-align: right">
+                <h:outputLabel value="Quito :" />
+                <h:outputLabel value="#{imprimePermisoSfccbdmq.licencia.fechaingreso}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputLabel>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="1" style="text-align: left">
+                <h:outputLabel value="Señor  :" />
+                <h:outputLabel value="#{configuracionSfccbdmq.configuracion.nombregerente}"/>
+                <h:outputLabel value="Presente.-" />
+                <br/>
+                <br/>
+                <br/>
+                <h:outputLabel value="De mi consideración: " />
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="1" style="text-align: left">
+
+                <p>Yo #{imprimePermisoSfccbdmq.licencia.empleado.entidad.toString()} que desempeña el cargo de 
+                    #{imprimePermisoSfccbdmq.licencia.empleado.cargoactual.cargo.toString()} en la dirección  
+                    #{imprimePermisoSfccbdmq.jefe.cargoactual.organigrama.toString()} 
+                    solicito a usted se sirva autorizar lo siguiente :</p>
+            </h:panelGrid>
+            <h:panelGrid columns="1" width="100%">
+                <ace:dataTable 
+                    value="#{imprimePermisoSfccbdmq.listaLicenciasImrimir}"
+                    var="itemImrimir">
+
+                    <ace:column  headerText="TIPO" style="text-align: left">
+                        <h:outputText  value="#{itemImrimir.tipo.toString()}"/>
+                    </ace:column>
+                    <ace:column  headerText="MOTIVO" style="text-align: left">
+                        <h:outputText  value="#{itemImrimir.observaciones}"/>
+                    </ace:column>
+                    <ace:column  headerText="HORA DE SALIDA" sortBy="#{item.nombre}" style="text-align: left">
+                        <h:outputText  value="#{itemImrimir.desde}">
+                            <f:convertDateTime pattern="HH:mm"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="HORA DE ENTRADA" sortBy="#{item.nombre}" style="text-align: left">
+                        <h:outputText  value="#{itemImrimir.hasta}">
+                            <f:convertDateTime pattern="HH:mm"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="ESTADO" style="text-align: left">
+                        <h:outputText  value="#{imprimePermisoSfccbdmq.getEstado(itemImrimir)}"/>
+                    </ace:column>
+                </ace:dataTable>
+            </h:panelGrid>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+
+            <h:panelGrid  width="90%" columns="5">
+                <h:outputLabel value="f.----------------------------" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="f.----------------------------" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="f.----------------------------" />
+                <h:outputLabel value="Firma de :Servidor(a)/Trabajador(a)"  />
+                <h:outputLabel value="" />
+                <h:outputLabel value="Jefe Inmediato"  />
+                <h:outputLabel value="" />
+                <h:outputLabel value="Talento Humano"  />
+
+            </h:panelGrid>
+        </h:panelGrid>
+        <h:panelGrid width="90%" rendered="#{!imprimePermisoSfccbdmq.licencia.tipo.horas}">
+            <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+            <h:panelGrid  width="90%" columns="2" style="text-align: right">
+                <h:outputText value="Usuario :"/>
+                <h:outputText value="#{parametrosSfccbdmq.logueado.userid}"/>
+                <h:outputText value="Fecha :"/>
+                <h:outputText value="#{parametrosSfccbdmq.fechaActual}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                </h:outputText>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="1" style="text-align: center">
+                <h3>SOLICITUD PARA AUSENTARSE DEL LUGAR DE TRABAJO  No : #{imprimePermisoSfccbdmq.licencia.numero}</h3>
+            </h:panelGrid>
+
+            <h:panelGrid  width="90%" columns="2" style="text-align: right">
+                <h:outputLabel value="Quito :" />
+                <h:outputLabel value="#{imprimePermisoSfccbdmq.licencia.fechaingreso}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputLabel>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="1" style="text-align: left">
+                <h:outputLabel value="Señor  :" />
+                <h:outputLabel value="#{configuracionSfccbdmq.configuracion.nombregerente}"/>
+                <h:outputLabel value="Presente.-" />
+                <br/>
+                <br/>
+                <br/>
+                <h:outputLabel value="De mi consideración: " />
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="1" style="text-align: left">
+
+                <p>Yo #{imprimePermisoSfccbdmq.licencia.empleado.entidad.toString()} que desempeña el cargo de 
+                    #{imprimePermisoSfccbdmq.licencia.empleado.cargoactual.cargo.toString()} en la dirección  
+                    #{imprimePermisoSfccbdmq.jefe.cargoactual.organigrama.toString()}
+                    <!--#{imprimePermisoSfccbdmq.licencia.empleado.cargoactual.organigrama.toString()}--> 
+                    solicito a usted se sirva autorizar lo siguiente :</p>
+            </h:panelGrid>
+            <h:panelGrid columns="1" width="100%">
+                <ace:dataTable 
+                    value="#{imprimePermisoSfccbdmq.listaLicenciasImrimir}"
+                    var="itemImrimir">
+                    <ace:column  headerText="TIPO" style="text-align: left">
+                        <h:outputText  value="#{itemImrimir.tipo.toString()}"/>
+                    </ace:column>
+                    <ace:column  headerText="MOTIVO" style="text-align: left">
+                        <h:outputText  value="#{itemImrimir.observaciones}"/>
+                    </ace:column>
+                    <ace:column  headerText="DESDE" sortBy="#{item.nombre}" style="text-align: left">
+                        <h:outputText  value="#{itemImrimir.inicio}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="HASTA" sortBy="#{item.nombre}" style="text-align: left">
+                        <h:outputText  value="#{itemImrimir.fin}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="ESTADO" style="text-align: left">
+                        <h:outputText  value="#{imprimePermisoSfccbdmq.getEstado(itemImrimir)}"/>
+                    </ace:column>
+                </ace:dataTable>
+            </h:panelGrid>
+            <h:panelGrid columns="1" width="100%" style="text-align: center">
+                    <h:outputLabel value="Atentamente" />
+                    <br/>
+                    <br/>
+                    <br/>
+                    <h:outputLabel value="f.----------------------------" />
+                    <h:outputLabel value="Firma de: Servidor(a)/Trabajador(a)" />
+                    <h:outputLabel value="C.I.----------------------------" />
+                    
+            </h:panelGrid>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+
+            <h:panelGrid  width="90%" columns="5">
+                <h:outputLabel value="f.----------------------------" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="f.----------------------------" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="f.----------------------------" />
+                <h:outputLabel value="Jefe Inmediato"  />
+                <h:outputLabel value="" />
+                <h:outputLabel value="Talento Humano"  />
+                <h:outputLabel value="" />
+                <h:outputLabel value="Comandancia"  />
+
+            </h:panelGrid>
+        </h:panelGrid>
+    </ace:panel>
+</html>

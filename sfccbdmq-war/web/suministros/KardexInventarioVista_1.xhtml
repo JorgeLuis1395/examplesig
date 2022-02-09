@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <h:panelGrid width="100%">
+                    <ace:panel id="panel"
+                               header="#{kadexTxSfccbdmq.perfil.menu.texto}"
+                               closable="false"
+                               toggleable="false"  >
+
+
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Consumo [SI] / Inversión [NO] :" />
+                            <h:selectBooleanCheckbox value="#{kadexTxSfccbdmq.consumo}">
+                                <ace:ajax execute="@all"/>
+                            </h:selectBooleanCheckbox>
+                            <h:outputLabel value="Bodega :" />
+                            <h:selectOneMenu  value="#{kadexTxSfccbdmq.bodega}">
+                                <f:selectItems value="#{bodegasSfccbdmq.comboBodegasSuministros}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Familia :" />
+                            <h:selectOneMenu value="#{tiposSuministrosSfccbdmq.familiaSuministros}" 
+                                             >
+                                <f:selectItems value="#{codigosSfccbdmq.comboFamiliaSuministros}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Tipo :"  />
+                            <h:selectOneMenu value="#{suministrosSfccbdmq.tipo}"  
+                                             >
+                                <f:selectItems value="#{tiposSuministrosSfccbdmq.comboTipoFamiliaEspacio}" />
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Suministro:" for="suministro" />
+                            <h:selectOneMenu id="suministro" value="#{kadexTxSfccbdmq.suministro}" title="Suministro" 
+                                             >
+                                <f:selectItems value="#{suministrosSfccbdmq.comboSuministroTipo}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{kadexTxSfccbdmq.desde}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{kadexTxSfccbdmq.hasta}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid> 
+
+                        <h:panelGrid columns="2" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{kadexTxSfccbdmq.buscar()}"/>
+                                <ace:menuItem value="Imprimir" icon="ui-icon ui-icon-print"  action="#{kadexTxSfccbdmq.imprimir()}"/>
+                            </ace:menuBar>
+                            <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                        </h:panelGrid>
+                        <ace:messages />
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{kadexTxSfccbdmq.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{kadexTxSfccbdmq.formulario.pantalla}" 
+                                              target="tabla" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%" style="margin-bottom: 20px;">
+
+                            <ace:dataTable id="tabla"
+                                           value="#{kadexTxSfccbdmq.listaKardex}"
+                                           var="item"
+                                           lazy="true"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="10,15,30,50"
+                                           currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="30"
+                                           style="width: 100%;"
+                                           >
+                                <ace:column  headerText="Fecha "  style="text-align: left">
+                                    <h:outputText  value="#{item.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Suministro"  style="text-align: left" groupBy="#{item.suministro.nombre}">
+                                    <h:outputText value="#{item.suministro.nombre}"/>
+                                </ace:column>
+
+                                <ace:column  headerText="Transacción"  style="text-align: left">
+                                    <h:outputText value="#{item.cabecerainventario.txid.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Número "  style="text-align: left">
+                                    <h:outputText value="#{item.cabecerainventario.numero}"/>
+                                </ace:column>
+                                <ace:column  headerText="Observaciones"  style="text-align: left">
+                                    <h:outputText value="#{item.cabecerainventario.observaciones}"/>
+                                </ace:column>
+
+
+                                <ace:column headerText="Ing." style="text-align: left">
+                                    <h:outputText value="SI" rendered="#{item.cabecerainventario.txid.ingreso}"/>
+                                    <h:outputText value="NO" rendered="#{!item.cabecerainventario.txid.ingreso}"/>
+                                </ace:column> 
+                                <ace:column  headerText="Saldo Inicial"  style="text-align: right" rendered="#{kadexTxSfccbdmq.consumo}">
+                                    <h:outputText  value="#{item.saldoanterior}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Saldo Inicial Inv."  style="text-align: right" rendered="#{!kadexTxSfccbdmq.consumo}">
+                                    <h:outputText  value="#{item.saldoanteriorinversion}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <!--                                <ace:column  headerText="Saldo Inicial Total"  style="text-align: right">
+                                                                    <h:outputText  value="#{item.saldoanterior+item.saldoanteriorinversion}">
+                                                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                                                    </h:outputText>
+                                                                </ace:column>-->
+                                <ace:column  headerText="Cantidad Ingreso"  style="text-align: right" rendered="#{kadexTxSfccbdmq.consumo}">
+                                    <h:outputText  value="#{item.cantidad}" rendered="#{item.cabecerainventario.txid.ingreso}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Cantidad Ingreso Inv."  style="text-align: right" rendered="#{!kadexTxSfccbdmq.consumo}">
+                                    <h:outputText  value="#{item.cantidadinversion}" rendered="#{item.cabecerainventario.txid.ingreso}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <!--                                <ace:column  headerText="Ingreso"  style="text-align: right">
+                                                                    <h:outputText  value="#{item.cantidad+item.cantidadinversion}" rendered="#{item.cabecerainventario.txid.ingreso}">
+                                                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                                                    </h:outputText>
+                                                                </ace:column>-->
+                                <ace:column  headerText="Costo Unitario Ingreso"  style="text-align: right" >
+                                    <h:outputText  value="#{item.costo}" rendered="#{item.cabecerainventario.txid.ingreso}">
+                                        <f:convertNumber pattern="###,###,##0.00000"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Total Ingreso"  style="text-align: right" rendered="#{kadexTxSfccbdmq.consumo}">
+                                    <h:outputText  value="#{(item.cantidad)*item.costo}" rendered="#{item.cabecerainventario.txid.ingreso}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Total Ingreso"  style="text-align: right" rendered="#{!kadexTxSfccbdmq.consumo}">
+                                    <h:outputText  value="#{(item.cantidadinversion)*item.costo}" rendered="#{item.cabecerainventario.txid.ingreso}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Cantidad Egreso"  style="text-align: right" rendered="#{kadexTxSfccbdmq.consumo}">
+                                    <h:outputText  value="#{item.cantidad}" rendered="#{!item.cabecerainventario.txid.ingreso}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Cantidad Egreso Inv."  style="text-align: right" rendered="#{!kadexTxSfccbdmq.consumo}">
+                                    <h:outputText  value="#{item.cantidadinversion}" rendered="#{!item.cabecerainventario.txid.ingreso}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+
+                                <ace:column  headerText="Costo Unitario Egreso"  style="text-align: right" >
+                                    <h:outputText  value="#{item.costopromedio}" rendered="#{!item.cabecerainventario.txid.ingreso}">
+                                        <f:convertNumber pattern="###,###,##0.00000"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Total Egreso"  style="text-align: right" rendered="#{kadexTxSfccbdmq.consumo}">
+                                    <h:outputText  value="#{item.costopromedio*(item.cantidad)}" rendered="#{!item.cabecerainventario.txid.ingreso}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Total Egreso"  style="text-align: right" rendered="#{!kadexTxSfccbdmq.consumo}">
+                                    <h:outputText  value="#{item.costopromedio*(item.cantidadinversion)}" rendered="#{!item.cabecerainventario.txid.ingreso}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Cantidad Saldo"  style="text-align: right" rendered="#{kadexTxSfccbdmq.consumo}">
+                                    <h:outputText  value="#{item.saldoanterior+item.cantidad}" rendered="#{item.cabecerainventario.txid.ingreso}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value="#{(item.saldoanterior)-(item.cantidad)}" rendered="#{!item.cabecerainventario.txid.ingreso}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Cantidad Saldo Inv."  style="text-align: right" rendered="#{!kadexTxSfccbdmq.consumo}">
+                                    <h:outputText  value="#{item.saldoanteriorinversion+item.cantidadinversion}" rendered="#{item.cabecerainventario.txid.ingreso}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value="#{(item.saldoanteriorinversion)-(item.cantidadinversion)}" rendered="#{!item.cabecerainventario.txid.ingreso}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Costo Promedio Saldo"  style="text-align: right">
+                                    <h:outputText  value="#{item.costopromedio}">
+                                        <f:convertNumber pattern="###,###,##0.00000"/>
+                                    </h:outputText>
+                                </ace:column>
+
+                                <ace:column  headerText="Total"  style="text-align: right" rendered="#{kadexTxSfccbdmq.consumo}">
+                                    <h:outputText  value="#{(item.saldoanterior+item.cantidad)*item.costopromedio}" rendered="#{item.cabecerainventario.txid.ingreso}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value="#{((item.saldoanterior-item.cantidad))*item.costopromedio}" rendered="#{!item.cabecerainventario.txid.ingreso}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Total"  style="text-align: right" rendered="#{!kadexTxSfccbdmq.consumo}">
+                                    <h:outputText  value="#{(item.saldoanteriorinversion+item.cantidadinversion)*item.costopromedio}" rendered="#{item.cabecerainventario.txid.ingreso}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value="#{((item.saldoanteriorinversion-item.cantidadinversion))*item.costopromedio}" rendered="#{!item.cabecerainventario.txid.ingreso}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <!--                                <ace:column  headerText="Unidades"  style="text-align: left">
+                                                                    <h:outputText  value="#{item.unidad.equivalencia}"/>
+                                                                </ace:column>-->
+
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:panel>
+                    <!--</ace:dialog>-->
+                </h:panelGrid>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{kadexTxSfccbdmq.formularioImprimir.mostrar}"
+                    visible="#{kadexTxSfccbdmq.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <!--                        <h:panelGrid columns="1">
+                                                    <h:commandButton  value="Imprimir">
+                                                        <h:outputText id="printBoth" value="Imprimir"/>
+                                                        <ace:printer for="panelImprimir"/>
+                                                    </h:commandButton>
+                                                </h:panelGrid>
+                                                <ui:include src="imprimirMovimientoReporte.xhtml" />-->
+                        <ace:dynamicResource fileName="KardexCon.pdf" id="pdf-button1" label="Generar PDF Consumo"
+                                             mimeType="application/pdf" resource="#{kadexTxSfccbdmq.reporte}" 
+                                             style="" type="button"/>
+                        <ace:dynamicResource fileName="KardexInv.pdf" id="pdf-button11" label="Generar PDF Inversión"
+                                             mimeType="application/pdf" resource="#{kadexTxSfccbdmq.reporteInv}" 
+                                             style="" type="button"/>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{kadexTxSfccbdmq.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <!--Poner  con include ya que vista demasiado Cargada;-->
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

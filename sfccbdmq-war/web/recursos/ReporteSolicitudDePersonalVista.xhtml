@@ -1,0 +1,206 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel 
+                    id ="panel"
+                    header="Reporte Solicitud de Certificación de Talento Humano"
+                    closable="false"
+                    toggleable="true"
+                    rendered="#{!reporteSolicitudTelento.formulario.nuevo}">    
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Número"/>
+                        <h:inputText value="#{reporteSolicitudTelento.numero}"/>
+                        <h:outputLabel value="Cédula:"/>
+                        <h:inputText value="#{reporteSolicitudTelento.cedula}"/>
+                        <h:outputLabel value="Nombre:"/>
+                        <h:inputText value="#{reporteSolicitudTelento.nombre}"/>
+                        <h:outputLabel value="Descripción:"/>
+                        <h:inputTextarea value="#{reporteSolicitudTelento.descripcion}" rows="5" cols="30"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteSolicitudTelento.buscar()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <!--                </ace:panel>
+                                    <ace:panel>-->
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:dataTable 
+                            id="tablaf"
+                            paginatorAlwaysVisible="true"
+                            value="#{reporteSolicitudTelento.listaSolicitud}"
+                            var="item"
+                            paginator="true"
+                            lazy="false"
+                            resizableColumns="true"
+                            rowIndexVar="row"
+                            paginatorPosition="both"
+                            rowsPerPageTemplate="5,10,15,30,50,100,all"
+                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            rows="15"
+                            binding="#{reporteSolicitudTelento.formulario.fila}"
+                            scrollHeight="600"
+                            scrollable="true">
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{reporteSolicitudTelento.certificar()}" 
+                                                  value="Certificados" icon="ui-icon ui-icon-pencil"/>
+                                </ace:menuButton>
+                            </ace:column>
+                            <ace:column  headerText="Orden" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column> 
+                            <ace:column  headerText="N°" style="text-align: right">
+                                <h:outputText value="#{item.numero}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Fecha" style="text-align: left">
+                                <h:outputText  value="#{item.fechasolicitud}">
+                                    <f:convertDateTime parent="dd/MM/yyyy"/>
+                                </h:outputText>
+                                <h:outputText value=" - "/>
+                                <h:outputText value="#{item.fechasolicitud}">
+                                    <f:convertDateTime pattern="HH:mm"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Cedula" style="text-align: left">
+                                <h:outputText  value="#{item.empleado.entidad.pin}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nombres" style="text-align: left">
+                                <h:outputText  value="#{item.empleado.entidad.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Descripción" style="text-align: left" filterBy="#{item.descripcion}" filterMatchMode="startsWith">
+                                <h:outputText  value="#{item.descripcion}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+
+                <ace:panel
+                    id="panel1"
+                    header="Solicitudes"
+                    closable="false"
+                    toggleable="true"
+                    rendered="#{reporteSolicitudTelento.formulario.nuevo}">
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{reporteSolicitudTelento.salir()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:dataTable 
+                            paginatorAlwaysVisible="true"
+                            value="#{reporteSolicitudTelento.listaDetalleSolicitud}"
+                            var="itemd"
+                            paginator="true"
+                            lazy="false"
+                            resizableColumns="true"
+                            rowIndexVar="row"
+                            paginatorPosition="both"
+                            rowsPerPageTemplate="5,10,15,30,50,100,all"
+                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            rows="15"
+                            binding="#{reporteSolicitudTelento.formularioDetalle.fila}">
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{reporteSolicitudTelento.imprimir(itemd)}" 
+                                                  value="Imprimir" icon="ui-icon ui-icon-print"/>
+                                </ace:menuButton>
+                            </ace:column>
+                            <ace:column  headerText="N°" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Fecha Solicitud - Hora" style="text-align: left">
+                                <h:outputText  value="#{itemd.solicitudpersonal.fechasolicitud}">
+                                    <f:convertDateTime parent="dd/MM/yyyy"/>
+                                </h:outputText>
+                                <h:outputText value=" - "/>
+                                <h:outputText value="#{itemd.solicitudpersonal.fechasolicitud}">
+                                    <f:convertDateTime pattern="HH:mm"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Aprobado" style="text-align: left">
+                                <h:outputText  value="#{itemd.aprobado ? 'Aprobado': !itemd.aprobado ? 'Rechazado':''}"/>
+                            </ace:column>
+                            <ace:column  headerText="Número" style="text-align: left">
+                                <h:outputText  value="#{itemd.numerocertificado}"/>
+                            </ace:column>
+                            <ace:column  headerText="Cedula" style="text-align: left">
+                                <h:outputText  value="#{itemd.solicitudpersonal.empleado.entidad.pin}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nombres" style="text-align: left">
+                                <h:outputText  value="#{itemd.solicitudpersonal.empleado.entidad.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Tipo de Solicitud" style="text-align: left">
+                                <h:outputText  value="#{reporteSolicitudTelento.traerTipo(itemd.tipo)}"/>
+                            </ace:column>
+                            <ace:column  headerText="Descripción" style="text-align: left">
+                                <h:outputText  value="#{itemd.solicitudpersonal.descripcion}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    width="600"
+                    rendered="#{reporteSolicitudTelento.formularioImprimir.mostrar}"
+                    visible="#{reporteSolicitudTelento.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid rendered="#{reporteSolicitudTelento.detalleSolicitud.tipo eq 1}">
+                            <ace:dynamicResource fileName="CertificadoLaboral.pdf" id="pdf-buttonxxx" label="Generar Certificado Laboral PDF"
+                                                 mimeType="application/pdf" 
+                                                 rendered="#{reporteSolicitudTelento.recursoCert!=null}"
+                                                 resource="#{reporteSolicitudTelento.recursoCert}" 
+                                                 style="" type="button"/>
+                        </h:panelGrid>
+                        <h:panelGrid rendered="#{reporteSolicitudTelento.detalleSolicitud.tipo eq 2}">
+                            <ace:dynamicResource fileName="CertificadoIngresos.pdf" id="pdf-buttonxxxx" label="Generar Certificado Ingresos PDF"
+                                                 mimeType="application/pdf" 
+                                                 rendered="#{reporteSolicitudTelento.recursoCertIng!=null}"
+                                                 resource="#{reporteSolicitudTelento.recursoCertIng}" 
+                                                 style="" type="button"/>
+                        </h:panelGrid>
+                        <h:panelGrid rendered="#{reporteSolicitudTelento.detalleSolicitud.tipo eq 3}">
+                            <ace:dynamicResource fileName="CertificadoOtro.pdf" id="pdf-buttonxxxxx" label="Generar Otro Certificado PDF"
+                                                 mimeType="application/pdf" 
+                                                 rendered="#{reporteSolicitudTelento.recursoOtro!=null}"
+                                                 resource="#{reporteSolicitudTelento.recursoOtro}" 
+                                                 style="" type="button"/>
+                        </h:panelGrid>
+                        <ace:messages />
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteSolicitudTelento.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

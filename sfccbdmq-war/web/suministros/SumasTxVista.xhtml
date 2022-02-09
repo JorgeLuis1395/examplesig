@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <h:panelGrid width="100%">
+                    <ace:panel id="panel"
+                               header="#{sumasTxSfccbdmq.perfil.menu.texto}"
+                               closable="false"
+                               toggleable="false"  >
+
+
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Bodega :" />
+                            <h:selectOneMenu  value="#{sumasTxSfccbdmq.bodega}">
+                                <f:selectItems value="#{bodegasSfccbdmq.comboBodegasSuministros}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Familia :" />
+                            <h:selectOneMenu value="#{tiposSuministrosSfccbdmq.familiaSuministros}" 
+                                             >
+                                <f:selectItems value="#{codigosSfccbdmq.comboFamiliaSuministros}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Tipo :"  />
+                            <h:selectOneMenu value="#{suministrosSfccbdmq.tipo}"  
+                                             >
+                                <f:selectItems value="#{tiposSuministrosSfccbdmq.comboTipoFamiliaEspacio}" />
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Suministro:" for="suministro" />
+                            <h:selectOneMenu id="suministro" value="#{sumasTxSfccbdmq.suministro}" title="Suministro" 
+                                             >
+                                <f:selectItems value="#{suministrosSfccbdmq.comboSuministroTipo}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="4">
+                            <!--                            <h:outputLabel value="Saldos desde:"/>
+                                                        <ace:dateTimeEntry navigator="true" value="#{sumasTxSfccbdmq.desde}"
+                                                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                        </ace:dateTimeEntry>-->
+                            <h:outputLabel value="Saldos Al:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{sumasTxSfccbdmq.hasta}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid> 
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{sumasTxSfccbdmq.buscar()}"/>
+                            </ace:menuBar>
+                            <ace:dynamicResource fileName="KardexInv.pdf" id="pdf-button1" label="Generar PDF"
+                                                 mimeType="application/pdf" 
+                                                 rendered="#{sumasTxSfccbdmq.reporte!=null}"
+                                                 resource="#{sumasTxSfccbdmq.reporte}" 
+                                                 style="" type="button"/>
+                            <ace:messages />
+                        </h:panelGrid>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="panel"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{solicitudesCargo.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{sumasTxSfccbdmq.formulario.pantalla}" 
+                                              target="tabla" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%" style="margin-bottom: 20px;">
+
+                            <ace:dataTable id="tabla"
+                                           value="#{sumasTxSfccbdmq.listaKardex}"
+                                           var="item"
+                                           lazy="false"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="10,15,30,50,all"
+                                           currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="30"
+                                           style="width: 100%;"
+                                           scrollHeight="600"
+                                           scrollable="true">
+                                <ace:row condition="group" groupBy="#{item.suministro.tipo}" pos="before">
+                                    <ace:column  colspan="7" style="background-color: #0099CC;text-align: left;color: #FFF">
+                                        <h:panelGrid columns="4">
+                                            <h:outputText value="Familia :" />
+                                            <h:outputText value="#{item.suministro.tipo.familia.nombre}" />
+                                            <h:outputText value="Tipo :" />
+                                            <h:outputText value="#{item.suministro.tipo.nombre}" />
+                                        </h:panelGrid>
+                                    </ace:column>
+                                </ace:row>
+                                <!--                                 <ace:column  headerText="Suministro"  style="text-align: left" >
+                                                                     <h:outputText value="#{item.suministro.id}"/>
+                                                                </ace:column>-->
+                                <ace:column  headerText="Código"  style="text-align: left" >
+                                    <h:outputText value="#{item.suministro.codigobarras}"/>
+                                </ace:column>
+                                <ace:column  headerText="Suministro"  style="text-align: left" >
+                                    <h:outputText value="#{item.suministro.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Cantidad"  style="text-align: right">
+                                    <h:outputText  value="#{item.cantidad}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+
+                                </ace:column>
+                                <ace:column  headerText="Cantidad Inv."  style="text-align: right">
+                                    <h:outputText  value="#{item.cantidadinversion}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Total"  style="text-align: right">
+                                    <h:outputText  value="#{item.cantidad+item.cantidadinversion}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Valor Total"  style="text-align: right">
+                                    <h:outputText  value="#{item.saldoanterior}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Unidades"  style="text-align: left">
+                                    <h:outputText  value="#{item.suministro.unidad.equivalencia}"/>
+                                </ace:column>
+
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:panel>
+                    <!--</ace:dialog>-->
+                </h:panelGrid>
+
+                <!--Poner  con include ya que vista demasiado Cargada;-->
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

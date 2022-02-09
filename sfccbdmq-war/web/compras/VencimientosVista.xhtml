@@ -1,0 +1,287 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{vencimientosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <ui:include src="../BuscarProveedor.xhtml"/>
+                    <h:panelGrid columns="2" width="100%">
+                        <h:outputLabel value="Contrato : "/>
+                        <h:selectOneMenu value="#{vencimientosSfccbdmq.contrato}">
+                            <f:selectItems value="#{contratosSfccbdmq.comboContratos}"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{vencimientosSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{vencimientosSfccbdmq.crear()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                   for="panel"
+                                   blockUI="panel"
+                                   autoCenter="true"
+                                   activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Bùsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{vencimientosSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{vencimientosSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <!--                    <h:panelGrid styleClass="centeredPanelGrid">
+                                            
+                                        </h:panelGrid>-->
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{vencimientosSfccbdmq.vencimientos}"
+                                       var="item"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       binding="#{vencimientosSfccbdmq.formulario.fila}">
+                            <!--                            <ace:column  headerText="Registro" style="text-align: right">
+                                                            <h:outputText value="#{row+1}"/>
+                                                        </ace:column>-->
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+
+                                    <ace:menuItem action="#{vencimientosSfccbdmq.modificar(item)}" value="Editar" icon="ui-icon ui-icon-pencil" />
+<!--                                    <ace:menuItem action="#{vencimientosSfccbdmq.imprimir(item)}" value="Imprimir" icon="ui-icon ui-icon-print"/>-->
+                                    <ace:menuItem action="#{vencimientosSfccbdmq.eliminar(item)}" value="Borrar" icon="ui-icon ui-icon-trash" />
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="Descripción" style="text-align: left">
+                                <h:outputText  value="#{item.texto}"/>
+                            </ace:column>
+                            <ace:column  headerText="Número Días" style="text-align: left">
+                                <h:outputText  value="#{item.numerodias}"/>
+                            </ace:column>
+                            <ace:column  headerText="Fecha Inicio" style="text-align: left">
+                                <h:outputText  value="#{item.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>  
+                            <ace:column  headerText="Fecha de Vencimiento " style="text-align: left" >
+                                <h:outputText  value="#{item.vencimiento}" rendered="#{item.vencimiento != null}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                                <h:outputText  value="---" rendered="#{item.vencimiento == null}" />
+                            </ace:column>  
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{vencimientosSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{vencimientosSfccbdmq.formulario.mostrar}"
+                    visible="#{vencimientosSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <!--                        <ace:tabSet style="clear:both;" clientSide="true">-->
+                        <!--                            <ace:tabPane>-->
+                        <f:facet name="label">Inf. General</f:facet>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Descripción:" />
+                            <h:inputTextarea cols="60" rows="8" id="objeto" value="#{vencimientosSfccbdmq.vencimiento.texto}" title="Descripción" />
+                            <h:outputLabel value="Fecha de Inicio:" />
+                            <ace:dateTimeEntry navigator="true" id="fecha" value="#{vencimientosSfccbdmq.vencimiento.fecha}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                <ace:ajax execute="@all"/>
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Número de Días:" />
+                            <h:inputText  value="#{vencimientosSfccbdmq.vencimiento.numerodias}" title="Número Días"  
+                                          valueChangeListener="#{vencimientosSfccbdmq.cambiaDias}">
+                                <ace:ajax execute="@all"/>
+                            </h:inputText>
+                            <h:outputLabel value="Fecha Vencimiento:" />
+                            <h:outputText  value="#{vencimientosSfccbdmq.vencimiento.vencimiento}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </h:panelGrid>
+                        <!--                            </ace:tabPane>-->
+                        <!--                            <ace:tabPane label="Adjuntos">
+                                                        <ui:include src="../mostrarImagenes.xhtml" />
+                                                    </ace:tabPane>-->
+                        <!--                        </ace:tabSet>    -->
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{vencimientosSfccbdmq.formulario.nuevo}" 
+                                          action="#{vencimientosSfccbdmq.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{vencimientosSfccbdmq.grabar()}" 
+                                          rendered="#{vencimientosSfccbdmq.formulario.modificar}" />
+                            <ace:menuItem action="#{vencimientosSfccbdmq.borrar()}" 
+                                          value="Esta seguro de Borrar el registro?" 
+                                          rendered="#{vencimientosSfccbdmq.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{vencimientosSfccbdmq.formulario.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                        <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                    </h:panelGrid>
+                </ace:dialog>
+                <!--formulario imprimir-->
+                <!--                <ace:dialog 
+                                    header="Imprimir"
+                                    closable="false"
+                                    modal="true"
+                                    draggable="true"
+                                    showEffect="clip"
+                                    hideEffect="fade"
+                                    rendered="#{vencimientosSfccbdmq.formularioImprimir.mostrar}"
+                                    visible="#{vencimientosSfccbdmq.formularioImprimir.mostrar}">
+                                    <h:panelGroup>
+                                        <h:panelGrid columns="1">
+                                            <h:commandButton  value="Imprimir">
+                                                <h:outputText id="printBoth" value="Imprimir"/>
+                                                <ace:printer for="panelImprimir"/>
+                                            </h:commandButton>
+                                        </h:panelGrid>
+                                        <ace:panel id="panelImprimir" style="display:block;">
+                                            <h:panelGrid width="90%">
+                                                <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+                                                <h:panelGrid  width="90%" columns="2" style="text-align: right">
+                                                    <h:outputText value="Usuario :"/>
+                                                    <h:outputText value="#{parametrosSfccbdmq.logueado.userid}"/>
+                                                    <h:outputText value="Fecha :"/>
+                                                    <h:outputText value="#{parametrosSfccbdmq.fechaActual}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                                                    </h:outputText>
+                                                    <h:outputText value="RE-Impresión" rendered="#{vencimientosSfccbdmq.imprimir}"/>
+                                                </h:panelGrid>
+                                                <h:panelGrid  width="90%" columns="1" style="text-align: center">
+                                                    <h3>Renovación de Garantía: #{vencimientosSfccbdmq.garantia.tipo.nombre}</h3>
+                                                </h:panelGrid>
+                                                <h:panelGrid  width="90%" columns="1" style="text-align: right">
+                                                    <h3>Valor : #{vencimientosSfccbdmq.valorStr}</h3>
+                                                </h:panelGrid>
+                                                <h:panelGrid  width="90%" columns="4" style="text-align: left">
+                                                    <h:outputLabel value="No de Contrato :" />
+                                                    <h:outputLabel value="#{vencimientosSfccbdmq.garantia.contrato.numero}"/>
+                                                    <h:outputLabel value="Administrador :" />
+                                                    <h:outputLabel value="#{vencimientosSfccbdmq.garantia.contrato.administrador.toString()}"/>
+                                                    <h:outputLabel value="Proveedor :" />
+                                                    <h:outputLabel value="#{vencimientosSfccbdmq.garantia.contrato.proveedor.empresa.toString()}"/>
+                                                    <h:outputLabel value="Fecha de emisión:" />
+                                                    <h:outputLabel value="#{vencimientosSfccbdmq.garantia.desde}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                    </h:outputLabel>
+                                                    <h:outputLabel value="Fecha de vencimiento:" />
+                                                    <h:outputLabel value="#{vencimientosSfccbdmq.garantia.vencimiento}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                    </h:outputLabel>
+                                                </h:panelGrid>
+                
+                                                <h:panelGrid  width="90%" columns="1" style="text-align: left">
+                                                    <h:outputLabel value="Objeto:" />
+                                                    <p>#{vencimientosSfccbdmq.garantia.objeto}</p>
+                                                </h:panelGrid>
+                                                <h:panelGrid  width="90%" columns="4" style="text-align: left">
+                
+                                                    <h:outputText value="Monto:"/>
+                                                    <h:outputText value="#{vencimientosSfccbdmq.garantia.renovacion.monto}" title="Monto">
+                                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                                    </h:outputText>
+                                                    <h:outputText value="Desde:"/>
+                                                    <h:outputText value="#{vencimientosSfccbdmq.garantia.renovacion.desde}" title="Desde">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                    </h:outputText>
+                                                    <h:outputText value="F. Vencimiento:"/>
+                                                    <h:outputText value="#{vencimientosSfccbdmq.garantia.renovacion.vencimiento}" title="Vencimiento">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                    </h:outputText>
+                
+                                                    <h:outputText value="Número:"/>
+                                                    <h:outputText value="#{vencimientosSfccbdmq.garantia.renovacion.numero}" title="Numero"/>
+                                                    <h:outputText value="Objeto:"/>
+                                                    <h:outputText value="#{vencimientosSfccbdmq.garantia.renovacion.objeto}" title="Objeto"/>
+                                                </h:panelGrid>
+                                                <h:panelGrid  width="90%" columns="1">
+                                                    <h:outputLabel value="" />
+                                                    <h:outputLabel value="" />
+                                                    <h:outputLabel value="" />
+                                                    <h:outputLabel value="" />
+                                                    <h:outputLabel value="" />
+                                                    <h:outputLabel value="" />
+                                                    <h:outputLabel value="" />
+                                                </h:panelGrid>
+                                                <h:panelGrid  width="90%" columns="5">
+                                                  
+                
+                                                    <h:outputLabel value="Preparado por"  />
+                                                    <h:outputLabel value="" />
+                                                    <h:outputLabel value="Revisado"  />
+                                                    <h:outputLabel value="" />
+                                                    <h:outputLabel value="Aprobado por"  />
+                
+                                                </h:panelGrid>
+                                            </h:panelGrid>
+                
+                                        </ace:panel>
+                
+                                        <h:panelGrid columns="1" width="100%">
+                                            <ace:menuBar autoSubmenuDisplay="true" >
+                
+                                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                              action="#{vencimientosSfccbdmq.formularioImprimir.cancelar()}"/>
+                                            </ace:menuBar>
+                                            <ace:messages />
+                                        </h:panelGrid>
+                                    </h:panelGroup>
+                                </ace:dialog>-->
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

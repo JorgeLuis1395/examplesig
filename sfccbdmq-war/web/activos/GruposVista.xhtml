@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{gruposActivosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{gruposActivosSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{gruposActivosSfccbdmq.crear()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+
+                </ace:panel>
+             
+                <ace:panel 
+                    header="Resultado Bùsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{gruposActivosSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{gruposActivosSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    </h:panelGrid>
+                    <!--                    <h:panelGrid styleClass="centeredPanelGrid">
+                                            
+                                        </h:panelGrid>-->
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{gruposActivosSfccbdmq.grupos}"
+                                       var="item"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       binding="#{gruposActivosSfccbdmq.formulario.fila}">
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{gruposActivosSfccbdmq.modificar()}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{gruposActivosSfccbdmq.eliminar()}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="Nombre"  style="text-align: left">
+                                <h:outputText  value="#{item.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Código"  style="text-align: left">
+                                <h:outputText  value="#{item.codigo}"/>
+                            </ace:column>
+                            <ace:column  headerText="Descripción"  style="text-align: left">
+                                <h:outputText  value="#{item.descripcion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Cuenta inicio depreciación " style="text-align: left">
+                                <h:outputText  value="#{item.iniciodepreciccion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Cuenta fin depreciación" style="text-align: left">
+                                <h:outputText  value="#{item.findepreciacion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Método de depreciación" style="text-align: left">
+                                <h:outputText  value="#{item.metododepreciacion.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Vida Util en meses"  style="text-align: right">
+                                <h:outputText  value="#{item.vidautil}"/>
+                            </ace:column>
+                            <ace:column  headerText="%  Residual"  style="text-align: right">
+                                <h:outputText  value="#{item.valorresidual}">
+                                    <f:convertNumber pattern="##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Tipo"  style="text-align: left">
+                                <h:outputText  value="#{item.tipo.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Observaciones"  style="text-align: left">
+                                <h:outputText  value="#{item.observaciones}"/>
+                            </ace:column>
+                            <ace:column  headerText="Secuencia" style="text-align: right">
+                                <h:outputText  value="#{item.secuencia}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{gruposActivosSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{gruposActivosSfccbdmq.formulario.mostrar}"
+                    visible="#{gruposActivosSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                             <h:outputLabel value="Tipo:"  />
+                            <h:selectOneMenu value="#{gruposActivosSfccbdmq.grupo.tipo}" title="Tipo" >
+                                <f:selectItems value="#{tiposActivosSfccbdmq.comboTipoNivelEspacio}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Código:" for="codigo" />
+                            <h:inputText id="codigo" value="#{gruposActivosSfccbdmq.grupo.codigo}" title="Codigo" disabled="#{!gruposActivosSfccbdmq.formulario.nuevo}"/>
+                            <h:outputLabel value="Nombre:" for="nombre" />
+                            <h:inputText id="nombre" value="#{gruposActivosSfccbdmq.grupo.nombre}" title="Nombre" />
+                            <h:outputLabel value="Descripcion:" for="descripcion" />
+                            <h:inputTextarea cols="40" rows="4" id="descripcion" value="#{gruposActivosSfccbdmq.grupo.descripcion}" title="Descripcion" />
+                            <h:outputLabel value="Observaciones:" for="observaciones" />
+                            <h:inputTextarea cols="40" rows="4" id="observaciones" value="#{gruposActivosSfccbdmq.grupo.observaciones}" title="Observaciones" />
+                            <h:outputLabel value="Vida útil en meses :" for="vidautil" />
+                            <h:inputText id="vidautil" value="#{gruposActivosSfccbdmq.grupo.vidautil}" title="Vidautil" />
+                            <h:outputLabel value="Depreciable:" for="depreciable" />
+                            <ace:checkboxButton id="depreciable" value="#{gruposActivosSfccbdmq.grupo.depreciable}"/>
+                            <h:outputLabel value="Cuenta Inicio :" for="iniciodepreciccion" />
+                            <h:inputText id="iniciodepreciccion" value="#{gruposActivosSfccbdmq.grupo.iniciodepreciccion}" title="Inicio" />
+                            <h:outputLabel value="Cuenta Depreciación :" for="findepreciacion" />
+                            <h:inputText id="findepreciacion" value="#{gruposActivosSfccbdmq.grupo.findepreciacion}" title="Cuenta Depreciación" />
+                            <h:outputLabel value="% Residual:" for="valorresidual" />
+                            <h:inputText id="valorresidual" value="#{gruposActivosSfccbdmq.grupo.valorresidual}" title="Valorresidual" />
+                            <h:outputLabel value="Método depreciación:" for="metododepreciacion" />
+                            <h:selectOneMenu id="metododepreciacion" value="#{gruposActivosSfccbdmq.grupo.metododepreciacion}" title="Metododepreciacion" >
+                                <f:selectItems value="#{codigosSfccbdmq.comboMetodosDepreciacion}"/>
+                            </h:selectOneMenu>
+                           <h:outputLabel value="Cuenta Débito Orden :" for="cuentadebitoorden" />
+                           <h:inputText id="debitoorden" value="#{gruposActivosSfccbdmq.grupo.debitoorden}" title="Cuenta Débito Orden" />
+                            <h:outputLabel value="Cuenta Crédito Orden :" for="cuentacreditoorden" />
+                            <h:inputText id="creditoorden" value="#{gruposActivosSfccbdmq.grupo.creditoorden}" title="Cuenta Crédito Orden" />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{gruposActivosSfccbdmq.formulario.nuevo}" 
+                                          action="#{gruposActivosSfccbdmq.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{gruposActivosSfccbdmq.grabar()}" 
+                                          rendered="#{gruposActivosSfccbdmq.formulario.modificar}" />
+                            <ace:menuItem action="#{gruposActivosSfccbdmq.borrar()}" 
+                                          value="Esta seguro de Borrar el registro?" 
+                                          rendered="#{gruposActivosSfccbdmq.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{gruposActivosSfccbdmq.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                        <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                    </h:panelGrid>
+                </ace:dialog>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

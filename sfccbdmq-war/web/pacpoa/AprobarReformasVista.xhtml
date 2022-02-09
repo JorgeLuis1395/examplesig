@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+
+    </h:head>
+    <h:body>
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel1"
+                           header="Aprobación de Reformas"
+                           closable="false"
+                           toggleable="true">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Año:" />
+                            <h:inputText value="#{aprobarReformas.anio}" title="Año" />
+                            <h:outputLabel value="Número de Control:" />
+                            <h:inputText value="#{aprobarReformas.id}" title="Número de Control" />
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{aprobarReformas.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{aprobarReformas.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{aprobarReformas.buscar()}"/>
+                            </ace:menuBar>
+                            <ace:submitMonitor id="submitMonitorPanel"
+                                               for="panel1"
+                                               blockUI="@all"
+                                               autoCenter="true"
+                                               activeLabel="Un Momento por favor"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable 
+                                paginatorAlwaysVisible="true"
+                                value="#{aprobarReformas.cabecerasReformaspoa}"
+                                var="itemCabeceras"
+                                paginator="true"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="both"
+                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rows="30">
+                                <ace:column  headerText="Registro" style="text-align: right">
+                                    <h:outputText value="#{row+1}"/>
+                                </ace:column>
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{aprobarReformas.imprimirCabecera(itemCabeceras)}"  
+                                                      value="Aprobar" icon="ui-icon ui-icon-print"/>
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column  headerText="Número de Control" style="text-align: left">
+                                    <h:outputText  value="#{itemCabeceras.id}"/>
+                                </ace:column>
+                                <ace:column  headerText="Observaciones" style="text-align: left">
+                                    <h:outputText  value="#{itemCabeceras.motivo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Fecha"  style="text-align: left">
+                                    <h:outputText  value="#{itemCabeceras.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Estado" style="text-align: left">
+                                    <h:outputText  value="#{aprobarReformas.estadoDirector(itemCabeceras.director)}"/>
+                                </ace:column>
+
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <!--</ace:dialog>-->
+                </ace:panel>
+
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{aprobarReformas.formularioImprimir.mostrar}"
+                    visible="#{aprobarReformas.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource 
+                            fileName="Reformas.pdf"                                            
+                            attachment="true"                                             
+                            label="Descargar archivo"
+                            mimeType="application/pdf"
+                            resource="#{aprobarReformas.reportepdf}" 
+                            type="button" rendered="#{aprobarReformas.reportepdf ne null}"/>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Aprobar DGA" icon="ui-icon ui-icon-check" 
+                                              action="#{aprobarReformas.aprobarDirector()}"
+                                              rendered="#{certificacionPoa.puedeEditar}"/>
+                                <ace:menuItem value="Negar DGA" icon="ui-icon ui-icon-close" 
+                                              action="#{aprobarReformas.negarDirector()}"
+                                              rendered="#{certificacionPoa.puedeEditar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{aprobarReformas.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ui:include src="DescargarDocumentos.xhtml"/>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

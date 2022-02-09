@@ -1,0 +1,349 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{cargosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="4" width="100%">
+                        <h:outputLabel value="Proceso u Organigrama:"/>
+                        <h:selectOneMenu value="#{cargosSfccbdmq.organigrama}" title="Organigrama" >
+                            <!-- TODO: update below reference to list of available items-->
+                            <f:selectItems value="#{organigramaSfccbdmq.comboOrganigramaV}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Escala Salarial:" />
+                        <h:selectOneMenu  value="#{cargosSfccbdmq.escala}" title="Escala Salarial" >
+                            <!-- TODO: update below reference to list of available items-->
+                            <f:selectItems value="#{escalasSfccbdmq.comboEscalaEspacio}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Nivel de educación:" />
+                        <h:selectOneMenu  value="#{cargosSfccbdmq.nivelEducacion}" title="Escala Salarial" >
+                            <!-- TODO: update below reference to list of available items-->
+                            <f:selectItems value="#{codigosSfccbdmq.comboNiveleducacion}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Nombre:"/>
+                        <h:inputText value="#{cargosSfccbdmq.nombre}"/>
+                        <h:outputLabel value="Descripción:"/>
+                        <h:inputTextarea cols="60" rows="4" value="#{cargosSfccbdmq.descripcion}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{cargosSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{cargosSfccbdmq.crear()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Bùsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{cargosSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{cargosSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <!--                    <h:panelGrid styleClass="centeredPanelGrid">
+                                            
+                                        </h:panelGrid>-->
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{cargosSfccbdmq.cargos}"
+                                       var="item"
+                                       lazy="true"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       binding="#{cargosSfccbdmq.formulario.fila}">
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{cargosSfccbdmq.modificar()}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{cargosSfccbdmq.eliminar()}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="Nombre" style="text-align: left">
+                                <h:outputText  value="#{item.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Descripcion" style="text-align: left">
+                                <h:outputText  value="#{item.descripcion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Escala salarial" style="text-align: left">
+                                <h:outputText  value="#{item.escalasalarial.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Proceso u Organigrama" style="text-align: left">
+                                <h:outputText  value="#{item.organigrama.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nivel educaión" style="text-align: right">
+                                <h:outputText  value="#{item.niveleducacion}"/>
+                            </ace:column>
+                            <ace:column  headerText="No. Puestos" style="text-align: left">
+                                <h:outputText  value="#{item.plazas}"/>
+                            </ace:column>
+                            <ace:column  headerText="Ordinal" style="text-align: left">
+                                <h:outputText  value="#{item.ordinal}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{cargosSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{cargosSfccbdmq.formulario.mostrar}"
+                    visible="#{cargosSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Nombre:" for="nombre" />
+                            <h:inputText id="nombre" value="#{cargosSfccbdmq.cargo.nombre}" title="Nombre" />
+                            <h:outputLabel value="Descripción:" for="telefonos" />
+                            <h:inputTextarea rows="4" cols="60" id="telefonos" value="#{cargosSfccbdmq.cargo.descripcion}" title="Descripción" />
+                            <h:outputLabel value="Nivel educación:"  />
+                            <h:selectOneMenu  value="#{cargosSfccbdmq.cargo.niveleducacion}" title="Nivel educación" >
+                                <!-- TODO: update below reference to list of available items-->
+                                <f:selectItems value="#{codigosSfccbdmq.comboNiveleducacion}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Escala Salarial:" />
+                            <h:selectOneMenu  value="#{cargosSfccbdmq.cargo.escalasalarial}" title="Nivel educación" >
+                                <!-- TODO: update below reference to list of available items-->
+                                <f:selectItems value="#{escalasSfccbdmq.comboEscalaEspacio}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="No Puestos:" for="pisos" />
+                            <h:inputText id="pisos" value="#{cargosSfccbdmq.cargo.plazas}" title="Pustos" />
+                            <h:outputLabel value="Ordinal:" for="parqueaderos" />
+                            <h:inputText id="parqueaderos" value="#{cargosSfccbdmq.cargo.ordinal}" title="Ordinal" />
+                            <h:outputLabel value="Proceso u Organigrama:"/>
+                            <h:selectOneMenu value="#{cargosSfccbdmq.cargo.organigrama}" title="Organigrama">
+                                <!-- TODO: update below reference to list of available items-->
+                                <f:selectItems value="#{organigramaSfccbdmq.comboOrganigramaV}"/>
+                            </h:selectOneMenu>
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Nueva Actividad" icon="ui-icon ui-icon-document" action="#{cargosSfccbdmq.insertar()}"/>
+
+                                <ace:menuItem value="Nueva Destreza" icon="ui-icon ui-icon-document" action="#{cargosSfccbdmq.insertar()}"/>
+                                <ace:menuItem value="Nueva Responsabilidad" icon="ui-icon ui-icon-document" action="#{cargosSfccbdmq.insertar()}"/>
+                                <ace:menuItem value="Nuevo Conocimiento" icon="ui-icon ui-icon-document" action="#{cargosSfccbdmq.insertar()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <ace:tabSet style="clear:both;" clientSide="true">
+                            <ace:tabPane >
+                                <f:facet name="label">Actividades</f:facet>
+                                <ace:dataTable id="tabla" 
+                                               value="#{cargosSfccbdmq.actividades}"
+                                               var="itemActividad"
+                                               lazy="false"
+                                               paginator="true"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="5,10,15,50,all"
+                                               paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="5">
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <ace:column style="text-align: left">
+                                        <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                            <ace:menuItem action="#{cargosSfccbdmq.modificaActividad(itemActividad, row)}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                            <ace:menuItem action="#{cargosSfccbdmq.eliminaActividad(itemActividad, row)}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                        </ace:menuButton>
+                                    </ace:column> 
+                                    <ace:column  headerText="" sortBy="#{itemActividad.actividad}" style="text-align: left">
+                                        <h:outputText  value="#{itemActividad.actividad}"/>
+                                    </ace:column>
+
+                                </ace:dataTable>
+                            </ace:tabPane>
+                            <ace:tabPane >
+                                <f:facet name="label">Destrezas</f:facet>
+                                <ace:dataTable id="tabla1" 
+                                               value="#{cargosSfccbdmq.destrezas}"
+                                               var="itemDestreza"
+                                               lazy="false"
+                                               paginator="true"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="5,10,15,50,all"
+                                               paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="5">
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <ace:column style="text-align: left">
+                                        <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                            <ace:menuItem action="#{cargosSfccbdmq.modificaActividad(itemDestreza, row)}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                            <ace:menuItem action="#{cargosSfccbdmq.eliminaActividad(itemDestreza, row)}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                        </ace:menuButton>
+                                    </ace:column> 
+                                    <ace:column  headerText="" sortBy="#{itemDestreza.actividad}" style="text-align: left">
+                                        <h:outputText  value="#{itemDestreza.actividad}"/>
+                                    </ace:column>
+
+                                </ace:dataTable>
+                            </ace:tabPane>
+                            <ace:tabPane >
+                                <f:facet name="label">Responsabilidad</f:facet>
+                                <ace:dataTable id="tabla2" 
+                                               value="#{cargosSfccbdmq.responsabilidades}"
+                                               var="itemResponsabilidad"
+                                               lazy="false"
+                                               paginator="true"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="5,10,15,50,all"
+                                               paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="5">
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <ace:column style="text-align: left">
+                                        <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                            <ace:menuItem action="#{cargosSfccbdmq.modificaActividad(itemResponsabilidad, row)}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                            <ace:menuItem action="#{cargosSfccbdmq.eliminaActividad(itemResponsabilidad, row)}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                        </ace:menuButton>
+                                    </ace:column> 
+                                    <ace:column  headerText="" sortBy="#{itemResponsabilidad.actividad}" style="text-align: left">
+                                        <h:outputText  value="#{itemResponsabilidad.actividad}"/>
+                                    </ace:column>
+
+                                </ace:dataTable>
+                            </ace:tabPane>
+                            <ace:tabPane >
+                                <f:facet name="label">Conocimiento</f:facet>
+                                <ace:dataTable id="tabla3" 
+                                               value="#{cargosSfccbdmq.conocimientos}"
+                                               var="itemConocimiento"
+                                               lazy="false"
+                                               paginator="true"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="5,10,15,50,all"
+                                               paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="5">
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <ace:column style="text-align: left">
+                                        <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                            <ace:menuItem action="#{cargosSfccbdmq.modificaActividad(itemConocimiento, row)}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                            <ace:menuItem action="#{cargosSfccbdmq.eliminaActividad(itemConocimiento, row)}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                        </ace:menuButton>
+                                    </ace:column> 
+                                    <ace:column  headerText="" sortBy="#{itemConocimiento.actividad}" style="text-align: left">
+                                        <h:outputText  value="#{itemConocimiento.actividad}"/>
+                                    </ace:column>
+
+                                </ace:dataTable>
+                            </ace:tabPane>
+                        </ace:tabSet>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{cargosSfccbdmq.formulario.nuevo}" 
+                                          action="#{cargosSfccbdmq.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{cargosSfccbdmq.grabar()}" 
+                                          rendered="#{cargosSfccbdmq.formulario.modificar}" />
+                            <ace:menuItem action="#{cargosSfccbdmq.borrar()}" 
+                                          value="Esta seguro de Borrar el registro?" 
+                                          rendered="#{cargosSfccbdmq.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{cargosSfccbdmq.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                        <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                    </h:panelGrid>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Registros #{cargosSfccbdmq.titulo}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{cargosSfccbdmq.formularioActividades.mostrar}"
+                    visible="#{cargosSfccbdmq.formularioActividades.mostrar}">
+                    <h:panelGroup>
+
+                        <h:panelGrid columns="1">
+
+                            <h:outputLabel value="Novedad:" />
+                            <h:inputTextarea rows="4" cols="80" value="#{cargosSfccbdmq.actividad.actividad}" />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{cargosSfccbdmq.formularioActividades.nuevo}" 
+                                          action="#{cargosSfccbdmq.insertarActividad()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{cargosSfccbdmq.garbarActividad()}" 
+                                          rendered="#{cargosSfccbdmq.formularioActividades.modificar}" />
+                            <ace:menuItem action="#{cargosSfccbdmq.borrarActividad()}" 
+                                          value="Esta seguro de Borrar el registro?" 
+                                          rendered="#{cargosSfccbdmq.formularioActividades.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{cargosSfccbdmq.formularioActividades.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+
+                    </h:panelGrid>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

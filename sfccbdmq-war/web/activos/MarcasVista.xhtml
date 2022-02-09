@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : luisfernando
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+
+    </h:head>
+    <h:body>
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{marcasActivos.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Código" />
+                        <h:inputText value="#{marcasActivos.codigo}"/>
+                        <h:outputLabel value="Nombre" />
+                        <h:inputText value="#{marcasActivos.nombre}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="7">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{marcasActivos.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{marcasActivos.nuevo()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="true">
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{marcasActivos.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{marcasActivos.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       paginatorAlwaysVisible="true"
+                                       value="#{marcasActivos.listaMarcas}"
+                                       var="item"
+                                       paginator="true"
+                                       lazy="false"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,30,50,100"
+                                       paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="30" 
+                                       binding="#{marcasActivos.formulario.fila}">
+                            <ace:column headerText="Acciones" style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem 
+                                        action="#{marcasActivos.modificar()}" 
+                                        value="Editar" 
+                                        icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem 
+                                        action="#{marcasActivos.eliminar()}" 
+                                        value="Borrar" 
+                                        icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="N°" style="text-align: left">
+                                <h:outputText  value="#{item.id}"/>
+                            </ace:column>
+                            <ace:column  headerText="Código"  style="text-align: left">
+                                <h:outputText  value="#{item.codigo}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Nombre"  style="text-align: left">
+                                <h:outputText  value="#{item.nombre}"/>
+                            </ace:column> 
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{marcasActivos.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="false"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{marcasActivos.formulario.mostrar}"
+                    visible="#{marcasActivos.formulario.mostrar}">
+
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Código: "  />
+                        <h:inputText  value="#{marcasActivos.marca.codigo}" title="Codigo" disabled="#{marcasActivos.formulario.modificar}"/>  
+                        <h:outputLabel value="Nombre: "  />
+                        <h:inputText  value="#{marcasActivos.marca.nombre}" title="Nombre"/>  
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          rendered="#{marcasActivos.formulario.nuevo}" 
+                                          action="#{marcasActivos.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{marcasActivos.grabar()}" 
+                                          rendered="#{marcasActivos.formulario.modificar}" />
+                            <ace:menuItem action="#{marcasActivos.borrar()}" 
+                                          value="¿Está seguro de Borrar el registro?" 
+                                          icon="ui-icon ui-icon-trash" 
+                                          rendered="#{marcasActivos.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{marcasActivos.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

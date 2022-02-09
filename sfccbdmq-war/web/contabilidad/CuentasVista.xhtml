@@ -1,0 +1,231 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{cuentasSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="6" width="100%">
+                        <h:outputLabel value="Código :"/>
+                        <h:inputText value="#{cuentasSfccbdmq.codigo}"/>
+                        <h:outputLabel value="Nombre :"/>
+                        <h:inputText value="#{cuentasSfccbdmq.nombre}"/>
+                        <h:outputLabel value="Clasificador presupuestario :"/>
+                        <h:inputText value="#{cuentasSfccbdmq.presupuesto}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{cuentasSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Imprimir" icon="ui-icon ui-icon-print"  action="#{cuentasSfccbdmq.imprimir()}"/>
+
+                        </ace:menuBar>
+                        <ace:messages style="white-space: pre-wrap;" redisplay="false" showSummary="true" showDetail="true"/>
+                    </h:panelGrid>
+
+                </ace:panel>
+               <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Bùsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{cuentasSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{cuentasSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <!--                    <h:panelGrid styleClass="centeredPanelGrid">
+                                            
+                                        </h:panelGrid>-->
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{cuentasSfccbdmq.cuentas}"
+                                       var="item"
+                                       paginator="true"
+                                       lazy="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100,300,500,1000"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       >
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{cuentasSfccbdmq.crear()}" rendered="#{!item.imputable}"/>
+                                    <ace:menuItem action="#{cuentasSfccbdmq.modificar()}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{cuentasSfccbdmq.eliminar()}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="Código"  style="text-align: left">
+                                <h:outputText  value="#{item.codigo}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nombre"  style="text-align: left">
+                                <h:outputText  value="#{item.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="De Movimiento"  style="text-align: left">
+                                <h:graphicImage url="../resources/images/si.png" rendered="#{item.imputable}"/>
+                                <h:graphicImage url="../resources/images/no.png" rendered="#{!item.imputable}"/>
+                            </ace:column>
+                            <ace:column  headerText="Ajuste"  style="text-align: left">
+                                <h:outputText  value="#{item.tipoajuste.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Auxiliares"  style="text-align: left">
+                                <h:outputText  value="#{item.auxiliares.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Cuenta Cierre"  style="text-align: left">
+                                <h:outputText  value="#{item.cuentacierre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Clasificador presupuesto"  style="text-align: left">
+                                <h:outputText  value="#{clasificadorSfccbdmq.traerCodigo(item.presupuesto).toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Centro de Costo"  style="text-align: left">
+                                <h:graphicImage url="../resources/images/si.png" rendered="#{item.ccosto}"/>
+                                <h:graphicImage url="../resources/images/no.png" rendered="#{!item.ccosto}"/>
+                            </ace:column>
+                            <ace:column  headerText="Acumulación de costos"  style="text-align: left">
+                                <h:outputText  value="#{item.codigonif}"/>
+                            </ace:column>
+                            <ace:column  headerText="Código Finanzas"  style="text-align: left">
+                                <h:outputText  value="#{item.codigofinanzas}"/>
+                            </ace:column>
+                            <ace:column  headerText="F creación"  style="text-align: left">
+                                <h:outputText  value="#{item.fingreso}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="F modificación"  style="text-align: left">
+                                <h:outputText  value="#{item.fmodificacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="Formato de cuenta #{cuentasSfccbdmq.nivel.descripcion} - #{cuentasSfccbdmq.nivel.formato}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{cuentasSfccbdmq.formulario.mostrar}"
+                    visible="#{cuentasSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Código:" for="codigo" />
+                            <h:outputLabel value="#{cuentasSfccbdmq.cuenta.codigo}"  rendered="#{!cuentasSfccbdmq.formulario.nuevo}"/>
+                            <h:inputText id="codigo" value="#{cuentasSfccbdmq.cuenta.codigo}" title="Codigo"  size="#{cuentasSfccbdmq.tamano}"
+                                         rendered="#{cuentasSfccbdmq.formulario.nuevo}"/>
+                            <h:outputLabel value="Acumulación de costos :"/>
+                            <h:inputText value="#{cuentasSfccbdmq.cuenta.codigonif}" title="Código NIFF " />
+                            <h:outputLabel value="Código Finanzas :"/>
+                            <h:inputText value="#{cuentasSfccbdmq.cuenta.codigofinanzas}" title="Código Finanzas " />
+                            <h:outputLabel value="Nombre :" for="nombre" />
+                            <h:inputTextarea cols="60" rows="3" id="nombre" value="#{cuentasSfccbdmq.cuenta.nombre}" title="Nombre" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" rendered="#{cuentasSfccbdmq.cuenta.imputable}">
+                            <ui:include src="../BuscarClasificador.xhtml" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" rendered="#{cuentasSfccbdmq.cuenta.imputable}">
+                            <h:outputLabel value="Centro de costo:" for="ccosto" />
+                            <h:selectBooleanCheckbox  id="ccosto" value="#{cuentasSfccbdmq.cuenta.ccosto}" title="Ccosto" />
+                            <h:outputLabel value="Tipo de ajuste:" for="tipoajuste" />
+                            <h:selectOneMenu id="tipoajuste" value="#{cuentasSfccbdmq.cuenta.tipoajuste}" title="Tipoajuste" >
+                                <!-- TODO: update below reference to list of available items-->
+                                <f:selectItems value="#{tipoAjusteSfccbdmq.comboTipoajuste}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Auxiliares:" for="auxiliares" />
+                            <h:selectOneMenu id="auxiliares" value="#{cuentasSfccbdmq.cuenta.auxiliares}" title="Auxiliares" >
+                                <!-- TODO: update below reference to list of available items-->
+                                <f:selectItems value="#{codigosSfccbdmq.auxiliaresCuentas}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Cuenta Cierre:"/>
+                            <h:inputText   value="#{cuentasSfccbdmq.cuenta.cuentacierre}" title="Cuenta Cierre" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{cuentasSfccbdmq.formulario.nuevo}" 
+                                              action="#{cuentasSfccbdmq.insertar()}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{cuentasSfccbdmq.grabar()}" 
+                                              rendered="#{cuentasSfccbdmq.formulario.modificar}" />
+                                <ace:menuItem action="#{cuentasSfccbdmq.borrar()}" 
+                                              value="Esta seguro de Borrar el registro?" 
+                                              rendered="#{cuentasSfccbdmq.formulario.borrar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{cuentasSfccbdmq.formulario.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages style="white-space: pre-wrap;" redisplay="false" showSummary="true" showDetail="true"/> 
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+
+                <ace:dialog 
+                    header="Imprimir "
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{cuentasSfccbdmq.formularioImprimir.mostrar}"
+                    visible="#{cuentasSfccbdmq.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource  fileName="Mayor.pdf" id="pdf-botonMayor" label="Generar PDF"
+                                            mimeType="application/pdf" resource="#{cuentasSfccbdmq.reporte}" 
+                                            style="" type="button"/>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{cuentasSfccbdmq.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages style="white-space: pre-wrap;" redisplay="false" showSummary="true" showDetail="true"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

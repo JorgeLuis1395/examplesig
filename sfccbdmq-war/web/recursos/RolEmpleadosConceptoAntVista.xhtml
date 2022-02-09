@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{rolEmpleadosConceptoSfccbdmqAnt.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <h:panelGrid  rendered="#{!rolEmpleadosConceptoSfccbdmqAnt.formulario.mostrar}">
+                        <ui:include src="../BuscarOrganigrama.xhtml"/>
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Cédula:"/>
+                            <h:inputText value="#{rolEmpleadosConceptoSfccbdmqAnt.buscarCedula}" />
+                            <h:outputLabel value="Nombres:"/>
+                            <h:inputText value="#{rolEmpleadosConceptoSfccbdmqAnt.nombres}" />
+                            <h:outputLabel value="Apellidos:"/>
+                            <h:inputText value="#{rolEmpleadosConceptoSfccbdmqAnt.apellidos}" />
+                            <h:outputLabel value="Email:"/>
+                            <h:inputText value="#{rolEmpleadosConceptoSfccbdmqAnt.email}" />
+                            <h:outputLabel value="Estado Civil:" />
+                            <h:selectOneMenu value="#{rolEmpleadosConceptoSfccbdmqAnt.ecivil}" >
+                                <f:selectItems value="#{codigosSfccbdmq.comboEstadoCivil}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Cargo:" />
+                            <h:selectOneMenu value="#{rolEmpleadosConceptoSfccbdmqAnt.cargo}" >
+                                <f:selectItems value="#{cargoxorganigrama.comboCargosOrganigrama}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Género:" />
+                            <h:selectOneMenu value="#{rolEmpleadosConceptoSfccbdmqAnt.genero}" >
+                                <f:selectItems value="#{codigosSfccbdmq.comboGenero}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Grupo Sanguineo:" />
+                            <h:selectOneMenu value="#{rolEmpleadosConceptoSfccbdmqAnt.tipsang}">
+                                <f:selectItems value="#{codigosSfccbdmq.comboGrpSanguineo}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Modalidad de Contratación : " />
+                            <h:selectOneMenu value="#{rolEmpleadosConceptoSfccbdmqAnt.contrato}" >
+                                <f:selectItems value="#{tipoContrato.comboTiposContrato}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Edificio:"  />
+                            <h:selectOneMenu value="#{oficinasSfccbdmq.edificio}">
+                                <f:selectItems value="#{edificiosSfccbdmq.comboEdificioEspacio}" />
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Oficina:" />
+                            <h:selectOneMenu value="#{rolEmpleadosConceptoSfccbdmqAnt.oficina}" >
+                                <f:selectItems value="#{oficinasSfccbdmq.comboOficinaEspacio}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Nombramiento : " />
+                            <h:selectOneRadio value="#{rolEmpleadosConceptoSfccbdmqAnt.nombramiento}"  style="border: 0px" >
+                                <f:selectItem itemValue="1" itemLabel="SI" />
+                                <f:selectItem itemValue="2" itemLabel="NO" />
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneRadio>
+
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Grupo de Información Adicional:"  />
+                            <h:selectOneMenu value="#{cabecerasEmpleados.grupocabecera}">
+                                <f:selectItems value="#{cabecerasEmpleados.comboCabecera}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu> 
+                            <h:outputLabel value="Campo donde buscar:"/>
+                            <h:selectOneMenu value="#{rolEmpleadosConceptoSfccbdmqAnt.cabeceraRrHh}" >
+                                <f:selectItems value="#{cabecerasEmpleados.comboCampos}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu> 
+
+
+                            <!--// primero texto si el campo es texto-->
+                            <h:outputLabel value="Texto a buscar:" rendered="#{rolEmpleadosConceptoSfccbdmqAnt.cabeceraRrHh.tipodato==2}" />
+                            <h:inputText value="#{rolEmpleadosConceptoSfccbdmqAnt.textoBuscar}" rendered="#{rolEmpleadosConceptoSfccbdmqAnt.cabeceraRrHh.tipodato==2}" />
+                            <!--// si el campo es texto-->
+                            <h:outputLabel value="Valor mayor o igual a:" rendered="#{rolEmpleadosConceptoSfccbdmqAnt.cabeceraRrHh.tipodato==1}" />
+                            <h:inputText value="#{rolEmpleadosConceptoSfccbdmqAnt.desdeNumerico}" rendered="#{rolEmpleadosConceptoSfccbdmqAnt.cabeceraRrHh.tipodato==1}" />
+                            <h:outputLabel value="Valor menor o igual a:" rendered="#{rolEmpleadosConceptoSfccbdmqAnt.cabeceraRrHh.tipodato==1}" />
+                            <h:inputText value="#{rolEmpleadosConceptoSfccbdmqAnt.desdeNumerico}" rendered="#{rolEmpleadosConceptoSfccbdmqAnt.cabeceraRrHh.tipodato==1}" />
+                            <!--// si es fecha-->
+                            <h:outputLabel value="Fecha desde:" rendered="#{rolEmpleadosConceptoSfccbdmqAnt.cabeceraRrHh.tipodato==3}" />
+                            <ace:dateTimeEntry navigator="true"  value="#{rolEmpleadosConceptoSfccbdmqAnt.desdeFecha}" rendered="#{rolEmpleadosConceptoSfccbdmqAnt.cabeceraRrHh.tipodato==3}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Fecha hasta:" rendered="#{rolEmpleadosConceptoSfccbdmqAnt.cabeceraRrHh.tipodato==3}" />
+                            <ace:dateTimeEntry navigator="true"  value="#{rolEmpleadosConceptoSfccbdmqAnt.hastaFecha}" rendered="#{rolEmpleadosConceptoSfccbdmqAnt.cabeceraRrHh.tipodato==3}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <!--// si es combo-->
+                            <h:outputLabel value="Seleccione :" rendered="#{rolEmpleadosConceptoSfccbdmqAnt.cabeceraRrHh.tipodato==0}" />
+                            <h:selectOneMenu value="#{rolEmpleadosConceptoSfccbdmqAnt.textoBuscar}" rendered="#{rolEmpleadosConceptoSfccbdmqAnt.cabeceraRrHh.tipodato==0}"  >
+                                <f:selectItems value="#{rolEmpleadosConceptoSfccbdmqAnt.comboRangoBuscar}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Seleccione :" rendered="#{rolEmpleadosConceptoSfccbdmqAnt.cabeceraRrHh.tipodato==4}" />
+                            <h:selectOneMenu value="#{rolEmpleadosConceptoSfccbdmqAnt.textoBuscar}" rendered="#{rolEmpleadosConceptoSfccbdmqAnt.cabeceraRrHh.tipodato==4}"  >
+                                <f:selectItems value="#{codigosSfccbdmq.getComboMaestro(rolEmpleadosConceptoSfccbdmqAnt.cabeceraRrHh.codigo)}"/>
+                            </h:selectOneMenu>
+
+                        </h:panelGrid>
+                    </h:panelGrid>
+                    <!--                    <ui:include src="../ExcluirUsuario.xhtml"/>-->
+                    <h:panelGrid columns="2">
+                        <ace:autoCompleteEntry 
+                            value="#{entidadesSfccbdmq.apellidos}"
+                            rows="10" width="300"
+                            listVar="empleadoSeleccionar"
+                            filterBy="#{empleadoSeleccionar.apellidos}"
+                            listValue="#{entidadesSfccbdmq.listaEntidades}"
+                            valueChangeListener="#{entidadesSfccbdmq.cambiaApellido}"
+                            textChangeListener="#{entidadesSfccbdmq.entidadChangeEventHandler}"
+                            label="Excluir Empleado:"
+                            labelPosition="left">
+                            <f:facet name="row">
+                                <h:panelGrid columns="3" width="100%"  style="text-align: left;font-size: xx-small" columnClasses="tipo">
+                                    <h:outputText value="#{empleadoSeleccionar.apellidos}"/>
+                                    <h:outputText value="#{empleadoSeleccionar.nombres}"/>
+                                    <h:outputText value="#{empleadoSeleccionar.pin}"/>
+                                </h:panelGrid>
+                            </f:facet>
+                        </ace:autoCompleteEntry>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" rendered="#{entidadesSfccbdmq.entidad!=null}">
+                        <h:outputLabel value="Nombres:" />
+                        <h:outputLabel value="#{entidadesSfccbdmq.entidad.nombres}" />
+                        <h:outputLabel value="Email:" />
+                        <h:outputLabel  value="#{entidadesSfccbdmq.entidad.email}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="4" rendered="#{!rolEmpleadosConceptoSfccbdmqAnt.formulario.mostrar}" >
+                        <h:outputText value="Mes" />
+                        <h:inputText value="#{rolEmpleadosConceptoSfccbdmqAnt.mes}"/>
+                        <h:outputText value="Año:" />
+                        <h:inputText value="#{rolEmpleadosConceptoSfccbdmqAnt.anio}"/>
+                        <h:outputText value="Concepto :"/>
+                        <h:selectOneMenu value="#{rolEmpleadosConceptoSfccbdmqAnt.concepto}">
+                            <f:selectItems value="#{conceptosSfccbdmq.comboProvicionesSinProveedor}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="4" rendered="#{rolEmpleadosConceptoSfccbdmqAnt.formulario.mostrar}" >
+                        <h:outputText value="Mes" />
+                        <h:outputText value="#{rolEmpleadosConceptoSfccbdmqAnt.mes}"/>
+                        <h:outputText value="Año:" />
+                        <h:outputText value="#{rolEmpleadosConceptoSfccbdmqAnt.anio}"/>
+                        <h:outputText value="Concepto :" />
+                        <h:outputText value="#{rolEmpleadosConceptoSfccbdmqAnt.concepto.toString()}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="4" >
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{rolEmpleadosConceptoSfccbdmqAnt.buscar()}" rendered="#{!rolEmpleadosConceptoSfccbdmqAnt.formulario.mostrar}" />
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                          action="#{rolEmpleadosConceptoSfccbdmqAnt.grabar()}" 
+                                          rendered="#{rolEmpleadosConceptoSfccbdmqAnt.formulario.mostrar}" />
+                            <ace:menuItem value="Hoja Elect." icon="ui-icon ui-icon-calculator" action="#{rolEmpleadosConceptoSfccbdmqAnt.exportar()}" rendered="#{rolEmpleadosConceptoSfccbdmqAnt.formulario.mostrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{rolEmpleadosConceptoSfccbdmqAnt.formulario.cancelar()}" />
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <ace:messages/>
+
+                    <h:panelGrid width="100%">
+
+                        <ace:dataTable id="listRolesTabla" 
+                                       value="#{rolEmpleadosConceptoSfccbdmqAnt.listaEmpleados}"
+                                       var="pagoRol">
+                            <ace:column  headerText="Empleado"  style="text-align: left">
+                                <h:outputText value="#{pagoRol.entidad.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="RMU"  style="text-align: right;background-color: #00ffff;">
+                                <h:outputText value="#{rolEmpleadosConceptoSfccbdmqAnt.getRmu(pagoRol)}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="ENCARGO"  style="text-align: right;background-color: #00ffff;">
+                                <h:outputText   value="#{rolEmpleadosConceptoSfccbdmqAnt.getEncargos(pagoRol)}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="SUBROGACIONES"  style="text-align: right;background-color: #00ffff;">
+                                <h:outputText   value="#{rolEmpleadosConceptoSfccbdmqAnt.getSubrogaciones(pagoRol)}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+
+                            <ace:column  style="text-align: right;background-color: #00ffff;" headerText="#{rolEmpleadosConceptoSfccbdmqAnt.concepto.nombre}">
+                                <h:outputText value="#{rolEmpleadosConceptoSfccbdmqAnt.getPagoconcepto(pagoRol, rolEmpleadosConceptoSfccbdmqAnt.concepto)}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+
+                </ace:panel>
+                <ace:dialog 
+                    header="Exportar"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{rolEmpleadosConceptoSfccbdmqAnt.formularioReporte.mostrar}"
+                    visible="#{rolEmpleadosConceptoSfccbdmqAnt.formularioReporte.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource  fileName="rol.xls" id="pdf-botonMayor" label="Exportar a XLS"
+                                              mimeType="application/xls" resource="#{rolEmpleadosConceptoSfccbdmqAnt.reporte}" 
+                                              style="" type="button"/>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{rolEmpleadosConceptoSfccbdmqAnt.formularioReporte.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

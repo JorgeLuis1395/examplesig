@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <!--<icecore:refresh interval="1" duration="1"/>-->
+                <ace:panel id="panel"
+                           header="#{rolEmpleadosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <h:panelGrid  rendered="#{!rolEmpleadosSfccbdmq.formulario.mostrar}">
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Cédula:"/>
+                            <h:inputText value="#{rolEmpleadosSfccbdmq.buscarCedula}" />
+                            <h:outputLabel value="Nombres:"/>
+                            <h:inputText value="#{rolEmpleadosSfccbdmq.nombres}" />
+                            <h:outputLabel value="Apellidos:"/>
+                            <h:inputText value="#{rolEmpleadosSfccbdmq.apellidos}" />
+                        </h:panelGrid>
+                    </h:panelGrid>
+                    <h:panelGrid columns="4" rendered="#{!rolEmpleadosSfccbdmq.formulario.mostrar}">
+                        <h:outputText value="Mes" />
+                        <h:inputText value="#{rolEmpleadosSfccbdmq.mes}"/>
+                        <h:outputText value="Año:" />
+                        <h:inputText value="#{rolEmpleadosSfccbdmq.anio}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="4" >
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Generar" icon="ui-icon ui-icon-search"  action="#{rolEmpleadosSfccbdmq.buscar()}" rendered="#{!rolEmpleadosSfccbdmq.formulario.mostrar}" />
+
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{rolEmpleadosSfccbdmq.formulario.cancelar()}" />
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Procesando..">
+
+                    </ace:submitMonitor>    
+                    <ace:messages/>
+                </ace:panel>
+                <ace:dialog 
+                    header="Exportar"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{rolEmpleadosSfccbdmq.formularioReporte.mostrar}"
+                    visible="#{rolEmpleadosSfccbdmq.formularioReporte.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource  fileName="rol.xls" id="pdf-botonMayor" label="Exportar a XLS"
+                                              mimeType="application/xls" resource="#{rolEmpleadosSfccbdmq.reporte}" 
+                                              style="" type="button"/>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{rolEmpleadosSfccbdmq.formularioReporte.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

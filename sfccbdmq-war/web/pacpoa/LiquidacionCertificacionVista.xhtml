@@ -1,0 +1,294 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:body>
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="Certificaciones"
+                           closable="false"
+                           toggleable="true"
+                           rendered="#{!certificacionesPoa.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="6">
+                            <h:outputLabel value="Año:" />
+                            <h:inputText value="#{certificacionesPoa.anio}" title="Año" />
+                            <h:outputLabel value="Liquidadas:" />
+                            <h:selectOneMenu  value="#{certificacionesPoa.liquidadas}" >
+                                <f:selectItem  itemLabel="NO" itemValue="false"/>
+                                <f:selectItem  itemLabel="SI" itemValue="true"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{certificacionesPoa.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{certificacionesPoa.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="No de Control:"  />
+                            <h:inputText value="#{certificacionesPoa.numeroControl}" />
+                            <h:outputLabel value="Dirección"  />
+                            <h:selectOneMenu  value="#{certificacionesPoa.direccion}" title="Dirección" >
+                                <f:selectItems value="#{consultasPoa.comboDirecciones}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{certificacionesPoa.buscarLiquidacion()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{certificacionesPoa.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages style="white-space: pre-wrap"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable 
+                                paginatorAlwaysVisible="true"
+                                value="#{certificacionesPoa.certificacionespoa}"
+                                var="itemCertificaciones"
+                                paginator="true"
+                                lazy="true"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="both"
+                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rows="30">
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{certificacionesPoa.liquidar(itemCertificaciones)}" value="Liquidar" icon="ui-icon ui-icon-trash" disabled="#{itemCertificaciones.anulado}"/>
+                                        <ace:menuItem action="#{certificacionesPoa.reporte(itemCertificaciones)}" value="Imprimir" icon="ui-icon ui-icon-print" />
+                                        <ace:menuItem action="#{imagenesPoa.verDocumentosCertificaciones(itemCertificaciones)}" value="Documentos" icon="ui-icon ui-icon-script"/>
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column  headerText="Número de Control" style="text-align: right">
+                                    <h:outputText  value="#{itemCertificaciones.numero}"/>
+                                </ace:column>
+                                <ace:column  headerText="Descripción"  style="text-align: left">
+                                    <h:outputText  value="#{itemCertificaciones.motivo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Fecha" style="text-align: left">
+                                    <h:outputText  value="#{itemCertificaciones.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Valor"  style="text-align: left">
+                                    <h:outputText  value="#{certificacionesPoa.valorCertificacion}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Aprobada"  style="text-align: left">
+                                    <h:panelGrid rendered="#{itemCertificaciones.apresupuestaria}">
+                                        <img src="../resources/images/si.png" />
+                                    </h:panelGrid>
+                                    <h:panelGrid rendered="#{!itemCertificaciones.apresupuestaria}">
+                                        <img src="../resources/images/no.png" width="16" height="16" />
+                                    </h:panelGrid>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:panel>                
+                <ace:panel id="panelUno"
+                           header="Certificación Presupuestaria"
+                           closable="false"
+                           toggleable="true"
+                           rendered="#{certificacionesPoa.formulario.mostrar}">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Memorando de Solicitud :" />
+                        <h:outputLabel value="#{certificacionesPoa.certificacion.memo}" />
+                        <h:outputLabel value="Descripción :" />
+                        <h:outputLabel value="#{certificacionesPoa.certificacion.motivo}" style="white-space: pre-wrap"/>
+                        <h:outputLabel value="Fecha:"/>
+                        <h:outputLabel value="#{certificacionesPoa.certificacion.fecha}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputLabel>
+                        <h:outputLabel value="Observaciones :" />
+                        <h:inputTextarea value="#{certificacionesPoa.observacionAprobacion}" title="Observaciones" rendered="#{certificacionesPoa.formulario.modificar}"/>
+                        <h:inputTextarea value="#{certificacionesPoa.observacionLiquidacion}" title="Observaciones" rendered="#{certificacionesPoa.formulario.borrar}"/>
+                        <h:outputLabel value="Aprobar Presupuesto:" rendered="#{certificacionesPoa.formulario.modificar}"/>
+                        <h:selectBooleanCheckbox value="#{certificacionesPoa.certificacion.apresupuestaria}" rendered="#{certificacionesPoa.formulario.modificar}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1">
+
+                    </h:panelGrid>
+
+
+                    <h:panelGrid columns="1" width="100%">
+
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{certificacionesPoa.grabarPresupuesto()}" 
+                                          rendered="#{certificacionesPoa.formulario.modificar}" />
+                            <ace:menuItem action="#{certificacionesPoa.grabarLiquidacion()}" 
+                                          value="¿Esta seguro de Liquidar la Certificación?" 
+                                          icon="ui-icon ui-icon-trash" 
+                                          rendered="#{certificacionesPoa.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{certificacionesPoa.formulario.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages style="white-space: pre-wrap"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+
+                        <ace:tabSet style="clear:both; width: 100%" >
+                            <ace:tabPane label="Detalle">
+                                <ace:dataTable 
+                                    value="#{certificacionesPoa.detalles}"
+                                    var="itemDetalles"
+                                    style="display:block;">
+
+
+                                    <c:forEach var="itemProducto" items="#{proyectosPoa.titulos}">
+                                        <ace:column  headerText="#{itemProducto.titulo1}"  style="text-align: left">
+                                            <h:outputText  value="#{proyectosPoa.dividir1(itemProducto, itemDetalles.asignacion.proyecto)}"/>
+                                        </ace:column>
+                                    </c:forEach>               
+
+                                    <ace:column  headerText="PRODUCTO"  style="text-align: left">
+                                        <h:outputText  value="#{itemDetalles.asignacion.proyecto.nombre}"/>
+                                    </ace:column>
+
+                                    <ace:column  headerText="PARTIDA"  style="text-align: left">
+                                        <h:outputText  value="#{itemDetalles.asignacion.partida.codigo}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="FUENTE DE FINANCIAMIENTO"  style="text-align: left">
+                                        <h:outputText  value="#{itemDetalles.asignacion.fuente}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="CÓDIGO"  style="text-align: left">
+                                        <h:outputText  value="#{itemDetalles.asignacion.proyecto.codigo}"/>
+                                        <h:outputText  value="TOTAL " rendered="#{itemDetalles.asignacion eq null}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="INCIO"  style="text-align: left">
+                                        <h:outputText  value="#{itemDetalles.asignacion.proyecto.inicio}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="FIN"  style="text-align: left">
+                                        <h:outputText  value="#{itemDetalles.asignacion.proyecto.termino}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="CONTRATACIÓN"  style="text-align: left">
+                                        <h:outputText  value="#{consultasPoa.traerTipoProcedimiento(itemDetalles.asignacion.proyecto.procedimientocontratacion)}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="DIRECCIÓN"  style="text-align: left">
+                                        <h:outputText  value="#{consultasPoa.traerDireccion(itemDetalles.asignacion.proyecto.direccion)}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </ace:column>
+
+                                    <ace:column  headerText="VALOR INCLUIDO IVA" style="text-align: right">
+                                        <h:outputText  value="#{itemDetalles.valor}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+
+
+                                </ace:dataTable>
+                            </ace:tabPane>
+                            <ace:tabPane label="Documentos">
+                                <h:panelGrid columns="3" >
+                                    <ace:fileEntry 
+                                        relativePath="/files/"
+                                        maxFileCount="10"
+                                        maxFileCountMessage="Alerta se pueden Subir hasta 10 archivos."
+                                        fileEntryListener="#{imagenesPoa.ficheroDocumentoLista}"
+                                        maxFileSize="10242880"
+                                        maxFileSizeMessage="El Tamaño del Archivo Maximo 10 MB."
+                                        maxTotalSize="102428800"
+                                        maxTotalSizeMessage="EL Tamaño Total de Los Archivos Subídos es demasiado grande."
+                                        requiredMessage="El archivo/s es/son requeridos para enviar esta forma."
+                                        useOriginalFilename="true"
+                                        useSessionSubdir="true"
+                                        label="Archivo Subido con Éxito"/>
+                                    <h:commandButton  type="submit" value="Subir Archivos"/>
+                                </h:panelGrid>
+                                <ace:dataTable value="#{imagenesPoa.listaDocumentos}" 
+                                               var="documentosol"
+                                               style="width: 99%;"
+                                               paginator="true"
+                                               paginatorAlwaysVisible="true"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="5,10"
+                                               currentPageReportTemplate="Documento {startRecord}/{totalRecords} Página {currentPage}/{totalPages}"
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="10"
+                                               rowIndexVar="row"> 
+                                    <ace:column style="text-align: left" headerText="Acciones">                             
+                                        <ace:menuBar autoSubmenuDisplay="true" >
+                                            <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" 
+                                                          action="#{imagenesPoa.borrarDocumento(documentosol)}" 
+                                                          helpText="Borrar"/>
+                                        </ace:menuBar>
+                                    </ace:column>
+                                    <ace:column headerText="Nombre Documento" style="text-align: left" >
+                                        <h:outputText value="#{documentosol.nombrearchivo}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Doc. Digital" style="text-align: left">
+                                        <h:commandLink value="Ver Documento"  action="#{imagenesPoa.traerImagen(documentosol.path, documentosol.nombrearchivo, documentosol.tipo)}" rendered="#{documentosol.path ne null}" />
+                                    </ace:column>
+                                </ace:dataTable>
+                            </ace:tabPane>
+                        </ace:tabSet>
+
+                    </h:panelGrid>
+                </ace:panel>              
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    width="900"
+                    height="600"
+                    rendered="#{certificacionesPoa.formularioImpresion.mostrar}"
+                    visible="#{certificacionesPoa.formularioImpresion.mostrar}">
+                    <h:panelGroup>    
+                        <ace:dynamicResource 
+                            fileName="Certificacion.pdf"                                            
+                            attachment="true"                                             
+                            label="Descargar archivo"
+                            mimeType="application/pdf"
+                            resource="#{certificacionesPoa.reportepdf}" 
+                            type="button" rendered="#{certificacionesPoa.reportepdf ne null}"/>
+                        <ui:include src="imprimirCertificacion.xhtml" />
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{certificacionesPoa.formularioImpresion.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages style="white-space: pre-wrap"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>  
+
+                <ui:include src="DescargarDocumentos.xhtml"/>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

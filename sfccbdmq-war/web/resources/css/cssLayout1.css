@@ -1,0 +1,176 @@
+
+#top {
+    position: relative;
+    /*background-color:#9A1010;*/
+    background-color:white;
+    /*background-image: url("../imagenes/header-bg.png");*/
+    color: #000;
+    padding: 0px;
+    margin: 0px 0px 0px 0px;
+    width: 100%;
+    
+}
+
+#bottom {
+    position: relative;
+    background-color: #2e4381;
+    padding: 0px;
+    margin: 0px 0px 0px 0px;
+    clear:both;
+    color: white;
+    vertical-align: middle;
+}
+
+#left {
+    float: left;
+    background-color: transparent;
+    padding: 0px;
+    left: 0px;
+    top: 0px;
+    width: 280px;
+   
+    
+}
+#left1 {
+    float: left;
+    background-color: transparent;
+    padding: 0px;
+    left: 0px;
+    top: 0px;
+    width: 360px;
+   
+    
+}
+#right {
+    float: right;
+    background-color: #ece3a5;
+    padding: 5px;
+    width: 150px;
+}
+
+.center_content {
+    position: relative;
+    background-color: #dddddd;
+    padding: 0px;
+    /*margin-left: 285px;*/
+    margin-left: 0px;
+    
+}
+.center_content1 {
+    position: relative;
+    background-color: #dddddd;
+    padding: 0px;
+    margin-left: 363px;
+}
+.center_content2 {
+    position: relative;
+    background-color: #dddddd;
+    padding: 0px;
+    margin-left:0px;
+}
+.center_content_1 {
+    position: relative;
+    background-color: #dddddd;
+    padding: 0px;
+    
+
+}
+.left_content {
+    position: relative;
+    background-color: #dddddd;
+    padding: 0px;
+    margin-left: 230px;
+
+}
+
+.right_content {
+    background-color: #dddddd;
+    padding: 5px;
+    margin: 0px 170px 0px 170px;
+}
+
+#top a:link, #top a:visited {
+    color: black;
+    font-weight : bold;
+    text-decoration: none;
+}
+
+#top a:link:hover, #top a:visited:hover  {
+    color: black;
+    font-weight : bold;
+    /*text-decoration : underline;*/
+}
+.iceMnuBarSubMenu {
+    width: 210px;
+
+}
+
+.tipo{
+    text-align:left;
+    width:100px;
+}
+
+.ui-datatable-odd {
+    background-color:lightgray !important;
+    /*color: white;*/
+    background-position-y: -1400px; /* IE7 hack */
+}
+.ui-datatable-even {
+    /*color: navy;*/
+    background-position-y: -1400px; /* IE7 hack */
+}
+.titulo {
+    background-color:#195f88  !important;
+    color: white;
+    background-position-y: -1400px; /* IE7 hack */
+}
+.total {
+    background-color:#D20005  !important;
+    color: white;
+    background-position-y: -1400px; /* IE7 hack */
+}
+.className td {
+    vertical-align: top;
+    text-align: left;
+    
+}
+.iceSelInpTxtList{
+    background-color: #AFAFAF;
+    border:solid black;
+    border-width: 1px;
+    z-index: 1;
+}
+.roles {
+    background-color:#195f88  !important;
+    color: white;
+    text-align:  left ;
+    background-position-y: -1400px; /* IE7 hack */
+}
+.tituloGrid {
+    text-align:  left ;
+    font-weight: bold  !important;
+}
+.tituloContenido{
+    background-color:#195f88  !important;
+    color: white;
+    text-align:  left ;
+    background-position-y: -1400px; /* IE7 hack */
+}
+p.saltodepagina
+{
+page-break-after: always;
+}
+
+.menu-panel-rectangular {
+ border-radius: 0px 0px 0px 0px;  /* anulando las puntas redondeadas por defecto*/
+
+   background: rgb(193,70,161); /* Old browsers */
+   background: -moz-linear-gradient(left, rgba(193,70,161,1) 0%, rgba(168,0,119,1) 51%, rgba(219,54,164,1) 100%); /* FF3.6+ */
+   background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(193,70,161,1)), color-stop(51%,rgba(168,0,119,1)), color-stop(100%,rgba(219,54,164,1))); /* Chrome,Safari4+ */
+   background: -webkit-linear-gradient(left, rgba(193,70,161,1) 0%,rgba(168,0,119,1) 51%,rgba(219,54,164,1) 100%); /* Chrome10+,Safari5.1+ */
+   background: -o-linear-gradient(left, rgba(193,70,161,1) 0%,rgba(168,0,119,1) 51%,rgba(219,54,164,1) 100%); /* Opera 11.10+ */
+   background: -ms-linear-gradient(left, rgba(193,70,161,1) 0%,rgba(168,0,119,1) 51%,rgba(219,54,164,1) 100%); /* IE10+ */
+   background: linear-gradient(to right, rgba(193,70,161,1) 0%,rgba(168,0,119,1) 51%,rgba(219,54,164,1) 100%); /* W3C */
+   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=’#c146a1′, endColorstr=’#db36a4′,GradientType=1 ); /* IE6-9 */
+
+}

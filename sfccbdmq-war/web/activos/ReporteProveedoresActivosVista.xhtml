@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{reporteProveedoresActivosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGroup>
+                        <ui:include src="../BuscarProveedor.xhtml" />
+                        <h:panelGrid columns="1" width="100%">
+
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteProveedoresActivosSfccbdmq.buscar()}"/>
+                            </ace:menuBar>
+                            <ace:messages/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                </ace:panel>
+                <ace:dialog
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    header="#{reporteProveedoresActivosSfccbdmq.perfil.menu.texto}"
+                    rendered="#{reporteProveedoresActivosSfccbdmq.formulario.mostrar}"
+                    visible="#{reporteProveedoresActivosSfccbdmq.formulario.mostrar}">
+
+                    <ace:dynamicResource  fileName="Bienes.pdf" id="pdf-button1" label="Imprimir"
+                                          mimeType="application/pdf" resource="#{reporteProveedoresActivosSfccbdmq.reporte}" 
+                                          style="" type="button"/>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                      action="#{reporteProveedoresActivosSfccbdmq.formulario.cancelar()}"/>
+                    </ace:menuBar>
+                </ace:dialog> 
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

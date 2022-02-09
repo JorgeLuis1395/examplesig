@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:panelGrid width="100%" >
+        <ace:dataTable value="#{empleados.listaCabeceraempleado}"  var="itemEmpleados"
+                       resizableColumns="true"
+                       style="width: 99%;"
+                       binding="#{empleados.formularioImagen.fila}">
+            <ace:row condition="group" groupBy="#{itemEmpleados.cabecera.idgrupo.texto}" pos="before" styleClass="titulo">
+                <ace:column colspan="7">
+                    #{itemEmpleados.cabecera.idgrupo.texto} 
+                </ace:column>
+            </ace:row>   
+            <ace:column headerText="Información" style="text-align: left">
+                <h:outputLabel value="#{itemEmpleados.texto}:" />
+            </ace:column> 
+            <ace:column   headerText="Valores" style="text-align: left" >
+                <h:inputText id="numero1" value="#{itemEmpleados.valornumerico}" 
+                               validatorMessage="Ingrese un valor Numérico"  
+                               converterMessage="Ingrese un valor Numérico" rendered="#{itemEmpleados.tipodato==1}" disabled="#{!itemEmpleados.datoimpresion}">
+                    <!--                                      <f:convertNumber maxFractionDigits="2" />   -->
+                </h:inputText>
+                <h:inputText value="#{itemEmpleados.valortexto}" rendered="#{itemEmpleados.tipodato==2}" disabled="#{!itemEmpleados.datoimpresion}"/>
+                <h:selectOneMenu value="#{itemEmpleados.valortexto}" rendered="#{itemEmpleados.tipodato==0}"  disabled="#{!itemEmpleados.datoimpresion}">
+                    <f:selectItems value="#{empleados.comboRango}"/>
+                </h:selectOneMenu>
+                <h:selectOneMenu value="#{itemEmpleados.codigo}" rendered="#{itemEmpleados.tipodato==4}"  disabled="#{!itemEmpleados.datoimpresion}">
+                    <f:selectItems value="#{codigosSfccbdmq.getComboMaestro(itemEmpleados.cabecera.codigo)}"/>
+                </h:selectOneMenu>
+                <ace:dateTimeEntry navigator="true"  value="#{itemEmpleados.valorfecha}" rendered="#{itemEmpleados.tipodato==3}" disabled="#{!itemEmpleados.datoimpresion}"
+                                   popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                </ace:dateTimeEntry>
+            </ace:column> 
+            <ace:column headerText="Ayuda" style="text-align: left">
+                <h:outputText value="#{itemEmpleados.ayuda}"/>
+                <ace:message for="numero1"  />
+            </ace:column>
+        </ace:dataTable>
+    </h:panelGrid>
+</html>
+

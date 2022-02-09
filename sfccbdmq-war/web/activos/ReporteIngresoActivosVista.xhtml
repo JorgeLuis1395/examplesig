@@ -1,0 +1,312 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{reporteIngresoActivosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGroup>
+                        <h:panelGrid columns="1">
+                            <ui:include src="../BuscarProveedor.xhtml" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <ace:autoCompleteEntry 
+                                value="#{entidadesSfccbdmq.apellidos}"
+                                rows="10" width="300"
+                                listVar="empleadoSeleccionar"
+                                filterBy="#{empleadoSeleccionar.toString()}"
+                                listValue="#{entidadesSfccbdmq.listaEntidades}"
+                                valueChangeListener="#{entidadesSfccbdmq.cambiaApellido}"
+                                textChangeListener="#{entidadesSfccbdmq.entidadChangeEventHandler}"
+                                label="Apellidos Usuario :"
+                                labelPosition="left">
+                                <f:facet name="row">
+                                    <h:panelGrid columns="3" width="100%"  style="text-align: left;font-size: xx-small" columnClasses="tipo">
+                                        <h:outputText value="#{empleadoSeleccionar.apellidos}"/>
+                                        <h:outputText value="#{empleadoSeleccionar.nombres}"/>
+                                        <h:outputText value="#{empleadoSeleccionar.pin}"/>
+                                    </h:panelGrid>
+                                </f:facet>
+                                <ace:ajax execute="@all"/>
+                            </ace:autoCompleteEntry>
+                            <h:panelGrid columns="2" rendered="#{entidadesSfccbdmq.entidad!=null}">
+                                <h:outputLabel value="Nombres:" />
+                                <h:outputLabel value="#{entidadesSfccbdmq.entidad.nombres}" />
+
+                                <h:outputLabel value="Email:" />
+                                <h:outputLabel  value="#{entidadesSfccbdmq.entidad.email}"/>
+                            </h:panelGrid>
+                        </h:panelGrid>
+                        <h:panelGrid columns="5">
+                            <h:outputLabel value="Fecha de Ingreso:"/>
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{reporteIngresoActivosSfccbdmq.desde}" id="dos"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{reporteIngresoActivosSfccbdmq.hasta}" id="tres"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="Factura:" />
+                            <h:inputText value="#{reporteIngresoActivosSfccbdmq.factura}"/>
+                            <h:outputLabel value="Nombre:" />
+                            <h:inputText value="#{reporteIngresoActivosSfccbdmq.nombre}" title="Nombre" />
+                            <h:outputLabel value="Código:" />
+                            <h:inputText value="#{reporteIngresoActivosSfccbdmq.codigo}"/>
+                            <h:outputLabel value="Código Inventario:" />
+                            <h:inputText  value="#{reporteIngresoActivosSfccbdmq.inventario}" title="Inventario" />
+                            <h:outputLabel value="Código Alterno:" for="alterno" />
+                            <h:inputText  value="#{reporteIngresoActivosSfccbdmq.alterno}" title="Alterno" />
+                            <h:outputLabel value="Código de Barras:" for="barras" />
+                            <h:inputText  value="#{reporteIngresoActivosSfccbdmq.codigobarras}" title="Barras" />
+                            <h:outputLabel value="Número de serie:" for="numeroserie" />
+                            <h:inputText  value="#{reporteIngresoActivosSfccbdmq.numeroserie}" title="Numeroserie" />
+                            <h:outputLabel value="Modelo:" />
+                            <h:inputText  value="#{reporteIngresoActivosSfccbdmq.modelo}" title="Modelo" />
+                            <h:outputLabel value="Nombre custodio externo:" />
+                            <h:inputText value="#{reporteIngresoActivosSfccbdmq.nombreExterno}" title="Nombre custodio externo" />
+                            <h:outputLabel value="R.U.C. o Cédula custodio externo:" />
+                            <h:inputText value="#{reporteIngresoActivosSfccbdmq.cedulaExterno}" title="R.U.C. o Cédula custodio externo" />
+                            <h:outputLabel value="Marca:" />
+                            <h:selectOneMenu  value="#{reporteIngresoActivosSfccbdmq.marca}" title="Grupo">
+                                <f:selectItems value="#{marcasActivos.comboMarcas}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Tipo:"  />
+                            <h:selectOneMenu value="#{reporteIngresoActivosSfccbdmq.tipo}" title="Tipo" >
+                                <f:selectItems value="#{tiposActivosSfccbdmq.comboTipoEspacio}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Grupo:"  />
+                            <h:selectOneMenu  value="#{subGruposActivosSfccbdmq.grupo}" title="Grupo">
+                                <f:selectItems value="#{gruposActivosSfccbdmq.comboGrupoEspacio}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Sub Grupo:" />
+                            <h:selectOneMenu  value="#{subGruposActivosSfccbdmq.subGrupo}" title="Grupo">
+                                <f:selectItems value="#{subGruposActivosSfccbdmq.comboSubGrupo}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Clasificación:" />
+                            <h:selectOneMenu value="#{reporteIngresoActivosSfccbdmq.clasificacion}" title="Clasificacion" >
+                                <f:selectItems value="#{codigosSfccbdmq.comboClasificacionActivos}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Estado Actual:" />
+                            <h:selectOneMenu  value="#{reporteIngresoActivosSfccbdmq.estado}" title="Estado">
+                                <f:selectItems value="#{codigosSfccbdmq.comboEstadoActivos}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Esta en garantía?:" />
+                            <h:selectOneMenu  value="#{reporteIngresoActivosSfccbdmq.garantia}" title="Edificio">
+                                <f:selectItem itemLabel="---Seleccione Uno----" itemValue="0"/>
+                                <f:selectItem itemLabel="SI" itemValue="1"/>
+                                <f:selectItem itemLabel="NO" itemValue="-1"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Esta en operativo?:" />
+                            <h:selectOneMenu  value="#{reporteIngresoActivosSfccbdmq.operativo}" >
+                                <f:selectItem itemLabel="---Seleccione Uno----" itemValue="0"/>
+                                <f:selectItem itemLabel="SI" itemValue="1"/>
+                                <f:selectItem itemLabel="NO" itemValue="-1"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Edificio:" />
+                            <h:selectOneMenu  value="#{oficinasSfccbdmq.edificio}" title="Edificio">
+                                <f:selectItems value="#{edificiosSfccbdmq.comboEdificioEspacio}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Oficina:" />
+                            <h:selectOneMenu  value="#{reporteIngresoActivosSfccbdmq.oficina}" title="Edificio" id="oficina">
+                                <f:selectItems value="#{oficinasSfccbdmq.comboOficinaEspacio}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Póliza de Seguros:" />
+                            <h:selectOneMenu  value="#{reporteIngresoActivosSfccbdmq.poliza}" title="Póliza de Seguros">
+                                <f:selectItems value="#{polizasSfccbdmq.comboPolizaEspacio}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Institución:" />
+                            <h:selectOneMenu  value="#{reporteIngresoActivosSfccbdmq.institucion}">
+                                <f:selectItems value="#{codigosSfccbdmq.comboInstituciones}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteIngresoActivosSfccbdmq.buscar()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="panel"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+
+                    </h:panelGroup>
+                    <!--                </ace:panel>
+                    
+                                    <ace:panel 
+                                        header="Resultado Bùsqueda"
+                                        closable="false"
+                                        toggleable="true"
+                                        >-->
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{reporteIngresoActivosSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{reporteIngresoActivosSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                        <!--                        <h:commandButton  value="Imprimir">
+                                                    <ace:printer for="panelImprimir"/>
+                                                </h:commandButton>-->
+                        <ace:dynamicResource fileName="Activos.pdf" id="pdf-button1" 
+                                             label="Imprimir"
+                                             mimeType="application/pdf" 
+                                             resource="#{reporteIngresoActivosSfccbdmq.reporte}" 
+                                             rendered="#{reporteIngresoActivosSfccbdmq.reporte!=null}"
+                                             type="button"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid width="100%" style="display:block;" columns="1" id="panelImprimir">
+                        <!--                        <h:panelGrid columns="2" width="100%">
+                                                    <h:panelGrid columns="2">
+                                                        <ace:autoCompleteEntry 
+                                                            value="#{entidadesSfccbdmq.apellidos}"
+                                                            rows="10" width="300"
+                                                            listVar="empleadoSeleccionar"
+                                                            filterBy="#{empleadoSeleccionar.apellidos}"
+                                                            listValue="#{entidadesSfccbdmq.listaEntidades}"
+                                                            valueChangeListener="#{entidadesSfccbdmq.cambiaApellido}"
+                                                            textChangeListener="#{entidadesSfccbdmq.entidadChangeEventHandler}"
+                                                            label="Cambiar Custodio A :"
+                                                            labelPosition="left">
+                                                            <f:facet name="row">
+                                                                <h:panelGrid columns="3" width="100%"  style="text-align: left;font-size: xx-small" columnClasses="tipo">
+                                                                    <h:outputText value="#{empleadoSeleccionar.apellidos}"/>
+                                                                    <h:outputText value="#{empleadoSeleccionar.nombres}"/>
+                                                                    <h:outputText value="#{empleadoSeleccionar.pin}"/>
+                                                                </h:panelGrid>
+                                                            </f:facet>
+                                                        </ace:autoCompleteEntry>
+                                                    </h:panelGrid>
+                                                    <h:panelGrid columns="2" rendered="#{entidadesSfccbdmq.entidad!=null}">
+                                                        <h:outputLabel value="Nombres:" />
+                                                        <h:outputLabel value="#{entidadesSfccbdmq.entidad.nombres}" />
+                        
+                                                        <h:outputLabel value="Email:" />
+                                                        <h:outputLabel  value="#{entidadesSfccbdmq.entidad.email}"/>
+                                                    </h:panelGrid>
+                                                </h:panelGrid>-->
+                        <h:panelGrid width="100%" >
+                            <ace:dataTable id="tabla" 
+                                           value="#{reporteIngresoActivosSfccbdmq.listaActivos}"
+                                           var="item"
+                                           paginator="false"
+                                           lazy="false"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="15,20,25,50,100"
+                                           currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           binding="#{reporteIngresoActivosSfccbdmq.formulario.fila}"
+                                           scrollHeight="600"
+                                           scrollable="true">
+                                <ace:column  headerText="Grupo"  style="text-align: left">
+                                    <h:outputText  value="#{item.grupo.nombre}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Clasificación"  style="text-align: left">
+                                    <h:outputText  value="#{item.clasificacion.nombre}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Tipo de Activo"  style="text-align: left">
+                                    <h:outputText  value="#{item.control ? 'Bien de Control':'Activo Fijo'}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Código"  style="text-align: left">
+                                    <h:outputText  value="#{item.codigo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nombre"  style="text-align: left">
+                                    <h:outputText  value="#{item.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Descripción"  style="text-align: left">
+                                    <h:outputText  value="#{item.descripcion}"/>
+                                </ace:column>
+                                <ace:column  headerText="Marca"  style="text-align: left">
+                                    <h:outputText  value="#{item.marca}"/>
+                                </ace:column>
+                                <ace:column  headerText="Modelo"  style="text-align: left">
+                                    <h:outputText  value="#{item.modelo}"/>
+                                </ace:column>
+                                <ace:column  headerText="No Serie"  style="text-align: left">
+                                    <h:outputText  value="#{item.numeroserie}"/>
+                                </ace:column>
+                                <ace:column  headerText="Código Alterno"  style="text-align: left">
+                                    <h:outputText  value="#{item.alterno}"/>
+                                </ace:column>
+                                <ace:column  headerText="Código de barras"  style="text-align: left">
+                                    <h:outputText  value="#{item.barras}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor Alta"  style="text-align: right">
+                                    <h:outputText  value="#{item.valoralta}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Observaciones"  style="text-align: left">
+                                    <h:outputText  value="#{item.observaciones}"/>
+                                </ace:column>
+                                <ace:column  headerText="Estado"  style="text-align: left">
+                                    <h:outputText  value="#{item.estado.nombre}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Tipo de Alta"  style="text-align: left">
+                                    <h:outputText  value="#{item.alta.descripcion}"/>
+                                </ace:column>
+                                <ace:column  headerText="Empresa"  style="text-align: left">
+                                    <h:outputText  value="#{item.proveedor.empresa.toString()}"/>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                        <h:panelGrid  width="90%" columns="3">
+                            <h:outputLabel value="f.----------------------------" />
+                            <h:outputLabel value="" />
+                            <h:outputLabel value="f.----------------------------" />
+                            <h:outputLabel value="Entregue conforme"  />
+                            <h:outputLabel value="" />
+                            <h:outputLabel value="Recibi Conforme"  />
+
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </ace:panel>
+                <!--edicion del activo-->
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

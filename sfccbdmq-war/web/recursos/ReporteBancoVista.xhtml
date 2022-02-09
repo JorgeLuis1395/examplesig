@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panelx"
+                           header="Reporte Contrato"
+                           closable="false"
+                           toggleable="false"  >
+                    <ace:panel header="Parámetros de Búsqueda">
+                        <ui:include src="../BuscarEmpleadoAdicional.xhtml"/>
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{bancoSfccbdmq.buscar()}"/>
+
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <ace:messages/>
+                    </ace:panel> 
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                   for="panel"
+                                   blockUI="panel"
+                                   autoCenter="true"
+                                   activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="false"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{bancoSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{bancoSfccbdmq.formulario.pantalla}" 
+                                          target="estudios" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="estudios" 
+                                       value="#{bancoSfccbdmq.listaEmpleado}"
+                                       var="itemBanco"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,50"
+                                       paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="5"
+                                       binding="#{bancoSfccbdmq.formulario.fila}">
+                                                      
+                            
+                             <ace:column  headerText="Partida Individual" style="text-align: left">
+                                <h:outputText  value="#{itemBanco.partidaindividual eq null?'----':item.partidaindividual}"/>
+                            </ace:column>
+                            
+                            
+                            
+                            <ace:column  headerText="Proyecto"  style="text-align: left">
+                                <h:outputText value="#{itemBanco.proyecto.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Empleado "  style="text-align: left">
+                                <h:outputText value="#{itemBanco.entidad.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Banco"  style="text-align: left">
+                                <h:outputText value="#{bancoSfccbdmq.traerBanco(itemBanco)}"/>
+                            </ace:column>
+                            <ace:column  headerText="Tipo Cuenta"  style="text-align: left">
+                                <h:outputText value="#{bancoSfccbdmq.traerTipoCuenta(itemBanco)}"/>
+                            </ace:column>
+                            <ace:column  headerText="No Cuenta"  style="text-align: left">
+                                <h:outputText value="#{bancoSfccbdmq.traer(itemBanco, 'NUMCUENTA')}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

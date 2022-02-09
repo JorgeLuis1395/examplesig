@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+
+                <ace:panel id="panel"
+                           header="#{reporteValesCajasSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGroup >
+
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Empleado:"  />
+                            <h:selectOneMenu  value="#{reporteValesCajasSfccbdmq.caja}" 
+                                              title="Empleado" >
+                                <f:selectItems value="#{reporteValesCajasSfccbdmq.comboCajas}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+
+                            <ace:submitMonitor id="submitMonitorPanel"
+                                               for="panel"
+                                               blockUI="@all"
+                                               autoCenter="true"
+                                               activeLabel="Un Momento por favor"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGroup >
+                        <h:panelGrid columns="1" width="100%" >
+                            <ace:panel id="panel1"
+                                       header="Datos caja"
+                                       closable="false"
+                                       toggleable="true"
+                                       >
+                                <h:panelGrid columns="2" width="100%">
+                                    <h:outputLabel value="Departamento:" />
+                                    <h:outputLabel value="#{reporteValesCajasSfccbdmq.caja.departamento.toString()}" />
+                                    <h:outputLabel value="Responsable:" />
+                                    <h:outputLabel value="#{reporteValesCajasSfccbdmq.caja.empleado.toString()}" />
+                                    <h:outputLabel value="Valor:" />
+                                    <h:outputText value="#{reporteValesCajasSfccbdmq.caja.valor}" >
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                    <h:outputLabel value="% Vale de caja:" />
+                                    <h:outputText value="#{reporteValesCajasSfccbdmq.caja.prcvale}" >
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </h:panelGrid>
+
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteValesCajasSfccbdmq.buscar()}"/>
+                                    <ace:menuItem value="Imprimir" icon="ui-icon ui-icon-print"  action="#{reporteValesCajasSfccbdmq.imprimir()}"/>
+                                </ace:menuBar>
+                            </ace:panel>
+                            <ace:dataTable 
+                                value="#{reporteValesCajasSfccbdmq.listaVales}"
+                                var="itemVales"
+                                paginator="true"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="top"
+                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rows="30"
+                                binding="#{fila}"
+                                scrollHeight="600"
+                                scrollable="true">
+
+
+                                <ace:column  headerText="Fecha Mov"  style="text-align: left">
+                                    <h:outputText  value="#{itemVales.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Solicitante"  style="text-align: left">
+                                    <h:outputText  value="#{itemVales.solicitante.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Proveedor"  style="text-align: left">
+                                    <h:outputText  value="#{itemVales.proveedor.empresa.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor" style="text-align: right">
+                                    <h:outputText  value="#{itemVales.valor}">
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Nro. Factura"  style="text-align: left">
+                                    <h:outputText  value="#{valesCajaSfccbdmq.traeNroFactura(itemVales)}"/>
+                                </ace:column>
+                                <ace:column  headerText="Base Imponible Cero" style="text-align: right">
+                                    <h:outputText  value="#{itemVales.baseimponiblecero}">
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Base Imponible" style="text-align: right">
+                                    <h:outputText  value="#{itemVales.baseimponible}">
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Valor IVA" style="text-align: right">
+                                    <h:outputText  value="#{itemVales.iva}">
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Total Documento" style="text-align: right">
+                                    <h:outputText  value="#{itemVales.baseimponiblecero+itemVales.baseimponible+itemVales.iva}">
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Estado"  style="text-align: left">
+                                    <h:outputText  value="SOLICITADO" rendered="#{itemVales.estado==-1}"/>
+                                    <h:outputText  value="INGRESADO" rendered="#{itemVales.estado==0}"/>
+                                    <h:outputText  value="SOLICITA REEMBOLSO" rendered="#{itemVales.estado==1}"/>
+                                    <h:outputText  value="LISTO PARA CONTABILIDAD" rendered="#{itemVales.estado==2}"/>
+                                    <h:outputText  value="LISTO PARA REEMBOLSO" rendered="#{itemVales.estado==4}"/>
+                                    <h:outputText  value="REEMBOLSADO" rendered="#{itemVales.estado==5}"/>
+                                    <h:outputText  value="LIQUIDADO" rendered="#{itemVales.estado==6}"/>
+                                    <h:outputText  value="NEGADO REEMBOLSO" rendered="#{itemVales.estado==3}"/>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:panel>
+                <ace:dialog 
+                    header="Vale de Caja"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteValesCajasSfccbdmq.formularioVale.mostrar}"
+                    visible="#{reporteValesCajasSfccbdmq.formularioVale.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid>
+                            <ace:dynamicResource fileName="ValeCaja.xls" id="xls-button" label="Imprimir Vale Caja"
+                                                 mimeType="application/pdf" resource="#{reporteValesCajasSfccbdmq.reporteRep}" 
+                                                 style="" type="button" rendered="#{reporteValesCajasSfccbdmq.reporteRep!=null}"/>
+                            <ace:dynamicResource fileName="Solicitud.pdf" id="button1" label="Imprimir Solicitud"
+                                                 mimeType="application/pdf" resource="#{reporteValesCajasSfccbdmq.reporteARL}" 
+                                                 style="" type="button" rendered="#{reporteValesCajasSfccbdmq.reporteARL!=null}"/>
+
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{reporteValesCajasSfccbdmq.formularioVale.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

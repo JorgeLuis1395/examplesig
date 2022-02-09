@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <ace:dialog 
+        header="Devengado Presupuesto"
+        closable="false"
+        modal="true"
+        draggable="false"
+        showEffect="clip"
+        hideEffect="fade"
+        rendered="#{reporteStockFamilias.formularioIngresos.mostrar}"
+        visible="#{reporteStockFamilias.formularioIngresos.mostrar}">
+        <h:panelGrid width="100%" columns="1" rendered="#{reporteStockFamilias.listaIngresos.size()>0}">
+            <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                <h:outputLabel  value="Exportar a:"/>
+                <h:selectOneRadio  value="#{reporteStockFamilias.formularioIngresos.pantalla}" required="true">
+                    <f:ajax disabled="false"/>
+                    <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                    <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                    <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                    <f:selectItem itemValue="xml" itemLabel="XML"/>
+                </h:selectOneRadio>
+                <ace:dataExporter id="dataExporterDev" 
+                                  label="Exportar Archivo" 
+                                  type="#{reporteStockFamilias.formularioIngresos.pantalla}" 
+                                  target="tablaDevengado" fileName="datos"/>
+            </h:panelGrid>
+            <ace:dataTable id="tablaDevengado" 
+                           value="#{reporteStockFamilias.listaIngresos}"
+                           var="item"
+                           paginator="true"
+                           lazy="false"
+                           resizableColumns="true"
+                           rowIndexVar="row"
+                           paginatorPosition="both"
+                           rowsPerPageTemplate="15,20,25,50,100,all"
+                           currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                           rows="15"
+                           >
+                <ace:column  headerText="Fecha" style="text-align: left">
+                    <h:outputText  value="#{item.fecha}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </ace:column>
+                <ace:column  headerText="Suministro" style="text-align: left" >
+                    <h:outputText  value="#{item.suministro}"/>
+                </ace:column>  
+                <ace:column  headerText="Cantidad" style="text-align: left" >
+                    <h:outputText  value="#{item.cantidad}"/>
+                </ace:column>  
+                <ace:column  headerText="Valor"  style="text-align: right" >
+                    <h:outputText  value="#{item.valor}">
+                        <f:convertNumber pattern="###,###,##0.00"/>
+                    </h:outputText>
+                </ace:column>
+            </ace:dataTable>
+            <ace:menuBar>
+                <ace:menuItem value="Cerrar" icon="ui-icon ui-icon-close" action="#{reporteStockFamilias.formularioIngresos.cancelar()}"/>
+            </ace:menuBar>
+        </h:panelGrid>
+        
+        <!--</ace:panel>-->
+    </ace:dialog>
+    <!--imprimir-->
+
+
+    <!-- Fin -->
+</html>

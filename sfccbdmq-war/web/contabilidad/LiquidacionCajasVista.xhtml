@@ -1,0 +1,323 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+
+                <ace:panel id="panel"
+                           header="#{liquidacionCajasSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGroup>
+
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Empleado:"  />
+                            <h:selectOneMenu  value="#{liquidacionCajasSfccbdmq.caja}" 
+                                              title="Empleado" >
+                                <f:selectItems value="#{liquidacionCajasSfccbdmq.comboCajas}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Liquidar" icon="ui-icon ui-icon-document" 
+                                              action="#{liquidacionCajasSfccbdmq.modificar()}"/>
+                            </ace:menuBar>
+                            <ace:submitMonitor id="submitMonitorPanel"
+                                               for="panel"
+                                               blockUI="@all"
+                                               autoCenter="true"
+                                               activeLabel="Un Momento por favor"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <!--dialogo para editar cada linea-->
+                    <ace:dialog 
+                        header="Liquidar Caja"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{liquidacionCajasSfccbdmq.formulario.mostrar}"
+                        visible="#{liquidacionCajasSfccbdmq.formulario.mostrar}">
+                        <h:panelGroup>
+                            <ace:tabSet style="clear:both;" >
+                                <ace:tabPane label="Información General">
+                                    <h:panelGrid columns="4">                            
+                                        <h:outputText value="Responsable: "  style="text-align: left"/>
+                                        <h:outputText  value="#{liquidacionCajasSfccbdmq.caja.empleado.entidad.toString()}"/>
+                                        <h:outputText value="Dirección: "  style="text-align: left"/>
+                                        <h:outputText  value="#{liquidacionCajasSfccbdmq.caja.departamento.toString()}"/>
+                                        <!--                                        <h:outputText value="Tipo de Movimiento: "/>
+                                                                                <h:selectOneMenu value="#{liquidacionCajasSfccbdmq.kardex.tipomov}" title="Tipo de Movimiento">
+                                                                                    <f:selectItems value="#{tipoMovBancosSfccbdmq.comboIngresosBancos}"/>
+                                                                                    <ace:ajax execute="@all"/>
+                                                                                </h:selectOneMenu>-->
+                                        <h:outputText value="Valor a Liquidar: "  style="text-align: left"/>
+                                        <h:outputText  value="#{liquidacionCajasSfccbdmq.caja.valor}">
+                                            <f:convertNumber parent="###,##0.00"/>
+                                        </h:outputText>
+                                        <h:outputLabel value="Fecha Movimiento: "/>
+                                        <ace:dateTimeEntry navigator="true"  value="#{liquidacionCajasSfccbdmq.kardex.fechamov}" 
+                                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </ace:dateTimeEntry>
+                                        <h:outputText value="Por Reponer: "  style="text-align: left"/>
+                                        <h:outputText  value="#{liquidacionCajasSfccbdmq.reponer}">
+                                            <f:convertNumber parent="###,##0.00"/>
+                                        </h:outputText>
+                                        <!--                                        <h:outputText value="Forma de pago: "/>
+                                                                                <h:selectOneMenu value="#{liquidacionCajasSfccbdmq.kardex.formapago}" title="Formapago" >
+                                                                                    <f:selectItems value="#{codigosSfccbdmq.comboFormaDePago}"/>
+                                                                                    <ace:ajax execute="@all"/>
+                                                                                </h:selectOneMenu>-->
+                                        <!--                                        <h:outputText value="Valor: "/>
+                                                                                <h:inputText value="#{liquidacionCajasSfccbdmq.kardex.valor}" title="Valor" >
+                                                                                </h:inputText> 
+                                                                                <h:outputText value="Documento: "/>
+                                                                                <h:inputText value="#{liquidacionCajasSfccbdmq.kardex.documento}" title="Documento" />-->
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2">
+                                        <h:outputLabel value="Número de Solicitud de Liquidación:"/>
+                                        <h:outputLabel id="numeroc" value="#{liquidacionCajasSfccbdmq.numeroLiq}" title="Vale" />
+                                    </h:panelGrid>
+                                     <!--depositos-->
+                                    <h:panelGrid columns="2" style="width: 100%" rendered="#{liquidacionCajasSfccbdmq.renglonDescuento == null and !liquidacionCajasSfccbdmq.masDescuentos and liquidacionCajasSfccbdmq.kardexDepositoDesconocido == null and !liquidacionCajasSfccbdmq.masDepositosDesconocidos}">
+                                        <h:outputLabel value="Más de un deposito:"/>
+                                        <ace:checkboxButton value="#{liquidacionCajasSfccbdmq.masDepositos}">
+                                            <ace:ajax execute="@all"/>
+                                        </ace:checkboxButton>
+                                        <h:outputText value="Depósito diferencia: "/>
+                                        <h:selectOneMenu value="#{liquidacionCajasSfccbdmq.kardexDeposito}"
+                                                         id="karxDeposito" title="Banco"
+                                                         rendered="#{!liquidacionCajasSfccbdmq.masDepositos}">
+                                            <f:selectItems value="#{liquidacionCajasSfccbdmq.comboKardex}"/>
+                                            <ace:ajax execute="@all"/>
+                                        </h:selectOneMenu>
+                                        <h:panelGrid columns="2" width="100%" style="text-align: left">
+                                            <ace:dataTable 
+                                                id="tablaf"
+                                                value="#{liquidacionCajasSfccbdmq.listadoPropio}"
+                                                var="itemDeposito"
+                                                lazy="false"
+                                                resizableColumns="true"
+                                                rowIndexVar="row"
+                                                paginatorPosition="both"
+                                                rendered="#{liquidacionCajasSfccbdmq.masDepositos}">    
+                                                <ace:column  headerText="Descripción" style="text-align: left">
+                                                    <h:outputText  value="#{itemDeposito.observaciones}"/>
+                                                </ace:column>
+                                                <ace:column  headerText="Valor" style="text-align: right">
+                                                    <h:outputText  value="#{itemDeposito.valor}">
+                                                        <f:convertNumber parent="###,##0.00"/>
+                                                    </h:outputText>
+                                                </ace:column>
+                                                <ace:column  headerText="Seleccionar" style="text-align: left" >
+                                                    <ace:checkboxButton value="#{itemDeposito.seleccionado}">
+                                                        <ace:ajax execute="@all"/>
+                                                    </ace:checkboxButton>
+                                                </ace:column>
+                                            </ace:dataTable>
+                                        </h:panelGrid>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" style="width: 100%" rendered="#{liquidacionCajasSfccbdmq.renglonDescuento == null and !liquidacionCajasSfccbdmq.masDescuentos}">
+                                        <h:outputText value="Banco Depósito: " rendered="#{liquidacionCajasSfccbdmq.kardexDeposito != null}"/>
+                                        <h:outputText value="#{liquidacionCajasSfccbdmq.kardexDeposito.banco.toString()}" rendered="#{liquidacionCajasSfccbdmq.kardexDeposito != null}"/>
+                                        <h:outputText value="Valor Depósito: " rendered="#{liquidacionCajasSfccbdmq.kardexDeposito != null}"/>
+                                        <h:outputText value="#{liquidacionCajasSfccbdmq.kardexDeposito.valor}" rendered="#{liquidacionCajasSfccbdmq.kardexDeposito != null}">
+                                            <f:convertNumber parent="###,##0.00"/>
+                                        </h:outputText>
+                                    </h:panelGrid>
+                                    <!--depositos desconocidos-->
+                                    <h:panelGrid columns="2" style="width: 100%" rendered="#{liquidacionCajasSfccbdmq.renglonDescuento == null and !liquidacionCajasSfccbdmq.masDescuentos and liquidacionCajasSfccbdmq.kardexDeposito == null and !liquidacionCajasSfccbdmq.masDepositos}">
+                                        <h:outputLabel value="Más de un deposito desconocido:"/>
+                                        <ace:checkboxButton value="#{liquidacionCajasSfccbdmq.masDepositosDesconocidos}">
+                                            <ace:ajax execute="@all"/>
+                                        </ace:checkboxButton>
+                                        <h:outputText value="Depósito diferencia desconocido: "/>
+                                        <h:selectOneMenu value="#{liquidacionCajasSfccbdmq.kardexDepositoDesconocido}"
+                                                         id="karxDepositoND" title="Banco"
+                                                         rendered="#{!liquidacionCajasSfccbdmq.masDepositosDesconocidos}">
+                                            <f:selectItems value="#{liquidacionCajasSfccbdmq.comboKardexDesconocido}"/>
+                                            <ace:ajax execute="@all"/>
+                                        </h:selectOneMenu>
+                                        <h:panelGrid columns="2" width="100%" style="text-align: left">
+                                            <ace:dataTable 
+                                                id="tablaND"
+                                                value="#{liquidacionCajasSfccbdmq.listadoPropioDesconocidos}"
+                                                var="itemDeposito"
+                                                lazy="false"
+                                                resizableColumns="true"
+                                                rowIndexVar="row"
+                                                paginatorPosition="both"
+                                                rendered="#{liquidacionCajasSfccbdmq.masDepositosDesconocidos}">    
+                                                <ace:column  headerText="Descripción" style="text-align: left">
+                                                    <h:outputText  value="#{itemDeposito.observaciones}"/>
+                                                </ace:column>
+                                                <ace:column  headerText="Valor" style="text-align: right">
+                                                    <h:outputText  value="#{itemDeposito.valor}">
+                                                        <f:convertNumber parent="###,##0.00"/>
+                                                    </h:outputText>
+                                                </ace:column>
+                                                <ace:column  headerText="Seleccionar" style="text-align: left" >
+                                                    <ace:checkboxButton value="#{itemDeposito.seleccionado}">
+                                                        <ace:ajax execute="@all"/>
+                                                    </ace:checkboxButton>
+                                                </ace:column>
+                                            </ace:dataTable>
+                                        </h:panelGrid>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" style="width: 100%" rendered="#{liquidacionCajasSfccbdmq.renglonDescuento == null and !liquidacionCajasSfccbdmq.masDescuentos}">
+                                        <h:outputText value="Banco Depósito: " rendered="#{liquidacionCajasSfccbdmq.kardexDepositoDesconocido != null}"/>
+                                        <h:outputText value="#{liquidacionCajasSfccbdmq.kardexDepositoDesconocido.banco.toString()}" rendered="#{liquidacionCajasSfccbdmq.kardexDepositoDesconocido != null}"/>
+                                        <h:outputText value="Valor Depósito: " rendered="#{liquidacionCajasSfccbdmq.kardexDepositoDesconocido != null}"/>
+                                        <h:outputText value="#{liquidacionCajasSfccbdmq.kardexDepositoDesconocido.valor}" rendered="#{liquidacionCajasSfccbdmq.kardexDepositoDesconocido != null}">
+                                            <f:convertNumber parent="###,##0.00"/>
+                                        </h:outputText>
+                                    </h:panelGrid>
+                                    <!--descuento por roles-->
+                                    <h:panelGrid columns="2" style="width: 100%" rendered="#{liquidacionCajasSfccbdmq.kardexDeposito == null and !liquidacionCajasSfccbdmq.masDepositos and liquidacionCajasSfccbdmq.kardexDepositoDesconocido == null and !liquidacionCajasSfccbdmq.masDepositosDesconocidos}">
+                                        <h:outputLabel value="Más de un Descuento por Rol:"/>
+                                        <ace:checkboxButton value="#{liquidacionCajasSfccbdmq.masDescuentos}">
+                                            <ace:ajax execute="@all"/>
+                                        </ace:checkboxButton>
+                                        <h:outputText value="Descuento por Rol: "/>
+                                        <h:selectOneMenu value="#{liquidacionCajasSfccbdmq.renglonDescuento}"
+                                                         id="karxDescuento" title="Descuento por Rol"
+                                                         rendered="#{!liquidacionCajasSfccbdmq.masDescuentos}">
+                                            <f:selectItems value="#{liquidacionCajasSfccbdmq.comboRenglones}"/>
+                                            <ace:ajax execute="@all"/>
+                                        </h:selectOneMenu>
+                                        <ace:dataTable 
+                                            id="tablaR"
+                                            value="#{liquidacionCajasSfccbdmq.listadoRol}"
+                                            var="itemRol"
+                                            lazy="false"
+                                            resizableColumns="true"
+                                            rowIndexVar="row"
+                                            paginatorPosition="both"
+                                            rendered="#{liquidacionCajasSfccbdmq.masDescuentos}"> 
+                                            <ace:column  headerText="Cuenta" style="text-align: left">
+                                                <h:outputText  value="#{itemRol.cuenta}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Descripción" style="text-align: left">
+                                                <h:outputText  value="#{itemRol.referencia}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Fecha"   style="text-align: left">
+                                                <h:outputText  value="#{itemRol.fecha}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                            <ace:column  headerText="Valor" style="text-align: left">
+                                                <h:outputText  value="#{itemRol.valor}">
+                                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                            <ace:column  headerText="Seleccionar" style="text-align: left" >
+                                                <ace:checkboxButton value="#{itemRol.seleccionado}">
+                                                    <ace:ajax execute="@all"/>
+                                                </ace:checkboxButton>
+                                            </ace:column>
+                                        </ace:dataTable>
+                                    </h:panelGrid>                                       
+                                    <h:panelGrid columns="1">
+                                        <h:outputText value="Observaciones: "/>
+                                        <h:inputTextarea cols="60" rows="4" value="#{liquidacionCajasSfccbdmq.kardex.observaciones}" title="Observaciones"/>
+                                    </h:panelGrid>
+                                </ace:tabPane>
+                                <ace:tabPane label="Contabilización">
+                                    <h:panelGrid columns="1" width="100%">
+                                        <ace:dataTable 
+                                            value="#{liquidacionCajasSfccbdmq.listaReglonesPreliminar}"
+                                            var="itemRasInt"
+                                            >
+                                            <ace:column  headerText="Cuenta"  style="text-align: left">
+                                                <h:outputText  value="#{itemRasInt.cuenta}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Nombre"  style="text-align: left">
+                                                <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemRasInt.cuenta).nombre}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Auxiliar"  style="text-align: left">
+                                                <h:outputText  value="#{proveedoresSfccbdmq.taerRuc(itemRasInt.auxiliar)}" rendered="#{proveedoresSfccbdmq.taerRuc(itemRasInt.auxiliar)!=null}"/>
+                                                <h:outputText  value="#{empleados.traerCedula(itemRasInt.auxiliar)}" rendered="#{empleados.traerCedula(itemRasInt.auxiliar)!=null}"/>
+                                                <h:outputText  value="#{itemRasInt.auxiliar}" rendered="#{empleados.traerCedula(itemRasInt.auxiliar)==null and proveedoresSfccbdmq.taerRuc(itemRasInt.auxiliar)==null}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Referencia"  style="text-align: left">
+                                                <h:outputText  value="#{itemRasInt.referencia}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Débitos" style="text-align: right">
+                                                <h:outputText  value="#{itemRasInt.positivos}" >
+                                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                            <ace:column  headerText="Créditos" style="text-align: right">
+                                                <h:outputText  value="#{itemRasInt.negativos}" >
+                                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                        </ace:dataTable>
+
+                                    </h:panelGrid>
+                                </ace:tabPane>
+                            </ace:tabSet>
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-document" 
+                                                  action="#{liquidacionCajasSfccbdmq.insertar()}"/>
+
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{liquidacionCajasSfccbdmq.formulario.cancelar()}"/>
+                                </ace:menuBar>
+                            </h:panelGrid>
+
+                        </h:panelGroup>
+                    </ace:dialog>
+                    <ace:dialog 
+                        header="Imprimir"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{liquidacionCajasSfccbdmq.formularioImpresion.mostrar}"
+                        visible="#{liquidacionCajasSfccbdmq.formularioImpresion.mostrar}">
+                        <h:panelGroup>
+                            <ace:dynamicResource fileName="Egreso.pdf" id="pdf-button1" label="Generar PDF"
+                                                 mimeType="application/pdf" resource="#{liquidacionCajasSfccbdmq.reporte}" 
+                                                 style="" type="button" rendered="#{liquidacionCajasSfccbdmq.reporte!=null}"/>
+                            <ace:dynamicResource fileName="Liquidacion.pdf" id="pdf-button2" label="Imprimir Liquidación"
+                                                 mimeType="application/pdf" resource="#{liquidacionCajasSfccbdmq.reporteLiq}" 
+                                                 style="" type="button" rendered="#{liquidacionCajasSfccbdmq.reporteLiq!=null}"/>
+                            <ace:dynamicResource fileName="Solicitud.pdf" id="pdf-button3" label="Imprimir Solicitud"
+                                                 mimeType="application/pdf" resource="#{liquidacionCajasSfccbdmq.reporteARL}" 
+                                                 style="" type="button" rendered="#{liquidacionCajasSfccbdmq.reporteARL!=null}"/>
+                            <!--<ui:include src="imprimirMovimientoBanco.xhtml" />-->
+
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{liquidacionCajasSfccbdmq.formularioImpresion.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{tipoPermiso.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"  >
+                    <h:panelGrid>
+
+
+                        <h:panelGrid columns="2" width="100%">
+
+                            <h:outputLabel value="Nombre : "/>
+                            <h:inputText value="#{tipoPermiso.nombre}"/>
+
+                            <h:outputLabel value="Tipo : " />
+                            <h:selectOneMenu value="#{tipoPermiso.tipo}" >
+                                <f:selectItem  itemLabel="-- Todos -- " itemValue="-10"/>
+                                <f:selectItem itemValue="0" itemLabel="Licencias" />
+                                <f:selectItem itemValue="1" itemLabel="Permisos" />
+                                <f:selectItem itemValue="2" itemLabel="Vacaciones" />
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{tipoPermiso.buscar()}"/>
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{tipoPermiso.nuevo()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                    <ace:messages/>
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                   for="panel"
+                                   blockUI="panel"
+                                   autoCenter="true"
+                                   activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{tipoPermiso.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{tipoPermiso.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{tipoPermiso.listaPermisos}"
+                                       var="item"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,50,all"
+                                       paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="5"
+                                       binding="#{tipoPermiso.formulario.fila}">
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{tipoPermiso.modificar()}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{tipoPermiso.eliminar()}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column>
+                            <ace:column  headerText="Nombre" style="text-align: left">
+                                <h:outputText  value="#{item.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Duración Máxima en minutos" style="text-align: left">
+                                <h:outputText  value="#{item.duracion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Tiempo máximo de permisos en un periodo" style="text-align: left">
+                                <h:outputText  value="#{item.maximo}"/>
+                            </ace:column>
+                            <ace:column  headerText="Periodo en meses" style="text-align: left">
+                                <h:outputText  value="#{item.periodo}"/>
+                            </ace:column>
+                            <ace:column  headerText="Duración Máxima de la legalización" style="text-align: left">
+                                <h:outputText  value="#{item.justificacion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Máximo  acción de personal" style="text-align: left">
+                                <h:outputText  value="#{item.tiempoaccion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Acción de personal" style="text-align: left">
+                                <h:outputText  value="#{item.accion.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Tipo" style="text-align: left">
+                                <h:outputText  value="Licencia" rendered="#{item.tipo==0}"/>
+                                <h:outputText  value="Permiso" rendered="#{item.tipo==1}"/>
+                                <h:outputText  value="Vacaciones" rendered="#{item.tipo==2}"/>
+                            </ace:column>
+                            <ace:column headerText="Es por horas?" style="text-align: left">
+                                <h:graphicImage url="../resources/images/si.png" rendered="#{item.horas}"/>
+                                <h:graphicImage url="../resources/images/no.png" rendered="#{!item.horas}"/>
+                            </ace:column> 
+                            <ace:column headerText="Es un rango de fechas?" style="text-align: left">
+                                <h:graphicImage url="../resources/images/si.png" rendered="#{item.recursivo}"/>
+                                <h:graphicImage url="../resources/images/no.png" rendered="#{!item.recursivo}"/>
+                            </ace:column> 
+                            <ace:column headerText="Sin remuneración" style="text-align: left">
+                                <h:graphicImage url="../resources/images/si.png" rendered="#{item.rmu}"/>
+                                <h:graphicImage url="../resources/images/no.png" rendered="#{!item.rmu}"/>
+                            </ace:column> 
+                            <ace:column headerText="Cargo a vacaciones" style="text-align: left">
+                                <h:graphicImage url="../resources/images/si.png" rendered="#{item.cargovacaciones}"/>
+                                <h:graphicImage url="../resources/images/no.png" rendered="#{!item.cargovacaciones}"/>
+                            </ace:column> 
+                            <ace:column headerText="Legaliza Automáticamente" style="text-align: left">
+                                <h:graphicImage url="../resources/images/si.png" rendered="#{item.legaliza}"/>
+                                <h:graphicImage url="../resources/images/no.png" rendered="#{!item.legaliza}"/>
+                            </ace:column> 
+                            <ace:column headerText="Ve Empleado" style="text-align: left">
+                                <h:graphicImage url="../resources/images/si.png" rendered="#{item.muestra}"/>
+                                <h:graphicImage url="../resources/images/no.png" rendered="#{!item.muestra}"/>
+                            </ace:column> 
+                            <ace:column headerText="Solicita Adjuntos" style="text-align: left">
+                                <h:graphicImage url="../resources/images/si.png" rendered="#{item.adjuntos}"/>
+                                <h:graphicImage url="../resources/images/no.png" rendered="#{!item.adjuntos}"/>
+                            </ace:column> 
+                            <ace:column headerText="Es para Lounch?" style="text-align: left">
+                                <h:graphicImage url="../resources/images/si.png" rendered="#{item.lounch}"/>
+                                <h:graphicImage url="../resources/images/no.png" rendered="#{!item.lounch}"/>
+                            </ace:column> 
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{tipoPermiso.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{tipoPermiso.formulario.mostrar}"
+                    visible="#{tipoPermiso.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Nombre:"  />
+                            <h:inputText  value="#{tipoPermiso.permiso.nombre}" title="Nombre" />
+                            <h:outputLabel value="Tiempo máximo de permisos en un periodo :"  />
+                            <h:inputText  value="#{tipoPermiso.permiso.maximo}" title="Duración máxima" />
+                            <h:outputLabel value="Periodo en meses :"  />
+                            <h:inputText  value="#{tipoPermiso.permiso.periodo}" title="Periodo en meses" />
+                            <h:outputLabel value="Duración máxima justificación días:"  />
+                            <h:inputText  value="#{tipoPermiso.permiso.justificacion}" title="Duración máxima" />
+                            <h:outputLabel value="Tipo : " />
+                            <h:selectOneMenu value="#{tipoPermiso.permiso.tipo}">
+                                <f:selectItem itemValue="0" itemLabel="Licencias" />
+                                <f:selectItem itemValue="1" itemLabel="Permisos" />
+                                <f:selectItem itemValue="2" itemLabel="Vacaciones" />
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Sin Remuneración :"  />
+                            <h:selectBooleanCheckbox value="#{tipoPermiso.permiso.rmu}" />
+                            <h:outputLabel value="Solicita adjuntos :"  />
+                            <h:selectBooleanCheckbox value="#{tipoPermiso.permiso.adjuntos}" />
+                            <h:outputLabel value="Es un rango de fechas:"  />
+                            <h:selectBooleanCheckbox value="#{tipoPermiso.permiso.recursivo}" />
+                            <h:outputLabel value="Es por horas?:"  />
+                            <h:selectBooleanCheckbox value="#{tipoPermiso.permiso.horas}" disabled="#{tipoPermiso.permiso.tipo==2}"/>
+                            <h:outputLabel value="Legaliza Automáticamente?:"  />
+                            <h:selectBooleanCheckbox value="#{tipoPermiso.permiso.legaliza}"/>
+                            <h:outputLabel value="Es para Lounch?:"  />
+                            <h:selectBooleanCheckbox value="#{tipoPermiso.permiso.lounch}"/>
+                            <h:outputLabel value="Muestra a empleado?:"  />
+                            <h:selectBooleanCheckbox value="#{tipoPermiso.permiso.muestra}"/>
+                            <h:outputLabel value="Cargo a vacaciones?:"  />
+                            <h:selectBooleanCheckbox value="#{tipoPermiso.permiso.cargovacaciones}" disabled="#{tipoPermiso.permiso.tipo==2}"/>
+                            <h:outputLabel value="Duración Máximo en minutos:"  rendered="#{tipoPermiso.permiso.tipo!=2}"/>
+                            <h:inputText  value="#{tipoPermiso.permiso.duracion}" title="Nombre" rendered="#{tipoPermiso.permiso.tipo!=2}"/>
+                            <h:outputLabel value="Duración Máximo en dias para generar acción de personal :" />
+                            <h:inputText  value="#{tipoPermiso.permiso.tiempoaccion}"/>
+                            <h:outputLabel value="Tipo de acción de personal :" />
+                            <h:selectOneMenu value="#{tipoPermiso.permiso.accion}">
+                                <f:selectItems value="#{codigosSfccbdmq.comboTipoAcciones}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Autoriza Automáticamente?:"  />
+                            <h:selectBooleanCheckbox value="#{tipoPermiso.permiso.diasaprobarautomatico}">
+                                <ace:ajax execute="@all"/>
+                            </h:selectBooleanCheckbox>
+                            <h:outputLabel value="Días para autorizar automaticamente :"  rendered="#{tipoPermiso.permiso.diasaprobarautomatico}"/>
+                            <h:inputText  value="#{tipoPermiso.permiso.diasaprobar}" title="Duración dias" rendered="#{tipoPermiso.permiso.diasaprobarautomatico}"/>
+
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{tipoPermiso.formulario.nuevo}" 
+                                          action="#{tipoPermiso.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{tipoPermiso.grabar()}" 
+                                          rendered="#{tipoPermiso.formulario.modificar}" />
+                            <ace:menuItem action="#{tipoPermiso.borrar()}" 
+                                          value="¿Está seguro de Borrar el registro?" 
+                                          icon="ui-icon ui-icon-trash"
+                                          rendered="#{tipoPermiso.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{tipoPermiso.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

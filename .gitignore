@@ -1,0 +1,16 @@
+/sfcflujos/build/
+/sfcmedical/build/
+/dist/
+/sfccbdmq-war/dist/
+/sfcflujos/dist/
+/sfcmedical/dist/
+/sfcpacpoa/build/
+/sfcpacpoa/dist/
+/sfccbdmq-archivos/build/
+/sfccbdmq-ejb/dist/
+/SfcRest/build/
+/SfcRest/dist/
+/build/
+/sfccbdmq-archivos/dist/
+/sfccbdmq-war/build/
+/sfccbdmq-ejb/build/

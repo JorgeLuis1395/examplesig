@@ -1,0 +1,837 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{compromisosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Es proveedor?:" />
+                        <h:selectBooleanCheckbox value="#{compromisosSfccbdmq.esProveedor}" >
+                            <ace:ajax execute="@all"/>
+                        </h:selectBooleanCheckbox>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" rendered="#{compromisosSfccbdmq.esProveedor}">
+                        <ui:include src="../BuscarProveedor.xhtml" />
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" rendered="#{!compromisosSfccbdmq.esProveedor}">
+                        <ui:include src="../BuscarUsuario.xhtml" />
+                    </h:panelGrid>
+                    <!--                    <ui:include src="../BuscarProveedor.xhtml" />-->
+                    <h:panelGrid columns="4" width="100%">
+                        <h:outputLabel value="Año:" />
+                        <h:inputText value="#{compromisosSfccbdmq.anio}" title="Año" />
+
+                        <h:outputLabel value="Número Compromiso:" />
+                        <h:inputText value="#{compromisosSfccbdmq.numero}" title="Número Compromiso" />
+                        <h:outputLabel value="Número Certificación:" />
+                        <h:inputText value="#{compromisosSfccbdmq.numeroCertificacion}" title="Número Cert." />
+                        <h:outputLabel value="Desde:"/>
+                        <ace:dateTimeEntry navigator="true"  value="#{compromisosSfccbdmq.desde}" 
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="hasta:"/>
+                        <ace:dateTimeEntry navigator="true"  value="#{compromisosSfccbdmq.hasta}" 
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Certificación :" />
+                        <h:selectOneMenu value="#{compromisosSfccbdmq.cert}">
+                            <f:selectItem itemLabel="---Seleccione Uno----" itemValue="0"/>
+                            <f:selectItem itemLabel="SI" itemValue="1"/>
+                            <f:selectItem itemLabel="NO" itemValue="-1"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{compromisosSfccbdmq.crear()}" />
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{compromisosSfccbdmq.buscar()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                   for="panel"
+                                   blockUI="panel"
+                                   autoCenter="true"
+                                   activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Bùsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{compromisosSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{compromisosSfccbdmq.formulario.pantalla}" 
+                                          target="tabla2" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla2" 
+                                       value="#{compromisosSfccbdmq.compromisos}"
+                                       var="item"
+                                       paginator="true"
+                                       lazy="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       >
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{compromisosSfccbdmq.modificar(item)}" 
+                                                  value="Editar" icon="ui-icon ui-icon-pencil" 
+                                                  disabled="#{compromisosSfccbdmq.editar}"/>
+                                    <ace:menuItem action="#{compromisosSfccbdmq.imprimir(item)}"
+                                                  value="Aprobar" icon="ui-icon ui-icon-check" rendered="#{item.impresion==null}"/>
+                                    <ace:menuItem action="#{compromisosSfccbdmq.anular(item)}" 
+                                                  value="Anular" icon="ui-icon ui-icon-circle-close" rendered="#{item.impresion!=null}"/>
+                                    <ace:menuItem action="#{compromisosSfccbdmq.imprimir(item)}"
+                                                  value="Imprimir" icon="ui-icon ui-icon-print" rendered="#{item.impresion!=null}"/>
+                                    <ace:menuItem action="#{compromisosSfccbdmq.eliminar(item)}" 
+                                                  value="Borrar" icon="ui-icon ui-icon-trash" 
+                                                  disabled="#{compromisosSfccbdmq.editar}"/>
+                                    <ace:menuItem action="#{compromisosSfccbdmq.liberarSaldo(item)}" 
+                                                  value="Liberar Saldo" icon="ui-icon ui-icon-transferthick-e-w"/>
+                                    <ace:menuItem action="#{compromisosSfccbdmq.ajusteSaldo(item)}" 
+                                                  value="Ajuste" icon="ui-icon ui-icon-plus"/>
+                                </ace:menuButton>
+                            </ace:column>
+                            <ace:column  headerText="No:"  style="text-align: left">
+                                <h:outputText  value="#{item.numerocomp}"/>
+                            </ace:column>
+                            <ace:column  headerText="Concepto"  style="text-align: left">
+                                <h:outputText  value="#{item.motivo}"/>
+                            </ace:column>
+                            <ace:column  headerText="Proveedor"  style="text-align: left">
+                                <h:outputText  value="#{item.proveedor.empresa.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Beneficiario"  style="text-align: left">
+                                <h:outputText  value="#{item.beneficiario.entidad.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Contrato" style="text-align: left">
+                                <h:outputText  value="#{item.contrato.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Valor"  style="text-align: right">
+                                <h:outputText  value="#{compromisosSfccbdmq.valorTotalCompromiso}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Saldo"  style="text-align: right">
+                                <h:outputText  value="#{compromisosSfccbdmq.saldoTotalCompromiso}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="ESTADO" style="text-align: left">
+                                <h:outputText  value="EN PROCESO" rendered="#{item.impresion==null}"/>
+                                <h:outputText  value="APROBADO" rendered="#{item.impresion!=null}"/>
+                            </ace:column>
+                            <ace:column  headerText="Anulado"  style="text-align: left">
+                                <h:outputText  value="SI" rendered="#{item.anulado}"/>
+                                <h:outputText  value="NO" rendered="#{!item.anulado}"/>
+                            </ace:column>
+                            <ace:column  headerText="Firma E."  style="text-align: left">
+                                <h:outputText  value="SI" rendered="#{item.archivo ne null}"/>
+                                <h:outputText  value="NO" rendered="#{item.archivo eq null}"/>
+                            </ace:column>
+                            <ace:column  headerText="Certificación" style="text-align: left">
+                                <h:outputText  value="#{item.certificacion.numerocert}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <!--dialogo de carga de la info primera--> 
+                <ace:dialog 
+                    header="#{compromisosSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{compromisosSfccbdmq.formulario.mostrar}"
+                    visible="#{compromisosSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Es proveedor?:" />
+                            <h:selectBooleanCheckbox value="#{compromisosSfccbdmq.esProveedor}" 
+                                                     disabled="#{!compromisosSfccbdmq.formulario.nuevo}">
+                                <ace:ajax execute="@all"/>
+                            </h:selectBooleanCheckbox>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" rendered="#{compromisosSfccbdmq.esProveedor}">
+                            <ui:include src="../BuscarProveedor.xhtml" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" rendered="#{!compromisosSfccbdmq.esProveedor}">
+                            <ui:include src="../BuscarUsuario.xhtml" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" rendered="#{!compromisosSfccbdmq.muchos}">
+                            <h:outputLabel value="Contrato Actual? :" />
+                            <h:selectBooleanCheckbox value="#{compromisosSfccbdmq.contatoActual}"> 
+                                <ace:ajax execute="@all"/>
+                            </h:selectBooleanCheckbox>
+                            <h:outputLabel value="Contrato Actual:" rendered="#{compromisosSfccbdmq.contatoActual}"/>
+                            <h:selectOneMenu  value="#{compromisosSfccbdmq.compromiso.contrato}"  rendered="#{compromisosSfccbdmq.contatoActual}">
+                                <f:selectItem itemLabel="Sin contrato" itemValue="0"/>
+                                <f:selectItems value="#{contratosSfccbdmq.comboContratosCompromisos}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Contrato Anterior :" rendered="#{!compromisosSfccbdmq.contatoActual}"/>
+                            <h:selectOneMenu  value="#{compromisosSfccbdmq.compromiso.contrato}"  rendered="#{!compromisosSfccbdmq.contatoActual}">
+                                <f:selectItem itemLabel="Sin contrato" itemValue="0" />
+                                <f:selectItems value="#{contratosSfccbdmq.comboContratosCompromisosAnteriores}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Tiene certificación? :" />
+                            <h:selectBooleanCheckbox value="#{compromisosSfccbdmq.tieneCertificacion}" disabled="#{compromisosSfccbdmq.detalles.size()>0}"> 
+                                <ace:ajax execute="@all"/>
+                            </h:selectBooleanCheckbox>
+                            <h:outputLabel value="Tipo de Compromiso :" />
+                            <h:selectOneRadio value="#{compromisosSfccbdmq.compromiso.devengado}" 
+                                              disabled="#{compromisosSfccbdmq.detalles.size()>0}">
+                                <f:selectItem itemLabel="Normal" itemValue="0"/>
+                                <!--<f:selectItem itemLabel="Sin certificación" itemValue="1"/>-->
+                                <f:selectItem itemLabel="Genera Devengado" itemValue="2"/>
+                                <f:selectItem itemLabel="Genera Ejecutado" itemValue="3"/>
+
+                                <ace:ajax render="@all"/>
+                            </h:selectOneRadio>
+                            <h:outputLabel value="Dirección Solicitante:"  rendered="#{!compromisosSfccbdmq.tieneCertificacion}"/>
+                            <h:selectOneMenu  value="#{compromisosSfccbdmq.compromiso.direccion}" rendered="#{!compromisosSfccbdmq.tieneCertificacion}">
+                                <f:selectItems value="#{organigrama.comboDirecciones}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Fecha:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{compromisosSfccbdmq.compromiso.fecha}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Valor contrato :" />
+                            <h:outputText value="#{compromisosSfccbdmq.compromiso.contrato.valor}">
+
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Valor modificaciones :" />
+                            <h:outputText value="#{compromisosSfccbdmq.sumaComplementarios}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Valores Anteriores :" />
+                            <h:outputText value="#{compromisosSfccbdmq.sumaCompromisoAnteriores}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Total :" />
+                            <h:outputText value="#{compromisosSfccbdmq.compromiso.contrato.valor+compromisosSfccbdmq.sumaComplementarios - compromisosSfccbdmq.sumaCompromisoAnteriores}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Mov. Inventario :" />
+                            <h:selectOneMenu  value="#{compromisosSfccbdmq.cabeceraInventario}">
+                                <f:selectItems value="#{compromisosSfccbdmq.comboInventario}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <!--                            <h:outputLabel value="Compromiso Anterior Sistema :" />
+                                                        <h:inputText value="#{compromisosSfccbdmq.compromiso.numeroanterior}" />-->
+                            <h:outputLabel value="Número de Compromiso :" />
+                            <h:inputText value="#{compromisosSfccbdmq.codigoNumero}"/>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <h:outputLabel value="#{compromisosSfccbdmq.valoreInventario}" />
+                            <h:outputLabel value="Concepto :" />
+                            <h:inputTextarea cols="80" rows="5" value="#{compromisosSfccbdmq.compromiso.motivo}" id="concepto"/>
+                        </h:panelGrid>
+                        <!-- tabla de obligaciones-->
+                        <h:panelGrid width="100%">
+                            <ace:dataTable id="tabla1" 
+                                           value="#{compromisosSfccbdmq.detalles}"
+                                           var="itemDetalles"
+                                           paginator="true"
+                                           lazy="false"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="top"
+                                           rowsPerPageTemplate="5,10,15,30,50,100"
+                                           paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="10"
+                                           binding="#{compromisosSfccbdmq.formularioDetalle.fila}"
+                                           >
+                                <f:facet name="header">Total Cuentas : #{compromisosSfccbdmq.valorTotalCompromisoStr} </f:facet>
+                                <ace:column  headerText="Registro" style="text-align: right">
+                                    <h:outputText value="#{row+1}"/>
+                                </ace:column>
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." rendered="#{!compromisosSfccbdmq.formulario.borrar}">
+                                        <ace:menuItem action="#{compromisosSfccbdmq.modificaDetalle()}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                        <ace:menuItem action="#{compromisosSfccbdmq.borraDetalle()}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                    </ace:menuButton>
+                                </ace:column>
+                                <c:forEach var="itemProducto" items="#{proyectosSfccbdmq.titulos}">
+                                    <ace:column  headerText="#{itemProducto.titulo1}"  style="text-align: left">
+                                        <h:outputText  value="#{proyectosSfccbdmq.dividir(itemProducto, itemDetalles.asignacion.proyecto)}"/>
+                                    </ace:column>
+                                </c:forEach>
+                                <ace:column  headerText="Producto"  style="text-align: left">
+                                    <h:outputText  value="#{itemDetalles.asignacion.proyecto.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Partida"  style="text-align: left">
+                                    <h:outputText  value="#{itemDetalles.asignacion.clasificador.toString()}"/>
+                                </ace:column>
+                                <!--                                <ace:column  headerText="Motivo" style="text-align: left">
+                                                                    <h:outputText  value="#{itemDetalles.motivo}"/>
+                                                                </ace:column>-->
+                                <ace:column  headerText="Valor" style="text-align: right">
+                                    <h:outputText  value="#{itemDetalles.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <!--                                <ace:column  headerText="Fecha" style="text-align: left">
+                                                                    <h:outputText  value="#{itemDetalles.fecha}">
+                                                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                                    </h:outputText>
+                                                                </ace:column>-->
+                                <!--                                <ace:column  headerText="Proveedor" style="text-align: left">
+                                                                    <h:outputText  value="#{itemDetalles.proveedor.empresa.toString()}"/>
+                                                                </ace:column>-->
+                            </ace:dataTable>
+                        </h:panelGrid>  
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Añadir cuenta" icon="ui-icon ui-icon-document" 
+                                              action="#{compromisosSfccbdmq.nuevaDetalle()}" 
+                                              rendered="#{!compromisosSfccbdmq.formulario.borrar}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{compromisosSfccbdmq.formulario.nuevo}" 
+                                              action="#{compromisosSfccbdmq.insertar()}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{compromisosSfccbdmq.grabar()}" 
+                                              rendered="#{compromisosSfccbdmq.formulario.modificar}" />
+                                <ace:menuItem action="#{compromisosSfccbdmq.borrar()}" 
+                                              value="Esta seguro de Borrar el registro?" 
+                                              rendered="#{compromisosSfccbdmq.formulario.borrar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{compromisosSfccbdmq.formulario.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                            <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <!--fin dialogo de carga de la info primera--> 
+                <!--panel para escoger certificacion-->
+                <ace:dialog 
+                    header="Seleccione una certificación"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{compromisosSfccbdmq.formularioCertificacion.mostrar}"
+                    visible="#{compromisosSfccbdmq.formularioCertificacion.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="4">
+                            <!--                            <h:outputLabel value="Impresos:" />
+                                                        <h:selectOneMenu  value="#{certificacionesSfccbdmq.impresas}" disabled="true">
+                                                            <f:selectItem  itemLabel="SI" itemValue="true"/>
+                                                            <f:selectItem  itemLabel="NO" itemValue="false"/>
+                                                        </h:selectOneMenu>-->
+                            <h:outputLabel value="No de Control:"  />
+                            <h:inputText value="#{certificacionesSfccbdmq.numeroControl}" />
+                            <h:outputLabel value="Año:" />
+                            <h:inputText value="#{certificacionesSfccbdmq.anio}" title="Año" />
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{certificacionesSfccbdmq.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{certificacionesSfccbdmq.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="1">
+                            <h:outputLabel value="Motivo :" />
+                            <h:inputTextarea cols="80" rows="5" value="#{certificacionesSfccbdmq.motivo}" title="Motivo" />
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{certificacionesSfccbdmq.buscarParaCompromiso()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{compromisosSfccbdmq.formularioCertificacion.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable 
+                                value="#{certificacionesSfccbdmq.certificacionesCompromiso}"
+                                var="itemCertificaciones"
+                                paginator="true"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="both"
+                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rows="5"
+                                >
+                                <ace:column style="text-align: left">
+                                    <ace:menuBar autoSubmenuDisplay="true" >
+                                        <ace:menuItem value="Selec." icon="ui-icon ui-icon-check" 
+                                                      action="#{compromisosSfccbdmq.seleccionaCertificacion(itemCertificaciones)}"/>
+                                    </ace:menuBar>
+                                </ace:column> 
+                                <ace:column  headerText="Número"  style="text-align: right">
+                                    <h:outputText  value="#{itemCertificaciones.numerocert}"/>
+                                </ace:column>
+                                <ace:column  headerText="Motivo" style="text-align: left">
+                                    <h:outputText  value="#{itemCertificaciones.motivo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Fecha" style="text-align: left">
+                                    <h:outputText  value="#{itemCertificaciones.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Tipo de Documento"  style="text-align: left">
+                                    <h:outputText  value="#{itemCertificaciones.tipodocumento.nombre}"/>
+                                </ace:column>
+
+                                <ace:column  headerText="Valor"  style="text-align: right">
+                                    <h:outputText  value="#{itemCertificaciones.monto}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Utilizado"  style="text-align: left">
+                                    <h:outputText  value="#{itemCertificaciones.saldo}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+
+                                </ace:column>
+                                <ace:column  headerText="Impresa"  style="text-align: left">
+                                    <h:panelGrid rendered="#{itemCertificaciones.impreso}">
+                                        <img src="../resources/images/imputable.png" width="16" height="16" alt="imputable"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid rendered="#{!itemCertificaciones.impreso}">
+                                        <img src="../resources/images/noimputable.png" width="16" height="16" alt="imputable"/>
+                                    </h:panelGrid>
+                                </ace:column>
+
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <!--panel para escoger certificacion-->
+                <!--dialogo del detalle de las partidas-->
+                <ace:dialog 
+                    header="Usar Partidas"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{compromisosSfccbdmq.formularioDetalle.mostrar}"
+                    visible="#{compromisosSfccbdmq.formularioDetalle.mostrar}">
+                    <h:panelGroup>
+<!--                        <h:panelGrid rendered="#{compromisosSfccbdmq.muchos}">
+                            <ui:include src="../BuscarProveedor.xhtml" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%"  rendered="#{compromisosSfccbdmq.muchos}">
+                            <h:outputLabel value="Motivo :" />
+                            <h:inputTextarea cols="80" rows="5" value="#{compromisosSfccbdmq.detalle.motivo}"/>
+                        </h:panelGrid>-->
+                        <h:panelGrid columns="2" rendered="#{!compromisosSfccbdmq.tieneCertificacion}">
+                            <h:outputLabel value="Partida :"/>
+                            <ace:comboBox value="#{compromisosSfccbdmq.partida}" 
+                                          listValue="#{compromisosSfccbdmq.listaClasificadores}"  
+                                          itemValue="#{itemClasificadores.codigo}"
+                                          filterMatchMode="startsWith"
+                                          width="300"
+                                          listVar="itemClasificadores" 
+                                          disabled="#{compromisosSfccbdmq.formularioDetalle.modificar}">
+                                <f:facet name="row">
+                                    <h:panelGrid columns="2" width="100%" columnClasses="tipo">
+                                        <h:outputText value="#{itemClasificadores.codigo}" />
+                                        <h:outputText value="#{itemClasificadores.nombre}" />
+                                    </h:panelGrid>
+                                </f:facet>
+                                <ace:ajax execute="@all"/>    
+                            </ace:comboBox>
+                            <h:outputLabel value="Fuente:" for="fuente" />
+                            <h:selectOneMenu id="fuente" value="#{compromisosSfccbdmq.fuente}" disabled="#{compromisosSfccbdmq.formularioDetalle.modificar}">
+                                <f:selectItems value="#{compromisosSfccbdmq.comboFuenteClasificador}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Proyectos :"/>
+                            <h:selectOneMenu value="#{compromisosSfccbdmq.detalle.asignacion}" disabled="#{compromisosSfccbdmq.formularioDetalle.modificar}">
+                                <f:selectItems value="#{compromisosSfccbdmq.comboClasificadorFuente}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" rendered="#{compromisosSfccbdmq.tieneCertificacion}">
+                            <h:outputLabel value="Partida :" />
+                            <h:selectOneMenu  value="#{compromisosSfccbdmq.detalle.asignacion}" 
+                                              id="partida" disabled="#{!compromisosSfccbdmq.formularioDetalle.nuevo}">
+                                <f:selectItems value="#{compromisosSfccbdmq.comboPartidaCertificacion}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" >
+                            <h:outputLabel value="Saldo Cert. :"/>
+                            <h:outputText value="#{compromisosSfccbdmq.saldoCertificacion-compromisosSfccbdmq.valorOcupadoCertificacion}" >
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Valor Compromiso:"/>
+                            <h:inputText value="#{compromisosSfccbdmq.detalle.valor}" title="Número" />
+                            <!--                            <h:outputLabel value="Fecha:"/>
+                                                        <ace:dateTimeEntry navigator="true"  value="#{compromisosSfccbdmq.detalle.fecha}" 
+                                                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                        </ace:dateTimeEntry>-->
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{compromisosSfccbdmq.formularioDetalle.nuevo}" 
+                                          action="#{compromisosSfccbdmq.insetarDetalle()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{compromisosSfccbdmq.grabarDetalle()}" 
+                                          rendered="#{compromisosSfccbdmq.formularioDetalle.modificar}" />
+                            <ace:menuItem action="#{compromisosSfccbdmq.borrarDetalle()}" 
+                                          value="Esta seguro de Borrar el registro?" 
+                                          rendered="#{compromisosSfccbdmq.formularioDetalle.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{compromisosSfccbdmq.formularioDetalle.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                        <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                    </h:panelGrid>
+                </ace:dialog>
+                <!--fin dialogo del detalle de las partidas-->
+                <!--dilogo para imrpimir-->
+                <!--                <ace:dialog 
+                                    header="Imprimir"
+                                    closable="false"
+                                    modal="true"
+                                    draggable="true"
+                                    showEffect="clip"
+                                    hideEffect="fade"
+                                    rendered="#{compromisosSfccbdmq.formularioImpresion.mostrar}"
+                                    visible="#{compromisosSfccbdmq.formularioImpresion.mostrar}">
+                                    <h:panelGroup>
+                                        <ace:dynamicResource fileName="Compromiso.pdf" id="pdf-button1" label="Imprimir"
+                                                             mimeType="application/pdf" resource="#{compromisosSfccbdmq.reporte}" 
+                                                             style="" type="button"/>
+                                        <ui:include src="imprimirCompromiso.xhtml" />
+                
+                                        <h:panelGrid columns="1" width="100%">
+                                            <ace:menuBar autoSubmenuDisplay="true" >
+                
+                                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                              action="#{compromisosSfccbdmq.formularioImpresion.cancelar()}"/>
+                                            </ace:menuBar>
+                                            <ace:messages />
+                                            <h:messages style="color: red;font-style: italic;font-weight: bold"/> 
+                                        </h:panelGrid>
+                                    </h:panelGroup>
+                                </ace:dialog>-->
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{compromisosSfccbdmq.formularioImpresion.mostrar}"
+                    visible="#{compromisosSfccbdmq.formularioImpresion.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource 
+                            fileName="#{compromisosSfccbdmq.nombreArchivo}"                                            
+                            attachment="true"                                             
+                            label="Descargar archivo firmado"
+                            mimeType="#{compromisosSfccbdmq.tipoArchivo}"
+                            resource="#{compromisosSfccbdmq.recurso}" 
+                            type="button" rendered="#{compromisosSfccbdmq.recurso ne null}"/>
+                        <ace:dynamicResource fileName="Compromiso.pdf" id="pdf-button1" label="Imprimir"
+                                             mimeType="application/pdf" resource="#{compromisosSfccbdmq.reportepdf}" 
+                                             style="" type="button"/>
+                        <!--<ui:include src="imprimirCompromiso.xhtml" />-->
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Firmar" icon="ui-icon ui-icon-key" 
+                                              action="#{compromisosSfccbdmq.firma()}"/>
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{compromisosSfccbdmq.formularioImpresion.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                            <h:messages style="color: red;font-style: italic;font-weight: bold"/> 
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <!--Firmar el documento-->
+                <ace:dialog 
+                    header="Firmar"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{compromisosSfccbdmq.formularioFirma.mostrar}"
+                    visible="#{compromisosSfccbdmq.formularioFirma.mostrar}">
+                    <h:panelGroup>    
+                        <h:outputLabel value="Clave:" />
+                        <h:inputSecret value="#{compromisosSfccbdmq.clave}" />
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Firmar" icon="ui-icon ui-icon-disk" 
+                                              action="#{compromisosSfccbdmq.grabarFirma()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{compromisosSfccbdmq.formularioFirma.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages style="white-space: pre-wrap"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog> 
+                <!--liberar saldo Certificacion-->
+                <ace:dialog 
+                    header="Liberar Saldo Cartificación"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{compromisosSfccbdmq.formularioCompromiso.mostrar}"
+                    visible="#{compromisosSfccbdmq.formularioCompromiso.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2" rendered="#{compromisosSfccbdmq.compromiso.devengado==0}">
+                            <h:outputLabel value="Partida :" />
+                            <h:selectOneMenu  value="#{compromisosSfccbdmq.detalle.asignacion}" 
+                                              id="partidacom">
+                                <f:selectItems value="#{compromisosSfccbdmq.comboPartidaCertificacionConSaldo}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" >
+                            <h:outputLabel value="Liberar saldo:"/>
+                            <h:outputText value="#{compromisosSfccbdmq.saldoCertificacion}" >
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Saldo a liberar:"/>
+                            <h:inputText value="#{compromisosSfccbdmq.saldoLiberar}" />
+                            <h:outputLabel value="Fecha:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{compromisosSfccbdmq.fechaLiberar}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{compromisosSfccbdmq.grabarLiberarSaldo()}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{compromisosSfccbdmq.formularioCompromiso.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                        <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                    </h:panelGrid>
+                </ace:dialog>
+                <!--liberar saldo Compromiso-->
+                <ace:dialog 
+                    header="Liberar Saldo Compromiso"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{compromisosSfccbdmq.formularioLiberarSaldo.mostrar}"
+                    visible="#{compromisosSfccbdmq.formularioLiberarSaldo.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2" >
+                            <h:outputLabel value="Partida :"/>
+                            <h:selectOneMenu value="#{compromisosSfccbdmq.detalle.asignacion}">
+                                <f:selectItems value="#{compromisosSfccbdmq.comboAsignacionCompromiso}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Liberar saldo:"/>
+                            <h:outputText value="#{compromisosSfccbdmq.saldoCompromiso}" >
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Saldo a liberar:"/>
+                            <h:inputText value="#{compromisosSfccbdmq.saldoLiberar}" />
+                            <h:outputLabel value="Fecha:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{compromisosSfccbdmq.fechaLiberar}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>                        
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{compromisosSfccbdmq.grabarLiberarSaldo()}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{compromisosSfccbdmq.formularioLiberarSaldo.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                        <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                    </h:panelGrid>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Ajustar Compromiso"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{compromisosSfccbdmq.formularioAjuste.mostrar}"
+                    visible="#{compromisosSfccbdmq.formularioAjuste.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2" >
+                            <h:outputLabel value="Partida :"/>
+                            <h:selectOneMenu value="#{compromisosSfccbdmq.detalle.asignacion}">
+                                <f:selectItems value="#{compromisosSfccbdmq.comboAsignacionCompromiso}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Saldo:"/>
+                            <h:outputText value="#{compromisosSfccbdmq.saldoAjuste}" >
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Valor de Ajuste:"/>
+                            <h:inputText value="#{compromisosSfccbdmq.saldoLiberar}" />
+                            <h:outputLabel value="Fecha:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{compromisosSfccbdmq.fechaLiberar}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>                        
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{compromisosSfccbdmq.grabarAjusteSaldo()}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{compromisosSfccbdmq.formularioAjuste.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                        <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                    </h:panelGrid>
+                </ace:dialog>
+                <!--Anular Certificacion-->
+                <ace:dialog 
+                    header="Anular Certificación"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{compromisosSfccbdmq.formularioAnular.mostrar}"
+                    visible="#{compromisosSfccbdmq.formularioAnular.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2" width="100%">
+                            <h:outputLabel value="Observacion :" />
+                            <h:inputTextarea cols="60" rows="4"  value="#{compromisosSfccbdmq.compromiso.observacionanulado}" />
+                            <h:outputLabel value="Fecha:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{compromisosSfccbdmq.compromiso.fechaanulado}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%">
+                            <ace:dataTable id="tablaAnulado" 
+                                           value="#{compromisosSfccbdmq.detalles}"
+                                           var="itemAnulado"
+                                           paginator="true"
+                                           lazy="false"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="top"
+                                           rowsPerPageTemplate="5,10,15,30,50,100"
+                                           paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="10"
+                                           binding="#{compromisosSfccbdmq.formularioAnular.fila}"
+                                           >
+                                <f:facet name="header">Total Cuentas : #{compromisosSfccbdmq.valorTotalCompromisoStr} </f:facet>
+                                <ace:column  headerText="Registro" style="text-align: right">
+                                    <h:outputText value="#{row+1}"/>
+                                </ace:column>
+                                <c:forEach var="itemProducto" items="#{proyectosSfccbdmq.titulos}">
+                                    <ace:column  headerText="#{itemProducto.titulo1}"  style="text-align: left">
+                                        <h:outputText  value="#{proyectosSfccbdmq.dividir(itemProducto, itemAnulado.asignacion.proyecto)}"/>
+                                    </ace:column>
+                                </c:forEach>
+                                <ace:column  headerText="Producto"  style="text-align: left">
+                                    <h:outputText  value="#{itemAnulado.asignacion.proyecto.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Partida"  style="text-align: left">
+                                    <h:outputText  value="#{itemAnulado.asignacion.clasificador.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor" style="text-align: right">
+                                    <h:outputText  value="#{itemAnulado.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Esta seguro de Anular el registro?" icon="ui-icon ui-icon-disk" 
+                                          action="#{compromisosSfccbdmq.grabarAnular()}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{compromisosSfccbdmq.formularioAnular.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+
+                <!--fin dilogo para imrpimir-->
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

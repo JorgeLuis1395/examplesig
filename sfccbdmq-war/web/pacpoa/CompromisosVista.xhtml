@@ -1,0 +1,240 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="Mantenimiento Compromisos"
+                           closable="false"
+                           toggleable="true"
+                           rendered="#{compromisosPoa.formulario.mostrar}">
+                    <h:panelGrid columns="2" width="30%">
+                        <h:outputLabel value="Separador de campos :"/>
+                        <h:inputText value="#{compromisosPoa.separador}"  size="3">
+                            <ace:ajax execute="@all"/>
+                        </h:inputText>
+                        <h:outputLabel value="Archivo a Subir:" />
+                    </h:panelGrid>
+                    <h:panelGrid columns="3" width="30%">
+                        <ace:fileEntry id="file-entry" 
+                                       maxFileCount="1" 
+                                       maxFileCountMessage="Máximo un archivo" 
+                                       fileEntryListener="#{compromisosPoa.archivoListener}" 
+                                       maxFileSize="6291456" 
+                                       maxFileSizeMessage="Tamaño muy grande." 
+                                       maxTotalSize="18874368" 
+                                       maxTotalSizeMessage="Total del tamaño muy grande." 
+                                       useOriginalFilename="true" 
+                                       useSessionSubdir="true"/>
+                        <h:commandButton type="submit" value="Cargar datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{compromisosPoa.grabar()}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{compromisosPoa.formulario.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+
+                    <ace:tabSet style="clear:both; width: 100%" >
+                        <ace:tabPane>
+                            <f:facet name="label">Compromisos</f:facet>
+                            <h:panelGrid width="100%">
+                                <ace:dataTable id="tabla" 
+                                               paginatorAlwaysVisible="true"
+                                               value="#{compromisosPoa.listaCompromisos}"
+                                               var="item"
+                                               paginator="true"
+                                               lazy="false"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="15,20,25,50,100"
+                                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="15"
+                                               style="width: 100%"
+                                               binding="#{compromisosPoa.formulario.fila}">
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+<!--                                    <ace:column headerText="Acciones" style="text-align: left">
+                                        <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                            <ace:menuItem 
+                                                action="#{compromisosPoa.modificar()}" 
+                                                value="Editar" 
+                                                icon="ui-icon ui-icon-pencil"/>
+                                            <ace:menuItem 
+                                                action="#{compromisosPoa.eliminar()}" 
+                                                value="Borrar" 
+                                                icon="ui-icon ui-icon-trash"/>
+                                        </ace:menuButton>
+                                    </ace:column> -->
+                                    <ace:column  headerText="Partida" style="text-align: left">
+                                        <h:outputText  value="#{item.partida}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Fuente" style="text-align: left">
+                                        <h:outputText  value="#{item.fuente}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Fecha" style="text-align: left">
+                                        <h:outputText  value="#{item.fecha}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Valor" style="text-align: left">
+                                        <h:outputText  value="#{item.valor}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="# Certificacion" style="text-align: left">
+                                        <h:outputText  value="#{item.certificacion}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Cedula" style="text-align: left">
+                                        <h:outputText  value="#{item.cedula}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Nombre" style="text-align: left">
+                                        <h:outputText  value="#{item.nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Observacion" style="text-align: left">
+                                        <h:outputText  value="#{item.observacion}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Proyecto" style="text-align: left">
+                                        <h:outputText  value="#{item.proyecto.toString()}"/>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane>
+                            <f:facet name="label">Errores</f:facet>
+                            <h:panelGrid width="90%">
+                                <ace:dataTable id="tablaErrores" 
+                                               value="#{compromisosPoa.listaErrores}"
+                                               var="error"
+                                               paginator="true"
+                                               lazy="false"
+                                               resizableColumns="true"
+                                               rowIndexVar="row2"
+                                               paginatorPosition="top"
+                                               paginatorAlwaysVisible="true"
+                                               rowsPerPageTemplate="5,10,15,30,50,100"
+                                               paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="10">
+                                    <ace:column  headerText="Error" style="text-align: left">
+                                        <h:outputText  value="#{error}">
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                    </ace:tabSet>
+                </ace:panel>
+
+                <ace:panel id ="panel1"
+                           header="Compromisos"
+                           closable="false"
+                           toggleable="true"
+                           rendered="#{!compromisosPoa.formulario.mostrar}">
+                    <h:panelGrid columns="1" width="100%">
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="# Certificación:" />
+                            <h:inputText value="#{compromisosPoa.certificacion}" title="Número de Certificación" />
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{compromisosPoa.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{compromisosPoa.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{compromisosPoa.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document"  action="#{compromisosPoa.nuevo()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                     <h:panelGrid width="100%">
+                                <ace:dataTable id="tabla3" 
+                                               paginatorAlwaysVisible="true"
+                                               value="#{compromisosPoa.listadoCompromisos}"
+                                               var="compromiso"
+                                               paginator="true"
+                                               lazy="true"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="15,20,25,50,100"
+                                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="15">
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+<!--                                    <ace:column headerText="Acciones" style="text-align: left">
+                                        <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                            <ace:menuItem 
+                                                action="#{compromisosPoa.modificar()}" 
+                                                value="Editar" 
+                                                icon="ui-icon ui-icon-pencil"/>
+                                            <ace:menuItem 
+                                                action="#{compromisosPoa.eliminar()}" 
+                                                value="Borrar" 
+                                                icon="ui-icon ui-icon-trash"/>
+                                        </ace:menuButton>
+                                    </ace:column> -->
+                                    <ace:column  headerText="Partida" style="text-align: left">
+                                        <h:outputText  value="#{compromiso.partida}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Fuente" style="text-align: left">
+                                        <h:outputText  value="#{compromiso.fuente}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Fecha" style="text-align: left">
+                                        <h:outputText  value="#{compromiso.fecha}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Valor" style="text-align: left">
+                                        <h:outputText  value="#{compromiso.valor}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="# Certificacion" style="text-align: left">
+                                        <h:outputText  value="#{compromiso.certificacion}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Cedula" style="text-align: left">
+                                        <h:outputText  value="#{compromiso.cedula}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Nombre" style="text-align: left">
+                                        <h:outputText  value="#{compromiso.nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Observacion" style="text-align: left">
+                                        <h:outputText  value="#{compromiso.observacion}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Proyecto" style="text-align: left">
+                                        <h:outputText  value="#{compromiso.proyecto.toString()}"/>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

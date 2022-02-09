@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="Reporte Certificaciones"
+                           closable="false"
+                           toggleable="true">
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteCertificacionesPoa.buscar()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:panel 
+                    header="Certificaciones encontradas"
+                    closable="false"
+                    toggleable="true">
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{reporteCertificacionesPoa.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{reporteCertificacionesPoa.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       paginatorAlwaysVisible="true"
+                                       value="#{reporteCertificacionesPoa.certificaciones}"
+                                       var="item"
+                                       paginator="true"
+                                       lazy="false"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       binding="#{reporteCertificacionesPoa.formulario.fila}"
+                                       scrollHeight="600"
+                                       scrollable="true">
+
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column  headerText="Motivo"  style="text-align: left">
+                                <h:outputText  value="#{item.motivo}"/>
+                            </ace:column>                           
+                            <ace:column  headerText="Número Doc."  style="text-align: left">
+                                <h:outputText  value="#{item.numero}"/>
+                            </ace:column>
+                            <ace:column  headerText="Fecha"  style="text-align: left">
+                                <h:outputText  value="#{item.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Valor"  style="text-align: right">
+                                <h:outputText  value="#{reporteCertificacionesPoa.valor}">
+                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                </h:outputText>
+                            </ace:column>
+
+                            <ace:column  headerText="Aprobada"  style="text-align: left">
+                                <h:panelGrid rendered="#{item.impreso}">
+                                    <img src="../resources/images/si.png" />
+                                </h:panelGrid>
+                                <h:panelGrid rendered="#{!item.impreso}">
+                                    <img src="../resources/images/no.png" width="16" height="16" />
+                                </h:panelGrid>
+                            </ace:column>
+                            <ace:column  headerText="Anulada"  style="text-align: left">
+                                <h:panelGrid rendered="#{item.anulado}">
+                                    <img src="../resources/images/si.png" />
+                                </h:panelGrid>
+                                <h:panelGrid rendered="#{!item.anulado}">
+                                    <img src="../resources/images/no.png" width="16" height="16" />
+                                </h:panelGrid>
+                            </ace:column>
+                            <ace:column  headerText="Rechazada"  style="text-align: left">
+                                <h:panelGrid rendered="#{item.rechazado}">
+                                    <img src="../resources/images/si.png" />
+                                </h:panelGrid>
+                                <h:panelGrid rendered="#{!item.rechazado}">
+                                    <img src="../resources/images/no.png" width="16" height="16" />
+                                </h:panelGrid>
+                            </ace:column>
+                            <ace:column  headerText="Utilizado"  style="text-align: left">
+                                <h:outputText  value="#{reporteCertificacionesPoa.saldoCertificacion}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Saldo"  style="text-align: left">
+                                <h:outputText  value="#{reporteCertificacionesPoa.saldo}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <f:facet name="footer">
+                                Total : <h:outputText value="#{reporteCertificacionesPoa.totalCertificaciones}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </f:facet> 
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

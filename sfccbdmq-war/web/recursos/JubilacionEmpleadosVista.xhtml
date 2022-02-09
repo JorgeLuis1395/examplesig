@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{jubilacionEmpleado.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <ui:include src="../BuscarEmpleado.xhtml" rendered="#{!jubilacionEmpleado.formulario.mostrar}"/>
+
+                    <h:panelGrid columns="2" rendered="#{!jubilacionEmpleado.formulario.mostrar}">
+                        <h:outputLabel value="Fecha de Cesasión:"/>
+                        <ace:dateTimeEntry navigator="true"  value="#{jubilacionEmpleado.fecha}" 
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Número de imposiciones anteriores : "/>
+                        <h:inputText value="#{jubilacionEmpleado.imposicionesAnteriores}"/>
+                        <h:outputLabel value="Tipo " styleClass="bold"/>
+                        <h:selectOneMenu value="#{jubilacionEmpleado.tipo}">
+                            <f:selectItems value="#{tipoJubilacionSfccbdmq.comboJubilacions}"/>                                           
+                        </h:selectOneMenu>
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Generar" icon="ui-icon ui-icon-document"
+                                          action="#{jubilacionEmpleado.nuevo()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <ace:messages/>
+                    <!--</ace:panel>--> 
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Registro"
+                    closable="false"
+                    toggleable="false"
+                    rendered="#{jubilacionEmpleado.formulario.mostrar}">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="R.M.U.:" />
+                        <h:outputLabel value="#{jubilacionEmpleado.rmu}">
+                            <f:convertNumber pattern="###,##0.00"/>
+                        </h:outputLabel>
+                        <h:outputLabel value="Edad:" />
+                        <h:outputLabel value="#{jubilacionEmpleado.edad}">
+                            <f:convertNumber pattern="##0"/>
+                        </h:outputLabel>
+                        <h:outputLabel value="Total Importes CBDMQ:" />
+                        <h:outputLabel value="#{jubilacionEmpleado.imposicionesActuales}">
+                            <f:convertNumber pattern="###,##0"/>
+                        </h:outputLabel>
+                        <h:outputLabel value="Total Importes Anteriores:" />
+                        <h:outputLabel value="#{jubilacionEmpleado.imposicionesAnteriores}">
+                            <f:convertNumber pattern="###,##0"/>
+                        </h:outputLabel>
+                        <h:outputLabel value="Valor de la Jubilación:" />
+                        <h:outputLabel value="#{jubilacionEmpleado.totalRmu}">
+                            <f:convertNumber pattern="###,##0.00"/>
+                        </h:outputLabel>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{jubilacionEmpleado.insertar()}" rendered="#{jubilacionEmpleado.formulario.nuevo}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{jubilacionEmpleado.formulario.cancelar()}" />
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

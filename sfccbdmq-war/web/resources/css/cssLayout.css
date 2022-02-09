@@ -1,0 +1,139 @@
+
+#top {
+    position: relative;
+    /*    background-color: #4f7b8f;*/
+
+    /*    color: #000;
+        padding: 0px;*/
+    margin: 0px 0px 0px 0px;
+    /*   background-image: url('../imagenes/azul.jpg');*/
+    /*    background-repeat: repeat-x;
+        background-position: left;*/
+}
+
+#bottom {
+    position: relative;
+    /*background-color: rgb(121, 121, 121);*/
+    background-color: white;
+    padding: 0px;
+    margin: 0px 0px 0px 0px;
+    clear:both;
+    color: black;
+    vertical-align: middle;
+}
+
+#left {
+    float: left;
+    background-color: #ece3a5;
+    padding: 5px;
+    width: 150px;
+}
+
+#right {
+    float: right;
+    background-color: #ece3a5;
+    padding: 5px;
+    width: 150px;
+}
+
+.center_content {
+    position: relative;
+/*    background-color: #dddddd;*/
+    padding: 0px;
+    margin-top: 0px; 
+}
+
+.left_content {
+    background-color: #dddddd;
+    padding: 5px;
+    margin-left: 170px;
+}
+
+.right_content {
+    background-color: #dddddd;
+    padding: 5px;
+    margin: 0px 170px 0px 170px;
+}
+
+/*#top a:link, #top a:visited {
+  color: black;
+  font-weight : bold;
+  text-decoration: none;
+}
+
+#top a:link:hover, #top a:visited:hover  {
+  color: black;
+  font-weight : bold;
+  text-decoration : underline;
+}*/
+
+.iceMnuBarSubMenu {
+    width: 208px;
+
+}
+.titulo {
+    background-color:#195f88  !important;
+    color: white;
+    background-position-y: -1400px; /* IE7 hack */
+}
+.totales {
+    text-align: right;
+    background-color:#195f88  !important;
+    color: white;
+    background-position-y: -1400px; /* IE7 hack */
+}
+.bold {
+    text-align: right !important;
+    font-weight: 900;
+    font-style: oblique;
+}
+.icePnlGrdRow {
+    vertical-align: top;
+}
+.iceSelInpTxtList{
+/*    background-color: #AFAFAF;*/
+    border:solid black;
+    border-width: 1px;
+    background-color: background;
+    z-index: 9999;
+}
+.iceSelInpTxtSelRow{
+    background-color: #0099CC;
+}
+
+#plantilla\:menuButton100_button .ui-button-text{
+    padding: .8em 4em .8em 3em;
+    text-align: left;
+}
+
+.column1{
+    width:90%;
+}
+.column2{
+    width:10%;
+
+}
+
+.col{
+    width: 50%;
+}
+
+@media print{
+    .imprimir{        
+        display:block !important; 
+        page-break-after: auto !important;
+        page-break-before: auto !important;
+        font-size: 10px !important;
+        color: black !important;
+        width: 100%;
+    }
+    .columna{
+        font-size: 10px !important;
+        color: black !important;
+    }
+    /*    .imprimir.ui-panel ui-widget ui-widget-content ui-corner-all.ui-panel-content ui-widget-content{ 
+            display:block !important; 
+            page-break-before:always !important;
+            font-size: 20px !important;
+        }*/
+}

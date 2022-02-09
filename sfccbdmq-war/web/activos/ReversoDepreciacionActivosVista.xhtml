@@ -1,0 +1,194 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{reversoDepreciacionActivosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGroup>
+
+
+
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="Mes de proceso:"/>
+                            <h:outputLabel value="#{reversoDepreciacionActivosSfccbdmq.mes}"/>
+                            <h:outputLabel value="Año de proceso:"/>
+                            <h:outputLabel value="#{reversoDepreciacionActivosSfccbdmq.anio}"/>
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reversoDepreciacionActivosSfccbdmq.buscar()}"/>
+                                <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{reversoDepreciacionActivosSfccbdmq.reversar()}" rendered="#{reversoDepreciacionActivosSfccbdmq.depreciaciones.size()>0}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                </ace:panel>
+
+                <ace:panel 
+                    header="Resultado Bùsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane >
+                            <f:facet name="label">Contabilización</f:facet>
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:dataTable 
+                                    value="#{reversoDepreciacionActivosSfccbdmq.listaRas}"
+                                    var="itemDetalles"
+                                    paginator="false"
+                                    lazy="false"
+                                    resizableColumns="true"
+                                    rowIndexVar="row"
+                                    paginatorPosition="both"
+                                    rowsPerPageTemplate="15,20,25,50,100"
+                                    currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                    rows="15"
+                                    >
+                                    <!--                    <ace:column  headerText="Registro" style="text-align: right">
+                                                            <h:outputText value="#{row+1}"/>
+                                                        </ace:column>-->
+                                    <ace:column  headerText="Cuenta"  style="text-align: left">
+                                        <h:outputText  value="#{itemDetalles.cuenta}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Nombre"  style="text-align: left">
+                                        <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemDetalles.cuenta).nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Referencia"  style="text-align: left">
+                                        <h:outputText  value="#{itemDetalles.referencia}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Débitos" style="text-align: right">
+                                        <h:outputText  value="#{itemDetalles.valor}" rendered="#{asientosSfccbdmq.isCredito(itemDetalles.valor)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Créditos" style="text-align: right">
+                                        <h:outputText  value="#{itemDetalles.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemDetalles.valor)}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane >
+                            <f:facet name="label">Registros</f:facet>
+                            <h:panelGrid width="100%" >
+                                <ace:dataTable id="tabla" 
+                                               value="#{reversoDepreciacionActivosSfccbdmq.depreciaciones}"
+                                               var="item"
+                                               paginator="true"
+                                               lazy="false"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="15,20,25,50,100"
+                                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="15"
+                                               >
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <!--                                    <ace:column  headerText="Fecha Ingreso"  style="text-align: right">
+                                                                            <h:outputText  value="#{item.activo.fechaingreso}">
+                                                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                                            </h:outputText>
+                                                                        </ace:column>-->
+                                    <ace:column  headerText="Fecha Alta"  style="text-align: right">
+                                        <h:outputText  value="#{item.activo.fechaalta}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <!--                                    <ace:column  headerText="Fecha Baja"  style="text-align: right">
+                                                                            <h:outputText  value="#{item.activo.fechabaja}">
+                                                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                                            </h:outputText>
+                                                                        </ace:column>-->
+                                    <ace:column  headerText="Grupo"  style="text-align: left">
+                                        <h:outputText  value="#{item.activo.grupo.nombre}"/>
+                                    </ace:column>  
+                                    <ace:column  headerText="Clasificación"  style="text-align: left">
+                                        <h:outputText  value="#{item.activo.clasificacion.nombre}"/>
+                                    </ace:column>  
+                                    <ace:column  headerText="Código"  style="text-align: left">
+                                        <h:outputText  value="#{item.activo.codigo}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Nombre"  style="text-align: left">
+                                        <h:outputText  value="#{item.activo.nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Descripción"  style="text-align: left">
+                                        <h:outputText  value="#{item.activo.descripcion}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Marca"  style="text-align: left">
+                                        <h:outputText  value="#{item.activo.marca}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Modelo"  style="text-align: left">
+                                        <h:outputText  value="#{item.activo.modelo}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Estado"  style="text-align: left">
+                                        <h:outputText  value="#{item.activo.estado.nombre}"/>
+                                    </ace:column>  
+                                    <!--                                    <ace:column  headerText="Valor Adquisición"  style="text-align: right">
+                                                                            <h:outputText  value="#{item.activo.valoradquisiscion}">
+                                                                                <f:convertNumber pattern="###,###,##0.00"/>
+                                                                            </h:outputText>
+                                                                        </ace:column>-->
+
+                                    <ace:column  headerText="Valor Alta"  style="text-align: right">
+                                        <h:outputText  value="#{item.activo.valoralta}">
+                                            <f:convertNumber pattern="###,###,##0.0000"/>
+                                        </h:outputText>
+                                    </ace:column>
+
+                                    <ace:column  headerText="% Valor Residual"  style="text-align: right">
+                                        <h:outputText  value="#{item.activo.valorresidual}">
+                                            <f:convertNumber pattern="###,###,##0.0000"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Vida Util"  style="text-align: right">
+                                        <h:outputText  value="#{item.activo.vidautil}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Valor Depreciación"  style="text-align: right">
+                                        <h:outputText  value="#{item.valor}">
+                                            <f:convertNumber pattern="###,###,##0.0000"/>
+                                        </h:outputText>
+                                    </ace:column>
+
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                    </ace:tabSet>
+                </ace:panel>
+                <!--edicion del activo-->
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

@@ -1,0 +1,189 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{aseguradosActivosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="2" width="100%">
+                        <h:outputLabel value="Póliza de Seguros:" />
+                            <h:selectOneMenu  value="#{aseguradosActivosSfccbdmq.poliza}" title="Póliza de Seguros">
+                                <f:selectItems value="#{polizasSfccbdmq.comboPolizaEspacio}"/>
+                            </h:selectOneMenu>
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{aseguradosActivosSfccbdmq.buscar()}"/>
+                        </ace:menuBar>
+                        <ace:dynamicResource fileName="Seguros.pdf" id="pdf-button1xx" label="Imprimir"
+                            mimeType="application/pdf" 
+                            rendered="#{aseguradosActivosSfccbdmq.reporte!=null}"
+                            resource="#{aseguradosActivosSfccbdmq.reporte}" 
+                            style="" type="button"/>
+                        <ace:messages/>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    </h:panelGrid>
+
+                </ace:panel>
+                
+                <ace:panel 
+                    header="Resultado Bùsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{aseguradosActivosSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{aseguradosActivosSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                   
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{aseguradosActivosSfccbdmq.polizas}"
+                                       var="item"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       >
+                            <ace:column  headerText="No" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                           
+                            <ace:column  headerText="Detalle" style="text-align: left">
+                                <h:outputText  value="#{item.activo.descripcion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Código" style="text-align: left">
+                                <h:outputText  value="#{item.activo.codigo}"/>
+                            </ace:column>
+                            <ace:column  headerText="Contrato" style="text-align: left">
+                                <h:outputText  value="#{item.poliza.descripcion}"/>
+                            </ace:column>
+                            
+                            <ace:column  headerText="Valor Asegurado" style="text-align: right">
+                                <h:outputText  value="#{item.poliza.prima}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Plazo" style="text-align: right">
+                                <h:outputText  value="#{aseguradosActivosSfccbdmq.plazo}">
+                                    <f:convertNumber pattern="###,###,##0"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Valor Prima" style="text-align: right">
+                                <h:outputText  value="#{item.valorasegurado}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Válida desde" style="text-align: left">
+                                <h:outputText  value="#{item.desde}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Válida hasta" style="text-align: left">
+                                <h:outputText  value="#{item.hasta}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Ubicación" style="text-align: left">
+                                <h:outputText  value="#{item.activo.localizacion.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Custodio" style="text-align: left">
+                                <h:outputText  value="#{item.activo.externo.institucion.nombre}  #{item.activo.externo.nombre}"/>
+                                <h:outputText  value="#{item.activo.custodio.entidad.toString()}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{aseguradosActivosSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{aseguradosActivosSfccbdmq.formulario.mostrar}"
+                    visible="#{aseguradosActivosSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Aseguradora:" />
+                            <h:selectOneMenu id="aseguradora" value="#{aseguradosActivosSfccbdmq.poliza.aseguradora}" title="Aseguradora" >
+                                <f:selectItems value="#{codigosSfccbdmq.comboAseguradoras}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Valor de la Prima:" for="prima" />
+                            <h:inputText id="prima" value="#{aseguradosActivosSfccbdmq.poliza.prima}" title="Prima" />
+                            <h:outputLabel value="Descripción:"/>
+                            <h:inputTextarea cols="60" rows="4" id="descripcion" value="#{aseguradosActivosSfccbdmq.poliza.descripcion}" title="Descripcion" />
+                            <h:outputLabel value="Válida Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{aseguradosActivosSfccbdmq.poliza.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Válida Hasta:" for="hasta" />
+                            <ace:dateTimeEntry navigator="true"  value="#{aseguradosActivosSfccbdmq.poliza.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{aseguradosActivosSfccbdmq.formulario.nuevo}" 
+                                          action="#{aseguradosActivosSfccbdmq.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{aseguradosActivosSfccbdmq.grabar()}" 
+                                          rendered="#{aseguradosActivosSfccbdmq.formulario.modificar}" />
+                            <ace:menuItem action="#{aseguradosActivosSfccbdmq.borrar()}" 
+                                          value="Esta seguro de Borrar el registro?" 
+                                          rendered="#{aseguradosActivosSfccbdmq.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{aseguradosActivosSfccbdmq.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

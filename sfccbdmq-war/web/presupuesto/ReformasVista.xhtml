@@ -1,0 +1,439 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body>
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="Mantenimiento reformas"
+                           closable="false"
+                           toggleable="true"
+                           rendered="#{reformasSfccbdmq.formularioCabecera.mostrar}">
+
+
+
+                    <h:panelGrid columns="2" width="30%">
+                        <h:outputLabel value="Separador de campos :"/>
+                        <h:inputText value="#{reformasSfccbdmq.separador}"  size="3">
+                            <ace:ajax execute="@all"/>
+                        </h:inputText>
+                        <h:outputLabel value="Archivo a Subir:" />
+                    </h:panelGrid>
+                    <h:panelGrid columns="3" width="30%">
+                        <ace:fileEntry id="file-entry" 
+
+                                       maxFileCount="1" 
+                                       maxFileCountMessage="Máximo un archivo" 
+                                       fileEntryListener="#{reformasSfccbdmq.archivoListener}" 
+                                       maxFileSize="6291456" 
+                                       maxFileSizeMessage="Tamaño muy grande." 
+                                       maxTotalSize="18874368" 
+                                       maxTotalSizeMessage="Total del tamaño muy grande." 
+                                       useOriginalFilename="true" 
+                                       useSessionSubdir="true"/>
+                        <h:commandButton type="submit" value="Cargar datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="4" width="100%">
+                        <h:outputLabel value="Tipo :"/>
+                        <h:selectOneMenu value="#{reformasSfccbdmq.cabeceraReforma.tipo}">
+                            <f:selectItems value="#{codigosSfccbdmq.comboTipoReforma}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Fecha:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{reformasSfccbdmq.cabeceraReforma.fecha}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <h:outputLabel value="Observaciones:" />
+                        <h:inputTextarea cols="40" rows="4" value="#{reformasSfccbdmq.cabeceraReforma.motivo}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{reformasSfccbdmq.crear()}" 
+                                          rendered="#{!reformasSfccbdmq.formularioCabecera.borrar}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{reformasSfccbdmq.formularioCabecera.nuevo}" 
+                                          action="#{reformasSfccbdmq.insertarCabecera()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{reformasSfccbdmq.grabarCabecera()}" 
+                                          rendered="#{reformasSfccbdmq.formularioCabecera.modificar}" />
+                            <ace:menuItem action="#{reformasSfccbdmq.borrarCabecera()}" 
+                                          value="Esta seguro de Borrar el registro?" 
+                                          rendered="#{reformasSfccbdmq.formularioCabecera.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{reformasSfccbdmq.salir()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane>
+                            <f:facet name="label">Registros</f:facet>
+                            <h:panelGrid width="90%">
+                                <ace:dataTable id="tabla" 
+                                               value="#{reformasSfccbdmq.reformas}"
+                                               var="item"
+                                               paginator="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="top"
+                                               rowsPerPageTemplate="15,20,25,50,100"
+                                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="15"
+                                               binding="#{reformasSfccbdmq.formulario.fila}">
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <ace:column style="text-align: left">
+                                        <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                            <ace:menuItem action="#{reformasSfccbdmq.modificar()}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                            <ace:menuItem action="#{reformasSfccbdmq.eliminar()}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                        </ace:menuButton>
+                                    </ace:column> 
+                                    <ace:column  headerText="Fuente" style="text-align: left">
+                                        <h:outputText  value="#{item.asignacion.fuente.nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Partida"  style="text-align: left">
+                                        <h:outputText  value="#{item.asignacion.proyecto.toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Clasificador"  style="text-align: left">
+                                        <h:outputText  value="#{item.asignacion.clasificador.toString()}"/>
+                                    </ace:column>
+    <!--                                <ace:column  headerText="Fecha" sortBy="#{item.fecha}" style="text-align: left">
+                                        <h:outputText  value="#{item.fecha}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </ace:column>-->
+                                    <ace:column  headerText="Asignacion"  style="text-align: right">
+                                        <h:outputText  value="#{item.asignacion.valor}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Reformas"  style="text-align: right">
+                                        <h:outputText  value="#{reformasSfccbdmq.totalReformas}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Codificado"  style="text-align: right">
+                                        <h:outputText  value="#{item.asignacion.valor+(reformasSfccbdmq.totalReformas)}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Certificaciones"  style="text-align: right">
+                                        <h:outputText  value="#{reformasSfccbdmq.totalCertificaciones}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Compromisos"  style="text-align: right">
+                                        <h:outputText  value="#{reformasSfccbdmq.totalCompromiso}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Reforma Actual" style="text-align: right">
+                                        <h:outputText  value="#{item.valor}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Total" style="text-align: right">
+                                        <h:outputText  value="#{item.asignacion.valor+(reformasSfccbdmq.totalReformas -reformasSfccbdmq.totalCertificaciones -reformasSfccbdmq.totalCompromiso ) +item.valor}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+
+                        <ace:tabPane>
+                            <f:facet name="label">Totales</f:facet>
+                            <h:panelGrid width="90%">
+                                <ace:dataTable id="tablaTotales" 
+                                               value="#{reformasSfccbdmq.totales}"
+                                               var="itemTotales"
+                                               paginator="true"
+                                               lazy="false"
+                                               resizableColumns="true"
+                                               rowIndexVar="row1"
+                                               paginatorPosition="top"
+                                               rowsPerPageTemplate="15,20,25,50,100"
+                                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="15"
+                                               >
+                                    <!--<f:facet name="header">Totales</f:facet>-->
+                                    <ace:column  headerText="Fuente"  style="text-align: left">
+                                        <h:outputText  value="#{itemTotales.fuente.nombre}" rendered="#{itemTotales.fuente!=null}"/>  
+                                        <h:outputText  value="#{itemTotales.total}" rendered="#{itemTotales.fuente==null}"/>  
+                                    </ace:column>
+                                    <ace:column  headerText="Ingresos" style="text-align: right">
+                                        <h:outputText  value="#{itemTotales.ingresos}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Egresos" style="text-align: right">
+                                        <h:outputText  value="#{itemTotales.egresos}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Total" style="text-align: right">
+                                        <h:outputText  value="#{itemTotales.ingresos-itemTotales.egresos}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+
+                        <ace:tabPane>
+                            <f:facet name="label">Errores</f:facet>
+                            <h:panelGrid width="90%">
+                                <ace:dataTable id="tablaErrores" 
+                                               value="#{reformasSfccbdmq.errores}"
+                                               var="error"
+                                               paginator="true"
+                                               lazy="false"
+                                               resizableColumns="true"
+                                               rowIndexVar="row2"
+                                               paginatorPosition="top"
+                                               rowsPerPageTemplate="5,10,15,30,50,100"
+                                               paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="10"
+                                               >
+                                    <ace:column  headerText="Error" style="text-align: left">
+                                        <h:outputText  value="#{error}">
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                    </ace:tabSet>
+                </ace:panel>
+                <ace:dialog 
+                    header="Partidas"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reformasSfccbdmq.formulario.mostrar}"
+                    visible="#{reformasSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="1" rendered="#{reformasSfccbdmq.formulario.nuevo}">
+                            <ui:include src="../BuscarClasificador.xhtml" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%" rendered="#{reformasSfccbdmq.formulario.nuevo}">
+                            <ui:include src="../BuscarProyecto.xhtml" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" width="100%" rendered="#{reformasSfccbdmq.formulario.nuevo}">
+                            <h:outputLabel value="Fuente :" for="fuente" />
+                            <h:selectOneMenu id="fuente" value="#{asignacionesSfccbdmq.fuente}">
+                                <f:selectItems value="#{codigosSfccbdmq.comboFuenteFin}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" width="100%" rendered="#{!reformasSfccbdmq.formulario.nuevo}">
+                            <h:outputLabel value="Fuente:" for="fuente" />
+                            <h:outputText value="#{reformasSfccbdmq.reforma.asignacion.fuente.toString()}" />
+                            <h:outputLabel value="Partidas :"/>
+                            <h:outputText value="#{reformasSfccbdmq.reforma.asignacion.toString()}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" width="100%">
+                            <h:outputLabel value="Valor Asignación:"/>
+                            <h:outputText value="#{reformasSfccbdmq.valorAisgnacion}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Valor Reformas:"/>
+                            <h:outputText value="#{reformasSfccbdmq.totalReformasAisgnacion}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Valor Certificaciones:"/>
+                            <h:outputText value="#{reformasSfccbdmq.valorCertificacion}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Valor Compromisos:"/>
+                            <h:outputText value="#{reformasSfccbdmq.valorCompromiso}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Saldo Actual:"/>
+                            <h:outputText value="#{reformasSfccbdmq.saldoActual}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Valor:" for="valor" />
+                            <h:inputText id="valor" value="#{reformasSfccbdmq.reforma.valor}" title="Valor" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{reformasSfccbdmq.formulario.nuevo}" 
+                                              action="#{reformasSfccbdmq.insertar()}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{reformasSfccbdmq.grabar()}" 
+                                              rendered="#{reformasSfccbdmq.formulario.modificar}" />
+                                <ace:menuItem action="#{reformasSfccbdmq.borrar()}" 
+                                              value="Esta seguro de Borrar el registro?" 
+                                              rendered="#{reformasSfccbdmq.formulario.borrar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reformasSfccbdmq.formulario.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                            <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:panel id="panel1"
+                           header="#{reformasSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           rendered="#{!reformasSfccbdmq.formularioCabecera.mostrar}">
+                    <!--                <ace:dialog 
+                                        header="Reformas"
+                                        closable="false"
+                                        modal="true"
+                                        draggable="true"
+                                        showEffect="clip"
+                                        hideEffect="fade"
+                                        rendered="#{!reformasSfccbdmq.formularioCabecera.mostrar}"
+                                        visible="#{!reformasSfccbdmq.formularioCabecera.mostrar}">-->
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Año:" />
+                            <h:inputText value="#{reformasSfccbdmq.anio}" title="Año" />
+                            <h:outputLabel value="Número de Control:" />
+                            <h:inputText value="#{reformasSfccbdmq.id}" title="Número de Control" />
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{reformasSfccbdmq.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{reformasSfccbdmq.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{reformasSfccbdmq.crearCabecera()}" />
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reformasSfccbdmq.buscar()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reformasSfccbdmq.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                            <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable 
+                                value="#{reformasSfccbdmq.cabecerasReformas}"
+                                var="itemCabeceras"
+                                paginator="true"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="both"
+                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rows="30"
+                                >
+                                <ace:column  headerText="Registro" style="text-align: right">
+                                    <h:outputText value="#{row+1}"/>
+                                </ace:column>
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{reformasSfccbdmq.modificarCabecera(itemCabeceras)}" 
+                                                      value="Editar" icon="ui-icon ui-icon-pencil" disabled="#{itemCabeceras.definitivo}"/>
+                                        <ace:menuItem action="#{reformasSfccbdmq.definitivaCabecera(itemCabeceras)}"  
+                                                      value="Definitiva" icon="ui-icon ui-icon-check" 
+                                                      disabled="#{itemCabeceras.definitivo}"/>
+                                        <ace:menuItem action="#{reformasSfccbdmq.imprimirCabecera(itemCabeceras)}"  
+                                                      value="Imprimir" icon="ui-icon ui-icon-print" disabled="#{!itemCabeceras.definitivo}"/>
+                                        <ace:menuItem action="#{reformasSfccbdmq.eliminarCabecera(itemCabeceras)}" 
+                                                      value="Borrar" icon="ui-icon ui-icon-trash" disabled="#{itemCabeceras.definitivo}"/>
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column  headerText="Número de Control" style="text-align: left">
+                                    <h:outputText  value="#{itemCabeceras.id}"/>
+                                </ace:column>
+                                <ace:column  headerText="Observaciones" style="text-align: left">
+                                    <h:outputText  value="#{itemCabeceras.motivo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Fecha"  style="text-align: left">
+                                    <h:outputText  value="#{itemCabeceras.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Definitiva" style="text-align: left">
+                                    <h:panelGrid rendered="#{itemCabeceras.definitivo}">
+                                        SI
+                                        <!--<img src="../resources/images/imputable.png" width="16" height="16" alt="imputable"/>-->
+                                    </h:panelGrid>
+                                    <h:panelGrid rendered="#{!itemCabeceras.definitivo}">
+                                        <!--<img src="../resources/images/noimputable.png" width="16" height="16" alt="imputable"/>-->
+                                        NO
+                                    </h:panelGrid>
+                                </ace:column>
+
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <!--</ace:dialog>-->
+                </ace:panel>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reformasSfccbdmq.formularioImprimir.mostrar}"
+                    visible="#{reformasSfccbdmq.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="1">
+                            <h:commandButton  value="Imprimir">
+                                <!--                                <h:outputText id="printBoth" value="Imprimir"/>-->
+                                <ace:printer for="panelImprimir"/>
+                            </h:commandButton>
+                        </h:panelGrid>
+                        <ui:include src="imprimirReforma.xhtml" />
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reformasSfccbdmq.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                            <h:messages style="color: red;font-style: italic;font-weight: bold"/> 
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

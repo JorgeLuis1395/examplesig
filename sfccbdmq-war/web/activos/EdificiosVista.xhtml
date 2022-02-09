@@ -1,0 +1,197 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{edificiosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="2" width="100%">
+                        <h:outputLabel value="Provincia:"/>
+                        <h:selectOneMenu value="#{ciudadesSfccbdmq.provincia}" title="Provincia" >
+                            <!-- TODO: update below reference to list of available items-->
+                            <f:selectItems value="#{ubicacionesSfccbdmq.comboProvinciasEspacio}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Ciudad:" for="ciudad" />
+                        <h:selectOneMenu  value="#{ciudadesSfccbdmq.ubicacion}" title="Ciudad" >
+                            <!-- TODO: update below reference to list of available items-->
+                            <f:selectItems value="#{ciudadesSfccbdmq.comboCiudadesEspacio}"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{edificiosSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{edificiosSfccbdmq.crear()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                </ace:panel>
+              
+                <ace:panel 
+                    header="Resultado Bùsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{edificiosSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{edificiosSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{edificiosSfccbdmq.edificios}"
+                                       var="item"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       binding="#{edificiosSfccbdmq.formulario.fila}">
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{edificiosSfccbdmq.modificar()}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{edificiosSfccbdmq.eliminar()}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="Nombre" style="text-align: left">
+                                <h:outputText  value="#{item.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Calle primaria" style="text-align: left">
+                                <h:outputText  value="#{item.calleprimaria}"/>
+                            </ace:column>
+                            <ace:column  headerText="Calle secundaria" style="text-align: left">
+                                <h:outputText  value="#{item.callesecundaria}"/>
+                            </ace:column>
+                            <ace:column  headerText="Número" style="text-align: left">
+                                <h:outputText  value="#{item.numero}"/>
+                            </ace:column>
+                            <ace:column  headerText="Referencia" style="text-align: left">
+                                <h:outputText  value="#{item.referencia}"/>
+                            </ace:column>
+                            <ace:column  headerText="Ciudad" style="text-align: left">
+                                <h:outputText  value="#{item.ciudad.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="No. pisos" style="text-align: right">
+                                <h:outputText  value="#{item.pisos}"/>
+                            </ace:column>
+                            <ace:column  headerText="No. parqueaderos" style="text-align: right">
+                                <h:outputText  value="#{item.parqueaderos}"/>
+                            </ace:column>
+                            <ace:column  headerText="Teléfonos" style="text-align: left">
+                                <h:outputText  value="#{item.telefonos}"/>
+                            </ace:column>
+                            <ace:column headerText="Es interno" style="text-align: left">
+                                <h:graphicImage url="../resources/images/si.png" rendered="#{item.internos}"/>
+                                <h:graphicImage url="../resources/images/no.png" rendered="#{!item.internos}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{edificiosSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{edificiosSfccbdmq.formulario.mostrar}"
+                    visible="#{edificiosSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Nombre:" for="nombre" />
+                            <h:inputText id="nombre" value="#{edificiosSfccbdmq.edificio.nombre}" title="Nombre" />
+                            <h:outputLabel value="Calle primaria:" for="calleprimaria" />
+                            <h:inputText id="calleprimaria" value="#{edificiosSfccbdmq.edificio.calleprimaria}" title="Calleprimaria" />
+                            <h:outputLabel value="Calle secundaria:" for="callesecundaria" />
+                            <h:inputText id="callesecundaria" value="#{edificiosSfccbdmq.edificio.callesecundaria}" title="Callesecundaria" />
+                            <h:outputLabel value="Número:" for="numero" />
+                            <h:inputText id="numero" value="#{edificiosSfccbdmq.edificio.numero}" title="Numero" />
+                            <h:outputLabel value="Referencia:" for="referencia" />
+                            <h:inputTextarea rows="4" cols="60" id="referencia" value="#{edificiosSfccbdmq.edificio.referencia}" title="Referencia" />
+                            <h:outputLabel value="Telefonos:" for="telefonos" />
+                            <h:inputTextarea rows="4" cols="60" id="telefonos" value="#{edificiosSfccbdmq.edificio.telefonos}" title="Telefonos" />
+                            <h:outputLabel value="No Pisos:" for="pisos" />
+                            <h:inputText id="pisos" value="#{edificiosSfccbdmq.edificio.pisos}" title="Pisos" />
+                            <h:outputLabel value="No Parqueaderos:" for="parqueaderos" />
+                            <h:inputText id="parqueaderos" value="#{edificiosSfccbdmq.edificio.parqueaderos}" title="Parqueaderos" />
+                            <h:outputLabel value="Provincia:"/>
+                            <h:selectOneMenu value="#{ciudadesSfccbdmq.provincia}" title="Provincia">
+                                <!-- TODO: update below reference to list of available items-->
+                                <f:selectItems value="#{ubicacionesSfccbdmq.comboProvinciasEspacio}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Ciudad:" for="ciudad" />
+                            <h:selectOneMenu id="ciudad" value="#{edificiosSfccbdmq.edificio.ciudad}" title="Ciudad" >
+                                <!-- TODO: update below reference to list of available items-->
+                                <f:selectItems value="#{ciudadesSfccbdmq.comboCiudadesEspacio}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Es interno?:" />
+                            <h:selectBooleanCheckbox value="#{edificiosSfccbdmq.edificio.internos}" title="Propio" />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{edificiosSfccbdmq.formulario.nuevo}" 
+                                          action="#{edificiosSfccbdmq.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{edificiosSfccbdmq.grabar()}" 
+                                          rendered="#{edificiosSfccbdmq.formulario.modificar}" />
+                            <ace:menuItem action="#{edificiosSfccbdmq.borrar()}" 
+                                          value="Esta seguro de Borrar el registro?" 
+                                          rendered="#{edificiosSfccbdmq.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{edificiosSfccbdmq.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                        <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                    </h:panelGrid>
+                </ace:dialog>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

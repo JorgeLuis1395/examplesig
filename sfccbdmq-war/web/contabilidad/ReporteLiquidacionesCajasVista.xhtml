@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+
+                <ace:panel id="panel"
+                           header="#{reporteLiquidacionesCajasSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGroup >
+
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Empleado:"  />
+                            <h:selectOneMenu  value="#{reporteLiquidacionesCajasSfccbdmq.caja}" 
+                                              title="Empleado" >
+                                <f:selectItems value="#{reporteLiquidacionesCajasSfccbdmq.comboCajas}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+
+                            <ace:submitMonitor id="submitMonitorPanel"
+                                               for="panel"
+                                               blockUI="@all"
+                                               autoCenter="true"
+                                               activeLabel="Un Momento por favor"/>
+                        </h:panelGrid>
+
+
+                    </h:panelGroup>
+                    <h:panelGroup >
+                        <h:panelGrid columns="1" width="100%" >
+                            <ace:panel id="panel1"
+                                       header="Datos caja"
+                                       closable="false"
+                                       toggleable="true"
+                                       >
+                                <h:panelGrid columns="2" width="100%">
+                                    <h:outputLabel value="Departamento:" />
+                                    <h:outputLabel value="#{reporteLiquidacionesCajasSfccbdmq.caja.departamento.toString()}" />
+                                    <h:outputLabel value="Responsable:" />
+                                    <h:outputLabel value="#{reporteLiquidacionesCajasSfccbdmq.caja.empleado.toString()}" />
+                                    <h:outputLabel value="Valor:" />
+                                    <h:outputText value="#{reporteLiquidacionesCajasSfccbdmq.caja.valor}" >
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                    <h:outputLabel value="% Vale de caja:" />
+                                    <h:outputText value="#{reporteLiquidacionesCajasSfccbdmq.caja.prcvale}" >
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </h:panelGrid>
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteLiquidacionesCajasSfccbdmq.buscarCajas()}"/>
+                                    <ace:menuItem value="Imprimir" icon="ui-icon ui-icon-print"  action="#{reporteLiquidacionesCajasSfccbdmq.buscarImprimir()}"/>
+                                </ace:menuBar>
+                            </ace:panel>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:panel>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteLiquidacionesCajasSfccbdmq.formularioReportes.mostrar}"
+                    visible="#{reporteLiquidacionesCajasSfccbdmq.formularioReportes.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="liquidacion.pdf" id="pdf-button1" label="Imprimir Liquidación"
+                                             mimeType="application/pdf" 
+                                             rendered="#{reporteLiquidacionesCajasSfccbdmq.reporte!=null}"
+                                             resource="#{reporteLiquidacionesCajasSfccbdmq.reporte}" 
+                                             style="" type="button"/>
+                        <ace:dynamicResource fileName="Solicitud.pdf" id="pdf-button" label="Imprimir Solicitud"
+                                             mimeType="application/pdf" resource="#{reporteLiquidacionesCajasSfccbdmq.reporteARL}" 
+                                             style="" type="button" rendered="#{reporteLiquidacionesCajasSfccbdmq.reporteARL!=null}"/>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteLiquidacionesCajasSfccbdmq.formularioReportes.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

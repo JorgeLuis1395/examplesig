@@ -1,0 +1,277 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{kardexBancosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGroup>
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="Banco :" />
+                            <h:selectOneMenu  value="#{kardexBancosSfccbdmq.banco}">
+                                <f:selectItems value="#{bancosSfccbdmq.comboBancos}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Tipo de Documento :"/>
+                            <h:selectOneMenu  value="#{kardexBancosSfccbdmq.tipo}">
+                                <f:selectItems value="#{tipoMovBancosSfccbdmq.comboOtrosBancos}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Documento :"/>
+                            <h:inputText  value="#{kardexBancosSfccbdmq.documento}"/>
+                            <h:outputLabel value="No comp egreso :"/>
+                            <h:inputText  value="#{kardexBancosSfccbdmq.numero}"/>
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{kardexBancosSfccbdmq.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{kardexBancosSfccbdmq.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" width="100%">
+                            <h:outputLabel value="Observaciones:"/>
+                            <h:inputTextarea cols="60" rows="4" value="#{kardexBancosSfccbdmq.observaciones}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{kardexBancosSfccbdmq.nuevo()}"/>
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{kardexBancosSfccbdmq.buscar()}"/>
+                            </ace:menuBar>
+                            <ace:messages/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{kardexBancosSfccbdmq.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{kardexBancosSfccbdmq.formulario.pantalla}" 
+                                              target="tabla" fileName="datos"/>
+                        </h:panelGrid>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="panel"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+                        <h:panelGrid width="100%">
+                            <ace:dataTable id="tabla" 
+                                           value="#{kardexBancosSfccbdmq.listakardex}"
+                                           var="item"
+                                           paginator="true"
+                                           lazy="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="top"
+                                           rowsPerPageTemplate="15,20,25,50,100"
+                                           currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="15"
+                                           >
+                                <ace:column  headerText="Registro" style="text-align: right">
+                                    <h:outputText value="#{row+1}"/>
+                                </ace:column>
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{kardexBancosSfccbdmq.modifica(item)}" value="Modificar" icon="ui-icon ui-icon-pencil" rendered="#{item.estado==0}"/>
+                                        <ace:menuItem action="#{kardexBancosSfccbdmq.contabiliza(item)}" value="Contabilizar" icon="ui-icon ui-icon-note" rendered="#{item.estado==0}"/>
+                                        <ace:menuItem action="#{kardexBancosSfccbdmq.eliminar(item)}" value="Eliminar" icon="ui-icon ui-icon-trash" rendered="#{item.estado==0}"/>
+                                        <ace:menuItem action="#{kardexBancosSfccbdmq.imprimir(item)}" value="Imprimir" icon="ui-icon ui-icon-print" rendered="#{item.estado!=0}"/>
+                                    </ace:menuButton>
+                                </ace:column>
+                                <ace:column  headerText="Banco"  style="text-align: left">
+                                    <h:outputText  value="#{item.banco.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Tipo mov"  style="text-align: left">
+                                    <h:outputText  value="#{item.tipomov.descripcion}"/>
+                                </ace:column>
+                                <ace:column  headerText="Documento"  style="text-align: left">
+                                    <h:outputText  value="#{item.documento}"/>
+                                </ace:column>
+                                <ace:column  headerText="Observaciones"  style="text-align: left">
+                                    <h:outputText  value="#{item.observaciones}"/>
+                                </ace:column>
+                                <ace:column  headerText="Número Comp. Egreso"  style="text-align: left">
+                                    <h:outputText  value="#{item.id}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor"  style="text-align: right">
+                                    <h:outputText  value="#{item.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Fecha Mov"  style="text-align: left">
+                                    <h:outputText  value="#{item.fechamov}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Fecha Contab"  style="text-align: left">
+                                    <h:outputText  value="#{item.fentrega}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Fecha grab"  style="text-align: left">
+                                    <h:outputText  value="#{item.fechagraba}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Propuesta"  style="text-align: left">
+                                    <h:outputText  value="#{item.propuesta}"/>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>  
+                    </h:panelGroup>
+                </ace:panel>
+
+                <!--para contabilizar-->
+                <ace:dialog 
+                    header="#{kardexBancosSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{kardexBancosSfccbdmq.formulario.mostrar}"
+                    visible="#{kardexBancosSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Tipo de Movimiento:"/>
+                            <h:selectOneMenu value="#{kardexBancosSfccbdmq.kardex.tipomov}" title="Tipo de Movimiento">
+                                <f:selectItems value="#{tipoMovBancosSfccbdmq.comboOtrosBancos}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid rendered="#{kardexBancosSfccbdmq.pideAuxiliar==1}">
+                            <ui:include src="../BuscarProveedor.xhtml" />
+                        </h:panelGrid>
+                        <h:panelGrid rendered="#{kardexBancosSfccbdmq.pideAuxiliar==2}">
+                            <ui:include src="../BuscarEmpleado.xhtml"/>
+                        </h:panelGrid>
+                        <h:panelGrid rendered="#{kardexBancosSfccbdmq.pideAuxiliar==3}">
+                            <ui:include src="../BuscarCliente.xhtml"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Auxiliar:" rendered="#{kardexBancosSfccbdmq.pideAuxiliar==4}"/>
+                            <h:inputTextarea cols="60" rows="4" value="#{kardexBancosSfccbdmq.kardex.auxiliar}" rendered="#{kardexBancosSfccbdmq.pideAuxiliar==4}"/>
+                            <h:outputText value="Banco:"/>
+                            <h:selectOneMenu value="#{kardexBancosSfccbdmq.kardex.banco}" title="Banco">
+                                <f:selectItems value="#{bancosSfccbdmq.comboBancos}"/>
+                            </h:selectOneMenu>
+                            <h:outputText value="Forma de pago:" rendered="#{!kardexBancosSfccbdmq.kardex.tipomov.ingreso}"/>
+                            <h:selectOneMenu value="#{kardexBancosSfccbdmq.kardex.formapago}" title="Formapago" 
+                                             rendered="#{!kardexBancosSfccbdmq.kardex.tipomov.ingreso}">
+                                <f:selectItems value="#{codigosSfccbdmq.comboFormaDePago}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Fecha Movimiento:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{kardexBancosSfccbdmq.kardex.fechamov}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputText value="Propuesta de Pago:" rendered="#{kardexBancosSfccbdmq.kardex.tipomov.spi}"/>
+                            <h:inputText value="#{kardexBancosSfccbdmq.kardex.propuesta}" rendered="#{kardexBancosSfccbdmq.kardex.tipomov.spi}"/>
+                            <h:outputText value="Número de SPI:" rendered="#{kardexBancosSfccbdmq.kardex.tipomov.spi}"/>
+                            <h:inputText value="#{kardexBancosSfccbdmq.numeroSpi}" rendered="#{kardexBancosSfccbdmq.kardex.tipomov.spi}"/>
+                            <h:outputText value="Valor:"/>
+                            <h:inputText value="#{kardexBancosSfccbdmq.kardex.valor}" title="Valor" />
+                            <h:outputText value="Observaciones:"/>
+                            <h:inputTextarea cols="60" rows="4" value="#{kardexBancosSfccbdmq.kardex.observaciones}" title="Observaciones"/>
+                            <h:outputText value="Referencia Banco:"/>
+                            <h:inputText value="#{kardexBancosSfccbdmq.kardex.documento}" title="Documento" />
+                            <h:outputText value="Número Recibo:" rendered="#{kardexBancosSfccbdmq.kardex.tipomov.ingreso}"/>
+                            <h:inputText value="#{kardexBancosSfccbdmq.kardex.numerorecibo}" title="Documento" rendered="#{kardexBancosSfccbdmq.kardex.tipomov.ingreso}"/>
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{kardexBancosSfccbdmq.formulario.nuevo}" 
+                                              action="#{kardexBancosSfccbdmq.insertar()}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{kardexBancosSfccbdmq.grabar()}" 
+                                              rendered="#{kardexBancosSfccbdmq.formulario.modificar}" />
+                                <ace:menuItem action="#{kardexBancosSfccbdmq.borrar()}" 
+                                              value="Esta seguro de Borrar el registro?" 
+                                              rendered="#{kardexBancosSfccbdmq.formulario.borrar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{kardexBancosSfccbdmq.formulario.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <!--Imprimimr-->
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{kardexBancosSfccbdmq.formularioImprimir.mostrar}"
+                    visible="#{kardexBancosSfccbdmq.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <!--                        <h:panelGrid columns="1">
+                                                    <h:commandButton  value="Imprimir">
+                                                        <h:outputText id="printBoth" value="Imprimir"/>
+                                                        <ace:printer for="panelImprimir"/>
+                                                    </h:commandButton>
+                                                </h:panelGrid>-->
+                        <ace:dynamicResource fileName="Egreso.pdf" id="pdf-button1" label="Generar PDF"
+                                             mimeType="application/pdf" resource="#{kardexBancosSfccbdmq.reporte}" 
+                                             style="" type="button" rendered="#{kardexBancosSfccbdmq.reporte!=null}"/>
+                        <ace:dynamicResource fileName="Propuesta.pdf"  label="Generar Propuesta"
+                                             mimeType="application/pdf" 
+                                             rendered="#{kardexBancosSfccbdmq.reportePropuesta!=null}"
+                                             resource="#{kardexBancosSfccbdmq.reportePropuesta}" 
+                                             style="" type="button"/>
+                        <ace:dynamicResource fileName="Ingreso.xls" id="xls-button" label="Comprobante"
+                                             mimeType="application/pdf" resource="#{kardexBancosSfccbdmq.reporteRecibo}" 
+                                             style="" type="button" rendered="#{kardexBancosSfccbdmq.reporteRecibo!=null}"/>
+                        <ui:include src="imprimirMovimientoBanco.xhtml" />
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{kardexBancosSfccbdmq.grabarContabilizar()}" rendered="#{kardexBancosSfccbdmq.formularioImprimir.nuevo}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{kardexBancosSfccbdmq.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

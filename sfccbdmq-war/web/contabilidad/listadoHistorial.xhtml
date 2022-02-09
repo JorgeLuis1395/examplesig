@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+
+    <h:panelGrid width="100%">
+        <ace:dataTable id="tablaHA" 
+                       value="#{bajasActivosSfccbdmq.tackings}"
+                       var="itemHistorial"
+                       paginator="true"
+                       lazy="false"
+                       resizableColumns="true"
+                       rowIndexVar="row"
+                       paginatorPosition="top"
+                       rowsPerPageTemplate="15,20,25,50,100"
+                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                       rows="15"
+                       >
+            <ace:column  headerText="Registro" style="text-align: right">
+                <h:outputText value="#{row+1}"/>
+            </ace:column>
+            <ace:column  headerText="Descripción" style="text-align: left">
+                <h:outputText  value="#{itemHistorial.descripcion}"/>
+            </ace:column>
+            <ace:column  headerText="Observaciones" style="text-align: left">
+                <h:outputText  value="#{itemHistorial.cuenta1}"/>
+            </ace:column>
+            <ace:column  headerText="Tipo" style="text-align: left">
+               <h:outputText  value="#{reporteTrackingActivosSfccbdmq.getTipoStr(itemHistorial.tipo)}"/>
+            </ace:column>
+            <ace:column  headerText="Inf. Ant." style="text-align: left">
+                <h:outputText  value="#{itemHistorial.cuenta1}"/>
+            </ace:column>
+            <ace:column  headerText="Inf. Actual." style="text-align: left">
+                <h:outputText  value="#{itemHistorial.cuenta2}"/>
+            </ace:column>
+            <ace:column  headerText="Fecha" style="text-align: left">
+                <h:outputText  value="#{itemHistorial.fecha}">
+                    <f:convertDateTime parent="dd/MM/yyyy HH:mm:ss"/>
+                </h:outputText>
+            </ace:column>
+            <ace:column  headerText="Valor ant" style="text-align: right">
+                <h:outputText  value="#{itemHistorial.valor}">
+                    <f:convertNumber pattern="###,###,##0.00"/>
+                </h:outputText>
+            </ace:column>
+            <ace:column  headerText="Valor nuevo" style="text-align: right">
+                <h:outputText  value="#{itemHistorial.valor}">
+                    <f:convertNumber pattern="###,###,##0.00"/>
+                </h:outputText>
+            </ace:column>
+            <ace:column  headerText="Usuario" style="text-align: left">
+                <h:outputText  value="#{itemHistorial.usuario}"/>
+            </ace:column>
+        </ace:dataTable>
+    </h:panelGrid>  
+</html>

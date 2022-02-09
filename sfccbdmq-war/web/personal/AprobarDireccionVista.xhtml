@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaPersonal.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <h:panelGrid width="100%">
+                    <ace:panel id="panel"
+                               header="Aprobar Suministros"
+                               closable="false"
+                               toggleable="false"  >
+
+
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Bodega :" />
+                            <h:selectOneMenu  value="#{aprobarDireccionSfccbdmq.bodega}">
+                                <f:selectItems value="#{bodegasSfccbdmq.comboBodegas}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Tipo de Movimiento :" />
+                            <h:selectOneMenu  value="#{aprobarDireccionSfccbdmq.tipo}">
+                                <f:selectItems value="#{txSuministrosSfccbdmq.comboTipos}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Número" />
+                            <h:inputText value="#{aprobarDireccionSfccbdmq.numero}"/>
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="1">
+                            <h:outputLabel value="Observaciones" />
+                            <h:inputTextarea cols="80" rows="4" value="#{aprobarDireccionSfccbdmq.observaciones}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="5">
+                            <h:outputLabel value="Fecha de Digitación:" />
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{aprobarDireccionSfccbdmq.desde}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{aprobarDireccionSfccbdmq.hasta}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid> 
+
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  
+                                              action="#{aprobarDireccionSfccbdmq.buscar()}"/>
+                            </ace:menuBar>
+
+                        </h:panelGrid>
+                        <ace:messages />
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{solicitudesCargo.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{solicitudesCargo.formulario.pantalla}" 
+                                              target="tabla" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%" style="margin-bottom: 20px;">
+
+                            <ace:dataTable id="tabla"
+                                           value="#{aprobarDireccionSfccbdmq.cabeceras}"
+                                           var="item"
+                                           lazy="true"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="10,15,30,50"
+                                           currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="30"
+                                           style="width: 100%;"
+                                           >
+                                <ace:column style="text-align: left" >
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem value="Editar" icon="ui-icon ui-icon-document" action="#{aprobarDireccionSfccbdmq.modifica()}"  rendered="#{aprobarDireccionSfccbdmq.pudeModificar}"/>
+                                        <ace:menuItem value="Imprimir" icon="ui-icon ui-icon-print" action="#{aprobarDireccionSfccbdmq.imprimir()}"  />
+                                        <!--<ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{aprobarDireccionSfccbdmq.elimina()}"  />-->
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column  headerText="Número "  style="text-align: left">
+                                    <h:outputText value="#{item.id}"/>
+                                </ace:column>
+
+                                <ace:column  headerText="Fecha Ingreso"  style="text-align: left">
+                                    <h:outputText  value="#{item.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Fecha Despacho"  style="text-align: left">
+                                    <h:outputText  value="#{item.despacho}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Observaciones"  style="text-align: left">
+                                    <h:outputText value="#{item.observaciones}"/>
+                                </ace:column>
+                                <ace:column  headerText="Solicitado por"  style="text-align: left">
+                                    <h:outputText value="#{item.empleadosolicita.entidad.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Despachado por"  style="text-align: left">
+                                    <h:outputText value="#{item.empleadodespacho.entidad.toString()}"/>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:panel>
+                    <!--</ace:dialog>-->
+                </h:panelGrid>
+                <ace:dialog
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    header="Solicitud de Suministros"
+                    rendered="#{aprobarDireccionSfccbdmq.formulario.mostrar}"
+                    visible="#{aprobarDireccionSfccbdmq.formulario.mostrar}">
+                    <ui:include src="DetalleSolicitudAprueba.xhtml"/>
+
+                </ace:dialog> 
+                <ace:dialog
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    header="Modificar/Crear Registro"
+                    rendered="#{aprobarDireccionSfccbdmq.formularioRenglones.mostrar}"
+                    visible="#{aprobarDireccionSfccbdmq.formularioRenglones.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2" width="90%" >
+                            <h:outputLabel value="Suministro:" for="suministro" />
+                            <h:outputLabel value="#{aprobarDireccionSfccbdmq.kardex.suministro.nombre}" />
+                            <h:outputLabel value="Saldo Bodega:" rendered="#{aprobarDireccionSfccbdmq.seleccionaConsumo}"/>
+                            <h:outputLabel value="#{aprobarDireccionSfccbdmq.saldoBodega}" rendered="#{aprobarDireccionSfccbdmq.seleccionaConsumo}"/>
+                            <h:outputLabel value="Solicitado:" rendered="#{aprobarDireccionSfccbdmq.seleccionaConsumo}"/>
+                            <h:outputLabel value="#{aprobarDireccionSfccbdmq.kardex.cantidad}" rendered="#{aprobarDireccionSfccbdmq.seleccionaConsumo}"/>
+                            <h:outputLabel value="Cantidad:" for="cantidad" rendered="#{aprobarDireccionSfccbdmq.seleccionaConsumo}"/>
+                            <h:inputText id="cantidad" value="#{aprobarDireccionSfccbdmq.kardex.aprobado}" title="Cantidad" rendered="#{aprobarDireccionSfccbdmq.seleccionaConsumo}"/>
+                            <h:outputLabel value="Saldo Bodega Inversión:" rendered="#{aprobarDireccionSfccbdmq.seleccionaInversion}"/>
+                            <h:outputLabel value="#{aprobarDireccionSfccbdmq.saldoInversionBodega}" rendered="#{aprobarDireccionSfccbdmq.seleccionaInversion}"/>
+                            <h:outputLabel value="Solicitado Inversión:" rendered="#{aprobarDireccionSfccbdmq.seleccionaConsumo}"/>
+                            <h:outputLabel value="#{aprobarDireccionSfccbdmq.kardex.cantidadinvercion}" rendered="#{aprobarDireccionSfccbdmq.seleccionaConsumo}"/>
+                            <h:outputLabel value="Cantidad Inversión:" rendered="#{aprobarDireccionSfccbdmq.seleccionaInversion}"/>
+                            <h:inputText value="#{aprobarDireccionSfccbdmq.kardex.aprobadoinversion}" title="Cantidad" rendered="#{aprobarDireccionSfccbdmq.seleccionaInversion}"/>
+                            <h:outputLabel value="Unidad:" for="unidad" />
+                            <h:outputLabel value="#{aprobarDireccionSfccbdmq.kardex.suministro.unidad.equivalencia}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{aprobarDireccionSfccbdmq.insertarRenglon()}" rendered="#{aprobarDireccionSfccbdmq.formularioRenglones.nuevo}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" action="#{aprobarDireccionSfccbdmq.grabarRenglon()}" rendered="#{aprobarDireccionSfccbdmq.formularioRenglones.modificar}" />
+                                <ace:menuItem value="Esta Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{aprobarDireccionSfccbdmq.borrarRenglon()}" rendered="#{aprobarDireccionSfccbdmq.formularioRenglones.borrar}" />
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" action="#{aprobarDireccionSfccbdmq.formularioRenglones.cancelar()}" />
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog> 
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{aprobarDireccionSfccbdmq.formularioImprimir.mostrar}"
+                    visible="#{aprobarDireccionSfccbdmq.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <!--                        <h:panelGrid columns="1">
+                                                    <h:commandButton  value="Imprimir">
+                                                        <h:outputText id="printBoth" value="Imprimir"/>
+                                                        <ace:printer for="panelImprimir"/>
+                                                    </h:commandButton>
+                                                </h:panelGrid>
+                                                <ui:include src="imprimirSolicitud.xhtml" />-->
+                        <ace:dynamicResource fileName="Solicitud.pdf" id="pdf-buttonxx" label="Generar PDF"
+                                             mimeType="application/pdf" resource="#{aprobarDireccionSfccbdmq.recurso}" 
+                                             style="" type="button"/>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{aprobarDireccionSfccbdmq.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <!--Poner  con include ya que vista demasiado Cargada;-->
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

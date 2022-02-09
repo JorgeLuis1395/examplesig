@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{pagoConceptoProveedorSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <ui:include src="../BuscarProveedor.xhtml" rendered="#{!pagoConceptoProveedorSfccbdmq.formulario.mostrar}"/>
+                    <h:panelGrid columns="4">
+                        <h:outputText value="Mes:"/>
+                        <h:inputText value="#{pagoConceptoProveedorSfccbdmq.mes}" disabled="#{pagoConceptoProveedorSfccbdmq.formulario.mostrar}"/>
+                        <h:outputText value="Anio:"/>
+                        <h:inputText value="#{pagoConceptoProveedorSfccbdmq.anio}" disabled="#{pagoConceptoProveedorSfccbdmq.formulario.mostrar}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1">
+                        <h:outputText value="Conceptos :"/>
+                        <!--layout="pageDirection"-->
+                        <h:selectManyCheckbox value="#{pagoConceptoProveedorSfccbdmq.conceptosLista}" id="listaConceptos" 
+                                              disabled="#{pagoConceptoProveedorSfccbdmq.formulario.mostrar}">
+                            <f:selectItems value="#{pagoConceptoProveedorSfccbdmq.proviciones}" 
+                                           var="lc" itemValue="#{lc.codigo}" itemLabel="#{lc.nombre}"/>
+                        </h:selectManyCheckbox>
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{pagoConceptoProveedorSfccbdmq.buscar()}" rendered="#{!pagoConceptoProveedorSfccbdmq.formulario.mostrar}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{pagoConceptoProveedorSfccbdmq.grabar()}" rendered="#{pagoConceptoProveedorSfccbdmq.formulario.nuevo}" />
+                            <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash"  action="#{pagoConceptoProveedorSfccbdmq.borrar()}" rendered="#{pagoConceptoProveedorSfccbdmq.formulario.borrar}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{pagoConceptoProveedorSfccbdmq.formulario.cancelar()}" rendered="#{pagoConceptoProveedorSfccbdmq.formulario.mostrar}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <ace:dynamicResource fileName="Egreso.pdf"  label="Generar Egreso"
+                                             mimeType="application/pdf" 
+                                             rendered="#{pagoConceptoProveedorSfccbdmq.reporte!=null}"
+                                             resource="#{pagoConceptoProveedorSfccbdmq.reporte}" 
+                                             style="" type="button"/>
+                        <ace:dynamicResource fileName="Propuesta.pdf" label="Generar Propuesta"
+                                             mimeType="application/pdf" 
+                                             rendered="#{pagoConceptoProveedorSfccbdmq.reportePropuesta!=null}"
+                                             resource="#{pagoConceptoProveedorSfccbdmq.reportePropuesta}" 
+                                             style="" type="button"/>
+                    </h:panelGrid>
+                    <ace:messages/>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{pagoConceptoProveedorSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter 
+                            label="Exportar Archivo" 
+                            type="#{pagoConceptoProveedorSfccbdmq.formulario.pantalla}" 
+                            target="tablaIngresos" fileName="datosIngresos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tablaIngresos"
+                                       value="#{pagoConceptoProveedorSfccbdmq.listaRoles}"
+                                       binding="#{pagoConceptoProveedorSfccbdmq.formulario.fila}"
+                                       var="pagoTotal">
+                            <ace:column  headerText="Empleado"  style="text-align: left">
+                                <h:outputText value="#{pagoTotal.entidad.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Banco"  style="text-align: left">
+                                <h:outputText value="#{pagoConceptoProveedorSfccbdmq.banco}"/>
+                            </ace:column>
+                            <ace:column  headerText="Tipo de Cuenta"  style="text-align: left">
+                                <h:outputText value="#{pagoConceptoProveedorSfccbdmq.tipoCuenta}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nùmero de Cuenta"  style="text-align: left">
+                                <h:outputText value="#{pagoConceptoProveedorSfccbdmq.numeroCuenta}"/>
+                            </ace:column>
+                            <ace:column  headerText="A pagar" style="text-align: right">
+                                <h:outputText   value="#{pagoTotal.totalPagar}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+
+                </ace:panel>
+                <ace:dialog 
+                    header="#{pagoConceptoProveedorSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{pagoConceptoProveedorSfccbdmq.formularioEgresos.mostrar}"
+                    visible="#{pagoConceptoProveedorSfccbdmq.formularioEgresos.mostrar}"
+                    >
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Forma de pago:"/>
+                            <h:selectOneMenu value="#{pagoConceptoProveedorSfccbdmq.kardex.formapago}" title="Formapago" >
+                                <f:selectItems value="#{codigosSfccbdmq.comboFormaDePago}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Fecha Movimiento:" />
+                            <ace:dateTimeEntry navigator="true" value="#{pagoConceptoProveedorSfccbdmq.kardex.fechamov}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <!--                            <h:outputText value="No Egreso:"/>
+                                                        <h:inputText value="#{pagoConceptoProveedorSfccbdmq.kardex.egreso}" title="No egreso"/>-->
+                            <h:outputText value="No SPI : "/>
+                            <h:inputText value="#{pagoConceptoProveedorSfccbdmq.numeroSpi}" title="No Documento" size="5">
+                                <f:validateLength maximum="5"/>
+                                <ace:ajax execute="@all"/>
+                            </h:inputText>
+                            <h:outputText value="Observaciones:"/>
+                            <h:inputTextarea cols="60" rows="4" value="#{pagoConceptoProveedorSfccbdmq.kardex.observaciones}" title="Observaciones"/>
+                            <h:outputText value="Tipo de Movimiento:"/>
+                            <h:selectOneMenu value="#{pagoConceptoProveedorSfccbdmq.kardex.tipomov}" title="Tipo de Movimiento">
+                                <f:selectItems value="#{tipoMovBancosSfccbdmq.comboObligacionesBancos}"/>
+                            </h:selectOneMenu>
+                            <h:outputText value="Banco:"/>
+                            <h:selectOneMenu value="#{pagoConceptoProveedorSfccbdmq.kardex.banco}" title="Banco">
+                                <f:selectItems value="#{bancosSfccbdmq.comboBancos}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="2" width="100%">
+                            <h:outputText value="Valor A pagar:" />
+                            <h:outputText value="#{pagoConceptoProveedorSfccbdmq.total}" >
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                        </h:panelGrid>
+
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                              action="#{pagoConceptoProveedorSfccbdmq.insertarKardex()}" />
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{pagoConceptoProveedorSfccbdmq.formularioEgresos.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{pagoConceptoProveedorSfccbdmq.formularioIngresos.mostrar}"
+                    visible="#{pagoConceptoProveedorSfccbdmq.formularioIngresos.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="Egreso.pdf"  label="Generar Egreso"
+                                             mimeType="application/pdf" 
+                                             rendered="#{pagoConceptoProveedorSfccbdmq.reporte!=null}"
+                                             resource="#{pagoConceptoProveedorSfccbdmq.reporte}" 
+                                             style="" type="button"/>
+                        <ace:dynamicResource fileName="Propuesta.pdf" label="Generar Propuesta"
+                                             mimeType="application/pdf" 
+                                             rendered="#{pagoConceptoProveedorSfccbdmq.reportePropuesta!=null}"
+                                             resource="#{pagoConceptoProveedorSfccbdmq.reportePropuesta}" 
+                                             style="" type="button"/>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{pagoConceptoProveedorSfccbdmq.formularioIngresos.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

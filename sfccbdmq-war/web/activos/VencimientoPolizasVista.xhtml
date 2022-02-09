@@ -1,0 +1,166 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{vencimientosPolizasSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+
+                    <h:panelGrid columns="2" width="100%">
+                        <h:outputLabel value="Més:" />
+                        <h:inputText value="#{vencimientosPolizasSfccbdmq.mes}" />
+                        <h:outputLabel value="Año:" />
+                        <h:inputText value="#{vencimientosPolizasSfccbdmq.anio}" />
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+
+                        <ace:menuBar autoSubmenuDisplay="true" >
+
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{vencimientosPolizasSfccbdmq.buscar()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                </ace:panel>
+
+                <ace:panel 
+                    header="Resultado Bùsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="leftedPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{vencimientosPolizasSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{vencimientosPolizasSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <!--                    <h:panelGrid styleClass="leftedPanelGrid">
+                                            
+                                        </h:panelGrid>-->
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{vencimientosPolizasSfccbdmq.calendarioMes}"
+                                       var="item"
+                                       binding="#{vencimientosPolizasSfccbdmq.formulario.fila}"
+                                       scrollHeight="600"
+                                       scrollable="true">
+                            <ace:column  headerText="Domingo"  style="text-align: left;width: 10%">
+                                <ace:panel 
+                                    header="#{item.diaDomingo}"
+                                    closable="false"
+                                    toggleable="false"
+                                    rendered="#{item.diaDomingo!=null}">
+                                    <h:panelGrid style="#{item.estilo}">
+                                        <h:outputText value="#{item.contenidoDomingo}" escape="false"/>
+                                    </h:panelGrid>
+                                </ace:panel>
+                            </ace:column>
+                            <ace:column  headerText="Lunes"  style="text-align: left;width: 15%">
+                                <ace:panel 
+                                    header="#{item.diaLunes}"
+                                    closable="false"
+                                    toggleable="false"
+                                    rendered="#{item.diaLunes!=null}">
+                                    <h:panelGrid style="#{item.estilo}">
+                                        <h:outputText value="#{item.contenidoLunes}" escape="false"/>
+                                    </h:panelGrid>
+                                </ace:panel>
+                            </ace:column>  
+                            <ace:column  headerText="Martes"  style="text-align: left;width: 15%">
+                                <ace:panel 
+                                    header="#{item.diaMartes}"
+                                    closable="false"
+                                    toggleable="false"
+                                    rendered="#{item.diaMartes!=null}">
+                                    <h:panelGrid style="#{item.estilo}" >
+                                        <h:outputText value="#{item.contenidoMartes}" escape="false"/>
+                                    </h:panelGrid>
+                                </ace:panel>
+                            </ace:column>
+                            <ace:column  headerText="Mércoles"  style="text-align: left;width: 15%">
+                                <ace:panel 
+                                    header="#{item.diaMiercoles}"
+                                    closable="false"
+                                    toggleable="false"
+                                    rendered="#{item.diaMiercoles!=null}">
+                                    <h:panelGrid style="#{item.estilo}">
+                                        <h:outputText value="#{item.contenidoMiercoles}" escape="false"/>
+                                    </h:panelGrid>
+                                </ace:panel>
+                            </ace:column>
+                            <ace:column  headerText="Jueves"  style="text-align: left;width: 15%">
+                                <ace:panel 
+                                    header="#{item.diaJueves}"
+                                    closable="false"
+                                    toggleable="false"
+                                    rendered="#{item.diaJueves!=null}">
+                                    <h:panelGrid style="#{item.estilo}">
+                                        <h:outputText value="#{item.contenidoJueves}" escape="false"/>
+                                    </h:panelGrid>
+                                </ace:panel>
+                            </ace:column>
+                            <ace:column  headerText="Viernes"  style="text-align: left;width: 15%">
+                                <ace:panel 
+                                    header="#{item.diaViernes}"
+                                    closable="false"
+                                    toggleable="false"
+                                    rendered="#{item.diaViernes!=null}">
+                                    <h:panelGrid style="#{item.estilo}">
+                                        <h:outputText value="#{item.contenidoViernes}" escape="false"/>
+                                    </h:panelGrid>
+                                </ace:panel>
+                            </ace:column>
+                            <ace:column  headerText="Sábado"  style="text-align: left;width: 15%">
+                                <ace:panel 
+                                    header="#{item.diaSabado}"
+                                    closable="false"
+                                    toggleable="false"
+                                    rendered="#{item.diaSabado!=null}">
+                                    <h:panelGrid style="#{item.estilo}">
+                                        <h:outputText value="#{item.contenidoSabado}" escape="false" style="text-align: left"/>
+                                    </h:panelGrid>
+                                </ace:panel>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

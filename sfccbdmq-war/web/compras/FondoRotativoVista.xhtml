@@ -1,0 +1,288 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{fondoRotativoSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           rendered="#{fondoRotativoSfccbdmq.formulario.mostrar}">
+                    <!--panel principal-->
+                    <h:panelGroup>
+                        <ace:tabSet style="clear:both;" clientSide="true">
+                            <ace:tabPane >
+                                <f:facet name="label">Inf. General</f:facet>
+                                <h:panelGroup>
+                                    <!--<ui:include src="../BuscarProveedor.xhtml" />-->
+                                    <h:panelGrid columns="2" width="100%">
+                                        <h:outputLabel value="Proveedor :" />
+                                        <h:selectOneMenu  value="#{fondoRotativoSfccbdmq.obligacion.proveedor}" 
+                                                          disabled="#{fondoRotativoSfccbdmq.deshabilitaProveedor}">
+                                            <f:selectItems value="#{fondoRotativoSfccbdmq.comboProveedores}"/>
+                                            <ace:ajax execute="@all"/>
+                                        </h:selectOneMenu>
+<!--                                        <h:outputLabel value="Código del sustento :"/>
+                                        <h:selectOneMenu  value="#{fondoRotativoSfccbdmq.obligacion.sustento}">
+                                            <f:selectItems value="#{codigosSfccbdmq.comboSustentos}"/>
+                                        </h:selectOneMenu>-->
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" width="100%" rendered="#{facturaSri.factura==null}">
+                                        <h:outputLabel value="Autorizaciones :"/>
+                                        <h:selectOneMenu  value="#{fondoRotativoSfccbdmq.autorizacion}" id="autorizacion">
+                                            <f:selectItems value="#{fondoRotativoSfccbdmq.comboAutorizaciones}"/>
+                                            <ace:ajax execute="@all"/>
+                                        </h:selectOneMenu>
+
+                                        <h:outputLabel value="Número de Documento :"/>
+                                        <h:inputText  value="#{fondoRotativoSfccbdmq.obligacion.documento}"/>
+                                        <h:outputLabel value="Fecha de Emisión. :"/>
+                                        <ace:dateTimeEntry navigator="true"  value="#{fondoRotativoSfccbdmq.obligacion.fechaemision}" 
+                                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </ace:dateTimeEntry>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" width="100%">
+                                        <ace:panel 
+                                            header="Retención"
+                                            closable="false"
+                                            toggleable="true"
+                                            >
+                                            <h:panelGrid columns="2" width="100%">
+                                                <h:outputLabel value="Sucursal de emisión :"/>
+                                                <h:selectOneMenu value="#{puntosemisionSfccbdmq.sucursal}">
+                                                    <f:selectItems value="#{sucursalesSfccbdmq.comboSucursales}"/>
+                                                    <ace:ajax execute="@all"/>
+                                                </h:selectOneMenu>
+                                                <h:outputLabel value="Punto de emisión :"/>
+                                                <h:selectOneMenu  value="#{fondoRotativoSfccbdmq.puntoEmision}">
+                                                    <f:selectItems value="#{puntosemisionSfccbdmq.comboPuntoemisionManual}"/>
+                                                    <ace:ajax execute="@all"/>
+                                                </h:selectOneMenu>
+                                                <h:outputLabel value="Autorización :"/>
+                                                <h:selectOneMenu  value="#{fondoRotativoSfccbdmq.documeto}">
+                                                    <f:selectItems value="#{fondoRotativoSfccbdmq.comboDocumentos}"/>
+                                                    <ace:ajax execute="@all"/>
+                                                </h:selectOneMenu>
+                                                <h:outputLabel value="Número:"/>
+                                                <h:inputText value="#{fondoRotativoSfccbdmq.obligacion.numeror}"/>
+                                                <h:outputLabel value="Fecha Ret.:" />
+                                                <ace:dateTimeEntry navigator="true"  value="#{fondoRotativoSfccbdmq.obligacion.fechar}" 
+                                                                   popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                </ace:dateTimeEntry>
+
+                                            </h:panelGrid>
+                                        </ace:panel>
+                                        <ace:panel 
+                                            header="Concepto"
+                                            closable="false"
+                                            toggleable="true"
+                                            >
+                                            <h:inputTextarea cols="100" rows="5" 
+                                                             value="#{fondoRotativoSfccbdmq.obligacion.concepto}"/>
+                                        </ace:panel>
+                                    </h:panelGrid>
+                                </h:panelGroup>
+                            </ace:tabPane>
+                            <ace:tabPane >
+                                <f:facet name="label">Totales</f:facet>
+                                <ace:dataTable  
+                                    value="#{fondoRotativoSfccbdmq.totales}"
+                                    var="itemTotales"
+                                    paginator="false"
+                                    lazy="falase"
+                                    resizableColumns="true"
+                                    rowIndexVar="row"
+                                    paginatorPosition="both"
+                                    rowsPerPageTemplate="15,20,25,50,100"
+                                    currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                    rows="15"
+                                    >
+                                    <f:facet name="header">Totales</f:facet> 
+                                    <ace:column  headerText=""  style="text-align: left">
+                                        <h:outputText  value="#{itemTotales.total}"/>
+                                    </ace:column>
+
+                                    <ace:column  headerText="Valor" style="text-align: right">
+                                        <h:outputText  value="#{itemTotales.ingresos}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </ace:tabPane>
+                            <ace:tabPane >
+                                <f:facet name="label">Factura electrónica</f:facet>
+                                <h:panelGrid columns="4" width="100%">
+                                    <h:outputLabel value="Archivo de Factura Electrónica :"/>
+                                    <ace:fileEntry id="Archivo_XML"
+                                                   relativePath="/files/"
+                                                   maxFileCount="10"
+                                                   maxFileCountMessage="Limited to 10 files uploaded concurrantly."
+                                                   fileEntryListener="#{fondoRotativoSfccbdmq.xmlListener}"
+                                                   maxFileSize="6291456"
+                                                   maxFileSizeMessage="Submitted file is too large."
+                                                   maxTotalSize="18874368"
+                                                   maxTotalSizeMessage="Total size of submitted files is too large."
+                                                   required="false"
+                                                   requiredMessage="The file is required to submit this form."
+                                                   useOriginalFilename="true"
+                                                   useSessionSubdir="true"
+                                                   />
+                                    <h:commandButton type="submit" value="Cargar Factura electrónica"/>
+                                    <h:commandButton action="#{fondoRotativoSfccbdmq.booraFacturaElectronica()}" value="Borra Factura electrónica"/>
+                                </h:panelGrid>
+                                <ui:include src="../facturaSri.xhtml" />
+                            </ace:tabPane>   
+
+                        </ace:tabSet>
+                        <h:panelGrid columns="1" width="100%">
+
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Nuevo renglón" icon="ui-icon ui-icon-document" action="#{fondoRotativoSfccbdmq.nuevoDetalle()}" rendered="#{!fondoRotativoSfccbdmq.formularioObligacion.borrar}" />
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                              action="#{fondoRotativoSfccbdmq.grabar()}" rendered="#{fondoRotativoSfccbdmq.formularioEditar.modificar}"/>
+                                <ace:menuItem value="Borrar Obligación" icon="ui-icon ui-icon-trash"  
+                                              action="#{fondoRotativoSfccbdmq.eliminarObligacion()}" rendered="#{fondoRotativoSfccbdmq.formularioEditar.borrar}"/>
+                                <ace:menuItem value="Recalcular totales" icon="ui-icon ui-icon-calculator"  rendered="#{fondoRotativoSfccbdmq.formularioEditar.modificar}"
+                                              action="#{fondoRotativoSfccbdmq.recalcular()}"/>
+                                <ace:menuItem value="Salir Obligación" icon="ui-icon ui-icon-close" 
+                                              action="#{fondoRotativoSfccbdmq.salirModificacion()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                        <h:panelGrid width="100%">
+                            <ace:dataTable  
+                                value="#{fondoRotativoSfccbdmq.detalles}"
+                                var="itemDetalle"
+                                paginator="true"
+                                lazy="falase"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="top"
+                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rows="5"
+                                binding="#{fila}">
+
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton  effect="slide" effectDuration="200" value="..." rendered="#{itemDetalle.cba=='C'}">
+                                        <ace:menuItem action="#{fondoRotativoSfccbdmq.modificaDetalle(fila.rowIndex)}" value="Editar" icon="ui-icon ui-icon-pencil" rendered="#{fondoRotativoSfccbdmq.formularioEditar.modificar}"/>
+                                        <ace:menuItem action="#{fondoRotativoSfccbdmq.eliminaDetalle(fila.rowIndex)}" value="Borrar" icon="ui-icon ui-icon-trash" rendered="#{fondoRotativoSfccbdmq.formularioEditar.modificar}"/>
+                                    </ace:menuButton>
+                                    <ace:menuButton  effect="slide" effectDuration="200" value="..." rendered="#{itemDetalle.cba=='A'}">
+                                        <ace:menuItem action="#{fondoRotativoSfccbdmq.eliminaDetalle(fila.rowIndex)}" value="Borrar" icon="ui-icon ui-icon-trash" />
+                                    </ace:menuButton>
+                                </ace:column>
+
+                                <ace:column  headerText="Partida" style="text-align: left">
+                                    <h:outputText  value="#{itemDetalle.detallecompromiso.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Referencia"  style="text-align: left">
+                                    <h:outputText  value="#{itemDetalle.referencia}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor"  style="text-align: right">
+                                    <h:outputText  value="#{itemDetalle.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Retención"  style="text-align: left">
+                                    <h:outputText  value="#{itemDetalle.retencion.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor Retención"  style="text-align: right">
+                                    <h:outputText  value="#{itemDetalle.valorret}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Impuesto"  style="text-align: left">
+                                    <h:outputText  value="#{itemDetalle.impuesto.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor Impuesto "  style="text-align: right">
+                                    <h:outputText  value="#{itemDetalle.valorimpuesto}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Ret. Impuesto"  style="text-align: left">
+                                    <h:outputText  value="#{itemDetalle.retimpuesto.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor Ret. Impuesto "  style="text-align: right">
+                                    <h:outputText  value="#{itemDetalle.vretimpuesto}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid> 
+                    </h:panelGroup>
+                    <!--fin de panel principal-->
+                </ace:panel>
+                <!--dialogo de carga de la info primera--> 
+                <ui:include src="listadoCompromisosFR.xhtml" />
+                <!--fin dialogo de carga de la info primera--> 
+                <!--panel para escoger certificacion-->
+                <ui:include src="listadoObligacionesFR.xhtml" />
+                <!--panel para escoger certificacion-->
+                <ui:include src="renglonesFondo.xhtml" />
+                <!--dialogo del detalle de las partidas-->
+
+                <!--dilogo para imrpimir-->
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{fondoRotativoSfccbdmq.formularioImpresion.mostrar}"
+                    visible="#{fondoRotativoSfccbdmq.formularioImpresion.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="1">
+                            <h:commandButton  value="Imprimir">
+                                <h:outputText id="printBoth" value="Imprimir"/>
+                                <ace:printer for="panelImprimir"/>
+                            </h:commandButton>
+                        </h:panelGrid>
+                        <ui:include src="imprimirFondoRotativo.xhtml" />
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{fondoRotativoSfccbdmq.formularioImpresion.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <!--fin dilogo para imrpimir-->
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

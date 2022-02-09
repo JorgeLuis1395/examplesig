@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+    <h:panelGrid columns="2">
+        <ace:menuBar autoSubmenuDisplay="true" >
+            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{habilidadesEmpleado.nuevo()}"/>
+            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" action="#{habilidadesEmpleado.formularioPrincipal.cancelar()}"/>
+        </ace:menuBar>
+    </h:panelGrid>
+    <ace:messages/>
+
+    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+        <h:outputLabel  value="Exportar a:"/>
+        <h:selectOneRadio  value="#{habilidadesEmpleado.formulario.pantalla}" required="true">
+            <f:ajax disabled="false"/>
+            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+            <f:selectItem itemValue="xml" itemLabel="XML"/>
+        </h:selectOneRadio>
+        <ace:dataExporter 
+                          label="Exportar Archivo" 
+                          type="#{habilidadesEmpleado.formulario.pantalla}" 
+                          target="habilidads" fileName="datos"/>
+    </h:panelGrid>
+    <h:panelGrid width="100%">
+        <ace:dataTable id="habilidads" 
+                       value="#{habilidadesEmpleado.listaHabilidades}"
+                       var="habilidadE"
+                       paginator="true"
+                       resizableColumns="true"
+                       rowIndexVar="row"
+                       paginatorPosition="both"
+                       rowsPerPageTemplate="5,10,15,50"
+
+                       paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                       rows="5"
+                       binding="#{habilidadesEmpleado.formulario.fila}">
+
+            <ace:column  style="text-align: left" rendered="#{!habilidadesEmpleado.formulario.borrar}" >
+                <ace:menuButton  effect="slide" effectDuration="200" value="...">
+                    <ace:menuItem value="Editar" icon="ui-icon ui-icon-pencil" action="#{habilidadesEmpleado.modifica(habilidadE)}"  />
+                    <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{habilidadesEmpleado.borra(habilidadE)}"  />
+                </ace:menuButton>
+            </ace:column>
+            <ace:column  headerText="Habilidad" style="text-align: left">
+                <h:outputText value="#{habilidadE.habilidad}"/>
+            </ace:column>
+
+
+        </ace:dataTable>
+    </h:panelGrid>
+
+
+</html>

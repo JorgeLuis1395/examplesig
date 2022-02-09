@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{cargaMenus.formaSeleccionada}"
+                           closable="false"
+                           toggleable="true"  >
+                    
+                    <h:panelGrid columns="4">
+
+                        <h:outputLabel value="Zona de Evaluación:"/>
+                        <h:selectOneMenu value="#{aspectos.zonaevaluacion}">
+                            <f:selectItems value="#{zonasEvaluacion.comboZonasEvaluacion}" />
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{aspectos.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{aspectos.crear()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <ace:messages/>
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{aspectos.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{aspectos.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{aspectos.listaAspectos}"
+                                       var="aspecto"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,50,100,all"
+                                       paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="100"
+                                       binding="#{aspectos.formulario.fila}">
+                            <ace:row condition="group" groupBy="#{aspecto.zonaevaluacion.zonaevaluacion}" pos="before"  styleClass="totales" rendered="#{aspectos.zonaevaluacion==null}" >
+                                <ace:column  style="text-align: center" colspan="20" >
+                                    <h:outputText value="#{aspecto.zonaevaluacion.zonaevaluacion.toString().toUpperCase()}" />
+                                </ace:column>                            
+                            </ace:row>
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{ponderaciones.ponderaciones(aspecto)}" value="Ponderaciones" icon="ui-icon ui-icon-clipboard"/>
+                                    <ace:menuItem action="#{aspectos.modificar()}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{aspectos.eliminar()}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column>
+                            <ace:column  headerText="Aspecto" style="text-align: left">
+                                <h:outputText  value="#{aspecto.aspecto}"/>
+                            </ace:column>
+                            <ace:column  headerText="Descripción" style="text-align: left">
+                                <h:outputText  value="#{aspecto.descripcion}"/>
+                            </ace:column>
+                            <c:forEach items="#{nivelesGestion.niveles}" var="nivel" >
+                                <ace:column  headerText="#{nivel.nombre}" style="text-align: right">
+                                    <h:outputText  value="#{ponderaciones.getPonderacion(aspecto, nivel)}"/>
+                                </ace:column>
+                            </c:forEach>
+                            <ace:row condition="group" groupBy="#{aspecto.zonaevaluacion.zonaevaluacion}" pos="after"  styleClass="totales" >
+                                <ace:column  style="text-align: right" colspan="3" >
+                                    <h:outputText value="TOTAL #{aspecto.zonaevaluacion.zonaevaluacion.toString().toUpperCase()}" />
+                                </ace:column>
+                                <c:forEach items="#{nivelesGestion.niveles}" var="nivel" >
+                                    <ace:column style="text-align: right">
+                                        <h:outputText  value="#{ponderaciones.getPonderacionTotal(nivel, aspecto.zonaevaluacion)}"/>
+                                    </ace:column>
+                                </c:forEach>
+                            </ace:row>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+
+                <ace:dialog 
+                    header="#{aspectos.zonaevaluacion.zonaevaluacion}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{aspectos.formulario.mostrar}"
+                    visible="#{aspectos.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">                            
+                            <h:outputLabel value="Nombre:"  />
+                            <h:inputText value="#{aspectos.aspecto.aspecto}" style="width: 100%" title="Nombre"/>
+                            <h:outputLabel value="Descripción:"  />
+                            <h:inputTextarea cols="100" rows="5" value="#{aspectos.aspecto.descripcion}" title="Descripción" />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{aspectos.formulario.nuevo}" 
+                                          action="#{aspectos.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{aspectos.grabar()}" 
+                                          rendered="#{aspectos.formulario.modificar}" />
+                            <ace:menuItem action="#{aspectos.borrar()}" 
+                                          value="¿Está seguro de Borrar el registro?" 
+                                          icon="ui-icon ui-icon-trash"
+                                          rendered="#{aspectos.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{aspectos.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+                <ace:dialog 
+                    header="#{ponderaciones.aspecto.aspecto}"
+                    closable="false"
+                    modal="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{ponderaciones.formularioAspectos.mostrar}"
+                    visible="#{ponderaciones.formularioAspectos.mostrar}">
+
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Nueva Ponderación" icon="ui-icon ui-icon-document" 
+                                          action="#{ponderaciones.crear()}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{ponderaciones.salir()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:dataTable 
+                            value="#{ponderaciones.listaPonderaciones}"
+                            var="ponderacion"
+                            paginator="true"
+                            resizableColumns="true"
+                            rowIndexVar="row"
+                            paginatorPosition="both"
+                            rowsPerPageTemplate="5,10,15,50,all"
+                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            rows="5"
+                            binding="#{ponderaciones.formulario.fila}">
+
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{ponderaciones.modificar()}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{ponderaciones.borrar()}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column>
+                            <ace:column  headerText="Nivel de Gestión" style="text-align: left">
+                                <h:outputText  value="#{ponderacion.nivelgestion.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Ponderación" style="text-align: left">
+                                <h:outputText  value="#{ponderacion.ponderacion}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:dialog>
+                <ace:dialog 
+                    header="#{ponderaciones.aspecto.aspecto}"
+                    closable="false"
+                    modal="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{ponderaciones.formulario.mostrar}"
+                    visible="#{ponderaciones.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">  
+                            <h:outputLabel value="Nivel de Gestión:"/>
+                            <h:selectOneMenu value="#{ponderaciones.ponderacion.nivelgestion}" rendered="#{ponderaciones.formulario.nuevo}" >
+                                <f:selectItems value="#{ponderaciones.comboNivelesGestion}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="#{ponderaciones.ponderacion.nivelgestion.nombre}"  rendered="#{!ponderaciones.formulario.nuevo}" />
+                            <h:outputLabel value="Ponderación:"  />
+                            <h:inputText value="#{ponderaciones.ponderacion.ponderacion}" title="Nombre"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          rendered="#{ponderaciones.formulario.nuevo}" 
+                                          action="#{ponderaciones.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{ponderaciones.grabar()}" 
+                                          rendered="#{ponderaciones.formulario.modificar}" />
+                            <ace:menuItem action="#{ponderaciones.eliminar()}" 
+                                          value="¿Está seguro de Borrar el registro?" 
+                                          icon="ui-icon ui-icon-trash"
+                                          rendered="#{ponderaciones.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{ponderaciones.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

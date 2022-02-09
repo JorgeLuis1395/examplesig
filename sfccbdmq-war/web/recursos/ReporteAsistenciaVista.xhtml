@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{reporteAsistenciaEmpleadoCbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"  >
+                    <h:panelGrid>
+
+                        <ui:include src="../BuscarEmpleado.xhtml"/>
+                        <ui:include src="../BuscarOrganigrama.xhtml"/>
+                        <h:panelGrid columns="4" width="100%">
+
+                            <h:outputLabel value="Modalidad de Contratación : " for="tipContrato" />
+                            <h:selectOneMenu value="#{reporteAsistenciaEmpleadoCbdmq.tipo}" >
+                                <f:selectItems value="#{tipoContrato.comboTiposContrato}" />
+                            </h:selectOneMenu>
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Fecha:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{reporteAsistenciaEmpleadoCbdmq.fecha}" id="dos"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+<!--                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{reporteAsistenciaEmpleadoCbdmq.fechaHasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>-->
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  
+                                              action="#{reporteAsistenciaEmpleadoCbdmq.buscar()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                    <ace:messages/>
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                <ace:tabSet>
+                    <ace:tabPane label="Registraron Aistencia" >
+
+
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{reporteAsistenciaEmpleadoCbdmq.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{reporteAsistenciaEmpleadoCbdmq.formulario.pantalla}" 
+                                              target="tabla" fileName="datos"/>
+                            <ace:dynamicResource fileName="Asistencia.pdf"  label="Generar PDF"
+                                            mimeType="application/pdf" 
+                                            rendered="#{reporteAsistenciaEmpleadoCbdmq.reporte!=null}"
+                                            resource="#{reporteAsistenciaEmpleadoCbdmq.reporte}" 
+                                            style="" type="button"/>
+                        </h:panelGrid>
+
+                        <h:panelGrid width="100%">
+                            <ace:dataTable id="tabla" 
+                                           value="#{reporteAsistenciaEmpleadoCbdmq.listaEmpleados}"
+                                           var="item"
+                                           binding="#{reporteAsistenciaEmpleadoCbdmq.formulario.fila}"
+                                           scrollHeight="600"
+                                           scrollable="true">
+                                <ace:column  headerText="Empleado" style="text-align: left">
+                                    <h:outputText  value="#{item.empleado.entidad.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Departamento" style="text-align: left">
+                                    <h:outputText  value="#{item.empleado.cargoactual.organigrama.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Modalidad de Contrato" style="text-align: left">
+                                    <h:outputText  value="#{item.empleado.tipocontrato.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Régimen" style="text-align: left">
+                                    <h:outputText  value="#{item.empleado.tipocontrato.regimen}"/>
+                                </ace:column>
+                                <ace:column  headerText="Entrada"  style="text-align: right;background-color: #00ffff;">
+                                    <h:outputText value="#{item.entrada}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Timbre Entrada"  style="text-align: right">
+                                    <h:outputText value="#{item.entradaLeida}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Salida"  style="text-align: right;background-color: #00ffff;">
+                                    <h:outputText value="#{item.salidaUno}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Timbre Salida"  style="text-align: right">
+                                    <h:outputText value="#{item.salidaLeidaUno}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Entrada"  style="text-align: right;background-color: #00ffff;">
+                                    <h:outputText value="#{item.entradaDos}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Timbre Entrada"  style="text-align: right">
+                                    <h:outputText value="#{item.entradaLeidaDos}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Salida"  style="text-align: right;background-color: #00ffff;">
+                                    <h:outputText value="#{item.salida}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Timbre Salida"  style="text-align: right">
+                                    <h:outputText value="#{item.salidaLeida}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:tabPane>
+                    <ace:tabPane label="No Registraron Aistencia" >
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{reporteAsistenciaEmpleadoCbdmq.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporterNo" 
+                                              label="Exportar Archivo" 
+                                              type="#{reporteAsistenciaEmpleadoCbdmq.formularioDos.pantalla}" 
+                                              target="tablaNo" fileName="datosNo"/>
+                            <ace:dynamicResource fileName="NoAsistencia.pdf"  label="Generar PDF"
+                                            mimeType="application/pdf" 
+                                            rendered="#{reporteAsistenciaEmpleadoCbdmq.reporte1!=null}"
+                                            resource="#{reporteAsistenciaEmpleadoCbdmq.reporte1}" 
+                                            style="" type="button"/>
+                        </h:panelGrid>
+
+                        <h:panelGrid width="100%">
+                            <ace:dataTable id="tablaNo" 
+                                           value="#{reporteAsistenciaEmpleadoCbdmq.listaEmpleadosNo}"
+                                           var="itemNo"
+                                           binding="#{reporteAsistenciaEmpleadoCbdmq.formularioDos.fila}">
+
+
+                                <ace:column  headerText="Empleado" style="text-align: left">
+                                    <h:outputText  value="#{itemNo.empleado.entidad.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Departameto" style="text-align: left">
+                                    <h:outputText  value="#{itemNo.empleado.cargoactual.organigrama.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Modalidad de Contrato" style="text-align: left">
+                                    <h:outputText  value="#{itemNo.empleado.tipocontrato.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Régimen" style="text-align: left">
+                                    <h:outputText  value="#{itemNo.empleado.tipocontrato.regimen}"/>
+                                </ace:column>
+                                <ace:column  headerText="Entrada"  style="text-align: right;background-color: #00ffff;">
+                                    <h:outputText value="#{itemNo.entrada}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Timbre Entrada"  style="text-align: right">
+                                    <h:outputText value="#{itemNo.entradaLeida}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Salida"  style="text-align: right;background-color: #00ffff;">
+                                    <h:outputText value="#{itemNo.salidaUno}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Timbre Salida"  style="text-align: right">
+                                    <h:outputText value="#{itemNo.salidaLeidaUno}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Entrada"  style="text-align: right;background-color: #00ffff;">
+                                    <h:outputText value="#{itemNo.entradaDos}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Timbre Entrada"  style="text-align: right">
+                                    <h:outputText value="#{itemNo.entradaLeidaDos}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Salida"  style="text-align: right;background-color: #00ffff;">
+                                    <h:outputText value="#{itemNo.salida}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Timbre Salida"  style="text-align: right">
+                                    <h:outputText value="#{itemNo.salidaLeida}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:tabPane>
+                </ace:tabSet>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

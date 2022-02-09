@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:body>
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="Proyectos"
+                           closable="false"
+                           toggleable="true">
+                    <h:panelGrid columns="6" width="100%">
+                        <h:outputLabel value="Año :"/>
+                        <h:inputText value="#{reporteCpcPoa.anio}"/>
+                        <h:outputLabel value="Direccion:" />
+                        <h:selectOneMenu value="#{reporteCpcPoa.direccion}">
+                            <f:selectItems value="#{consultasPoa.comboDirecciones}" />
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteCpcPoa.buscar()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+
+                </ace:panel>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="true">
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{reporteCpcPoa.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{reporteCpcPoa.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       paginatorAlwaysVisible="true"
+                                       value="#{reporteCpcPoa.proyectos}"
+                                       var="item"
+                                       paginator="true"
+                                       lazy="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="10,15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="10">
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column  headerText="Código" style="text-align: left" filterBy="#{item.codigo}" filterMatchMode="contains">
+                                <h:outputText  value="#{item.codigo}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nombre" style="text-align: left" filterBy="#{item.nombre}" filterMatchMode="contains">
+                                <h:outputText  value="#{item.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Observaciones" style="text-align: left">
+                                <h:outputText  value="#{item.observaciones}"/>
+                            </ace:column>
+                            <ace:column  headerText="Direccion" style="text-align: left">
+                                <h:outputText  value="#{consultasPoa.traerDireccion(item.direccion)}"/>
+                            </ace:column>
+                            <ace:column  headerText="¿Ingreso? #{reporteCpcPoa.ingreso}" style="text-align: center"
+                                         filterOptions="#{proyectosPoa.traerCombosino()}"
+                                         filterBy="#{item.ingreso}"
+                                         filterMatchMode="exact"
+                                         filterValue="#{reporteCpcPoa.ingreso}">
+                                <h:graphicImage url="../resources/images/si.png" rendered="#{item.ingreso}"/>
+                                <h:graphicImage url="../resources/images/no.png" rendered="#{!item.ingreso}"/>
+                            </ace:column>
+                            <ace:column  headerText="CPC" style="text-align: left" filterBy="#{item.cpc}" filterMatchMode="contains">
+                                <h:outputText  value="#{item.cpc}"/>
+                            </ace:column>
+                            <ace:column  headerText="Año" style="text-align: right">
+                                <h:outputText  value="#{item.anio}"/>
+                            </ace:column>
+                            <ace:column  headerText="Desde" style="text-align: right">
+                                <h:outputText  value="#{item.inicio}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Hasta" style="text-align: right">
+                                <h:outputText  value="#{item.termino}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

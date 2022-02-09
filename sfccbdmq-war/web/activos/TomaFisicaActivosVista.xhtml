@@ -1,0 +1,598 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{tomaFisicaActivosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane >
+                            <f:facet name="label">Subir Información toma</f:facet>
+                            <h:panelGrid columns="2" width="30%">
+                                <h:outputLabel value="Separador de campos :"/>
+                                <h:inputText value="#{tomaFisicaActivosSfccbdmq.separador}" size="3">
+                                    <ace:ajax execute="@all"/>
+                                </h:inputText>
+                                <h:outputLabel value="Archivo a Subir:" />
+                            </h:panelGrid>
+                            <h:panelGrid columns="3" width="100%">
+                                <ace:fileEntry id="file-entry" 
+
+                                               maxFileCount="1" 
+                                               maxFileCountMessage="Máximo un archivo" 
+                                               fileEntryListener="#{tomaFisicaActivosSfccbdmq.archivoListener}" 
+                                               maxFileSize="6291456" 
+                                               maxFileSizeMessage="Tamaño muy grande." 
+                                               maxTotalSize="18874368" 
+                                               maxTotalSizeMessage="Total del tamaño muy grande." 
+                                               useOriginalFilename="true" 
+                                               useSessionSubdir="true"/>
+                                <h:commandButton type="submit" value="Cargar datos"/>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane >
+                            <f:facet name="label">Parámetros de Búsqueda</f:facet>
+                            <h:panelGroup>
+                                <ui:include src="../BuscarProveedor.xhtml" />
+                                <h:panelGrid columns="2" width="100%">
+
+                                    <h:panelGrid columns="2">
+                                        <ace:autoCompleteEntry 
+                                            value="#{entidadesSfccbdmq.apellidos}"
+                                            rows="10" width="300"
+                                            listVar="empleadoSeleccionar"
+                                            filterBy="#{empleadoSeleccionar.apellidos}"
+                                            listValue="#{entidadesSfccbdmq.listaEntidades}"
+                                            valueChangeListener="#{entidadesSfccbdmq.cambiaApellido}"
+                                            textChangeListener="#{entidadesSfccbdmq.entidadChangeEventHandler}"
+                                            label="Apellidos Responsable :"
+                                            labelPosition="left">
+                                            <f:facet name="row">
+                                                <h:panelGrid columns="3" width="100%"  style="text-align: left;font-size: xx-small" columnClasses="tipo">
+                                                    <h:outputText value="#{empleadoSeleccionar.apellidos}"/>
+                                                    <h:outputText value="#{empleadoSeleccionar.nombres}"/>
+                                                    <h:outputText value="#{empleadoSeleccionar.pin}"/>
+                                                </h:panelGrid>
+                                            </f:facet>
+                                        </ace:autoCompleteEntry>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" rendered="#{entidadesSfccbdmq.entidad!=null}">
+                                        <h:outputLabel value="Nombres:" />
+                                        <h:outputLabel value="#{entidadesSfccbdmq.entidad.nombres}" />
+
+                                        <h:outputLabel value="Email:" />
+                                        <h:outputLabel  value="#{entidadesSfccbdmq.entidad.email}"/>
+                                    </h:panelGrid>
+                                </h:panelGrid>
+
+                                <h:panelGrid columns="4" width="100%">
+                                    <h:outputLabel value="Nombre:" />
+                                    <h:inputText value="#{tomaFisicaActivosSfccbdmq.nombre}" title="Nombre" />
+<!--                                    <h:outputLabel value="Marca:" />
+                                    <h:inputText value="#{tomaFisicaActivosSfccbdmq.marca}" title="Marca" />-->
+                                    <h:outputLabel value="Marca:" />
+                                    <h:selectOneMenu  value="#{tomaFisicaActivosSfccbdmq.marca}" title="Grupo">
+                                        <f:selectItems value="#{marcasActivos.comboMarcas}"/>
+                                        <ace:ajax execute="@all"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Modelo:" />
+                                    <h:inputText  value="#{tomaFisicaActivosSfccbdmq.modelo}" title="Modelo" />
+                                    <h:outputLabel value="Tipo:"  />
+                                    <h:selectOneMenu value="#{tomaFisicaActivosSfccbdmq.tipo}" title="Tipo" >
+                                        <f:selectItems value="#{tiposActivosSfccbdmq.comboTipoEspacio}"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Grupo:"  />
+                                    <h:selectOneMenu  value="#{subGruposActivosSfccbdmq.grupo}" title="Grupo">
+                                        <f:selectItems value="#{gruposActivosSfccbdmq.comboGrupoEspacio}"/>
+                                        <ace:ajax execute="@all"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Sub Grupo:" />
+                                    <h:selectOneMenu  value="#{subGruposActivosSfccbdmq.subGrupo}" title="Grupo">
+                                        <f:selectItems value="#{subGruposActivosSfccbdmq.comboSubGrupo}"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Clasificación:" />
+                                    <h:selectOneMenu value="#{tomaFisicaActivosSfccbdmq.clasificacion}" title="Clasificacion" >
+                                        <f:selectItems value="#{codigosSfccbdmq.comboClasificacionActivos}"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Estado Actual:" />
+                                    <h:selectOneMenu  value="#{tomaFisicaActivosSfccbdmq.estado}" title="Estado">
+                                        <f:selectItems value="#{codigosSfccbdmq.comboEstadoActivos}"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Póliza de Seguros:" />
+                                    <h:selectOneMenu  value="#{tomaFisicaActivosSfccbdmq.poliza}" title="Póliza de Seguros">
+                                        <f:selectItems value="#{polizasSfccbdmq.comboPolizaEspacio}"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Codigo:" />
+                                    <h:inputText value="#{tomaFisicaActivosSfccbdmq.codigo}" title="Codigo" />
+                                    <h:outputLabel value="Código Inventario:" />
+                                    <h:inputText  value="#{tomaFisicaActivosSfccbdmq.inventario}" title="Inventario" />
+                                    <h:outputLabel value="Código Alterno:" />
+                                    <h:inputText  value="#{tomaFisicaActivosSfccbdmq.alterno}" title="Alterno" />
+                                    <h:outputLabel value="Código de Barras:" />
+                                    <h:inputText  value="#{tomaFisicaActivosSfccbdmq.codigobarras}" title="Barras" />
+                                    <h:outputLabel value="Numero de serie:" />
+                                    <h:inputText  value="#{tomaFisicaActivosSfccbdmq.numeroserie}" title="Numeroserie" />
+                                    <h:outputLabel value="Esta en garantía?:" />
+                                    <h:selectOneMenu  value="#{tomaFisicaActivosSfccbdmq.garantia}" title="Edificio">
+                                        <f:selectItem itemLabel="---Seleccione Uno----" itemValue="0"/>
+                                        <f:selectItem itemLabel="SI" itemValue="1"/>
+                                        <f:selectItem itemLabel="NO" itemValue="-1"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Esta en operativo?:" />
+                                    <h:selectOneMenu  value="#{tomaFisicaActivosSfccbdmq.operativo}" >
+                                        <f:selectItem itemLabel="---Seleccione Uno----" itemValue="0"/>
+                                        <f:selectItem itemLabel="SI" itemValue="1"/>
+                                        <f:selectItem itemLabel="NO" itemValue="-1"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Es de control?:" />
+                                    <h:selectOneMenu  value="#{tomaFisicaActivosSfccbdmq.control}" >
+                                        <f:selectItem itemLabel="---Seleccione Uno----" itemValue="0"/>
+                                        <f:selectItem itemLabel="SI" itemValue="1"/>
+                                        <f:selectItem itemLabel="NO" itemValue="-1"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Edificio:" />
+                                    <h:selectOneMenu  value="#{oficinasSfccbdmq.edificio}" title="Edificio">
+                                        <f:selectItems value="#{edificiosSfccbdmq.comboEdificioEspacio}"/>
+                                        <ace:ajax execute="@all"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Oficina:" />
+                                    <h:selectOneMenu  value="#{tomaFisicaActivosSfccbdmq.oficina}" title="Edificio" id="oficina">
+                                        <f:selectItems value="#{oficinasSfccbdmq.comboOficinaEspacio}"/>
+                                    </h:selectOneMenu>
+                                </h:panelGrid>
+                                <h:panelGrid columns="1" width="100%">
+                                    <h:outputLabel value="Descripción:"/>
+                                    <h:inputTextarea cols="60" rows="4" value="#{tomaFisicaActivosSfccbdmq.descripcion}" id="seis"/>
+
+                                </h:panelGrid>
+                            </h:panelGroup>
+                        </ace:tabPane>
+                    </ace:tabSet>
+                    <h:panelGrid columns="1" width="100%">
+
+                        <ace:menuBar autoSubmenuDisplay="true" >
+
+                            <ace:menuItem value="Buscar Activos" icon="ui-icon ui-icon-search"  action="#{tomaFisicaActivosSfccbdmq.buscarActivos()}"/>
+                            <ace:menuItem value="Imprimir" icon="ui-icon ui-icon-print"  action="#{tomaFisicaActivosSfccbdmq.imprimir()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{tomaFisicaActivosSfccbdmq.nuevoDetalle()}"/>
+                            <ace:menuItem value="Terminar" icon="ui-icon ui-icon-disk" 
+                                          action="#{tomaFisicaActivosSfccbdmq.terminar()}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{tomaFisicaActivosSfccbdmq.salir()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                </ace:panel>
+                <!--                <ace:panel>
+                                    
+                                </ace:panel>-->
+                <ace:tabSet style="clear:both;" clientSide="true">
+                    <ace:tabPane >
+                        <f:facet name="label">Registros</f:facet>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{tomaFisicaActivosSfccbdmq.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{tomaFisicaActivosSfccbdmq.formulario.pantalla}" 
+                                              target="tabla" fileName="datos"/>
+                        </h:panelGrid>
+                        <!--                    <h:panelGrid styleClass="centeredPanelGrid">
+                                                
+                                            </h:panelGrid>-->
+                        <h:panelGrid width="100%" >
+                            <ace:dataTable id="tabla" 
+                                           value="#{tomaFisicaActivosSfccbdmq.listaDetalleToma}"
+                                           var="item"
+                                           paginator="true"
+                                           lazy="false"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="15,20,25,50,100,300"
+                                           currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="50"
+                                           style="width: 90%"
+                                           binding="#{tomaFisicaActivosSfccbdmq.formulario.fila}">
+                                <ace:column style="text-align: left">
+
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{tomaFisicaActivosSfccbdmq.modificaDetalle()}" disabled="#{item.toma.fechafin!=null}"
+                                                      value="Cambiar" icon="ui-icon ui-icon-pencil"/>
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column  headerText="Código"  style="text-align: right">
+                                    <h:outputText  value="#{item.codigobarras}"/>
+                                </ace:column>
+                                <ace:column  headerText="Código Alterno"  style="text-align: right">
+                                    <h:outputText  value="#{item.activo.alterno}"/>
+                                </ace:column>
+                                <ace:column  headerText="Grupo"  style="text-align: left">
+                                    <h:outputText  value="#{item.activo.grupo.nombre}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Subgrupo"  style="text-align: left">
+                                    <h:outputText  value="#{item.activo.subgrupo.nombre}"/>
+                                </ace:column> 
+                                <ace:column  headerText="Clasificación"  style="text-align: left">
+                                    <h:outputText  value="#{item.activo.clasificacion.nombre}"/>
+                                </ace:column> 
+                                <ace:column  headerText="Descripción"  style="text-align: left">
+                                    <h:outputText  value="#{item.activo.descripcion}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Observaciones"  style="text-align: left">
+                                    <h:outputText  value="#{item.observaciones}"/>
+                                </ace:column>
+                                <ace:column  headerText="Marca"  style="text-align: left">
+                                    <h:outputText  value="#{item.activo.activomarca.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Modelo"  style="text-align: left">
+                                    <h:outputText  value="#{item.activo.modelo}"/>
+                                </ace:column>
+                                <ace:column  headerText="No Serie"  style="text-align: left">
+                                    <h:outputText  value="#{item.activo.numeroserie}"/>
+                                </ace:column>
+                                <ace:column  headerText="Estado"  style="text-align: left">
+                                    <h:outputText  value="#{item.estado.codigo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Custodio"  style="text-align: left">
+                                    <h:outputText  value="#{item.custodio.pin}"/>
+                                </ace:column>
+                                <ace:column  headerText="Oficina"  style="text-align: left">
+                                    <h:outputText  value="#{item.localidad.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor Alta"  style="text-align: left">
+                                    <h:outputText  value="#{item.activo.valoralta}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Valor Residual"  style="text-align: left">
+                                    <h:outputText  value="#{item.activo.valorresidual}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:tabPane>
+                    <ace:tabPane >
+                        <f:facet name="label">Verificados</f:facet>
+                        <h:panelGrid width="100%" >
+                            <ace:dataTable 
+                                value="#{tomaFisicaActivosSfccbdmq.listaVerificados}"
+                                var="itemVerificados"
+                                paginator="true"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="both"
+                                rowsPerPageTemplate="15,20,25,50,100,300"
+                                currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rows="50">
+                                <ace:column style="text-align: left">
+
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{tomaFisicaActivosSfccbdmq.eliminaVerificado(itemVerificados)}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column  headerText="Código"  style="text-align: right">
+                                    <h:outputText  value="#{itemVerificados.codigobarras}"/>
+                                </ace:column>
+
+                                <ace:column  headerText="Grupo"  style="text-align: left">
+                                    <h:outputText  value="#{itemVerificados.activo.grupo.nombre}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Descripción"  style="text-align: left">
+                                    <h:outputText  value="#{itemVerificados.activo.descripcion}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Observaciones"  style="text-align: left">
+                                    <h:outputText  value="#{itemVerificados.observaciones}"/>
+                                </ace:column>
+                                <ace:column  headerText="Marca"  style="text-align: left">
+                                    <h:outputText  value="#{itemVerificados.activo.activomarca.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Modelo"  style="text-align: left">
+                                    <h:outputText  value="#{itemVerificados.activo.modelo}"/>
+                                </ace:column>
+                                <ace:column  headerText="No Serie"  style="text-align: left">
+                                    <h:outputText  value="#{itemVerificados.activo.numeroserie}"/>
+                                </ace:column>
+                                <ace:column  headerText="Estado"  style="text-align: left">
+                                    <h:outputText  value="#{itemVerificados.estado.codigo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Custodio"  style="text-align: left">
+                                    <h:outputText  value="#{itemVerificados.custodio.pin}"/>
+                                </ace:column>
+                                <ace:column  headerText="Oficina"  style="text-align: left">
+                                    <h:outputText  value="#{itemVerificados.localidad.nombre}"/>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:tabPane>    
+                    <ace:tabPane >
+                        <f:facet name="label">Nuevos</f:facet>
+                        <h:panelGrid width="100%" >
+                            <ace:dataTable 
+                                value="#{tomaFisicaActivosSfccbdmq.listaNuevos}"
+                                var="itemNuevos"
+                                paginator="true"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="both"
+                                rowsPerPageTemplate="15,20,25,50,100,300"
+                                currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rows="50">
+                                <ace:column style="text-align: left">
+
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{tomaFisicaActivosSfccbdmq.eliminaNuevo(itemNuevos)}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column  headerText="Código"  style="text-align: right">
+                                    <h:outputText  value="#{itemNuevos.codigobarras}"/>
+                                </ace:column>
+                                <ace:column  headerText="Estado"  style="text-align: left">
+                                    <h:outputText  value="#{itemNuevos.estadoStr}"/>
+                                </ace:column>
+                                <ace:column  headerText="Custodio"  style="text-align: left">
+                                    <h:outputText  value="#{itemNuevos.custodioStr}"/>
+                                </ace:column>
+                                <ace:column  headerText="Oficina"  style="text-align: left">
+                                    <h:outputText  value="#{itemNuevos.localidadStr}"/>
+                                </ace:column>
+                                <ace:column  headerText="Observaciones"  style="text-align: left">
+                                    <h:outputText  value="#{itemNuevos.observaciones}"/>
+                                </ace:column>
+
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:tabPane>    
+                    <ace:tabPane >
+                        <f:facet name="label">Diferencias</f:facet>
+                        <h:panelGrid width="100%" >
+                            <ace:dataTable 
+                                value="#{tomaFisicaActivosSfccbdmq.listaDiferencias}"
+                                var="itemDiferencias"
+                                paginator="true"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="both"
+                                rowsPerPageTemplate="15,20,25,50,100,300"
+                                currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rows="50">
+                                <ace:column style="text-align: left">
+
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{tomaFisicaActivosSfccbdmq.eliminaDiferencia(itemDiferencias)}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column  headerText="Código"  style="text-align: right">
+                                    <h:outputText  value="#{itemDiferencias.codigobarras}"/>
+                                </ace:column>
+
+                                <ace:column  headerText="Grupo"  style="text-align: left">
+                                    <h:outputText  value="#{itemDiferencias.activo.grupo.nombre}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Descripción"  style="text-align: left">
+                                    <h:outputText  value="#{itemDiferencias.activo.descripcion}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Observaciones"  style="text-align: left">
+                                    <h:outputText  value="#{itemDiferencias.observaciones}"/>
+                                </ace:column>
+                                <ace:column  headerText="Marca"  style="text-align: left">
+                                    <h:outputText  value="#{itemDiferencias.activo.activomarca.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Modelo"  style="text-align: left">
+                                    <h:outputText  value="#{itemDiferencias.activo.modelo}"/>
+                                </ace:column>
+                                <ace:column  headerText="No Serie"  style="text-align: left">
+                                    <h:outputText  value="#{itemDiferencias.activo.numeroserie}"/>
+                                </ace:column>
+                                <ace:column  headerText="Estado"  style="text-align: left">
+                                    <h:outputText  value="#{itemDiferencias.estado.codigo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Custodio"  style="text-align: left">
+                                    <h:outputText  value="#{itemDiferencias.custodio.pin}"/>
+                                </ace:column>
+                                <ace:column  headerText="Oficina"  style="text-align: left">
+                                    <h:outputText  value="#{itemDiferencias.localidad.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Estado N"  style="text-align: left">
+                                    <h:outputText  value="#{itemDiferencias.estadoStr}"/>
+                                </ace:column>
+                                <ace:column  headerText="Custodio N"  style="text-align: left">
+                                    <h:outputText  value="#{itemDiferencias.custodioStr}"/>
+                                </ace:column>
+                                <ace:column  headerText="Oficina N"  style="text-align: left">
+                                    <h:outputText  value="#{itemDiferencias.localidadStr}"/>
+                                </ace:column>
+                                <ace:column  headerText="Observaciones"  style="text-align: left">
+                                    <h:outputText  value="#{itemDiferencias.observaciones}"/>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:tabPane>    
+                </ace:tabSet>
+
+
+                <!--edicion del activo-->
+                <ace:dialog 
+                    header="#{tomaFisicaActivosSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{!tomaFisicaActivosSfccbdmq.formularioToma.mostrar}"
+                    visible="#{!tomaFisicaActivosSfccbdmq.formularioToma.mostrar}">
+
+                    <h:panelGrid columns="4" width="90%">
+                        <h:outputLabel value="Desde:"/>
+                        <ace:dateTimeEntry navigator="true"  value="#{tomaFisicaActivosSfccbdmq.desde}" id="dos"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Hasta:"/>
+                        <ace:dateTimeEntry navigator="true"  value="#{tomaFisicaActivosSfccbdmq.hasta}" id="tres"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{tomaFisicaActivosSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{tomaFisicaActivosSfccbdmq.nuevo()}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{tomaFisicaActivosSfccbdmq.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                    <h:panelGrid width="90%">
+                        <ace:dataTable id="tablaO" 
+                                       value="#{tomaFisicaActivosSfccbdmq.listaTomas}"
+                                       var="itemTomas"
+                                       paginator="true"
+                                       lazy="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="top"
+                                       rowsPerPageTemplate="5,10,15,30,50,100"
+                                       paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="10"
+                                       >
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{tomaFisicaActivosSfccbdmq.modifica()}" value="Cambiar" icon="ui-icon ui-icon-pencil" disabled="#{itemTomas.fechafin!=null}"/>
+                                </ace:menuButton>
+                            </ace:column>
+                            <ace:column  headerText="Fecha Inicio" style="text-align: left">
+                                <h:outputText  value="#{itemTomas.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Fecha Fin" style="text-align: left">
+                                <h:outputText  value="#{itemTomas.fechafin}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+
+                        </ace:dataTable>
+                    </h:panelGrid>  
+
+                </ace:dialog>
+                <ace:dialog 
+                    header="#{tomaFisicaActivosSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{tomaFisicaActivosSfccbdmq.formulario.mostrar}"
+                    visible="#{tomaFisicaActivosSfccbdmq.formulario.mostrar}">
+
+                    <h:panelGrid columns="2" width="90%">
+                        <h:outputLabel value="Edificio:" />
+                        <h:selectOneMenu  value="#{oficinasSfccbdmq.edificio}" title="Edificio">
+                            <f:selectItems value="#{edificiosSfccbdmq.comboEdificioEspacio}"/>
+
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Localidad:" for="localidad" />
+                        <h:selectOneMenu id="localidad" value="#{tomaFisicaActivosSfccbdmq.oficinaNueva}" title="Localidad" >
+                            <f:selectItems value="#{oficinasSfccbdmq.comboOficina}"/>
+                        </h:selectOneMenu>
+
+                        <h:outputLabel value="Estado:" for="estado" />
+                        <h:selectOneMenu id="estado" value="#{tomaFisicaActivosSfccbdmq.estadoNuevo}" title="Estado" >
+                            <f:selectItems value="#{codigosSfccbdmq.comboEstadoActivos}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Observaciones:" />
+                        <h:inputTextarea cols="60" rows="4" value="#{tomaFisicaActivosSfccbdmq.detalleToma.observaciones}"/>
+
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{tomaFisicaActivosSfccbdmq.grabaNuevo()}" 
+                                          rendered="#{tomaFisicaActivosSfccbdmq.formulario.nuevo}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{tomaFisicaActivosSfccbdmq.grabarDetalle()}" 
+                                          rendered="#{tomaFisicaActivosSfccbdmq.formulario.modificar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{tomaFisicaActivosSfccbdmq.formulario.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+                <ace:dialog 
+                    header="#{tomaFisicaActivosSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{tomaFisicaActivosSfccbdmq.formularioImprimir.mostrar}"
+                    visible="#{tomaFisicaActivosSfccbdmq.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="Bienes.pdf" 
+                                             id="pdf-buttonprint" 
+                                             label="Generar PDF"
+                                             mimeType="application/pdf" 
+                                             resource="#{tomaFisicaActivosSfccbdmq.reporte}" 
+                                             style="" type="button"/>
+
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{tomaFisicaActivosSfccbdmq.formularioImprimir.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

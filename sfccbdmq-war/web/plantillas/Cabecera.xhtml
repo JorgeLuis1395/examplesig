@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+
+    <body >
+        <ui:composition>
+            <h:panelGrid columns="2" width="100%" style="text-align: center;margin-top:-13px ">
+                <ace:graphicImage alt="EMSEG" url="./resources/SFC90.png" value="./resources/SFC90.png"/>
+                <h:panelGrid columns="6" width="100%" style="text-align: center;margin-top:-13px ">
+                    <ace:menuBar  style="text-align: left; margin-top:0px;  height: 36px; width: 100%; border: 0"  autoSubmenuDisplay="true"  >
+                        <ace:menuItem>
+                            <a target="_blank" href="#">
+                                <h:graphicImage alt="EMSEG" url="./resources/FACEBOOK.png" value="./resources/FACEBOOK.png"/>  
+                            </a>
+                        </ace:menuItem>
+                        <ace:menuItem>
+                            <a target="_blank" href="#">
+                                <h:graphicImage alt="EMSEG" url="./resources/twitter.png" value="./resources/twitter.png"/>  
+                            </a>
+                        </ace:menuItem>
+                        <ace:menuItem>
+                            <a target="_blank" href="#">
+                                <h:graphicImage alt="EMSEG" url="./resources/youtube.png" value="./resources/youtube.png"/>  
+                            </a>
+                        </ace:menuItem>
+                        <ace:menuItem>
+                            <a target="_blank" href="#">
+                                <h:graphicImage alt="EMSEG" url="./resources/inst.png" value="./resources/inst.png"/>  
+                            </a>
+                        </ace:menuItem>
+                        <ace:menuItem>
+                            <a target="_blank" href="#">
+                                <h:graphicImage alt="EMSEG" url="./resources/flickr.png" value="./resources/flickr.png"/>  
+                            </a>
+                        </ace:menuItem>
+                    </ace:menuBar>
+                </h:panelGrid>
+            </h:panelGrid>  
+            <h:panelGrid columns="2">
+                <!--<img src="resources/images/logo.png"  alt="logo"/>-->
+                <!--                <img src="resources/images/logo.png" width="182" height="90" alt="logo"/>-->
+                <ace:menuBar  autoSubmenuDisplay="true">
+                    <ace:menuItem  value="Activos Fijos" action="#{menusSfccbdmq.iralModuloInicio('ACT')}" icon="ui-icon ui-icon-clipboard" />
+                    <ace:menuItem  action="#{menusSfccbdmq.iralModuloInicio('COM')}" value="Compras" icon="ui-icon ui-icon-tag" />
+                    <ace:menuItem  value="Contabilidad" action="#{menusSfccbdmq.iralModuloInicio('CONT')}" icon="ui-icon ui-icon-script" />
+                    <ace:menuItem  value="Presupuesto" action="#{menusSfccbdmq.iralModuloInicio('PRE')}" icon="ui-icon ui-icon-image" />
+                    <ace:menuItem  value="Tesorería" action="#{menusSfccbdmq.iralModuloInicio('TES')}" icon="ui-icon ui-icon-calculator" />
+                    <ace:menuItem  value="Seguridad" action="#{menusSfccbdmq.iralModuloInicio('SEG')}" icon="ui-icon ui-icon-key" />
+                    <ace:menuItem  value="Suministros" action="#{menusSfccbdmq.iralModuloInicio('SUM')}" icon="ui-icon ui-icon-cart"/>
+                    <ace:menuItem  value="Talento Humano" action="#{menusSfccbdmq.iralModuloInicio('RRHH')}" icon="ui-icon ui-icon-person" />
+                    <ace:menuItem  value="Personal" action="#{menusSfccbdmq.iralModuloInicio('PER')}" icon="ui-icon ui-icon-heart" />
+                    <ace:menuItem  value="PACPOA" action="#{menusSfccbdmq.iralModuloInicio('PACPOA')}" icon="ui-icon ui-icon-check" />
+                    <!--<ace:menuItem  value="Procesos" action="#{menusSfccbdmq.iralModulo('FLU')}" icon="ui-icon ui-icon-link" />-->
+                    <!--<ace:menuItem  value="Fichas" action="#{menusSfccbdmq.iralModuloInicio('FICHAS')}" icon="ui-icon ui-icon-circle-plus" />-->
+                    <ace:menuItem  value="Cerrar Sesión" action="#{parametrosSfccbdmq.cerraSession()}" style="color: red" icon="ui-icon ui-icon-power"/>
+                </ace:menuBar>
+            </h:panelGrid>
+            <h:panelGrid columns="2">
+                <!--<ace:messages/>-->
+                <ace:growlMessages  id="allMsgsGrowl" autoHide="false"
+                                    closeAll="true"
+                                    maxVisibleMessages="3"
+                                    position="top-right" header="Información"/>
+            </h:panelGrid>
+        </ui:composition>
+    </body>
+</html>

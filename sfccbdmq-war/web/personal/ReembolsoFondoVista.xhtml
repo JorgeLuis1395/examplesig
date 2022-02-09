@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+        <ui:composition template="../plantillas/plantillaPersonal.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel1"
+                           header="Reembolso Vales de caja"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGroup rendered="#{!reembolsoFondoSfccbdmq.formulario.nuevo}">
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{reembolsoFondoSfccbdmq.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{reembolsoFondoSfccbdmq.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reembolsoFondoSfccbdmq.buscar()}"/>
+                            </ace:menuBar>
+                            <ace:messages/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{reembolsoFondoSfccbdmq.formulario.nuevo}">
+                        <ace:panel id="panel"
+                                   header="Reembolso Vales de caja"
+                                   closable="false" >                            
+                            <h:panelGrid columns="2" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                                  action="#{reembolsoFondoSfccbdmq.grabar()}"  />
+                                    <ace:menuItem value="Pasar Todos" icon="ui-icon ui-icon-seek-end"  
+                                                  action="#{reembolsoFondoSfccbdmq.colocarTodas()}"/>
+                                    <ace:menuItem value="Retirar Todas" 
+                                                  icon="ui-icon ui-icon-seek-first" 
+                                                  action="#{reembolsoFondoSfccbdmq.retirarTodas()}" />
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{reembolsoFondoSfccbdmq.salir()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                            <ace:splitPane columnDivider="50"
+                                           scrollable="true"
+                                           style="width: 100%;">
+                                <f:facet name="left">
+                                    <ace:dataTable 
+                                        value="#{reembolsoFondoSfccbdmq.listaSeleccionada}"
+                                        var="item"
+                                        paginator="true"
+                                        lazy="false"
+                                        resizableColumns="true"
+                                        rowIndexVar="row"
+                                        paginatorPosition="both"
+                                        rowsPerPageTemplate="15,20,25,50,100"
+                                        currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        rows="15"
+                                        binding="#{origen}">
+                                        <f:facet name="header">Para seleccionar #{reembolsoFondoSfccbdmq.valorSeleccionar}</f:facet>
+                                        <ace:column style="text-align: left">
+                                            <ace:menuBar autoSubmenuDisplay="true" >
+                                                <ace:menuItem action="#{reembolsoFondoSfccbdmq.colocar(item.id)}" 
+                                                              value="Selecciona" icon="ui-icon ui-icon-seek-next" >
+                                                    <ace:ajax execute="@all"/>
+                                                </ace:menuItem>
+                                            </ace:menuBar>
+                                        </ace:column>
+                                        <ace:column  headerText="Fecha Mov"  style="text-align: left">
+                                            <h:outputText  value="#{item.fecha}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Solicitante"  style="text-align: left">
+                                            <h:outputText  value="#{item.solicitante.toString()}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Proveedor"  style="text-align: left">
+                                            <h:outputText  value="#{item.proveedor.empresa.toString()}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Valor" style="text-align: right">
+                                            <h:outputText  value="#{item.valor}">
+                                                <f:convertNumber pattern="###,###,#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Nro. Factura"  style="text-align: left">
+                                            <h:outputText  value="#{valesFondoSfccbdmq.traeNroFactura(item)}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Base Imponible Cero" style="text-align: right">
+                                            <h:outputText  value="#{item.baseimponiblecero}">
+                                                <f:convertNumber pattern="###,###,#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Base Imponible" style="text-align: right">
+                                            <h:outputText  value="#{item.baseimponible}">
+                                                <f:convertNumber pattern="###,###,#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Valor IVA" style="text-align: right">
+                                            <h:outputText  value="#{item.iva}">
+                                                <f:convertNumber pattern="###,###,#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Total Documento" style="text-align: right">
+                                            <h:outputText  value="#{item.baseimponiblecero+item.baseimponible+item.iva}">
+                                                <f:convertNumber pattern="###,###,#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Estado"  style="text-align: left">
+                                            <h:outputText  value="INGRESADO" rendered="#{item.estado==-1}"/>
+                                            <h:outputText  value="REGISTRADO" rendered="#{item.estado==0}"/>
+                                            <h:outputText  value="SOLICITA REEMBOLSO" rendered="#{item.estado==1}"/>
+                                            <h:outputText  value="REENBOLSADO" rendered="#{item.estado==2}"/>
+                                            <h:outputText  value="NEGADO REEMBOLSO" rendered="#{item.estado==3}"/>
+                                        </ace:column>
+
+                                    </ace:dataTable>
+                                </f:facet>
+                                <f:facet name="right">
+                                    <ace:dataTable 
+                                        value="#{reembolsoFondoSfccbdmq.listaSeleccionadab}"
+                                        var="seleccionados"
+                                        paginator="true"
+                                        lazy="false"
+                                        resizableColumns="true"
+                                        rowIndexVar="row1"
+                                        paginatorPosition="both"
+                                        rowsPerPageTemplate="5,10,15,30,50,100"
+                                        paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        rows="30"
+                                        binding="#{destino}">
+                                        <f:facet name="header">Seleccionado #{reembolsoFondoSfccbdmq.valorSeleccionado}</f:facet>
+                                        <ace:column style="text-align: left">
+                                            <ace:menuBar autoSubmenuDisplay="true" >
+                                                <ace:menuItem action="#{reembolsoFondoSfccbdmq.retirar(destino.rowIndex)}" 
+                                                              value="Retira" icon="ui-icon ui-icon-seek-prev" >
+                                                    <ace:ajax execute="@all"/>
+                                                </ace:menuItem>
+                                            </ace:menuBar>
+                                        </ace:column>
+                                        <ace:column  headerText="Fecha Mov"  style="text-align: left">
+                                            <h:outputText  value="#{seleccionados.fecha}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Solicitante"  style="text-align: left">
+                                            <h:outputText  value="#{seleccionados.solicitante.toString()}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Proveedor"  style="text-align: left">
+                                            <h:outputText  value="#{seleccionados.proveedor.empresa.toString()}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Valor" style="text-align: right">
+                                            <h:outputText  value="#{seleccionados.valor}">
+                                                <f:convertNumber pattern="###,###,#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Nro. Factura"  style="text-align: left">
+                                            <h:outputText  value="#{valesFondoSfccbdmq.traeNroFactura(seleccionados)}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Base Imponible Cero" style="text-align: right">
+                                            <h:outputText  value="#{seleccionados.baseimponiblecero}">
+                                                <f:convertNumber pattern="###,###,#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Base Imponible" style="text-align: right">
+                                            <h:outputText  value="#{seleccionados.baseimponible}">
+                                                <f:convertNumber pattern="###,###,#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Valor IVA" style="text-align: right">
+                                            <h:outputText  value="#{seleccionados.iva}">
+                                                <f:convertNumber pattern="###,###,#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Total Documento" style="text-align: right">
+                                            <h:outputText  value="#{seleccionados.baseimponiblecero+seleccionados.baseimponible+seleccionados.iva}">
+                                                <f:convertNumber pattern="###,###,#00.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Estado"  style="text-align: left">
+                                            <h:outputText  value="INGRESADO" rendered="#{seleccionados.estado==-1}"/>
+                                            <h:outputText  value="REGISTRADO" rendered="#{seleccionados.estado==0}"/>
+                                            <h:outputText  value="SOLICITA REEMBOLSO" rendered="#{seleccionados.estado==1}"/>
+                                            <h:outputText  value="REEMBOLSADO" rendered="#{seleccionados.estado==2}"/>
+                                            <h:outputText  value="NEGADO REEMBOLSO" rendered="#{seleccionados.estado==3}"/>
+                                        </ace:column>
+                                    </ace:dataTable>
+                                </f:facet>
+                            </ace:splitPane>
+                        </ace:panel>
+                    </h:panelGroup>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

@@ -1,0 +1,342 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+
+                <ace:panel id="panel"
+                           header="#{reporteReposicionesCajasSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGroup >
+
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Empleado:"  />
+                            <h:selectOneMenu  value="#{reporteReposicionesCajasSfccbdmq.cajaBuscar}" 
+                                              title="Empleado" >
+                                <f:selectItems value="#{reporteReposicionesCajasSfccbdmq.comboCajas}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+
+                            <ace:submitMonitor id="submitMonitorPanel"
+                                               for="panel"
+                                               blockUI="@all"
+                                               autoCenter="true"
+                                               activeLabel="Un Momento por favor"/>
+                        </h:panelGrid>
+
+
+                    </h:panelGroup>
+                    <h:panelGroup >
+                        <h:panelGrid columns="1" width="100%" >
+                            <ace:panel id="panel1"
+                                       header="Datos caja"
+                                       closable="false"
+                                       toggleable="true"
+                                       >
+                                <h:panelGrid columns="2" width="100%">
+                                    <h:outputLabel value="Departamento:" />
+                                    <h:outputLabel value="#{reporteReposicionesCajasSfccbdmq.caja.departamento.toString()}" />
+                                    <h:outputLabel value="Responsable:" />
+                                    <h:outputLabel value="#{reporteReposicionesCajasSfccbdmq.caja.empleado.toString()}" />
+                                    <h:outputLabel value="Valor:" />
+                                    <h:outputText value="#{reporteReposicionesCajasSfccbdmq.caja.valor}" >
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                    <h:outputLabel value="% Vale de caja:" />
+                                    <h:outputText value="#{reporteReposicionesCajasSfccbdmq.caja.prcvale}" >
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+
+                                </h:panelGrid>
+
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteReposicionesCajasSfccbdmq.buscarCajas()}"/>
+                                </ace:menuBar>
+                            </ace:panel>
+                            <ace:dataTable 
+                                value="#{reporteReposicionesCajasSfccbdmq.listaCajas}"
+                                var="item"
+                                paginator="true"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="top"
+                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rows="30"
+                                binding="#{reporteReposicionesCajasSfccbdmq.formulario.fila}"
+                                scrollHeight="600"
+                                scrollable="true">
+
+
+                                <ace:column  headerText="Aciones"  style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="...">
+                                        <ace:menuItem value="Imprimir Pago" icon="ui-icon ui-icon-print"  action="#{reporteReposicionesCajasSfccbdmq.imprimirKardex()}"/>
+                                        <ace:menuItem value="Imprimir Reposición" icon="ui-icon ui-icon-print"  action="#{reporteReposicionesCajasSfccbdmq.insertarReposicion()}"/>
+                                    </ace:menuButton>
+                                </ace:column>
+                                <ace:column  headerText="Fecha Mov"  style="text-align: left">
+                                    <h:outputText  value="#{item.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Apellidos "  style="text-align: left" 
+                                             filterBy="#{item.empleado.entidad.apellidos}" 
+                                             filterMatchMode="startsWith">
+                                    <h:outputText value="#{item.empleado.entidad.apellidos}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nombres"  style="text-align: left">
+                                    <h:outputText value="#{item.empleado.entidad.nombres}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor" style="text-align: left">
+                                    <h:outputText  value="#{item.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Valor Vales" style="text-align: left">
+                                    <h:outputText  value="#{reporteReposicionesCajasSfccbdmq.traerValorVales(item)}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+
+                                <ace:column  headerText="Dirección"  style="text-align: left">
+                                    <h:outputText value="#{item.departamento.toString()}"/>
+                                </ace:column>
+
+                                <ace:column  headerText="Observaciones"  style="text-align: left">
+                                    <h:outputText value="#{item.observaciones}"/>
+                                </ace:column>
+                                <ace:column  headerText="Tipo" style="text-align: left">
+                                    <h:outputText  value="APERTURA" rendered="#{item.apertura==null}"/>
+                                    <h:outputText  value="REEMBOLSO" rendered="#{item.apertura!=null}"/>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:panel>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteReposicionesCajasSfccbdmq.formularioReportes.mostrar}"
+                    visible="#{reporteReposicionesCajasSfccbdmq.formularioReportes.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="Egreso.pdf" id="pdf-button1" label="Generar PDF"
+                                             mimeType="application/pdf" 
+                                             rendered="#{reporteReposicionesCajasSfccbdmq.reporte!=null}"
+                                             resource="#{reporteReposicionesCajasSfccbdmq.reporte}" 
+                                             style="" type="button"/>
+                        <ace:dynamicResource fileName="Propuesta.pdf"  label="Generar Propuesta"
+                                             mimeType="application/pdf" 
+                                             rendered="#{reporteReposicionesCajasSfccbdmq.reportePropuesta!=null}"
+                                             resource="#{reporteReposicionesCajasSfccbdmq.reportePropuesta}" 
+                                             style="" type="button"/>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteReposicionesCajasSfccbdmq.formularioReportes.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteReposicionesCajasSfccbdmq.formularioImrpimir.mostrar}"
+                    visible="#{reporteReposicionesCajasSfccbdmq.formularioImrpimir.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="Reposicion.pdf" id="pdf-button" label="Imprimir Reposición"
+                                             mimeType="application/pdf" resource="#{reporteReposicionesCajasSfccbdmq.reporteReposicion}" 
+                                             style="" type="button" rendered="#{reporteReposicionesCajasSfccbdmq.reporteReposicion!=null}"/>
+                        <ace:dynamicResource fileName="LiquidacionCompras.xls" id="xls-button" label="Imprimir Liquidacion de Compras"
+                                             mimeType="application/pdf" resource="#{reporteReposicionesCajasSfccbdmq.reporteComp}" 
+                                             style="" type="button" rendered="#{reporteReposicionesCajasSfccbdmq.reporteComp!=null}"/>
+                        <ace:dynamicResource fileName="Compromiso.pdf" id="pdf-button2" label="Imprimir Compromiso"
+                                             mimeType="application/pdf" resource="#{reporteReposicionesCajasSfccbdmq.reporteCompromiso}" 
+                                             style="" type="button" rendered="#{reporteReposicionesCajasSfccbdmq.reporteCompromiso!=null}"/>
+                        <ace:dynamicResource fileName="Solicitud.pdf" id="button1" label="Imprimir Solicitud"
+                                             mimeType="application/pdf" resource="#{reporteReposicionesCajasSfccbdmq.reporteARL}" 
+                                             style="" type="button" rendered="#{reporteReposicionesCajasSfccbdmq.reporteARL!=null}"/>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteReposicionesCajasSfccbdmq.formularioImrpimir.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Detalle Caja"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteReposicionesCajasSfccbdmq.formularioReposicion.mostrar}"
+                    visible="#{reporteReposicionesCajasSfccbdmq.formularioReposicion.mostrar}">
+                    <h:panelGroup>
+                        <ace:tabSet style="clear:both;" clientSide="true">
+                            <ace:tabPane >
+                                <f:facet name="label">Liquidación / Factura</f:facet>
+                                <h:panelGrid columns="2" width="100%">
+                                    <h:outputLabel value="Tipo de Documento:" for="tipo" />
+                                    <h:selectOneMenu value="#{reporteReposicionesCajasSfccbdmq.reposicion.documento}" title="Tipo" >
+                                        <f:selectItems value="#{codigosSfccbdmq.comboDocumentos}"/>
+                                        <ace:ajax execute="@all"/>
+                                    </h:selectOneMenu>
+                                </h:panelGrid>
+                                <h:panelGrid columns="3" width="100%"  rendered="#{reporteReposicionesCajasSfccbdmq.reposicion.documento.codigo eq 'FACT'}">
+                                    <h:outputLabel value="Autorizaciones :"/>
+                                    <h:selectOneMenu  value="#{reporteReposicionesCajasSfccbdmq.autorizacion2}" id="autorizacion">
+                                        <f:selectItems value="#{reporteReposicionesCajasSfccbdmq.comboAutorizaciones2}"/>
+                                        <ace:ajax execute="@all"/>
+                                    </h:selectOneMenu>
+                                    <h:commandButton value="Nueva Autorización" action="#{reporteReposicionesCajasSfccbdmq.crear()}"/>
+                                </h:panelGrid>
+                                <h:panelGrid columns="2" width="100%" >
+                                    <h:outputLabel value="Número de Documento :"/>
+                                    <h:inputText  value="#{reporteReposicionesCajasSfccbdmq.reposicion.numerodocumento}"/>
+                                    <h:outputLabel value="Fecha:"/>
+                                    <ace:dateTimeEntry navigator="true"
+                                                       value="#{reporteReposicionesCajasSfccbdmq.reposicion.fecha}" 
+                                                       popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                       pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </ace:dateTimeEntry>
+                                    <h:outputLabel value="Base Imponible 0:" />
+                                    <h:inputText  value="#{reporteReposicionesCajasSfccbdmq.reposicion.base0}" />
+
+                                    <h:outputLabel value="Base Imponible :" />
+                                    <h:inputText  value="#{reporteReposicionesCajasSfccbdmq.reposicion.base}" >
+                                        <ace:ajax execute="@all"/>
+                                    </h:inputText>
+                                    <h:outputLabel  value="Impuesto :"/>
+                                    <h:selectOneMenu value="#{reporteReposicionesCajasSfccbdmq.impuesto}" >
+                                        <f:selectItems value="#{impuestosSfccbdmq.comboImpuestos}"/>
+                                        <ace:ajax execute="@all"/>
+                                    </h:selectOneMenu>
+
+                                    <h:outputLabel value="IVA :" />
+                                    <h:panelGrid columns="3" width="50%" style="text-align: left">
+                                        <h:outputLabel value="#{reporteReposicionesCajasSfccbdmq.reposicion.ajuste/100+(reporteReposicionesCajasSfccbdmq.reposicion.base*
+                                                                reporteReposicionesCajasSfccbdmq.impuesto.porcentaje/100)}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputLabel>
+                                        <h:commandButton value="+" action="#{reporteReposicionesCajasSfccbdmq.sube()}"/>
+                                        <h:commandButton value="-" action="#{reporteReposicionesCajasSfccbdmq.baja()}"/>
+                                    </h:panelGrid>
+                                    <h:outputLabel value="Sucursal de emisión :" rendered="#{reporteReposicionesCajasSfccbdmq.reposicion.documento.codigo ne 'FACT'}"/>
+                                    <h:selectOneMenu  value="#{reporteReposicionesCajasSfccbdmq.sucursal}" rendered="#{reporteReposicionesCajasSfccbdmq.reposicion.documento.codigo ne 'FACT'}">
+                                        <f:selectItems value="#{reporteReposicionesCajasSfccbdmq.comboSucursales}"/>
+                                        <ace:ajax execute="@all"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Punto de emisión :" rendered="#{reporteReposicionesCajasSfccbdmq.reposicion.documento.codigo ne 'FACT'}"/>
+                                    <h:selectOneMenu  value="#{reporteReposicionesCajasSfccbdmq.puntoemision}" rendered="#{reporteReposicionesCajasSfccbdmq.reposicion.documento.codigo ne 'FACT'}">
+                                        <f:selectItems value="#{reporteReposicionesCajasSfccbdmq.comboPuntoemision}"/>
+                                        <ace:ajax execute="@all"/>
+                                    </h:selectOneMenu>
+                                </h:panelGrid>
+                                <h:panelGrid columns="2" width="100%">
+                                    <h:outputLabel value="Descripción:" />
+                                    <h:inputTextarea cols="100" rows="5" 
+                                                     value="#{reporteReposicionesCajasSfccbdmq.reposicion.descripcion}"/>
+                                </h:panelGrid>
+                            </ace:tabPane>
+                        </ace:tabSet>
+                        <h:panelGrid columns="1">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{reporteReposicionesCajasSfccbdmq.grabarReposicion()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteReposicionesCajasSfccbdmq.formularioReposicion.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Autorización"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteReposicionesCajasSfccbdmq.formularioAuto.mostrar}"
+                    visible="#{reporteReposicionesCajasSfccbdmq.formularioAuto.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Tipo de Documento:" for="tipo" />
+                            <h:selectOneMenu id="tipo" value="#{reporteReposicionesCajasSfccbdmq.autorizacionProveedor.tipodocumento}" title="Tipo" >
+                                <f:selectItems value="#{codigosSfccbdmq.comboDocumentos}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Autorización:"/>
+                            <h:inputText value="#{reporteReposicionesCajasSfccbdmq.autorizacionProveedor.autorizacion}" title="Autorizacion">
+                                <f:validateLength maximum="10" minimum="10"/>
+                            </h:inputText>
+                            <h:outputLabel value="Sucursal/establecimiento:"/>
+                            <h:inputText value="#{reporteReposicionesCajasSfccbdmq.autorizacionProveedor.establecimiento}" title="Serie Inicial" size="3">
+                                <f:validateLength maximum="3" minimum="3"/>
+                            </h:inputText>
+                            <h:outputLabel value="Punto emisión:"/>
+                            <h:inputText value="#{reporteReposicionesCajasSfccbdmq.autorizacionProveedor.puntoemision}" title="Serie Inicial" size="3">
+                                <f:validateLength maximum="3" minimum="3"/>
+                            </h:inputText>
+                            <h:outputLabel value="Serie Inicial:"/>
+                            <h:inputText value="#{reporteReposicionesCajasSfccbdmq.autorizacionProveedor.inicio}" title="Serie Inicial" />
+                            <h:outputLabel value="Serie Final:"/>
+                            <h:inputText value="#{reporteReposicionesCajasSfccbdmq.autorizacionProveedor.fin}" title="Serie Inicial" />
+                            <h:outputLabel value="Fecha de Emisión:" />
+                            <ace:dateTimeEntry navigator="true" id="fecha" value="#{reporteReposicionesCajasSfccbdmq.autorizacionProveedor.fechaemision}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Fecha de Vencimiento :" />
+                            <ace:dateTimeEntry navigator="true"  value="#{reporteReposicionesCajasSfccbdmq.autorizacionProveedor.fechacaducidad}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"
+                                          action="#{reporteReposicionesCajasSfccbdmq.insertar()}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{reporteReposicionesCajasSfccbdmq.formularioAuto.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                        <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                    </h:panelGrid>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaPersonal.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="Planificación de suministros - departamento"
+                           closable="false"
+                           toggleable="false"  >
+                    <h:panelGrid columns="6" rendered="#{!suministroOrganigrama.formulario.mostrar}">
+                        <h:outputLabel value="Año :"  />
+                        <h:inputText value="#{suministroOrganigrama.anio}"/>
+
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{suministroOrganigrama.buscarReporte()}"  />
+
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <ace:tabSet style="clear:both;">
+                        <ace:tabPane >
+                            <f:facet name="label">Planificacion Consolidada</f:facet>
+                            <h:panelGrid width="100%">
+                                <ace:dataTable 
+                                    value="#{suministroOrganigrama.listaOrganigramaSuministros}"
+                                    var="novedadItem"
+                                    binding="#{suministroOrganigrama.formularioOrgSol.fila}">
+                                    <ace:row condition="group" groupBy="#{novedadItem.suministro.tipo}" pos="before">
+                                        <ace:column  colspan="6" style="background-color: #0099CC;text-align: left;color: #FFF">
+                                            <h:panelGrid columns="4">
+                                                <h:outputText value="Familia :" />
+                                                <h:outputText value="#{novedadItem.suministro.tipo.familia.nombre}" />
+                                                <h:outputText value="Tipo :" />
+                                                <h:outputText value="#{novedadItem.suministro.tipo.nombre}" />
+                                            </h:panelGrid>
+                                        </ace:column>
+                                    </ace:row>
+                                    <ace:column  headerText="Suministro"  style="text-align: left">
+                                        <h:outputText value="#{novedadItem.suministro.nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Unidad de medida"  style="text-align: left">
+                                        <h:outputText value="#{novedadItem.suministro.unidad.equivalencia}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Cantidad" style="text-align: right">
+                                        <h:outputText   value="#{novedadItem.cantidad}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Cantidad Aprobada" style="text-align: right">
+                                        <h:outputText   value="#{novedadItem.aprobado}"/>
+                                    </ace:column>
+                                     <ace:column  headerText="Solicitado" style="text-align: right">
+                                        <h:outputText   value="#{suministroOrganigrama.solicitado}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Despachado" style="text-align: right">
+                                        <h:outputText   value="#{suministroOrganigrama.despachado}"/>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+
+                        <ace:tabPane >
+                            <f:facet name="label">Planificación Individual</f:facet>
+                            <h:panelGrid width="100%">
+                                <ace:dataTable 
+                                    value="#{suministroOrganigrama.listaEmpleadosuministros}"
+                                    var="cosolidado"
+                                    >
+                                    <ace:row condition="group"  groupBy="#{cosolidado.empleado.id}" pos="before">
+                                        <ace:column  colspan="8" style="background-color: #00ffff;text-align: left;color: #FFF">
+                                            <h:panelGrid columns="6">
+                                                <h:outputText value="C.I. :" />
+                                                <h:outputText value="#{cosolidado.empleado.entidad.pin}" />
+                                                <h:outputText value="Apellidos Nombres" />
+                                                <h:outputText value="#{cosolidado.empleado.entidad.toString()}" />
+                                                <h:outputText value="Cargo :" />
+                                                <h:outputText value="#{cosolidado.empleado.cargoactual.cargo.nombre}" />
+                                                <h:outputText value="Modalidad de Contratación :" />
+                                                <h:outputText value="#{cosolidado.empleado.tipocontrato.nombre}" />
+                                            </h:panelGrid>
+                                        </ace:column>
+                                    </ace:row>
+
+                                    <ace:column   style="background-color: #0099CC;text-align: left;color: #FFF" groupBy="#{cosolidado.suministro.tipo.id}">
+                                        <h:panelGrid columns="4">
+                                            <h:outputText value="Familia :" />
+                                            <h:outputText value="#{cosolidado.suministro.tipo.familia.nombre}" />
+                                            <h:outputText value="Tipo :" />
+                                            <h:outputText value="#{cosolidado.suministro.tipo.nombre}" />
+                                        </h:panelGrid>
+                                    </ace:column>
+                                    <ace:column  headerText="Suministro"  style="text-align: left">
+                                        <h:outputText value="#{cosolidado.suministro.nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Unidad de medida"  style="text-align: left">
+                                        <h:outputText value="#{cosolidado.suministro.unidad.equivalencia}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Cantidad" style="text-align: right">
+                                        <h:outputText   value="#{cosolidado.cantidad}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Cantidad Aprobada" style="text-align: right">
+                                        <h:outputText   value="#{cosolidado.aprobado}"/>
+                                    </ace:column>
+                                   
+                                    
+                                    <ace:column  headerText="Explicación" style="text-align: left">
+                                        <h:outputText   value="#{cosolidado.explicacion}"/>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                    </ace:tabSet>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

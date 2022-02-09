@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{areasSeleccion.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"  >
+                    <h:panelGrid>
+
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Tipo:"/>
+                            <h:selectOneMenu value="#{areasSeleccion.tipo}" >
+                                <f:selectItems value="#{tiposSelecciones.comboTiposSeleccion}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Nombre : " rendered="#{areasSeleccion.tipo != null}" />
+                            <h:inputText value="#{areasSeleccion.nombre}" rendered="#{areasSeleccion.tipo != null}" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{areasSeleccion.buscar()}"/>
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{areasSeleccion.nuevo()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                    <ace:messages/>
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{areasSeleccion.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{areasSeleccion.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{areasSeleccion.listaAreas}"
+                                       var="item"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,50,all"
+                                       paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="5"
+                                       binding="#{areasSeleccion.formulario.fila}">
+
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{areasSeleccion.modificar()}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{areasSeleccion.eliminar()}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column>
+                            <ace:column  headerText="Orden" style="text-align: left">
+                                <h:outputText  value="#{item.orden}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nombre" style="text-align: left">
+                                <h:outputText  value="#{item.nombre}"/>
+                            </ace:column>
+                            <!--                            <ace:column  headerText="Ponderación" style="text-align: left">
+                                                            <h:outputText  value="#{item.ponderacion}"/>
+                                                        </ace:column>-->
+                            <ace:column  headerText="Nota Máxima" style="text-align: right">
+                                <h:outputText  value="#{item.notamaxima}"/>
+                            </ace:column>
+                            <ace:column  headerText="Descripción" style="text-align: left">
+                                <h:outputText  value="#{item.descripcion}"/>
+                            </ace:column>
+                            <ace:column headerText="Prueba (SI / NO):" style="text-align: left">
+                                <h:graphicImage url="../resources/images/si.png" rendered="#{item.prueba}"/>
+                                <h:graphicImage url="../resources/images/no.png" rendered="#{!item.prueba}"/>
+                            </ace:column>
+                            <ace:row condition="group" groupBy="#{areasSeleccion.listaAreas}" pos="after" styleClass="grupo">
+                                <ace:column >
+                                </ace:column>
+                                <ace:column>
+                                </ace:column>
+                                <ace:column  style="text-align: right" >
+                                    <h:outputText  value="SUMATORIA / #{areasSeleccion.tipo.notamaxima}"  />
+                                </ace:column>
+                                <ace:column style="text-align: right">
+                                    <h:outputText value="#{areasSeleccion.totalNotaMaxima()}" style="text-align: left">
+                                        <f:convertNumber type="number" maxFractionDigits="2" minFractionDigits="2"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column>
+                                </ace:column>
+                                <ace:column>
+                                </ace:column>
+                            </ace:row>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{areasSeleccion.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{areasSeleccion.formulario.mostrar}"
+                    visible="#{areasSeleccion.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Orden" for="orden" />
+                            <h:inputText id="orden" value="#{areasSeleccion.area.orden}" title="Orden"/>
+                            <h:outputLabel value="Nombre:" for="nombre" />
+                            <h:inputText id="nombre" value="#{areasSeleccion.area.nombre}" title="Nombre" />
+                            <!--                            <h:outputText value="Ponderación (%)"/>
+                                                        <h:inputText value="#{areasSeleccion.area.ponderacion}" id="ponderacion" partialSubmit="true" />-->
+                            <h:outputText value="Calificación Máxima"/>
+                            <h:inputText value="#{areasSeleccion.area.notamaxima}" id="notamax">
+                                <ace:ajax execute="@all"/>
+                            </h:inputText>
+                            <h:outputText value="Descripción"/>
+                            <h:inputTextarea value="#{areasSeleccion.area.descripcion}" id="descripcion" >
+                                <ace:ajax execute="@all"/>
+                            </h:inputTextarea>
+                            <h:outputText value="Prueba: (Ordinario: SI / Adicional: NO:"/>
+                            <h:selectBooleanCheckbox value="#{areasSeleccion.area.prueba}" >
+                                <ace:ajax render="panel"/>
+                            </h:selectBooleanCheckbox>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{areasSeleccion.formulario.nuevo}" 
+                                          action="#{areasSeleccion.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{areasSeleccion.grabar()}" 
+                                          rendered="#{areasSeleccion.formulario.modificar}" />
+                            <ace:menuItem action="#{areasSeleccion.borrar()}" 
+                                          value="¿Está seguro de Borrar el registro?" 
+                                          icon="ui-icon ui-icon-trash"
+                                          rendered="#{areasSeleccion.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{areasSeleccion.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

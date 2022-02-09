@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+    <h:panelGrid columns="3">
+        <h:outputLabel value="Buscar Proyecto/CC por:" />
+        <h:selectOneMenu value="#{proyectosSfccbdmq.tipoBuscar}" disabled="#{activosSfccbdmq.activo.fechaalta!=null}">
+            <f:selectItem itemLabel="Código" itemValue="-1"/>
+            <f:selectItem itemLabel="Nombre" itemValue="-2"/>
+            <ace:ajax execute="@all"/>
+        </h:selectOneMenu>
+
+        <ace:autoCompleteEntry  listValue="#{proyectosSfccbdmq.listaProyectosSeleccionar}" 
+                                listVar="proyectoAuto" 
+                                rows="8" 
+                                value="#{proyectosSfccbdmq.codigo}" 
+                                valueChangeListener="#{proyectosSfccbdmq.cambiaCodigo}" 
+                                filterBy="#{proyectoAuto.codigo}"
+                                textChangeListener="#{proyectosSfccbdmq.proyectoChangeEventHandler}"
+                                width="400"
+                                rendered="#{proyectosSfccbdmq.tipoBuscar==-1}">
+            <f:facet name="row">
+                <h:panelGrid  columns="2"  width="100%" columnClasses="tipo" style="text-align: left;font-size: xx-small">
+                    <h:outputText value="#{proyectoAuto.codigo}"/>
+                    <h:outputText value="#{proyectoAuto.nombre}"/>
+                </h:panelGrid>
+            </f:facet>
+        </ace:autoCompleteEntry>
+        <ace:autoCompleteEntry  listValue="#{proyectosSfccbdmq.listaProyectosSeleccionar}" 
+                                listVar="proyectoAutoNombre" 
+                                rows="8" 
+                                value="#{proyectosSfccbdmq.codigo}" 
+                                valueChangeListener="#{proyectosSfccbdmq.cambiaNombre}" 
+                                filterBy="#{proyectoAutoNombre.nombre}"
+                                textChangeListener="#{proyectosSfccbdmq.proyectoChangeEventHandler}"
+                                width="400"
+                                rendered="#{proyectosSfccbdmq.tipoBuscar==-2}">
+            <f:facet name="row">
+                <h:panelGrid  columns="4"  width="100%" columnClasses="tipo" style="text-align: left;font-size: xx-small">
+                    <h:outputText value="#{proyectoAutoNombre.nombre}"/>
+                    <h:outputText value="#{proyectoAutoNombre.codigo}"/>
+
+                </h:panelGrid>
+            </f:facet>
+        </ace:autoCompleteEntry>
+    </h:panelGrid>
+    <h:panelGrid columns="2" rendered="#{proyectosSfccbdmq.proyectoSeleccionado!=null}">
+        <h:outputLabel value="Código:" />
+        <h:outputLabel  value="#{proyectosSfccbdmq.proyectoSeleccionado.codigo}"  />
+        <h:outputLabel value="Nombre:" />
+        <h:outputLabel  value="#{proyectosSfccbdmq.proyectoSeleccionado.nombre}"  />
+    </h:panelGrid>
+
+</html>

@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:body>
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="Reporte Cruce de Facturas"
+                           closable="false"
+                           toggleable="true">
+                    <h:panelGroup>
+                        <ui:include src="../BuscarProveedor.xhtml" />
+                        <ui:include src="../BuscarUsuario.xhtml" />
+                        <h:panelGrid columns="2" width="100%">
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{cruceFacturasSfccbdmq.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{cruceFacturasSfccbdmq.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{cruceFacturasSfccbdmq.buscar()}"/>
+                                <ace:menuItem value="Hoja Elect." icon="ui-icon ui-icon-calculator" action="#{cruceFacturasSfccbdmq.exportar()}"/>
+                            </ace:menuBar>
+                            <ace:messages/>
+                        </h:panelGrid>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="@all"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{cruceFacturasSfccbdmq.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{cruceFacturasSfccbdmq.formulario.pantalla}" 
+                                              target="tabla" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%">
+                            <ace:dataTable id="tabla2" 
+                                           value="#{cruceFacturasSfccbdmq.cabeceraDocumentos}"
+                                           var="item"
+                                           paginator="true"
+                                           lazy="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="15,20,25,50,100"
+                                           currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="15"
+                                           scrollHeight="600"
+                                           scrollable="true">
+                                <ace:column  headerText="Registro" style="text-align: right">
+                                    <h:outputText value="#{row+1}"/>
+                                </ace:column>
+                                <ace:column  headerText="Fecha"  style="text-align: left">
+                                    <h:outputText  value="#{item.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Proveedor"  style="text-align: left">
+                                    <h:outputText  value="#{item.compromiso.proveedor.empresa.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nro. Pago"  style="text-align: right">
+                                    <h:outputText  value="#{item.id}"/>
+                                </ace:column>
+                                <ace:column  headerText="Compromiso"  style="text-align: left">
+                                    <h:outputText  value="#{item.compromiso.toString()}"/>
+                                </ace:column>        
+                                <ace:column  headerText="Valor Compromiso"  style="text-align: right">
+                                    <h:outputText  value="#{cruceFacturasSfccbdmq.traerValorCompromiso(item)}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Devengado"  style="text-align: right">
+                                    <h:outputText  value="#{cruceFacturasSfccbdmq.traerValorRenglones(item)}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Valor Detalle"  style="text-align: right">
+                                    <h:outputText  value="#{cruceFacturasSfccbdmq.traerValorDetalles(item)}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Diferencia"  style="text-align: right">
+                                    <h:outputText  value="#{cruceFacturasSfccbdmq.traerValorRenglones(item) - cruceFacturasSfccbdmq.traerValorDetalles(item)}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                        <ace:dialog 
+                            header="Exportar"
+                            closable="false"
+                            modal="true"
+                            draggable="true"
+                            showEffect="clip"
+                            hideEffect="fade"
+                            rendered="#{cruceFacturasSfccbdmq.formularioReporte.mostrar}"
+                            visible="#{cruceFacturasSfccbdmq.formularioReporte.mostrar}">
+                            <h:panelGroup>
+                                <ace:dynamicResource fileName="CruceFacturas.xls" id="pdf-botonMayor" label="Exportar a XLS"
+                                                     mimeType="application/xls" resource="#{cruceFacturasSfccbdmq.reporteXls}" 
+                                                     style="" type="button"/>
+
+                                <h:panelGrid columns="1" width="100%">
+                                    <ace:menuBar autoSubmenuDisplay="true" >
+
+                                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                      action="#{cruceFacturasSfccbdmq.formularioReporte.cancelar()}"/>
+                                    </ace:menuBar>
+                                    <ace:messages />
+                                </h:panelGrid>
+                            </h:panelGroup>
+                        </ace:dialog>
+                    </h:panelGroup>
+                </ace:panel>                
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>
+
+

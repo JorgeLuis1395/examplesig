@@ -1,0 +1,391 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <ace:panel id="panelImprimir" >
+        <ace:panel  style="display:block;">
+            <h:panelGrid width="100%" style="border: 0px;" id="imprimirInscripcion" >
+                <h:panelGrid width="100%" style="border: 0px;">
+                    <ace:panel 
+                        style="width: 100%; border: 0px; display: inline-block ; width: 100%;"
+                        closable="false"
+                        toggleable="false">
+                        <table style="width: 100%; border: #aaaaaa 1px solid; border-collapse: collapse ; font-size: 12px; color: black">
+                            <tr>
+                                <td rowspan="2" style="width: 25%; border: #aaaaaa 1px solid; text-align: center; color: black" >
+                                    <strong>
+                                        <img src="../resources/images/logo.png" width="111" height="65" alt="logo"/>
+                                    </strong>
+                                </td>
+                                <td  style="width: 75%; border: #aaaaaa 1px solid; text-align: center; color: black">
+                                    <strong>
+                                        <h:outputText value="CUERPO DE BOMBEROS" style="text-align: center;" styleClass="bold"/>
+                                        <br/>
+                                        <h:outputText value="DISTRITO METROPOLITANO DE QUITO" style="text-align: center;" styleClass="bold"/>
+                                        <br/>
+                                        <h:outputText value="DIRECCIÓN FINANCIERA" style="text-align: center;" styleClass="bold"/>
+                                        <br/>
+                                        <h:outputText value="SOLICITUD DE ANTICIPO DE REMUNERACIÓN UNIFICADA" style="text-align: center;" styleClass="bold"/>
+                                    </strong>
+                                    <br/>
+                                    <strong>
+                                        <h:outputText value="NÚMERO : " styleClass="bold" />
+                                        <h:outputLabel value="#{prestamosEmpleado.prestamo.pagare} " styleClass="bold" />
+
+                                    </strong>
+                                </td>
+
+                            </tr>
+                        </table>
+                    </ace:panel>
+                    <ace:panel
+                        style="border: 0px; font-size: 12px; display: inline-block ; width: 100%; "
+                        header="1. IDENTIFICACIÓN DE SOLICITANTE"
+                        closable="false">  
+                        <h:panelGrid columns="4" style="font-size: 12px; color: black; width: 100%; text-align: justify; border:  #aaaaaa  1px solid" columnClasses="column3,column4">
+                            <h:outputLabel value="APELLIDOS Y NOMBRES:" styleClass="bold"/>
+                            <h:outputLabel value="#{prestamosEmpleado.prestamo.empleado.entidad.apellidos} #{prestamosEmpleado.prestamo.empleado.entidad.nombres}" />
+                            <h:outputLabel value="CÉDULA DE CIUDADANÍA: " styleClass="bold" />
+                            <h:outputLabel value="#{prestamosEmpleado.prestamo.empleado.entidad.pin}" />
+                            <h:outputLabel value="  FECHA DE PRESENTACIÓN: " styleClass="bold"/>
+                            <h:outputLabel value="#{prestamosEmpleado.prestamo.fechasolicitud}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputLabel>
+                        </h:panelGrid>
+                    </ace:panel>
+                    <ace:panel
+                        style="border: 0px; font-size: 12px; display: inline-block ; width: 100%;"
+                        header="TIPO DE RELACIÓN LABORAL"
+                        closable="false">
+                        <h:panelGrid columns="2" style="font-size: 12px; color: black; width: 100%; text-align: justify; border:  #aaaaaa  1px solid" columnClasses="column3,column4" >     
+                            <h:outputLabel value="#{prestamosEmpleado.prestamo.empleado.tipocontrato.codigo}" />
+                        </h:panelGrid>
+                    </ace:panel>
+                    <ace:panel
+                        style="border: 0px; font-size: 12px; display: inline-block ; width: 100%; "
+                        header="3. INFORMACIÓN BANCARIA"
+                        closable="false">
+                        <h:panelGrid columns="6" style="font-size: 12px; color: black; width: 100%; text-align: justify; border:  #aaaaaa  1px solid" columnClasses="column3,column4" >     
+                            <h:outputLabel value="No CUENTA:" styleClass="bold"/>
+                            <h:outputLabel value="#{prestamosEmpleado.traer(prestamosEmpleado.prestamo.empleado, 'NUMCUENTA')}" />
+                            <h:outputLabel value="BANCO: " styleClass="bold"/>
+                            <h:outputLabel value="#{prestamosEmpleado.traerBancoP(prestamosEmpleado.prestamo.empleado)}"/>
+                            <h:outputLabel value="TIPO: " styleClass="bold"/>
+                            <h:outputLabel value="#{prestamosEmpleado.traerTipoCuenta(prestamosEmpleado.prestamo.empleado)}" />
+                        </h:panelGrid>
+
+                    </ace:panel>
+                    <ace:panel
+                        style="border: 0px; font-size: 12px; display: inline-block ; width: 100%; "
+                        header="4. TIPO DE ANTICIPO"
+                        closable="false">
+                        <h:panelGrid columns="2" style="font-size: 12px; color: black; width: 100%; text-align: justify; border:  #aaaaaa  1px solid" columnClasses="column3,column4" >     
+                            <h:outputLabel value="#{prestamosEmpleado.prestamo.tipo.nombre}" />
+                        </h:panelGrid>
+                    </ace:panel>
+                    <ace:panel 
+                        style="width: 100%; border: 0px; display: inline-block ; width: 100%;"
+                        closable="false"
+                        toggleable="false">
+                        <table style="width: 100%; border: #aaaaaa 1px solid; border-collapse: collapse ; font-size: 12px; color: black">
+                            <tr>
+                                <th  style="width: 15%; border: #aaaaaa 1px solid; text-align: center; color: black" >
+                                    <strong>
+                                        <h:outputText value="MONTO SOLICITADO" style="text-align: center;" styleClass="bold"/>
+                                    </strong>
+                                </th>
+                                <th  style="width: 15%; border: #aaaaaa 1px solid; text-align: center; color: black">
+                                    <strong>
+                                        <h:outputText value="PLAZO DEL PAGO" style="text-align: center;" styleClass="bold"/>
+                                    </strong>
+                                </th>
+                                <th  style="width: 70%; border: #aaaaaa 1px solid; text-align: center; color: black">
+                                    <strong>
+                                        <h:outputText value="COMPROMISO DEL SERVIDOR O SERVIDORA" style="text-align: center;" styleClass="bold"/>
+                                    </strong>
+                                </th>
+                            </tr>
+                            <tr>
+                                <td style="width: 20%; border: #aaaaaa 1px solid; text-align: center; color: black" >
+                                    <h:outputText value="VALOR $ " styleClass="bold"/>
+                                    <h:outputText value="#{prestamosEmpleado.prestamo.valor}" />
+                                    <br/>
+                                    <br/>
+                                    <h:outputText value="VALOR DEL DÉCIMO $ " styleClass="bold"/>
+                                    <h:outputText value="#{prestamosEmpleado.prestamo.valordiciembre}" />
+                                </td>
+                                <td  style="width: 55%; border: #aaaaaa 1px solid; text-align: center; color: black">
+                                    <h:outputText value="#{prestamosEmpleado.prestamo.couta} MESES"/>
+                                </td>
+                                <td   style="width: 55%; border: #aaaaaa 1px solid; text-align: center; color: black">
+
+                                    <h:outputText value="DEBO Y PAGARE AL CB-DMQ LA SUMA DE USD $ #{prestamosEmpleado.prestamo.valor} Y AUTORIZO EL
+                                                  DEBITO EN CUOTAS MENSUALES DE MIS HABERES. EN CASO DE SEPARACIÓN DEFINITIVA
+                                                  DE LA INSTITUCIÓN AUTORIZO SE ME DESCUENTE DE MI LIQUIDACION EL SALDO DEL
+                                                  ANTICIPO SOLICITADO; SOMETIENDOME A LAS LEYES Y NORMATIVAS ESTABLECIDAS PARA
+                                                  EL EFECTO EN CASO DE NO CUBRIR LA TOTALIDAD DE LA DEUDA" style="text-align: justify;" />
+                                    <ace:graphicImage   value="#{imagenesSfccbdmq.traerImagenBmp(prestamosEmpleado.prestamo.empleado.entidad)}" />
+                                    <ace:graphicImage   value="#{imagenesSfccbdmq.traerImagenJpg(prestamosEmpleado.prestamo.empleado.entidad)}" />
+                                    <br/>
+                                    <h:outputText value="#{prestamosEmpleado.prestamo.empleado.entidad.toString()}"/>
+                                    <br/>
+                                    <h:outputText value="#{prestamosEmpleado.prestamo.empleado.entidad.pin}"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </ace:panel>
+                    <ace:panel
+                        style="border: 0px; font-size: 12px; display: inline-block ; width: 100%; "
+                        header="5. GARANTÍA"
+                        closable="false">
+                        <h:panelGrid columns="2" style="font-size: 12px; color: black; width: 100%; text-align: justify; border:  #aaaaaa  1px solid" columnClasses="column3,column4" >     
+                            <h:outputLabel value="Yo , #{prestamosEmpleado.traerGarante(prestamosEmpleado.prestamo.garante)}, con Cédula de Ciudadanía No #{prestamosEmpleado.traerCedulaGarante(prestamosEmpleado.prestamo.garante)}
+                                           en calidad de deudor solidario y garante del Señor(a) #{prestamosEmpleado.prestamo.empleado.entidad.toString()}
+                                           con Cédula de Ciudadanía No. #{prestamosEmpleado.prestamo.empleado.entidad.pin} ,autorizo expresamente para que en caso de NO PAGO de DOS CUOTAS MENSUALES,
+                                           del deudor principal y/o en caso de retiro de la Institución por cualquier circunstancia, se proceda al descuento de mi remuneracion del
+                                           mes inmediato siguiente, hasta la total cancelación de la obligación, en base a la reliquidación del préstamo.
+                                           " />
+                        </h:panelGrid>
+                        <h:panelGrid  width="100%" columns="2" style=" height: 10px;">
+                            <ace:graphicImage   value="#{imagenesSfccbdmq.traerImagenBmpG(prestamosEmpleado.traerCedulaGarante(prestamosEmpleado.prestamo.garante))  }" />
+                            <ace:graphicImage   value="#{imagenesSfccbdmq.traerImagenJpgG(prestamosEmpleado.traerCedulaGarante(prestamosEmpleado.prestamo.garante))  }" />
+                        </h:panelGrid>
+                        <h:panelGrid  width="50%" columns="2" style=" height: 10px;">
+
+                            <h:outputLabel value="Nombre: " styleClass="bold"/>
+                            <h:outputLabel value="#{prestamosEmpleado.traerGarante(prestamosEmpleado.prestamo.garante)}" />
+                            <h:outputLabel value="CI: " styleClass="bold"/>
+                            <h:outputLabel value="#{prestamosEmpleado.traerCedulaGarante(prestamosEmpleado.prestamo.garante)}" />
+                        </h:panelGrid>
+                    </ace:panel>
+                    <ace:panel
+                        style="border: 0px; font-size: 12px; display: inline-block ; width: 100%; "
+                        header="6. DIRECCIÓN FINANCIERA (ANÁLISIS DE CAPACIDAD DE PAGO)"
+                        closable="false">
+
+                        <table style="width: 100%; border: #aaaaaa 1px solid; border-collapse: collapse ; font-size: 12px; color: black">
+
+                            <tr>
+                                <td style="width: 50%; border: #aaaaaa 1px solid; text-align: left; color: black" >
+
+                                    <h:outputLabel value="REMUNERACIÓN MENSUAL UNIFICADA: " styleClass="bold"/>
+                                    <br/>
+                                    <h:outputLabel value="SUELDO LIQUIDO MES ANTERIOR: " styleClass="bold"/>
+                                    <br/>
+                                    <h:outputLabel value="CAPACIDAD PAGO MENSUAL: " styleClass="bold"/> 
+                                    <br/>
+                                    <h:outputLabel value="DESCUENTO CUOTA MENSUAL: " styleClass="bold"/>
+                                    <br/> 
+                                    <h:outputLabel value="DESCUENTO MES DE DICIEMBRE: " styleClass="bold"/>
+
+
+                                </td>
+                                <td  style="width: 50%; border: #aaaaaa 1px solid; text-align: center; color: black">
+                                    <h:outputLabel value="#{prestamosEmpleado.rmu}" >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputLabel>
+                                    <br/>
+                                    <h:outputLabel value="#{(prestamosEmpleado.factivilidadPagare)}" />
+                                    <br/>
+                                    <h:outputLabel value="#{(prestamosEmpleado.maximoPagare)}" />
+                                    <br/>
+                                    <h:outputLabel value="#{(prestamosEmpleado.valorCuotaF())}" >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputLabel>
+                                    <br/>
+                                    <h:outputLabel value=" #{prestamosEmpleado.prestamo.valordiciembre}" >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputLabel>
+
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table style="width: 100%; border: #aaaaaa 1px solid; border-collapse: collapse ; font-size: 12px; color: black">
+                            <tr>
+                                <th  style="width: 20%; border: #aaaaaa 1px solid; text-align: center; color: black" >
+                                    <strong>
+                                        <h:outputText value="#{prestamosEmpleado.prestamo.fechaFinanciero}" style="text-align: center;" >
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>                                    
+                                        </h:outputText>
+                                    </strong>
+                                </th>
+                                <th  style="width: 55%; border: #aaaaaa 1px solid; text-align: center; color: black">
+                                    <h:panelGrid columns="2" style="font-size: 12px; color: black; width: 100%; text-align: justify; border:  #aaaaaa  1px solid" columnClasses="column3,column4" >     
+                                        <ace:graphicImage   value="#{imagenesSfccbdmq.traerImagenBmpG(prestamosEmpleado.dTesoreria())}" />
+                                        <ace:graphicImage   value="#{ imagenesSfccbdmq.traerImagenJpgG(prestamosEmpleado.dTesoreria())}" />
+                                        <br/>
+                                        <h:outputText value="#{  prestamosEmpleado.traerFuncionario(prestamosEmpleado.dTesoreria()) }" 
+                                                      style="text-align: center;" styleClass="bold"/>
+                                    </h:panelGrid>
+                                </th>
+
+                            </tr>
+                            <tr>
+                                <td style="width: 20%; border: #aaaaaa 1px solid; text-align: center; color: black" >
+                                    <h:outputText value="FECHA" />
+
+                                </td>
+                                <td  style="width: 55%; border: #aaaaaa 1px solid; text-align: center; color: black">
+                                    <h:outputText value="TESORERÍA"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </ace:panel>
+                    <ace:panel 
+                        style="width: 100%; border: 0px; display: inline-block ; width: 100%;"
+                        header="7. DIRECCIÓN FINANCIERA"
+                        closable="false"
+                        toggleable="false">
+                        <table style="width: 100%; border: #aaaaaa 1px solid; border-collapse: collapse ; font-size: 12px; color: black">
+                            <tr>
+                                <th  style="width: 20%; border: #aaaaaa 1px solid; text-align: center; color: black" >
+                                    <strong>
+                                        <h:outputText value="MONTO APROBADO" style="text-align: center;" styleClass="bold"/>
+                                    </strong>
+                                </th>
+                                <th  style="width: 20%; border: #aaaaaa 1px solid; text-align: center; color: black" >
+                                    <strong>
+                                        <h:outputText value="DESCUENTO MES DE DICIEMBRE" style="text-align: center;" styleClass="bold"/>
+                                    </strong>  
+                                </th>
+                                <th  style="width: 20%; border: #aaaaaa 1px solid; text-align: center; color: black" >
+                                    <strong>
+                                        <h:outputText value="PLAZO DE PAGO" style="text-align: center;" styleClass="bold"/>
+                                    </strong>
+                                </th>
+                                <th  style="width: 55%; border: #aaaaaa 1px solid; text-align: center; color: black">
+                                    <strong>
+                                        <h:outputText value="RESPONSABLE" style="text-align: center;" styleClass="bold"/>
+                                    </strong>
+                                    <h:outputText value="#{empleados.empleadoSeleccionado.entidad.toString()}" style="text-align: center;" styleClass="bold"/>
+
+                                </th>
+                            </tr>
+                            <tr>
+                                <td  style="width: 20%; border: #aaaaaa 1px solid; text-align: center; color: black" >
+                                    <h:outputText value="$ #{prestamosEmpleado.prestamo.valorcontabilidad}" />
+                                </td>
+                                <td  style="width: 20%; border: #aaaaaa 1px solid; text-align: center; color: black" >
+                                    <h:outputText value="$ #{prestamosEmpleado.prestamo.valordiciembre}"/>
+                                </td>
+                                <td  style="width: 20%; border: #aaaaaa 1px solid; text-align: center; color: black" >
+                                    <h:outputText value="#{prestamosEmpleado.prestamo.couta} MESES"/>
+                                </td>
+                                <td  style="width: 55%; border: #aaaaaa 1px solid; text-align: center; color: black">
+
+                                    <ace:graphicImage   value="#{imagenesSfccbdmq.traerImagenBmpG(prestamosEmpleado.dContabilidad())}" />
+                                    <ace:graphicImage   value="#{ imagenesSfccbdmq.traerImagenJpgG(prestamosEmpleado.dContabilidad())}" />
+                                    <br/>
+                                    <h:outputText value="#{prestamosEmpleado.traerFuncionario(prestamosEmpleado.dContabilidad()) }" 
+                                                  style="text-align: center;" styleClass="bold"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </ace:panel>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                     <br/>
+                    <ace:panel    style="text-align: center;  "
+                                  closable="false">
+
+                        <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+                        <h3><strong>CUERPO DE BOMBEROS DEL DISTRITO METROPOLITANO DE QUITO</strong></h3>
+                        <h3><strong>#PAGARÉ A LA ORDEN NRO {prestamosEmpleado.prestamo.pagare}</strong></h3>
+
+                        <h3>Anticipo No: #{prestamosEmpleado.prestamo.id}       POR #{prestamosEmpleado.prestamo.valorcontabilidad} </h3>
+                    </ace:panel>
+                    <ace:panel style="text-align: justify;  "
+                               closable="false">
+
+                        <h:outputLabel value="Yo , #{prestamosEmpleado.prestamo.empleado.entidad.toString()}, portador(a) de la cédula de identidad No
+                                       #{prestamosEmpleado.prestamo.empleado.entidad.pin} domiciliada(o) en la ciudad de QUITO en la Dirección #{prestamosEmpleado.prestamo.empleado.entidad.direccion.principal} - #{prestamosEmpleado.prestamo.empleado.entidad.direccion.secundaria}
+                                       , con el cargo #{prestamosEmpleado.prestamo.empleado.cargoactual.toString()}; debo y pagaré a la orden del CUERPO DE BOMBEROS DEL DMQ. 
+                                       La suma de $ #{prestamosEmpleado.prestamo.valorcontabilidad} /100 Dólares que he recibido de dicha Institución en calidad Anticipo de remuneración a mi entera satisfacción.
+
+
+                                       La cantidad indicada en este pagaré me obligo a cancelar en #{prestamosEmpleado.prestamo.couta.intValue()} mes (es) fijos, mediante pagos mensuales por un valor de $
+                                       #{(prestamosEmpleado.valorCuota())} excepto en el mes de diciembre que se me descontará la cantidad de $ #{prestamosEmpleado.prestamo.valordiciembre.toString()}
+                                       ; para lo cual autorizo el descuento respectivo de mi remuneración mensual unificada, a partir de la suscripción de este documento de crédito. Sobre la cantidad prestada reconocerá el interés
+                                       del 0% anual, desde la fecha de emisión hasta la total cancelación de esta obligación. El incumplimiento en el pago de TRES dividendos
+                                       mensuales dará derecho a la parte acreedora para declarar vencida la obligación.
+                                       " />
+                        <br/>
+                        <h:outputText value="                               
+                                      En caso de mora acepto pagar el interés mensual que esté en vigencia en el Banco Central del Ecuador de la obligación que adquiero mediante
+                                      este documento, el mismo que se liquidará en cuotas vencidas, corren a mi cargo todos los impuestos y tasas que causen esta operación, así
+                                      como también los gastos judiciales y extrajudiciales, inclusive honorarios profesionales que ocasionen el cobro de este crédito. Me sujeto al
+                                      trámite del juicio ejecutivo o verbal sumario a elección de la entidad acreedora, con todos mis bienes, con renuncia de fuero y domicilio. El
+                                      pago no podrá hacerse por partes ni aún por mis herederos o sucesores. Sin protesto.
+                                      Autorizo de forma expresa en caso de incumplimiento de la obligación al CUERPO DE BOMBEROS DEL DISTRITO METROPOLITANO DE QUITO,
+                                      o a la persona que sea cesionario o endosatario de los efectos u obligaciones contendidas o derivadas del presente documento, para que toda
+                                      la información de riesgos crediticios, constante en el presente documento sea transferida y actualizada periódicamente a los burós de crédito,
+                                      Ministerio de Finanzas del Ecuador, Ministerio de Relaciones Laborales u otras entidades que pudieran reemplazar a tales instituciones, así
+                                      como también para que mi actividad o comportamiento crediticio, comercial o contractual sea reportado y actualizado a tales entidades.">
+                        </h:outputText>
+                        <br/>
+                        <br/>
+                        <h:outputLabel value="Quito, "/> 
+                        <h:outputLabel value="#{prestamosEmpleado.prestamo.fechasolicitud}"> 
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputLabel>
+                        <br/>
+                        <br/>
+                        <ace:graphicImage   value="#{imagenesSfccbdmq.traerImagenBmp(prestamosEmpleado.prestamo.empleado.entidad)}" />
+                        <ace:graphicImage   value="#{ imagenesSfccbdmq.traerImagenJpg(prestamosEmpleado.prestamo.empleado.entidad)}" />
+                        <br/>
+                        <h:outputLabel value="Nombre: #{prestamosEmpleado.prestamo.empleado.entidad.toString()}" />
+                        <h:outputLabel value="CI: #{prestamosEmpleado.prestamo.empleado.entidad.pin}" />
+                        <br/>
+                        <h:outputLabel value="VISTO BUENO" />
+                    </ace:panel>
+                    <br/>
+                    <br/>
+                    <ace:panel   style="text-align: justify; "
+                                 closable="false">
+                        <h:outputLabel value="Yo , #{prestamosEmpleado.traerGarante(prestamosEmpleado.prestamo.garante)}, portador de la cédula de identidad No #{prestamosEmpleado.traerCedulaGarante(prestamosEmpleado.prestamo.garante)}
+                                       domiciliada (o) en la ciudad de QUITO en #{prestamosEmpleado.traerDireccionGarante(prestamosEmpleado.prestamo.garante)},teléfono #{prestamosEmpleado.traerTelefonoGarante(prestamosEmpleado.prestamo.garante)},con el cargo #{prestamosEmpleado.traerCargoGarante(prestamosEmpleado.prestamo.garante)} .
+
+                                       Por aval me (nos)
+                                       constituyo (imos) en Garante solidario en cumplimiento de la obligación constante en el pagaré que antecede, haciendo de deuda ajena
+                                       propia y renunciando a los beneficios de domicilio orden, excusión y división de bienes; quedando sometido a los jueces del cantón Quito y al
+                                       juicio ejecutivo o verbal sumario a elección del actor. Sin protesto exímase de la presentación para el pago, así como de avisos por falta de
+                                       pago.
+                                       El pago no podrá hacerse por partes ni aún por nuestros herederos.
+                                       " />
+                    </ace:panel>
+                    <ace:panel   style="text-align: justify; "
+                                 closable="false">
+                        <h:outputLabel value="Quito, "/> 
+                        <h:outputLabel value="#{prestamosEmpleado.prestamo.fechaFinanciero}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputLabel>          
+                        <ace:graphicImage   value="#{imagenesSfccbdmq.traerImagenBmpG(prestamosEmpleado.traerCedulaGarante(prestamosEmpleado.prestamo.garante))  }" />
+                        <ace:graphicImage   value="#{imagenesSfccbdmq.traerImagenJpgG(prestamosEmpleado.traerCedulaGarante(prestamosEmpleado.prestamo.garante))  }" />
+                        <br/>
+                        <h:outputLabel value="Nombre: #{prestamosEmpleado.traerGarante(prestamosEmpleado.prestamo.garante)}" />
+                        <br/>
+                        <h:outputLabel value="CI: #{prestamosEmpleado.traerCedulaGarante(prestamosEmpleado.prestamo.garante)}" />
+                        <br/>
+                        <h:outputLabel value="Dirección domiciliaria: #{prestamosEmpleado.traerDireccionGarante(prestamosEmpleado.prestamo.garante)}" />
+                        <br/>
+                        <br/>
+
+                    </ace:panel>
+                </h:panelGrid>
+            </h:panelGrid>
+        </ace:panel>
+    </ace:panel>
+</html>

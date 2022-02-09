@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <ace:panel id="panelImprimirSri" style="display:block;">
+        <h:panelGrid width="90%">
+            
+            <h:panelGrid  width="90%" columns="1" style="text-align: center">
+                <h3>Factura de proveedor : #{facturaSri.factura.infoTributaria.razonSocial}</h3>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                <h:outputLabel value="R.U.C :" />
+                <h:outputLabel value="#{facturaSri.factura.infoTributaria.ruc}"/>
+                <h:outputLabel value="Dirección Matriz :" />
+                <h:outputLabel value="#{facturaSri.factura.infoTributaria.dirMatriz}"/>
+                <h:outputLabel value="Dirección Establecimiento:" />
+                <h:outputLabel value="#{facturaSri.factura.infoTributaria.estab}"/>
+                <h:outputLabel value="Cont. Especial No:  :" />
+                <h:outputLabel value="#{facturaSri.factura.infoFactura.contribuyenteEspecial}"/>
+                <h:outputLabel value="Obligado a llevar Contab :" />
+                <h:outputLabel value="#{facturaSri.factura.infoFactura.obligadoContabilidad}"/>
+                <h:outputLabel value="Número de Autorización :" />
+                <h:outputLabel value="#{facturaSri.factura.autorizacion.numeroAutorizacion}"/>
+                <h:outputLabel value="Clave de Acceso :" />
+                <h:outputLabel value="#{facturaSri.factura.infoTributaria.claveAcceso}"/>
+                <h:outputLabel value="Fecha de emisión :" />
+                <h:outputLabel value="#{facturaSri.factura.infoFactura.fechaEmision}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputLabel>
+
+            </h:panelGrid>
+            <h:panelGrid columns="1" width="100%">
+                <ace:dataTable 
+                    value="#{facturaSri.factura.detalles}"
+                    var="itemDetalles"
+                    paginator="false"
+                    lazy="false"
+                    resizableColumns="true"
+                    rowIndexVar="row"
+                    paginatorPosition="both"
+                    rowsPerPageTemplate="5,10,15,30,50,100"
+                    paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    >
+                    
+                    <ace:column  headerText="Código"  style="text-align: left">
+                        <h:outputText  value="#{itemDetalles.codigoPrincipal}"/>
+                    </ace:column>
+                    <ace:column  headerText="Cantidad"  style="text-align: right">
+                        <h:outputText  value="#{itemDetalles.cantidad}"/>
+                    </ace:column>
+                    <ace:column  headerText="Descripción"  style="text-align: left">
+                        <h:outputText  value="#{itemDetalles.descripcion}"/>
+                    </ace:column>
+
+                    <ace:column  headerText="Precio Unitario" style="text-align: right">
+                        <h:outputText  value="#{itemDetalles.precioUnitario}"/>
+                    </ace:column>
+                    <ace:column  headerText="Descuento" style="text-align: right">
+                        <h:outputText  value="#{itemDetalles.descuento}"/>
+                    </ace:column>
+                    <ace:column  headerText="Precio Total" style="text-align: right">
+                        <h:outputText  value="#{itemDetalles.precioTotalSinImpuesto}"/>
+                    </ace:column>
+                </ace:dataTable>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="2">
+                <h:panelGrid  width="90%" columns="1">
+                    <ace:dataTable 
+                        value="#{facturaSri.factura.infoAdicional}"
+                        var="itemAdicionales"
+                        paginator="false"
+                        lazy="false"
+                        resizableColumns="true"
+                        rowIndexVar="row"
+                        paginatorPosition="both"
+                        rowsPerPageTemplate="5,10,15,30,50,100"
+                        paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        >
+                        
+                        <ace:column  headerText="Info Adicional"  style="text-align: left">
+                            <h:outputText  value="#{itemAdicionales.toString()}"/>
+                        </ace:column>
+                        
+
+                    </ace:dataTable>
+                </h:panelGrid>
+                <h:panelGrid  width="90%" columns="1">
+                    <ace:dataTable 
+                        value="#{facturaSri.factura.infoFactura.totalConImpuestos}"
+                        var="itemConImpuestos"
+                        paginator="false"
+                        lazy="false"
+                        resizableColumns="true"
+                        rowIndexVar="row"
+                        paginatorPosition="both"
+                        rowsPerPageTemplate="5,10,15,30,50,100"
+                        paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        >
+                        
+                        <ace:column  headerText="Impuesto"  style="text-align: left">
+                            <h:outputText  value="#{itemConImpuestos.codigo}"/>
+                            <h:outputText  value="[#{itemConImpuestos.codigoPorcentaje}]"/>
+                        </ace:column>
+                        <ace:column  headerText="Tarifa"  style="text-align: left">
+                            <h:outputText  value="#{itemConImpuestos.tarifa}"/>
+                        </ace:column>
+                        <ace:column  headerText="Base Imponible"  style="text-align: left">
+                            <h:outputText  value="#{itemConImpuestos.baseImponible}"/>
+                        </ace:column>
+                        <ace:column  headerText="Valor"  style="text-align: left">
+                            <h:outputText  value="#{itemConImpuestos.valor}"/>
+                        </ace:column>
+
+                    </ace:dataTable>
+                    
+                </h:panelGrid>
+                <h:panelGrid  width="90%" columns="2">
+                    <h:outputLabel value="Total Sin Impuestos:" />
+                    <h:outputLabel value="#{facturaSri.factura.infoFactura.totalSinImpuestos}" style="text-align: right"/>
+                    <h:outputLabel value="Total Descuentos:" />
+                    <h:outputLabel value="#{facturaSri.factura.infoFactura.totalDescuento}" style="text-align: right"/>
+                    <h:outputLabel value="Total :" />
+                    <h:outputLabel value="#{facturaSri.factura.infoFactura.importeTotal}" style="text-align: right"/>
+                </h:panelGrid>
+            </h:panelGrid>
+        </h:panelGrid>
+
+    </ace:panel>
+
+</html>

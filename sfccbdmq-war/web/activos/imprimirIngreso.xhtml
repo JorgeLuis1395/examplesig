@@ -1,0 +1,262 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ace:panel id="panelImprimir4" style="display:block;">
+        <h:panelGroup>
+            <h:panelGrid width="98%">
+                <h:panelGrid columns="2">
+                    <img src="../resources/images/logo.png" width="45" height="45" alt="logo"/>
+                    <font style="font-size: small ; color: #000; text-align: center"><strong>CUERPO DE BOMBEROS DEL DISTRITO METROPOLITANO DE QUITO</strong></font>
+                </h:panelGrid>
+                <h:panelGrid  width="98%" columns="1" style="text-align: center">
+                    <p><font style="font-size: x-small ; color: #000">ACTIVOS FIJOS</font></p>
+                    <p><font style="font-size: x-small ; color: #000">INGRESO DE BIENES</font></p>
+                    <p><font style="font-size: x-small ; color: #000">Acta #{actasActivosSfccbdmq.acta.tipo.nombre}</font>
+                        <font style="font-size: x-small ; color: #000"> - #{actasActivosSfccbdmq.acta.numerotexto}</font></p>
+                    <p><font style="font-size: x-small ; color: #000">BODEGA CENTRAL</font>
+                        <font style="font-size: x-small ; color: #000"> - FECHA INGRESO (ALTA): #{actasActivosSfccbdmq.fecha}</font></p>
+                    <p><font style="font-size: x-small ; color: #000">FECHA CONTABILIZACIÓN: #{actasActivosSfccbdmq.fechaContab}</font></p>
+                    <p><font style="font-size: x-small ; color: #000">DETALLE DE LOS BIENES</font></p>
+                </h:panelGrid>
+                <h:panelGrid columns="1" width="98%" style="text-align: justify" rendered="#{actasActivosSfccbdmq.listControl}">
+                    <ace:dataTable id="tablaImrimir7" 
+                                   value="#{actasActivosSfccbdmq.listadoActivosControl}"
+                                   var="itemImprimir"
+                                   paginator="false"
+                                   lazy="false"
+                                   resizableColumns="true"
+                                   rowIndexVar="row"
+                                   paginatorPosition="both"
+                                   rowsPerPageTemplate="5,10,15,50,all"
+                                   paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                   style="font-size: xx-small; display:block;">
+                        <f:facet name="header">BIEN DE CONTROL</f:facet> 
+                        <ace:column  headerText="N°"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{row+1}"/>
+                        </ace:column> 
+                        <ace:column  headerText="CÓDIGO"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemImprimir.activo.codigo}" style="font-size: xx-small"/>
+                        </ace:column>  
+                        <ace:column  headerText="NOMBRE DEL BIEN"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemImprimir.activo.nombre}" style="font-size: xx-small"/>
+                        </ace:column>  
+                        <ace:column  headerText="SERIE"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemImprimir.activo.numeroserie}" style="font-size: xx-small"/>
+                        </ace:column> 
+                        <ace:column  headerText="MARCA"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemImprimir.activo.activomarca.nombre}" style="font-size: xx-small"/>
+                        </ace:column> 
+                        <ace:column  headerText="COLOR"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemImprimir.activo.color}" style="font-size: xx-small"/>
+                        </ace:column> 
+                        <ace:column  headerText="MODELO"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemImprimir.activo.modelo}" style="font-size: xx-small"/>
+                        </ace:column> 
+                        <ace:column  headerText="ESTADO"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemImprimir.activo.estado.toString()}" style="font-size: xx-small"/>
+                        </ace:column> 
+                        <ace:column  headerText="OBSERVACION"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemImprimir.activo.observaciones}" style="font-size: xx-small"/>
+                        </ace:column> 
+                        <ace:column  headerText="CHASIS"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemImprimir.activo.marca}" style="font-size: xx-small"/>
+                        </ace:column> 
+                        <ace:column  headerText="PLACA"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemImprimir.activo.caracteristicas}" style="font-size: xx-small"/>
+                        </ace:column> 
+                        <ace:column  headerText="GRUPO"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemImprimir.activo.grupo.nombre}" style="font-size: xx-small"/>
+                        </ace:column>  
+                        <ace:column  headerText="GRUPO CÓDIGO"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemImprimir.activo.grupo.codigo}" style="font-size: xx-small"/>
+                        </ace:column> 
+<!--                        <ace:column  headerText="FECHA INGRESO"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemImprimir.activo.fechaingreso}" style="font-size: xx-small">
+                                <f:convertDateTime parent="dd/MM/yyyy"/>
+                            </h:outputText>  
+                        </ace:column> -->
+                        <ace:column  headerText="FACTURA"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemImprimir.activo.factura}" style="font-size: xx-small"/>
+                        </ace:column> 
+                        <ace:column  headerText="VALOR"  style="text-align: right; font-size: xx-small"> 
+                            <!--<h:outputText  value="#{itemImprimir.activo.iva == null ?(itemImprimir.activo.valoralta):(itemImprimir.activo.iva == 0.00?(itemImprimir.activo.valoralta):(itemImprimir.activo.valoralta + (itemImprimir.activo.valoralta * itemImprimir.activo.iva)))}">-->
+                            <h:outputText  value="#{itemImprimir.activo.valoralta}"> 
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                        </ace:column>   
+                    </ace:dataTable>
+                    <h:panelGrid columns="2" style="font-size: xx-small ; color: #000">
+                        <h:outputText  value="Suma Bien de Control: "/>
+                        <h:outputText  value="#{actasActivosSfccbdmq.totalControl}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                        <h:outputText  value="Total Items: "/>
+                        <h:outputText  value="#{actasActivosSfccbdmq.totalItemControl}"/>
+                    </h:panelGrid>
+                </h:panelGrid>
+                <h:panelGrid columns="1" width="98%" style="text-align: justify" rendered="#{actasActivosSfccbdmq.listFijo}">
+                    <ace:dataTable id="tablaImrimir8" 
+                                   value="#{actasActivosSfccbdmq.listadoActivosFijos}"
+                                   var="itemFijo"
+                                   paginator="false"
+                                   lazy="false"
+                                   resizableColumns="true"
+                                   rowIndexVar="row"
+                                   paginatorPosition="both"
+                                   rowsPerPageTemplate="5,10,15,50,all"
+                                   paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                   style="font-size: xx-small; display:block;">
+                        <f:facet name="header">ACTIVO FIJO</f:facet> 
+                        <ace:column  headerText="N°"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{row+1}"/>
+                        </ace:column>
+                        <ace:column  headerText="CÓDIGO"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemFijo.activo.codigo}" style="font-size: xx-small"/>
+                        </ace:column>  
+                        <ace:column  headerText="NOMBRE DEL BIEN"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemFijo.activo.nombre}" style="font-size: xx-small"/>
+                        </ace:column>  
+                        <ace:column  headerText="SERIE"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemFijo.activo.numeroserie}" style="font-size: xx-small"/>
+                        </ace:column> 
+                        <ace:column  headerText="MARCA"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemFijo.activo.activomarca.nombre}" style="font-size: xx-small"/>
+                        </ace:column> 
+                        <ace:column  headerText="COLOR"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemFijo.activo.color}" style="font-size: xx-small"/>
+                        </ace:column> 
+                        <ace:column  headerText="MODELO"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemFijo.activo.modelo}" style="font-size: xx-small"/>
+                        </ace:column> 
+                        <ace:column  headerText="ESTADO"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemFijo.activo.estado.toString()}" style="font-size: xx-small"/>
+                        </ace:column> 
+                        <ace:column  headerText="OBSERVACION"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemFijo.activo.observaciones}" style="font-size: xx-small"/>
+                        </ace:column>                         
+                        <ace:column  headerText="CHASIS"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemFijo.activo.marca}" style="font-size: xx-small"/>
+                        </ace:column>                         
+                        <ace:column  headerText="PLACA"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemFijo.activo.caracteristicas}" style="font-size: xx-small"/>
+                        </ace:column>         
+                        <ace:column  headerText="GRUPO"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemFijo.activo.grupo.nombre}" style="font-size: xx-small"/>
+                        </ace:column> 
+                        <ace:column  headerText="GRUPO CÓDIGO"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemFijo.activo.grupo.codigo}" style="font-size: xx-small"/>
+                        </ace:column> 
+<!--                        <ace:column  headerText="FECHA INGRESO"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemFijo.activo.fechaingreso}" style="font-size: xx-small">
+                                <f:convertDateTime parent="dd/MM/yyyy"/>
+                            </h:outputText>                          
+                        </ace:column> -->
+                        <ace:column  headerText="FACTURA"  style="text-align: left; font-size: xx-small">
+                            <h:outputText  value="#{itemFijo.activo.factura}" style="font-size: xx-small"/>
+                        </ace:column> 
+                        <ace:column  headerText="VALOR"  style="text-align: right; font-size: xx-small"> 
+                            <!--<h:outputText  value="#{itemFijo.activo.iva == null ?(itemFijo.activo.valoralta):(itemFijo.activo.iva == 0.00?(itemFijo.activo.valoralta):(itemFijo.activo.valoralta + (itemFijo.activo.valoralta * itemFijo.activo.iva)))}">-->
+                            <h:outputText  value="#{itemFijo.activo.valoralta}"> 
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                        </ace:column>  
+                    </ace:dataTable>
+                    <h:panelGrid columns="2" style="font-size: xx-small ; color: #000">
+                        <h:outputText  value="Suma Activo Fijo: "/>
+                        <h:outputText  value="#{actasActivosSfccbdmq.totalActivo}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                        <h:outputText  value="Total Items "/>
+                        <h:outputText  value="#{actasActivosSfccbdmq.totalItemActivo}"/>
+                    </h:panelGrid>
+                </h:panelGrid>
+                <h:panelGrid columns="2" style="font-size: xx-small ; color: #000">
+                    <h:outputText  value="Total: "/>
+                    <h:outputText  value="#{actasActivosSfccbdmq.totalActivo + actasActivosSfccbdmq.totalControl}">
+                        <f:convertNumber pattern="###,###,##0.00"/>
+                    </h:outputText>
+                    <h:outputText  value="Total Items: "/>
+                    <h:outputText  value="#{actasActivosSfccbdmq.totalItemActivo + actasActivosSfccbdmq.totalItemControl}"/>
+                    <h:outputText  value=""/>
+                    <h:outputText  value=""/>
+                    <h:outputText  value="Observación: "/>
+                    <h:outputText  value="#{actasActivosSfccbdmq.acta.observacion}"/>
+                </h:panelGrid>
+                <!--Actas ver si se pone en codigos-->
+                <h:panelGrid columns="1" width="98%" style="text-align: justify">
+                    <p><font style="font-size: 7px ; color: #000">#{actasActivosSfccbdmq.articulo1}</font></p>
+                    <p><font style="font-size: 7px ; color: #000">#{actasActivosSfccbdmq.articulo2}</font></p>
+                    <p><font style="font-size: 7px ; color: #000">#{actasActivosSfccbdmq.articulo3}</font></p>
+                    <p><font style="font-size: 7px ; color: #000">#{actasActivosSfccbdmq.articulo4}</font></p>
+                    <p><font style="font-size: 7px ; color: #000">#{actasActivosSfccbdmq.articulo5}</font></p>
+                    <p><font style="font-size: 7px ; color: #000">#{actasActivosSfccbdmq.articulo6}</font></p>
+                </h:panelGrid>
+                <h:panelGrid columns="1" width="98%" style="text-align: justify">
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <h:panelGrid  width="98%" columns="3">
+                        <h:panelGrid  width="98%" columns="1" style="font-size: x-small ; color: #000" >
+                            <h:outputText value="ENTREGUE CONFORME"/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <h:outputText value="_____________________________"/>
+                            <h:outputText value="ADMINISTRADOR DEL CONTRATO"/>
+                            <h:outputText value="#{actasActivosSfccbdmq.contrato.administrador.toString()}"/>
+                            <h:outputText value="#{actasActivosSfccbdmq.contrato.administrador.pin}"/>
+                        </h:panelGrid>
+                        <h:panelGrid  width="98%" columns="1" style="font-size: x-small ; color: #000" >
+                            <h:outputText value="UNIDAD DE BIENES"/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <h:outputText value="_____________________________"/>
+                            <h:outputText value="RESPONSABLE DE LA UNIDAD DE BIENES"/>
+                            <h:outputText value="#{actasActivosSfccbdmq.bien.descripcion}"/>
+                            <h:outputText value="#{actasActivosSfccbdmq.bien.parametros}"/>
+                        </h:panelGrid>
+                        <h:panelGrid  width="98%" columns="1" style="font-size: x-small ; color: #000" >
+                            <h:outputText value="ELABORADO POR"/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <h:outputText value="_____________________________"/>
+                            <h:outputText value=""/>
+                            <h:outputText value="#{actasActivosSfccbdmq.entidad.toString()}"/>
+                            <h:outputText value="#{actasActivosSfccbdmq.entidad.pin}"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </h:panelGrid>
+                <h:panelGrid columns="1" width="98%" style="text-align: justify">
+                    <p><font style="font-size: xx-small ; color: #000">
+                            Para fe y constancia se firma la presente acta en DOS EJEMPLARES de igual valor y tenor:
+                        </font></p>
+                    <p><font style="font-size: xx-small ; color: #000">
+                            UNO PARA USUARIO
+                        </font></p>
+                    <p><font style="font-size: xx-small ; color: #000">
+                            UNO UNIDAD DE BIENES (físico y electronico)
+                        </font></p>
+                </h:panelGrid>
+            </h:panelGrid>
+        </h:panelGroup>
+    </ace:panel>
+</html>

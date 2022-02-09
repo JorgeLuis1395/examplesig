@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+    <h:panelGroup style=" width: 100%">
+        <h:panelGrid columns="2">
+            <ace:menuBar autoSubmenuDisplay="true" >
+                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{estudiosEmpleado.nuevo()}"/>
+                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" action="#{estudiosEmpleado.formularioPrincipal.cancelar()}"/>
+            </ace:menuBar>
+        </h:panelGrid>
+        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+            <h:outputLabel  value="Exportar a:"/>
+            <h:selectOneRadio  value="#{estudiosEmpleado.formulario.pantalla}" required="true">
+                <f:ajax disabled="false"/>
+                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                <f:selectItem itemValue="xml" itemLabel="XML"/>
+            </h:selectOneRadio>
+            <ace:dataExporter id="dataExporterEmpledos" 
+                              label="Exportar Archivo" 
+                              type="#{estudiosEmpleado.formulario.pantalla}" 
+                              target="estudios" fileName="datos"/>
+        </h:panelGrid>
+        <h:panelGrid width="50%">
+            <ace:dataTable id="estudios" 
+                           paginatorAlwaysVisible="true"
+                           value="#{estudiosEmpleado.listaEstudios}"
+                           var="estudio"
+                           paginator="true"
+                           resizableColumns="true"
+                           rowIndexVar="row"
+                           paginatorPosition="both"
+                           rowsPerPageTemplate="5,10,15,50"
+                           paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                           rows="5"
+                           binding="#{estudiosEmpleado.formulario.fila}">
+
+                <ace:column  style="text-align: left" rendered="#{!estudiosEmpleado.formulario.borrar}" >
+                    <ace:menuButton  effect="slide" effectDuration="200" value="...">
+                        <ace:menuItem value="Editar" icon="ui-icon ui-icon-pencil" action="#{estudiosEmpleado.modifica(estudio)}"  />
+                        <ace:menuItem value="Verificar" icon="ui-icon ui-icon-check" action="#{estudiosEmpleado.verifica(estudio)}"  />
+                        <ace:menuItem value="Negar" icon="ui-icon ui-icon-close" action="#{estudiosEmpleado.niega(estudio)}"  />
+                        <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{estudiosEmpleado.borra(estudio)}"  />
+                    </ace:menuButton>
+                </ace:column>
+
+
+                <ace:column  headerText="Título"  style="text-align: left">
+                    <h:outputText value="#{estudio.titulo}"/>
+                </ace:column>
+                <ace:column  headerText='Institución' style="text-align: left">
+                    <h:outputText  value="#{estudio.universidad}"/>
+                </ace:column>
+                <ace:column  headerText='País' style="text-align: left">
+                    <h:outputText  value="#{estudio.pais}"/>
+                </ace:column>
+                <ace:column  headerText='Nivel' style="text-align: left">
+                    <h:outputText  value="#{estudio.nivel.nombre}"/>
+                </ace:column>
+            </ace:dataTable>
+        </h:panelGrid>
+    </h:panelGroup>
+</html>

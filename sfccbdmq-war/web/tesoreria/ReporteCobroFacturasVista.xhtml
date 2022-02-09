@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : luisfernando
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+
+    </h:head>
+    <h:body>
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{reporteCobroFacturasSfcbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true">
+                    <ui:include src="../BuscarCliente.xhtml" />
+                    <h:panelGrid columns="7">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteCobroFacturasSfcbdmq.buscar()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{reporteCobroFacturasSfcbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{reporteCobroFacturasSfcbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       paginatorAlwaysVisible="true"
+                                       value="#{reporteCobroFacturasSfcbdmq.listaFacturas}"
+                                       var="item"
+                                       paginator="true"
+                                       lazy="false"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,30,50,100"
+                                       paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="30" 
+                                       binding="#{reporteCobroFacturasSfcbdmq.formulario.fila}"
+                                       scrollHeight="600"
+                                       scrollable="true">
+                            <ace:column headerText="Acciones" style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem 
+                                        action="#{reporteCobroFacturasSfcbdmq.imprimir(item)}" 
+                                        value="Imprimir"
+                                        icon="ui-icon ui-icon-print"/>
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="N°" style="text-align: left">
+                                <h:outputText  value="#{item.id}"/>
+                            </ace:column>
+                            <ace:column  headerText="Fecha"  style="text-align: left">
+                                <h:outputText  value="#{item.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column> 
+                            <ace:column  headerText="Cliente"  style="text-align: left">
+                                <h:outputText  value="#{item.cliente.empresa.nombrecomercial}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Punto Emision"  style="text-align: left">
+                                <h:outputText  value="#{item.puntoemision}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Sucursal"  style="text-align: left">
+                                <h:outputText  value="#{item.sucursal}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Valor"  style="text-align: left">
+                                <h:outputText  value="#{reporteCobroFacturasSfcbdmq.valor}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column> 
+                        </ace:dataTable>
+                    </h:panelGrid>
+
+                    <ace:dialog 
+                        header="Imprimir"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{reporteCobroFacturasSfcbdmq.formularioImprimir.mostrar}"
+                        visible="#{reporteCobroFacturasSfcbdmq.formularioImprimir.mostrar}">
+                        <h:panelGroup>
+                            <h:panelGrid columns="1">
+                                <ace:dynamicResource fileName="Ingreso.xls" id="xls-button" label="Comprobante"
+                                                     mimeType="application/pdf" resource="#{reporteCobroFacturasSfcbdmq.reporteRecibo}" 
+                                                     style="" type="button" rendered="#{reporteCobroFacturasSfcbdmq.reporteRecibo!=null}"/>
+                                <ace:dynamicResource fileName="Egreso.pdf" id="pdf-button1" label="Generar PDF"
+                                                     mimeType="application/pdf" resource="#{reporteCobroFacturasSfcbdmq.reporte}" 
+                                                     style="" type="button" rendered="#{reporteCobroFacturasSfcbdmq.reporte!=null}"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{reporteCobroFacturasSfcbdmq.formularioImprimir.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

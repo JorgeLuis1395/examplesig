@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <h:panelGrid width="100%">
+                    <ace:panel id="panel"
+                               header="#{pagosVencimientosSfccbdmq.perfil.menu.texto}"
+                               closable="false"
+                               toggleable="false"  >
+                        <ui:include src="../BuscarProveedor.xhtml" />
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="No factura :"/>
+                            <h:inputText value="#{pagosVencimientosSfccbdmq.factura}"/>
+                            <h:outputLabel value="No Orden de pago :"/>
+                            <h:inputText value="#{pagosVencimientosSfccbdmq.ordenPago}"/>
+                            <h:outputLabel value="Propuestas  ya generadas:"/>
+                            <h:selectBooleanCheckbox value="#{pagosVencimientosSfccbdmq.propuestas}">
+                                <ace:ajax execute="@all"/>
+                            </h:selectBooleanCheckbox>
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{pagosVencimientosSfccbdmq.desde}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{pagosVencimientosSfccbdmq.hasta}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid> 
+
+                        <h:panelGrid columns="2" rendered="#{!pagosVencimientosSfccbdmq.propuestas}">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  
+                                              action="#{pagosVencimientosSfccbdmq.buscarPropuesta()}"/>
+                                <ace:menuItem value="Proponer Seleccionados" icon="ui-icon ui-icon-check"  
+                                              action="#{pagosVencimientosSfccbdmq.proponerSeleccionados()}"/>
+                                <ace:menuItem value="Pasar Todos" icon="ui-icon ui-icon-seek-end"  
+                                              action="#{pagosVencimientosSfccbdmq.seleccionarTodos()}"/>
+                                <ace:menuItem value="Retirar Todas" 
+                                              icon="ui-icon ui-icon-seek-first" 
+                                              action="#{pagosVencimientosSfccbdmq.quitarTodos()}" />
+                            </ace:menuBar>
+
+                        </h:panelGrid>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="panel"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+
+                        <ace:messages />
+
+                        <h:panelGrid width="100%" style="margin-bottom: 20px;" 
+                                     rendered="#{!pagosVencimientosSfccbdmq.propuestas}">
+
+                            <ace:dataTable id="tablaObligaciones"
+                                           value="#{pagosVencimientosSfccbdmq.listadoPropuestaPago}"
+                                           var="itemObligaciones"
+                                           lazy="false"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="10,15,30,50"
+                                           currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="30"
+                                           style="width: 100%;"
+                                           >
+                                <f:facet name="header">Obligaciones</f:facet>
+                                <ace:column  headerText="Seleccionar" style="text-align: left">
+                                    <h:selectBooleanCheckbox  value="#{itemObligaciones.seleccionar}">
+                                        <ace:ajax execute="@all"/>
+                                    </h:selectBooleanCheckbox>
+                                </ace:column>
+                                <ace:column  headerText="Orden de Pago" 
+                                             style="text-align: left">
+                                    <h:outputText  value="#{kardexPagosSfccbdmq.traerOrdenPago(itemObligaciones.obligacion)}"/>
+                                </ace:column>
+                                <ace:column  headerText="Concepto" 
+                                             filterBy="#{itemObligaciones.obligacion.concepto}"  
+                                             sortBy="#{itemObligaciones.obligacion.concepto}"
+                                             filterMatchMode="contains"
+                                             style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.obligacion.concepto}"/>
+                                </ace:column>
+                                <ace:column  headerText="Proveedor" 
+                                             filterBy="#{itemObligaciones.obligacion.proveedor.empresa.toString()}"  
+                                             sortBy="#{itemObligaciones.obligacion.proveedor.empresa.toString()}"
+                                             filterMatchMode="contains"
+                                             style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.obligacion.proveedor.empresa.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Beneficiario" 
+                                             filterBy="#{itemObligaciones.obligacion.compromiso.beneficiario.toString()}"  
+                                             sortBy="#{itemObligaciones.obligacion.compromiso.beneficiario.toString()}"
+                                             filterMatchMode="contains"
+                                             style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.obligacion.compromiso.beneficiario.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Contrato" 
+                                             filterBy="#{itemObligaciones.obligacion.contrato.toString()}"  
+                                             sortBy="#{itemObligaciones.obligacion.contrato.toString()}"
+                                             filterMatchMode="contains"
+                                             style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.obligacion.contrato.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Tipo documento" 
+                                             filterBy="#{itemObligaciones.obligacion.tipodocumento.nombre}"  
+                                             sortBy="#{itemObligaciones.obligacion.tipodocumento.nombre}"
+                                             filterMatchMode="contains"
+                                             style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.obligacion.tipodocumento.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Número Factura" 
+                                             filterBy="#{itemObligaciones.obligacion.documento}"  
+                                             sortBy="#{itemObligaciones.obligacion.documento}"
+                                             filterMatchMode="contains"
+                                             style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.obligacion.documento}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor" 
+                                             filterBy="#{itemObligaciones.valor}"  
+                                             sortBy="#{itemObligaciones.valor}"
+                                             filterMatchMode="contains"
+                                             style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+<!--                                <ace:column  headerText="Anticipo" 
+                                             filterBy="#{itemObligaciones.valoranticipo}"  
+                                             sortBy="#{itemObligaciones.valoranticipo}"
+                                             filterMatchMode="contains"
+                                             style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.valoranticipo}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>-->
+                                <ace:column  headerText="Total" style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <f:facet name="footer">
+                                    Total :
+                                    <h:outputText  value="#{pagosVencimientosSfccbdmq.totalSeleccionado}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </f:facet>
+                            </ace:dataTable>
+
+                        </h:panelGrid>
+
+                        <h:panelGrid width="100%" style="margin-bottom: 20px;" 
+                                     rendered="#{pagosVencimientosSfccbdmq.propuestas}">
+
+                            <ace:dataTable id="tablaPropuestas"
+                                           value="#{pagosVencimientosSfccbdmq.propuestasAnteriores}"
+                                           var="itemPropuestas"
+                                           lazy="false"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="10,15,30,50"
+                                           currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="30"
+                                           style="width: 100%;"
+                                           >
+                                <f:facet name="header">Propuestas</f:facet>
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        
+                                        <ace:menuItem action="#{pagosVencimientosSfccbdmq.editar(itemPropuestas)}" 
+                                                      value="Cambiar" icon="ui-icon ui-icon-pencil" 
+                                                      />
+                                        <ace:menuItem action="#{pagosVencimientosSfccbdmq.botonImprimir(itemPropuestas)}" 
+                                                      value="Imprimir" icon="ui-icon ui-icon-print" 
+                                                      />
+                                        <ace:menuItem action="#{pagosVencimientosSfccbdmq.borrar(itemPropuestas)}" 
+                                                      value="Borrar" icon="ui-icon ui-icon-trash" 
+                                                      />
+                                    </ace:menuButton>
+                                </ace:column>
+                                <ace:column  headerText="Propuesta" 
+                                             filterBy="#{itemPropuestas.dato}"  
+                                             sortBy="#{itemPropuestas.dato}"
+                                             filterMatchMode="contains"
+                                             style="text-align: left">
+                                    <h:outputText  value="#{itemPropuestas.dato}"/>
+                                </ace:column>
+
+                                <ace:column  headerText="Valor" style="text-align: left">
+                                    <h:outputText  value="#{itemPropuestas.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+
+                            </ace:dataTable>
+
+                        </h:panelGrid>
+                    </ace:panel>
+                    <ace:dialog 
+                        header="Ingresar Propuesta"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{pagosVencimientosSfccbdmq.formulario.mostrar}"
+                        visible="#{pagosVencimientosSfccbdmq.formulario.mostrar}">
+                        <h:panelGroup>
+
+                            <h:panelGrid columns="1" width="100%">
+                                <h:outputText value="Propuesta :"/>
+                                <h:inputTextarea cols="60" rows="4" 
+                                                 value="#{pagosVencimientosSfccbdmq.observacionPropuesta}" 
+                                                 title="Observaciones"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                                  action="#{pagosVencimientosSfccbdmq.aprueba()}" />
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{pagosVencimientosSfccbdmq.formulario.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                    <ace:dialog 
+                        header="Editar Propuesta"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{pagosVencimientosSfccbdmq.formularioObservaciones.mostrar}"
+                        visible="#{pagosVencimientosSfccbdmq.formularioObservaciones.mostrar}">
+                        <h:panelGroup>
+
+                            <h:panelGrid columns="1" width="100%">
+                                <h:outputText value="Propuesta :"/>
+                                <h:inputTextarea cols="60" rows="4" 
+                                                 value="#{pagosVencimientosSfccbdmq.observacionPropuesta}" 
+                                                 title="Observaciones"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                                  action="#{pagosVencimientosSfccbdmq.cambiar()}" />
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{pagosVencimientosSfccbdmq.formularioObservaciones.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                    <!--</ace:dialog>-->
+                    <ace:dialog 
+                        header="Imprimir Propuesta"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{pagosVencimientosSfccbdmq.formularioImprimir.mostrar}"
+                        visible="#{pagosVencimientosSfccbdmq.formularioImprimir.mostrar}">
+                        <h:panelGroup>
+                            <ace:dynamicResource fileName="#{pagosVencimientosSfccbdmq.nombreArchivo}" 
+                                                 id="pdf-botonMayor" label="#{pagosVencimientosSfccbdmq.tipoArchivo}"
+                                                 mimeType="#{pagosVencimientosSfccbdmq.tipoMime}" resource="#{pagosVencimientosSfccbdmq.reporte}" 
+                                                 style="" type="button"/>
+
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{pagosVencimientosSfccbdmq.formularioImprimir.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                </h:panelGrid>
+                <!--Poner  con include ya que vista demasiado Cargada;-->
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:panelGroup>
+        <h:panelGrid columns="2" style="text-align: left">
+            <!--                                <h:outputText id="outputText2" value="R.U.C"/>-->
+            <h:selectOneMenu value="#{custodioIncialActivosSfccbdmq.tipobuscar}">
+                <f:selectItem itemLabel="Cédula de Usuario" itemValue="1"/>
+                <f:selectItem itemLabel="Apelllidos de Usuario" itemValue="2"/>
+                <ace:ajax execute="@all"/>
+            </h:selectOneMenu>
+            <ace:autoCompleteEntry 
+                value="#{custodioIncialActivosSfccbdmq.externo}"
+                rows="50" width="300"
+                listVar="externoSeleccionar"
+                filterBy="#{externoSeleccionar.empresa}"
+                listValue="#{custodioIncialActivosSfccbdmq.listaExternos}"
+                valueChangeListener="#{custodioIncialActivosSfccbdmq.cambiaexterno}"
+                textChangeListener="#{custodioIncialActivosSfccbdmq.externoCedulaChangeEventHandler}"
+                labelPosition="left"
+                rendered="#{custodioIncialActivosSfccbdmq.tipobuscar==1}">
+                <f:facet name="row">
+                    <h:panelGrid columns="2" width="100%"  style="text-align: left;font-size: xx-small" columnClasses="tipo">
+                        <h:outputText value="#{externoSeleccionar.empresa}"/>
+                        <h:outputText value="#{externoSeleccionar.nombre}"/>
+                    </h:panelGrid>
+                </f:facet>
+                <ace:ajax execute="@all"/>
+            </ace:autoCompleteEntry>
+            <ace:autoCompleteEntry  
+                value="#{custodioIncialActivosSfccbdmq.externo}"
+                rows="10" width="300"
+                listVar="externoSeleccionar"
+                filterBy="#{externoSeleccionar.nombre}"
+                listValue="#{custodioIncialActivosSfccbdmq.listaExternos}"
+                valueChangeListener="#{custodioIncialActivosSfccbdmq.cambiaexterno}"
+                textChangeListener="#{custodioIncialActivosSfccbdmq.nombreChangeEventHandler}"
+                rendered="#{custodioIncialActivosSfccbdmq.tipobuscar==2}"
+                filterMatchMode="none">
+                <f:facet name="row">
+                    <h:panelGrid columns="2" width="100%"  style="text-align: left;font-size: xx-small" columnClasses="tipo">
+                        <h:outputText value="#{externoSeleccionar.empresa}"/>
+                        <h:outputText value="#{externoSeleccionar.nombre}"/>
+                    </h:panelGrid>
+                </f:facet>
+                <ace:ajax execute="@all"/>
+            </ace:autoCompleteEntry>
+        </h:panelGrid>
+        <ace:panel header="Externo" rendered="#{custodioIncialActivosSfccbdmq.esExterno}">
+            <h:panelGrid columns="4" width="100%" title="Externo" >
+                <h:outputLabel value="Nombres : " />
+                <h:outputLabel value="#{custodioIncialActivosSfccbdmq.externoEntidad.nombre}" />
+                <h:outputLabel value="email : " />
+                <h:outputLabel value="#{custodioIncialActivosSfccbdmq.externoEntidad.email}" />
+                <h:outputLabel value="Teléfonos : " />
+                <h:outputLabel value="#{custodioIncialActivosSfccbdmq.externoEntidad.telefonos}" />
+                <h:outputLabel value="Institución : " />
+                <h:outputLabel value="#{custodioIncialActivosSfccbdmq.externoEntidad.institucion.toString()}" />
+                <h:commandButton value="Editar" action="#{custodioIncialActivosSfccbdmq.cambiaTipoExterno()}"/>
+            </h:panelGrid>
+        </ace:panel>
+    </h:panelGroup>
+</html>

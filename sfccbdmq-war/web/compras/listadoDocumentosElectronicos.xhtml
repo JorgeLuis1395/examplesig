@@ -1,0 +1,690 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+
+    <ace:panel id="panel2"
+               header="Facturas Disponibles"
+               closable="false"
+               toggleable="true"
+               rendered="#{pagoRetencionesSfccbdmq.formularioObligacion.mostrar}">
+        <h:panelGroup>
+            <ace:panel 
+                header="Registro de la cuenta por pagar"
+                closable="false"
+                toggleable="true"
+                >
+                <ace:submitMonitor id="submitMonitorDoc"
+                                   for="panel2"
+                                   blockUI="@all"
+                                   autoCenter="true"
+                                   activeLabel="Un Momento por favor"/>
+                <h:panelGrid columns="2">
+                    <h:outputText value="Compromiso:"/>
+                    <h:selectOneMenu  value="#{pagoRetencionesSfccbdmq.cabeceraDoc.compromiso}" 
+                                      valueChangeListener="#{pagoRetencionesSfccbdmq.cambiaCompromiso}"
+                                      rendered="#{pagoRetencionesSfccbdmq.formularioObligacion.nuevo}">
+                        <!--<f:selectItem itemLabel="Sin contrato" itemValue="0"/>-->
+                        <f:selectItems value="#{pagoRetencionesSfccbdmq.comboCompromisos}"/>
+                        <ace:ajax execute="@all" render="@all"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="#{pagoRetencionesSfccbdmq.cabeceraDoc.compromiso.toString()}" 
+                                   rendered="#{pagoRetencionesSfccbdmq.formularioObligacion.modificar}"/>
+                    <h:outputLabel value="Fecha :"/>
+                    <ace:dateTimeEntry navigator="true" value="#{pagoRetencionesSfccbdmq.cabeceraDoc.fecha}"
+                                       popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                       pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </ace:dateTimeEntry>
+                    <h:outputLabel value="Motivo:" />
+                    <h:outputLabel value="#{pagoRetencionesSfccbdmq.cabeceraDoc.observaciones}" />
+                    <h:outputLabel value="Correo electrónico del proveedor:" rendered="#{proveedoresSfccbdmq.empresa ne null}"/>
+                    <h:inputText value="#{proveedoresSfccbdmq.empresa.email}" rendered="#{proveedoresSfccbdmq.empresa ne null}"/>
+
+<!--<h:inputTextarea cols="60" rows="4" value="#{pagoRetencionesSfccbdmq.cabeceraDoc.observaciones}" title="Motivo" />-->
+                    <!--                    <h:outputLabel value="Valor:" for="valor" />
+                                        <h:inputText value="#{pagoRetencionesSfccbdmq.cabeceraDoc.valor}" />-->
+                </h:panelGrid>
+            </ace:panel>
+
+            <h:panelGrid columns="1" width="100%">
+                <ace:menuBar autoSubmenuDisplay="true" >
+                    <ace:menuItem value="Editar Motivo" icon="ui-icon ui-icon-document" 
+                                  action="#{pagoRetencionesSfccbdmq.editarMotivo()}" 
+                                  />
+                    <ace:menuItem value="Nueva factura" icon="ui-icon ui-icon-document" 
+                                  action="#{pagoRetencionesSfccbdmq.nuevaFacturaManual()}" 
+                                  />
+                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                  action="#{pagoRetencionesSfccbdmq.garbarTodo()}"/>
+                    <ace:menuItem value="Ver Facturas Ingresadas (#{pagoRetencionesSfccbdmq.totalObligaciones})" icon="ui-icon ui-icon-search"  
+                                  action="#{pagoRetencionesSfccbdmq.vistaObligaciones()}"/>
+                    <ace:menuItem value="Ver Presupuesto" icon="ui-icon ui-icon-search"  
+                                  action="#{pagoRetencionesSfccbdmq.vistaPresupuesto()}"/>
+                    <ace:menuItem value="Ver Facturas electrónicas" icon="ui-icon ui-icon-search"  
+                                  action="#{pagoRetencionesSfccbdmq.vistaFacturas()}"/>
+                    <ace:menuItem action="#{pagoRetencionesSfccbdmq.verContabilizar()}" 
+                                  value="Ver contabilización" icon="ui-icon ui-icon-note" />
+                    <ace:menuItem action="#{pagoRetencionesSfccbdmq.vistaRetenciones()}" 
+                                  value="Ver retenciones" icon="ui-icon ui-icon-search" />
+                    <ace:menuItem action="#{pagoRetencionesSfccbdmq.lote()}" 
+                                  rendered="#{pagoRetencionesSfccbdmq.seleccionados}"
+                                  value="Reg. Seleccionadas" icon="ui-icon ui-icon-disk" />
+                    <ace:menuItem action="#{pagoRetencionesSfccbdmq.borrarSeleccionadas()}" 
+                                  rendered="#{pagoRetencionesSfccbdmq.seleccionadosBorrar}"
+                                  value="Borrar Seleccionadas" icon="ui-icon ui-icon-trash" />    
+                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                  action="#{pagoRetencionesSfccbdmq.salirObligacion()}"/>
+                </ace:menuBar>
+                <ace:messages/>
+            </h:panelGrid>
+            <h:panelGrid width="100%" rendered="#{pagoRetencionesSfccbdmq.formularioDetalleDetalle.nuevo}">
+                <ace:dataTable id="tablaPresupuesto" 
+                               value="#{pagoRetencionesSfccbdmq.listaDetalleCompras}"
+                               var="itemPresupuesto"
+                               paginator="true"
+                               lazy="false"
+                               resizableColumns="true"
+                               rowIndexVar="row"
+                               paginatorPosition="top"
+                               rowsPerPageTemplate="15,20,25,50,100"
+                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                               rows="15"
+                               >
+                    <f:facet name="header">Cuentas Disponibles</f:facet>
+                    <ace:column  headerText="Registro" style="text-align: right">
+                        <h:outputText value="#{row+1}"/>
+                    </ace:column>
+                    <ace:column  headerText="Partida"  style="text-align: left">
+                        <h:outputText  value="#{itemPresupuesto.detallecompromiso.asignacion.clasificador.codigo}"/>
+                    </ace:column>
+                    <ace:column  headerText="Proyecto"  style="text-align: left">
+                        <h:outputText  value="#{itemPresupuesto.detallecompromiso.asignacion.proyecto.codigo}"/>
+                    </ace:column>
+                    <ace:column  headerText="Fuente"  style="text-align: left">
+                        <h:outputText  value="#{itemPresupuesto.detallecompromiso.asignacion.fuente.codigo}"/>
+                    </ace:column>
+                    <ace:column  headerText="Cuenta"  style="text-align: left">
+                        <h:outputText  value="#{itemPresupuesto.cuenta.toString()}"/>
+                    </ace:column>
+                    <ace:column  headerText="Valor del compromiso"  style="text-align: right">
+                        <h:outputText  value="#{itemPresupuesto.detallecompromiso.valor}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Saldo del compromiso"  style="text-align: right">
+                        <h:outputText  value="#{itemPresupuesto.detallecompromiso.saldo-itemPresupuesto.valor+itemPresupuesto.valorAnterior}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Valor del gasto"  style="text-align: right">
+                        <h:inputText  value="#{itemPresupuesto.valor}">
+                            <ace:ajax execute="@all"/>
+                        </h:inputText>
+                    </ace:column>
+                    <f:facet name="footer">Total : #{pagoRetencionesSfccbdmq.valorPresupuesto}</f:facet>
+                </ace:dataTable>
+            </h:panelGrid>  
+            <h:panelGrid width="100%" rendered="#{pagoRetencionesSfccbdmq.formularioDetalleDetalle.borrar}" columns="1">
+                <ace:fileEntry id="Archivo_XML"
+                               relativePath="/files/"
+                               maxFileCount="10"
+                               maxFileCountMessage="Limited to 10 files uploaded concurrantly."
+                               fileEntryListener="#{pagoRetencionesSfccbdmq.xmlListener}"
+                               maxFileSize="6291456"
+                               maxFileSizeMessage="Submitted file is too large."
+                               maxTotalSize="18874368"
+                               maxTotalSizeMessage="Total size of submitted files is too large."
+                               required="false"
+                               label="Subir factura electrónica"
+                               requiredMessage="The file is required to submit this form."
+                               useOriginalFilename="true"
+                               useSessionSubdir="true"
+                               />
+                <h:panelGrid columns="3">
+                    <h:commandButton type="submit" value="Cargar Factura electrónica"/>
+                    <h:commandButton action="#{pagoRetencionesSfccbdmq.seleccionarTodos()}" value="Seleccionar Todo"/>
+                    <h:commandButton action="#{pagoRetencionesSfccbdmq.quitarTodos()}" value="Quitar Selección"/>
+                </h:panelGrid>
+
+                <ace:dataTable id="tabla" 
+                               value="#{pagoRetencionesSfccbdmq.listadoFacturas}"
+                               var="itemFacturas"
+                               paginator="true"
+                               lazy="false"
+                               resizableColumns="true"
+                               rowIndexVar="row"
+                               paginatorPosition="top"
+                               rowsPerPageTemplate="15,20,25,50,100"
+                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                               rows="15"
+                               >
+                    <f:facet name="header">Facturas Disponibles (#{pagoRetencionesSfccbdmq.numeroFacturasSeleccionadas}) Total: #{pagoRetencionesSfccbdmq.totalFacturasSeleccionadas}</f:facet>
+                    <ace:column  headerText="Seleccionar" style="text-align: right">
+                        <h:selectBooleanCheckbox  value="#{itemFacturas.seleccionado}">
+                            <ace:ajax execute="@all"/>
+                        </h:selectBooleanCheckbox>
+                    </ace:column>
+                    <ace:column style="text-align: left">
+                        <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                            <ace:menuItem value="Registrar factura" icon="ui-icon ui-icon-document" 
+                                          action="#{pagoRetencionesSfccbdmq.nuevaFactura(itemFacturas)}" 
+                                          rendered="#{itemFacturas.obligacion==null}"/>
+                            <ace:menuItem action="#{pagoRetencionesSfccbdmq.modificarFactura(itemFacturas)}" value="Editar" 
+                                          icon="ui-icon ui-icon-pencil" rendered="#{itemFacturas.obligacion!=null}"/>
+                            <ace:menuItem action="#{pagoRetencionesSfccbdmq.borraEletronica(itemFacturas)}" 
+                                          value="Borrar" icon="ui-icon ui-icon-trash" />
+                        </ace:menuButton>
+                    </ace:column>
+                    <ace:column  headerText="Fecha emisión"  style="text-align: left"
+                                 sortBy="#{itemFacturas.fechaemision}"
+                                 filterBy="#{itemFacturas.fechaemision}" 
+                                 rangedFilter="false"
+                                 filterDatePattern="dd/MM/yyyy">
+                        <h:outputText  value="#{itemFacturas.fechaemision}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Autorización"  style="text-align: left" sortBy="#{itemFacturas.autorizacion}">
+                        <h:outputText  value="#{itemFacturas.autorizacion}"/>
+                    </ace:column>
+
+                    <ace:column  headerText="Número"  style="text-align: left" 
+                                 sortBy="#{itemFacturas.numero}"
+                                 filterBy="#{itemFacturas.numero}" 
+                                 filterMatchMode="contains">
+                        <h:outputText  value="#{itemFacturas.numero}"/>
+                    </ace:column>
+                    <!--                    <ace:column  headerText="Clave" style="text-align: left">
+                                            <h:outputText  value="#{itemFacturas.clave}"/>
+                                        </ace:column>-->
+                    <ace:column  headerText="Base Imponible"  style="text-align: right">
+                        <h:inputText value="#{itemFacturas.baseimponible}"/>
+<!--                        <h:outputText  value="#{itemFacturas.baseimponible}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>-->
+                    </ace:column>
+                    <ace:column  headerText="Base imponible 0"  style="text-align: right">
+                        <h:outputText value="#{itemFacturas.baseimponible0}"/>
+<!--                        <h:outputText  value="#{itemFacturas.baseimponible0}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>-->
+                    </ace:column>
+                    <ace:column  headerText="Iva"  style="text-align: right">
+                        <h:outputText  value="#{itemFacturas.iva}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Valor del gasto"  style="text-align: right">
+                        <h:outputText  value="#{itemFacturas.valortotal}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                </ace:dataTable>
+            </h:panelGrid>  
+            <h:panelGrid width="100%" rendered="#{pagoRetencionesSfccbdmq.formularioDetalleDetalle.modificar}">
+                <h:panelGrid columns="3">
+                    <h:commandButton action="#{pagoRetencionesSfccbdmq.seleccionarTodosBorrar()}" value="Seleccionar Todo"/>
+                    <h:commandButton action="#{pagoRetencionesSfccbdmq.quitarTodosBorrar()}" value="Quitar Selección"/>
+                </h:panelGrid>
+                <ace:dataTable id="tabla4" 
+                               value="#{pagoRetencionesSfccbdmq.listadoObligaciones}"
+                               var="itemObligaciones"
+                               paginator="true"
+                               lazy="false"
+                               resizableColumns="true"
+                               rowIndexVar="row"
+                               paginatorPosition="top"
+                               rowsPerPageTemplate="15,20,25,50,100"
+                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                               rows="15"
+                               >
+                    <f:facet name="header">Facturas Utilizadas (#{pagoRetencionesSfccbdmq.totalObligaciones}) Total : #{pagoRetencionesSfccbdmq.valorTotalObligaciones} </f:facet>
+                    <ace:column  headerText="Seleccionar" style="text-align: right">
+                        <h:selectBooleanCheckbox  value="#{itemObligaciones.seleccionado}">
+                            <ace:ajax execute="@all"/>
+                        </h:selectBooleanCheckbox>
+                    </ace:column>
+                    <ace:column style="text-align: left">
+                        <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                            <ace:menuItem action="#{pagoRetencionesSfccbdmq.modificarFactura(itemObligaciones)}" value="Editar" 
+                                          icon="ui-icon ui-icon-pencil" rendered="#{itemObligaciones.obligacion!=null}"/>
+                            <ace:menuItem action="#{pagoRetencionesSfccbdmq.borraFactura(itemObligaciones)}" 
+                                          value="Borrar" icon="ui-icon ui-icon-trash" rendered="#{itemObligaciones.obligacion!=null}"/>
+                        </ace:menuButton>
+                    </ace:column>
+                    <ace:column  headerText="Fecha emisión"  style="text-align: left" 
+                                 sortBy="#{itemObligaciones.fechaemision}"
+                                 filterBy="#{itemObligaciones.fechaemision}" 
+                                 filterMatchMode="contains">
+                        <h:outputText  value="#{itemObligaciones.fechaemision}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Autorización"  style="text-align: left">
+                        <h:outputText  value="#{itemObligaciones.obligacion.autorizacion}"/>
+                    </ace:column>
+                    <ace:column  headerText="Tipo de Documento" style="text-align: left">
+                        <h:outputText  value="#{itemObligaciones.obligacion.tipodocumento.nombre}"/>
+                    </ace:column>
+                    <ace:column  headerText="Estab."  style="text-align: left"
+                                 sortBy="#{itemObligaciones.obligacion.establecimiento}"
+                                 filterBy="#{itemObligaciones.obligacion.establecimiento}" 
+                                 filterMatchMode="contains">
+                        <h:outputText  value="#{itemObligaciones.obligacion.establecimiento}"/>
+                    </ace:column>
+                    <ace:column  headerText="Punto"  style="text-align: left"
+                                 sortBy="#{itemObligaciones.obligacion.puntoemision}"
+                                 filterBy="#{itemObligaciones.obligacion.puntoemision}" 
+                                 filterMatchMode="contains">
+                        <h:outputText  value="#{itemObligaciones.obligacion.puntoemision}"/>
+                    </ace:column>
+                    <ace:column  headerText="Documento"  style="text-align: left"
+                                 sortBy="#{itemObligaciones.obligacion.documento}"
+                                 filterBy="#{itemObligaciones.obligacion.documento}" 
+                                 filterMatchMode="contains">
+                        <h:outputText  value="#{itemObligaciones.obligacion.documento}"/>
+                    </ace:column>
+                    <ace:column  headerText="Base imponible"  style="text-align: right">
+                        <h:outputText  value="#{itemObligaciones.baseimponible}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Base imponible 0"  style="text-align: right">
+                        <h:outputText  value="#{itemObligaciones.baseimponible0}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Iva"  style="text-align: right">
+                        <h:outputText  value="#{itemObligaciones.iva}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Valor del gasto"  style="text-align: right">
+                        <h:outputText  value="#{itemObligaciones.valortotal}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                </ace:dataTable>
+            </h:panelGrid>  
+            <h:panelGrid width="100%" rendered="#{pagoRetencionesSfccbdmq.formularioDetalleDetalle.consulta}">
+                <ace:tabSet style="clear:both;" clientSide="true">
+                    <ace:tabPane label="Contabilización del Gasto">
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable 
+                                value="#{pagoRetencionesSfccbdmq.renglonesAuxiliar}"
+                                var="itemRasInt"
+                                >
+                                <ace:column  headerText="Cuenta"  style="text-align: left">
+                                    <h:outputText  value="#{itemRasInt.cuenta}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nombre"  style="text-align: left">
+                                    <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemRasInt.cuenta).nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Auxiliar"  style="text-align: left">
+                                    <h:outputText  value="#{proveedoresSfccbdmq.taerRuc(itemRasInt.auxiliar)}" rendered="#{proveedoresSfccbdmq.taerRuc(itemRasInt.auxiliar)!=null}"/>
+                                    <h:outputText  value="#{empleados.traerCedula(itemRasInt.auxiliar)}" rendered="#{empleados.traerCedula(itemRasInt.auxiliar)!=null}"/>
+                                    <h:outputText  value="#{itemRasInt.auxiliar}" rendered="#{empleados.traerCedula(itemRasInt.auxiliar)==null and proveedoresSfccbdmq.taerRuc(itemRasInt.auxiliar)==null}"/>
+                                </ace:column>
+                                <ace:column  headerText="Referencia"  style="text-align: left">
+                                    <h:outputText  value="#{itemRasInt.referencia}"/>
+                                </ace:column>
+                                <ace:column  headerText="Débitos" style="text-align: right">
+                                    <h:outputText  value="#{itemRasInt.ingresos}" >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Créditos" style="text-align: right">
+                                    <h:outputText  value="#{itemRasInt.egresos}" >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+
+                        </h:panelGrid>
+                    </ace:tabPane>    
+                    <ace:tabPane label="Reclasificación del Gasto" rendered="#{pagoRetencionesSfccbdmq.renglonesReclasificacion.size()>0}">
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable 
+                                value="#{pagoRetencionesSfccbdmq.renglonesReclasificacion}"
+                                var="itemReclasifcacionInt"
+                                >
+                                <ace:column  headerText="Cuenta"  style="text-align: left">
+                                    <h:outputText  value="#{itemReclasifcacionInt.cuenta}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nombre"  style="text-align: left">
+                                    <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemReclasifcacionInt.cuenta).nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Auxiliar"  style="text-align: left">
+                                    <h:outputText  value="#{proveedoresSfccbdmq.taerRuc(itemReclasifcacionInt.auxiliar)}" rendered="#{proveedoresSfccbdmq.taerRuc(itemReclasifcacionInt.auxiliar)!=null}"/>
+                                    <h:outputText  value="#{empleados.traerCedula(itemReclasifcacionInt.auxiliar)}" rendered="#{empleados.traerCedula(itemReclasifcacionInt.auxiliar)!=null}"/>
+                                    <h:outputText  value="#{itemReclasifcacionInt.auxiliar}" rendered="#{empleados.traerCedula(itemReclasifcacionInt.auxiliar)==null and proveedoresSfccbdmq.taerRuc(itemReclasifcacionInt.auxiliar)==null}"/>
+                                </ace:column>
+                                <ace:column  headerText="Referencia"  style="text-align: left">
+                                    <h:outputText  value="#{itemReclasifcacionInt.referencia}"/>
+                                </ace:column>
+                                <ace:column  headerText="Débitos" style="text-align: right">
+                                    <h:outputText  value="#{itemReclasifcacionInt.ingresos}" >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Créditos" style="text-align: right">
+                                    <h:outputText  value="#{itemReclasifcacionInt.egresos}" >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+
+                        </h:panelGrid>
+                    </ace:tabPane>
+                    <ace:tabPane label="Reclasificación del Anticipo" rendered="#{pagoRetencionesSfccbdmq.renglonesAnticipos.size()>0}">
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable 
+                                value="#{pagoRetencionesSfccbdmq.renglonesAnticipos}"
+                                var="itemAnticiposInt"
+                                >
+                                <ace:column  headerText="Cuenta"  style="text-align: left">
+                                    <h:outputText  value="#{itemAnticiposInt.cuenta}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nombre"  style="text-align: left">
+                                    <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemAnticiposInt.cuenta).nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Auxiliar"  style="text-align: left">
+                                    <h:outputText  value="#{proveedoresSfccbdmq.taerRuc(itemAnticiposInt.auxiliar)}" rendered="#{proveedoresSfccbdmq.taerRuc(itemAnticiposInt.auxiliar)!=null}"/>
+                                    <h:outputText  value="#{empleados.traerCedula(itemAnticiposInt.auxiliar)}" rendered="#{empleados.traerCedula(itemAnticiposInt.auxiliar)!=null}"/>
+                                    <h:outputText  value="#{itemAnticiposInt.auxiliar}" rendered="#{empleados.traerCedula(itemAnticiposInt.auxiliar)==null and proveedoresSfccbdmq.taerRuc(itemAnticiposInt.auxiliar)==null}"/>
+                                </ace:column>
+                                <ace:column  headerText="Referencia"  style="text-align: left">
+                                    <h:outputText  value="#{itemAnticiposInt.referencia}"/>
+                                </ace:column>
+                                <ace:column  headerText="Débitos" style="text-align: right">
+                                    <h:outputText  value="#{itemAnticiposInt.ingresos}" >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Créditos" style="text-align: right">
+                                    <h:outputText  value="#{itemAnticiposInt.egresos}" >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+
+                        </h:panelGrid>
+                    </ace:tabPane>
+                    <ace:tabPane label="Reclasificación de Multas" rendered="#{pagoRetencionesSfccbdmq.renglonesMultas.size()>0}">
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable 
+                                value="#{pagoRetencionesSfccbdmq.renglonesMultas}"
+                                var="itemMultasInt"
+                                >
+                                <ace:column  headerText="Cuenta"  style="text-align: left">
+                                    <h:outputText  value="#{itemMultasInt.cuenta}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nombre"  style="text-align: left">
+                                    <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemMultasInt.cuenta).nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Auxiliar"  style="text-align: left">
+                                    <h:outputText  value="#{proveedoresSfccbdmq.taerRuc(itemMultasInt.auxiliar)}" rendered="#{proveedoresSfccbdmq.taerRuc(itemMultasInt.auxiliar)!=null}"/>
+                                    <h:outputText  value="#{empleados.traerCedula(itemMultasInt.auxiliar)}" rendered="#{empleados.traerCedula(itemMultasInt.auxiliar)!=null}"/>
+                                    <h:outputText  value="#{itemMultasInt.auxiliar}" rendered="#{empleados.traerCedula(itemMultasInt.auxiliar)==null and proveedoresSfccbdmq.taerRuc(itemMultasInt.auxiliar)==null}"/>
+                                </ace:column>
+                                <ace:column  headerText="Referencia"  style="text-align: left">
+                                    <h:outputText  value="#{itemMultasInt.referencia}"/>
+                                </ace:column>
+                                <ace:column  headerText="Débitos" style="text-align: right">
+                                    <h:outputText  value="#{itemMultasInt.ingresos}" >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Créditos" style="text-align: right">
+                                    <h:outputText  value="#{itemMultasInt.egresos}" >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+
+                        </h:panelGrid>
+                    </ace:tabPane>
+                    <ace:tabPane label="Descuento" rendered="#{pagoRetencionesSfccbdmq.renglonesDescuento.size()>0}">
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable 
+                                value="#{pagoRetencionesSfccbdmq.renglonesDescuento}"
+                                var="itemDesciento"
+                                >
+                                <ace:column  headerText="Cuenta"  style="text-align: left">
+                                    <h:outputText  value="#{itemDesciento.cuenta}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nombre"  style="text-align: left">
+                                    <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemDesciento.cuenta).nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Auxiliar"  style="text-align: left">
+                                    <h:outputText  value="#{proveedoresSfccbdmq.taerRuc(itemDesciento.auxiliar)}" rendered="#{proveedoresSfccbdmq.taerRuc(itemDesciento.auxiliar)!=null}"/>
+                                    <h:outputText  value="#{empleados.traerCedula(itemDesciento.auxiliar)}" rendered="#{empleados.traerCedula(itemDesciento.auxiliar)!=null}"/>
+                                    <h:outputText  value="#{itemDesciento.auxiliar}" rendered="#{empleados.traerCedula(itemDesciento.auxiliar)==null and proveedoresSfccbdmq.taerRuc(itemDesciento.auxiliar)==null}"/>
+                                </ace:column>
+                                <ace:column  headerText="Referencia"  style="text-align: left">
+                                    <h:outputText  value="#{itemDesciento.referencia}"/>
+                                </ace:column>
+                                <ace:column  headerText="Débitos" style="text-align: right">
+                                    <h:outputText  value="#{itemDesciento.ingresos}" >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Créditos" style="text-align: right">
+                                    <h:outputText  value="#{itemDesciento.egresos}" >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:tabPane>
+                    <ace:tabPane label="Liquidación Fondo al Exterior" rendered="#{pagoRetencionesSfccbdmq.renglonesExterior.size()>0}">
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable 
+                                value="#{pagoRetencionesSfccbdmq.renglonesExterior}"
+                                var="itemExteriorInt"
+                                >
+                                <ace:column  headerText="Cuenta"  style="text-align: left">
+                                    <h:outputText  value="#{itemExteriorInt.cuenta}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nombre"  style="text-align: left">
+                                    <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemExteriorInt.cuenta).nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Auxiliar"  style="text-align: left">
+                                    <h:outputText  value="#{proveedoresSfccbdmq.taerRuc(itemExteriorInt.auxiliar)}" rendered="#{proveedoresSfccbdmq.taerRuc(itemExteriorInt.auxiliar)!=null}"/>
+                                    <h:outputText  value="#{empleados.traerCedula(itemExteriorInt.auxiliar)}" rendered="#{empleados.traerCedula(itemExteriorInt.auxiliar)!=null}"/>
+                                    <h:outputText  value="#{itemExteriorInt.auxiliar}" rendered="#{empleados.traerCedula(itemExteriorInt.auxiliar)==null and proveedoresSfccbdmq.taerRuc(itemExteriorInt.auxiliar)==null}"/>
+                                </ace:column>
+                                <ace:column  headerText="Referencia"  style="text-align: left">
+                                    <h:outputText  value="#{itemExteriorInt.referencia}"/>
+                                </ace:column>
+                                <ace:column  headerText="Débitos" style="text-align: right">
+                                    <h:outputText  value="#{itemExteriorInt.ingresos}" >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Créditos" style="text-align: right">
+                                    <h:outputText  value="#{itemExteriorInt.egresos}" >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:tabPane>
+                </ace:tabSet>
+            </h:panelGrid>  
+            <h:panelGrid width="100%" rendered="#{pagoRetencionesSfccbdmq.formularioDetalleDetalle.resultado}">
+                <ace:dataTable  
+                    value="#{pagoRetencionesSfccbdmq.listaRetencionesComprasInt}"
+                    var="itemDetalleInt"
+                    paginator="true"
+                    lazy="false"
+                    resizableColumns="true"
+                    rowIndexVar="row"
+                    paginatorPosition="top"
+                    rowsPerPageTemplate="5,10,15,30,50,100"
+                    paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    rows="20"
+                    >
+                    <f:facet name="header">Retenciones</f:facet> 
+                    <ace:column  headerText="Fecha" style="text-align: left">
+                        <h:outputText  value="#{itemDetalleInt.obligacion.fechar}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Partida" style="text-align: left">
+                        <h:outputText  value="#{itemDetalleInt.partida}"/>
+                    </ace:column>
+                    <ace:column  headerText="Tipo de compra"  style="text-align: left">
+                        <h:outputText  value="BIEN" rendered="#{itemDetalleInt.bien}"/>
+                        <h:outputText  value="SERVICIO" rendered="#{!itemDetalleInt.bien}"/>
+                    </ace:column>
+                    <ace:column  headerText="Base imponible 0"  style="text-align: right">
+                        <h:outputText  value="#{itemDetalleInt.baseimponible0}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Base imponible"  style="text-align: right">
+                        <h:outputText  value="#{itemDetalleInt.baseimponible}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="IVA" style="text-align: left">
+                        <h:outputText  value="#{itemDetalleInt.iva}"/>
+                    </ace:column>
+                    <ace:column  headerText="Código IR" style="text-align: left">
+                        <h:outputText  value="#{itemDetalleInt.retencion.etiqueta}#{itemDetalleInt.retencion.ats}"/>
+                    </ace:column>
+                    <ace:column  headerText="Retención IR" style="text-align: left">
+                        <h:outputText  value="#{itemDetalleInt.retencion.toString()}}"/>
+                        <!--<h:outputText  value="#{itemDetalleInt.retencion.etiqueta}#{itemDetalleInt.retencion.ats}"/>-->
+                    </ace:column>
+                    <ace:column  headerText="Valor IR"  style="text-align: right">
+                        <h:outputText  value="#{itemDetalleInt.valor}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Código IVA" style="text-align: left">
+                        <h:outputText  value="#{itemDetalleInt.retencionimpuesto.etiqueta}#{itemDetalleInt.retencionimpuesto.ats}"/>
+                    </ace:column>
+
+                    <ace:column  headerText="Retención IVA" style="text-align: left">
+                        <h:outputText  value="#{itemDetalleInt.retencionimpuesto.toString()}"/>
+                        <!--<h:outputText  value="#{itemDetalleInt.retencionimpuesto.etiqueta}#{itemDetalleInt.retencionimpuesto.ats}"/>-->
+                    </ace:column>
+                    <ace:column  headerText="Valor IR"  style="text-align: right">
+                        <h:outputText  value="#{itemDetalleInt.valoriva}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                </ace:dataTable>
+            </h:panelGrid>
+        </h:panelGroup>
+
+        <ace:dialog 
+            header="Motivo"
+            closable="false"
+            modal="true"
+            draggable="true"
+            showEffect="clip"
+            hideEffect="fade"
+            rendered="#{pagoRetencionesSfccbdmq.formularioMotivo.mostrar}"
+            visible="#{pagoRetencionesSfccbdmq.formularioMotivo.mostrar}">
+            <h:panelGroup>
+                <h:panelGrid columns="1">
+                    <h:outputLabel  value="Motivo :"/>
+                    <h:inputTextarea cols="60" rows="4" value="#{pagoRetencionesSfccbdmq.cabeceraDoc.observaciones}" title="Motivo" />
+                </h:panelGrid>
+
+                <h:panelGrid columns="1" width="100%">
+                    <ace:menuBar autoSubmenuDisplay="true" >
+
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                      action="#{pagoRetencionesSfccbdmq.formularioMotivo.cancelar()}"/>
+                    </ace:menuBar>
+
+                </h:panelGrid>
+            </h:panelGroup>
+        </ace:dialog>
+        <ace:dialog
+            header="Retenciones"
+            closable="false"
+            modal="true"
+            draggable="true"
+            showEffect="clip"
+            hideEffect="fade"
+            rendered="#{pagoRetencionesSfccbdmq.formularioLote.mostrar}"
+            visible="#{pagoRetencionesSfccbdmq.formularioLote.mostrar}">
+            <h:panelGroup>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="Sucursal de emisión :" />
+                    <h:selectOneMenu  value="#{puntosemisionSfccbdmq.sucursal}" 
+                                      >
+                        <f:selectItems value="#{sucursalesSfccbdmq.comboSucursales}"/>
+                        <ace:ajax execute="@all"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="Punto de emisión :"/>
+                    <h:selectOneMenu  value="#{pagoRetencionesSfccbdmq.puntoEmision}" 
+                                      >
+                        <f:selectItems value="#{puntosemisionSfccbdmq.comboPuntoemision}"/>
+                        <ace:ajax execute="@all"/>
+                    </h:selectOneMenu>
+
+                    <h:outputLabel  value="Bien o Servicios :"/>
+                    <h:selectBooleanCheckbox value="#{pagoRetencionesSfccbdmq.retencionLote.bien}">
+                        <ace:ajax execute="@all"/>
+                    </h:selectBooleanCheckbox>
+
+                    <h:outputLabel  value="Impuesto :"/>
+                    <h:selectOneMenu value="#{pagoRetencionesSfccbdmq.retencionLote.impuesto}" >
+                        <f:selectItems value="#{impuestosSfccbdmq.comboImpuestos}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel  value="Retención IR:"/>
+                    <h:selectOneMenu value="#{pagoRetencionesSfccbdmq.retencionLote.retencion}" >
+                        <f:selectItems value="#{pagoRetencionesSfccbdmq.comboRetencionesLote}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel  value="Retención IVA:"/>
+                    <h:selectOneMenu value="#{pagoRetencionesSfccbdmq.retencionLote.retencionimpuesto}" >
+                        <f:selectItems value="#{pagoRetencionesSfccbdmq.comboRetencionesLoteImpuestos}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel  value="Partidas :"/>
+                    <h:selectOneMenu value="#{pagoRetencionesSfccbdmq.retencionLote.partida}">
+                        <f:selectItems value="#{pagoRetencionesSfccbdmq.comboPartidas}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="Fecha Retención:"/>
+                    <ace:dateTimeEntry navigator="true" value="#{pagoRetencionesSfccbdmq.retencionLote.fechaRetencion}"
+                                       popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                       pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </ace:dateTimeEntry>
+                </h:panelGrid>
+
+                <h:panelGrid columns="1" width="100%">
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                      action="#{pagoRetencionesSfccbdmq.grabaLote()}"/>
+
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                      action="#{pagoRetencionesSfccbdmq.formularioLote.cancelar()}"/>
+                    </ace:menuBar>
+
+                </h:panelGrid>
+            </h:panelGroup>
+        </ace:dialog>
+    </ace:panel>
+    <!--</ace:dialog>-->
+</html>

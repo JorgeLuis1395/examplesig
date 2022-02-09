@@ -1,0 +1,357 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{actaCustodioSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{actaCustodioSfccbdmq.buscar()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                </ace:panel>
+
+                <ace:panel 
+                    header="Resultado Bùsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{actaCustodioSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{actaCustodioSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <ace:tabSet style="clear:both;">
+                        <ace:tabPane >
+                            <f:facet name="label">Internos</f:facet>
+                            <h:panelGrid width="100%">
+                                <ace:dataTable id="tabla" 
+                                               value="#{actaCustodioSfccbdmq.listaReporte}"
+                                               var="item"
+                                               paginator="true"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="15,20,25,50,100"
+                                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="15"
+                                               binding="#{actaCustodioSfccbdmq.formulario.fila}">
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <ace:column style="text-align: left">
+                                        <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..."  rendered="#{item.referencia!=null}">
+                                            <ace:menuItem action="#{actaCustodioSfccbdmq.seleccionaInterno(item)}" value="Generar" icon="ui-icon ui-icon-pencil" />
+                                        </ace:menuButton>
+                                    </ace:column> 
+                                    <ace:column  headerText="Cédula" style="text-align: left">
+                                        <h:outputText  value="#{item.referencia}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Apellidos" style="text-align: left">
+                                        <h:outputText  value="#{item.total}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Dirección" style="text-align: left">
+                                        <h:outputText  value="#{item.cuenta}"/>
+                                    </ace:column>
+
+                                    <ace:column  headerText="Valor de Custodia" style="text-align: right">
+                                        <h:outputText  value="#{item.saldoInicial}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane >
+                            <f:facet name="label">Externos</f:facet>
+                            <h:panelGrid width="100%">
+                                <ace:dataTable id="tablaExternos" 
+                                               value="#{actaCustodioSfccbdmq.listaExternos}"
+                                               var="itemExterno"
+                                               paginator="true"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="15,20,25,50,100"
+                                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="15">
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <ace:column style="text-align: left">
+                                        <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." rendered="#{itemExterno.referencia!=null}">
+                                            <ace:menuItem action="#{actaCustodioSfccbdmq.seleccionaExterno(itemExterno)}" value="Generar" icon="ui-icon ui-icon-pencil" />
+                                        </ace:menuButton>
+                                    </ace:column> 
+                                    <ace:column  headerText="CI." style="text-align: left">
+                                        <h:outputText  value="#{itemExterno.referencia}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Nombres" style="text-align: left">
+                                        <h:outputText  value="#{itemExterno.total}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Dirección" style="text-align: left">
+                                        <h:outputText  value="#{itemExterno.cuenta}"/>
+                                    </ace:column>
+
+                                    <ace:column  headerText="Valor de Custodia" style="text-align: right">
+                                        <h:outputText  value="#{itemExterno.saldoInicial}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+
+                    </ace:tabSet>
+                </ace:panel>
+                <ace:dialog 
+                    header="Generar Acta de entrega de activos"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{actaCustodioSfccbdmq.formulario.mostrar}"
+                    visible="#{actaCustodioSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2" width="100%" >
+                            <h:outputText  value="Cédula" />
+                            <h:outputText  value="#{actaCustodioSfccbdmq.auxiliar.referencia}"/>
+                            <h:outputText  value="Apellidos" />
+                            <h:outputText  value="#{actaCustodioSfccbdmq.auxiliar.total}"/>
+                            <h:outputText  value="Nombres" />
+                            <h:outputText  value="#{actaCustodioSfccbdmq.auxiliar.cuenta}"/>
+                            <h:outputText  value="Valor de Custodia" />
+                            <h:outputText  value="#{actaCustodioSfccbdmq.auxiliar.saldoInicial}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <h:outputText  value="Anteccedentes :" />
+                            <h:inputTextarea cols="60" rows="8" value="#{actaCustodioSfccbdmq.acta.antecedentes}"/>
+                            <ace:tabSet style="clear:both;">
+                                <ace:tabPane  label="Activos">
+                                    <ace:dataTable id="tablaDep" 
+                                                   value="#{actaCustodioSfccbdmq.listaActivos}"
+                                                   var="itemActivos"
+                                                   paginator="true"
+                                                   lazy="false"
+                                                   resizableColumns="true"
+                                                   rowIndexVar="row"
+                                                   paginatorPosition="both"
+                                                   rowsPerPageTemplate="5,10,15,50,all"
+                                                   paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                   rows="5"
+                                                   >
+                                        <ace:column  headerText="Seleccionar" style="text-align: right">
+                                            <h:selectBooleanCheckbox  value="#{itemActivos.seleccionado}"/>
+                                        </ace:column>
+
+                                        <ace:column  headerText="Ubicación"  style="text-align: left">
+                                            <h:outputText  value="#{itemActivos.localizacion.edificio.nombre}"/>
+                                        </ace:column>  
+                                        <ace:column  headerText="Código"  style="text-align: left">
+                                            <h:outputText  value="#{itemActivos.codigo}"/>
+                                        </ace:column>  
+                                        <ace:column  headerText="Descripción"  style="text-align: left">
+                                            <h:outputText  value="#{itemActivos.descripcion}"/>
+                                        </ace:column> 
+                                        <ace:column  headerText="Fecha Adquisición"  style="text-align: right">
+                                            <h:outputText  value="#{itemActivos.fechaalta}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                        </ace:column>
+
+                                    </ace:dataTable>
+                                </ace:tabPane>
+                                <ace:tabPane  label="Quien entrega">
+                                    <ace:dataTable id="tablaEntrega" 
+                                                   value="#{actaCustodioSfccbdmq.listaEntregan}"
+                                                   var="itemEntrega"
+                                                   paginator="true"
+                                                   resizableColumns="true"
+                                                   rowIndexVar="row"
+                                                   paginatorPosition="both"
+                                                   rowsPerPageTemplate="15,20,25,50,100"
+                                                   currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                                   paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                   rows="15"
+                                                   binding="#{actaCustodioSfccbdmq.formularioEntregan.fila}">
+                                        <f:facet name="header"><h:commandButton value="Nuevo" action="#{actaCustodioSfccbdmq.nuevaEntrega()}"/></f:facet>
+                                        <ace:column  headerText="Registro" style="text-align: right">
+                                            <h:outputText value="#{row+1}"/>
+                                        </ace:column>
+                                        <ace:column style="text-align: left">
+                                            <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="...">
+                                                <ace:menuItem action="#{actaCustodioSfccbdmq.borraEntrega()}" value="Borrar" icon="ui-icon ui-icon-trash" />
+                                            </ace:menuButton>
+                                        </ace:column> 
+                                        <ace:column  headerText="Titulo" style="text-align: left">
+                                            <h:outputText  value="#{itemEntrega.auxiliar}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Nombres" style="text-align: left">
+                                            <h:outputText  value="#{itemEntrega.total}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Cargo" style="text-align: left">
+                                            <h:outputText  value="#{itemEntrega.cuenta}"/>
+                                        </ace:column>
+                                    </ace:dataTable>
+                                </ace:tabPane>
+                                <ace:tabPane  label="Quien recibe">
+                                    <ace:dataTable id="tablaReciben" 
+                                                   value="#{actaCustodioSfccbdmq.listaReciben}"
+                                                   var="itemRecibe"
+                                                   paginator="true"
+                                                   resizableColumns="true"
+                                                   rowIndexVar="row"
+                                                   paginatorPosition="both"
+                                                   rowsPerPageTemplate="15,20,25,50,100"
+                                                   currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                                   paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                   rows="15"
+                                                   binding="#{actaCustodioSfccbdmq.formularioReciben.fila}">
+                                        <f:facet name="header"><h:commandButton value="Nuevo" action="#{actaCustodioSfccbdmq.nuevaRecibe()}"/></f:facet>
+                                        <ace:column  headerText="Registro" style="text-align: right">
+                                            <h:outputText value="#{row+1}"/>
+                                        </ace:column>
+                                        <ace:column style="text-align: left">
+                                            <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="...">
+                                                <ace:menuItem action="#{actaCustodioSfccbdmq.borraRecibe()}" value="Borrar" icon="ui-icon ui-icon-trash" />
+                                            </ace:menuButton>
+                                        </ace:column> 
+                                        <ace:column  headerText="Titulo" style="text-align: left">
+                                            <h:outputText  value="#{itemRecibe.auxiliar}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Nombres" style="text-align: left">
+                                            <h:outputText  value="#{itemRecibe.total}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Cargo" style="text-align: left">
+                                            <h:outputText  value="#{itemRecibe.cuenta}"/>
+                                        </ace:column>
+                                    </ace:dataTable>
+                                </ace:tabPane>
+                            </ace:tabSet>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{actaCustodioSfccbdmq.grabar()}" 
+                                              />
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{actaCustodioSfccbdmq.formulario.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Agregar"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{actaCustodioSfccbdmq.formularioEntregan.mostrar}"
+                    visible="#{actaCustodioSfccbdmq.formularioEntregan.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="1">
+                            <h:outputLabel value="Título : "/>
+                            <h:inputText value="#{actaCustodioSfccbdmq.entrega.auxiliar}"/>
+                            <h:outputLabel value="Nombres : "/>
+                            <h:inputText value="#{actaCustodioSfccbdmq.entrega.total}"/>
+                            <h:outputLabel value="Cargo : "/>
+                            <h:inputText value="#{actaCustodioSfccbdmq.entrega.cuenta}"/>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{actaCustodioSfccbdmq.grabaEntrega()}" 
+                                              rendered="#{actaCustodioSfccbdmq.formularioEntregan.modificar}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{actaCustodioSfccbdmq.grabaReciben()}" 
+                                              rendered="#{actaCustodioSfccbdmq.formularioEntregan.nuevo}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{actaCustodioSfccbdmq.formularioEntregan.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{actaCustodioSfccbdmq.formularioImprimir.mostrar}"
+                    visible="#{actaCustodioSfccbdmq.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="1">
+                            <h:commandButton  value="Imprimir">
+                                <!--<h:outputText id="printBoth" value="Imprimir"/>-->
+                                <ace:printer for="panelImprimir"/>
+                            </h:commandButton>
+                        </h:panelGrid>
+                        <ui:include src="imprimirActa.xhtml" />
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{actaCustodioSfccbdmq.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

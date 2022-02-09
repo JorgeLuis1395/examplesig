@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+
+                <ace:panel id="panel"
+                           header="#{reporteCajasSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true">
+                    <h:panelGrid columns="2" width="100%">
+                        <h:outputLabel value="Anio:"/>
+                        <h:inputText value="#{reporteCajasSfccbdmq.anio}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteCajasSfccbdmq.buscar()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="@all"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{fuentesuUsosSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{fuentesuUsosSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+
+                </ace:panel>
+                <ace:panel id="panelImprimir">
+                    <h:panelGroup>
+                        <h:panelGrid columns="1" width="100%" >
+                            <ace:dataTable 
+                                id="tabla"
+                                value="#{reporteCajasSfccbdmq.listaMeses}"
+                                var="item"
+                                paginator="true"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="top"
+                                binding="#{reporteCajasSfccbdmq.formulario.fila}"
+                                scrollHeight="600"
+                                scrollable="true">
+                                <ace:column  headerText="Unidad"  style="text-align: left" groupBy="#{item.caja.departamento.id}">
+                                    <h:outputText value="#{item.caja.departamento.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Custodio "  style="text-align: left" >
+                                    <h:outputText value="#{item.caja.empleado.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Auxiliar "  style="text-align: left" >
+                                    <h:outputText value="#{item.codigo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Monto Asignado" style="text-align: left">
+                                    <h:outputText  value="#{item.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+
+                                <ace:column  headerText="Enero" style="text-align: right" styleClass="#{item.estilo}">
+                                    <h:outputText  value="#{item.enero}"  >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Febrero" style="text-align: right" styleClass="#{item.estilo}">
+                                    <h:outputText  value="#{item.febrero}"  >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Marzo" style="text-align: right" styleClass="#{item.estilo}">
+                                    <h:outputText  value="#{item.marzo}"  >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Abril" style="text-align: right" styleClass="#{item.estilo}">
+                                    <h:outputText  value="#{item.abril}"  >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Mayo" style="text-align: right" styleClass="#{item.estilo}">
+                                    <h:outputText  value="#{item.mayo}"  >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Junio" style="text-align: right" styleClass="#{item.estilo}">
+                                    <h:outputText  value="#{item.junio}"  >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Julio" style="text-align: right" styleClass="#{item.estilo}">
+                                    <h:outputText  value="#{item.julio}"  >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Agosto" style="text-align: right" styleClass="#{item.estilo}">
+                                    <h:outputText  value="#{item.agosto}"  >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Septiembre" style="text-align: right" styleClass="#{item.estilo}">
+                                    <h:outputText  value="#{item.septiempbre}"  >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Octubre" style="text-align: right" styleClass="#{item.estilo}">
+                                    <h:outputText  value="#{item.octubre}"  >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Noviembre" style="text-align: right" styleClass="#{item.estilo}">
+                                    <h:outputText  value="#{item.noviembre}"  >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Diciembre" style="text-align: right" styleClass="#{item.estilo}">
+                                    <h:outputText  value="#{item.diciembre}"  >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Total" style="text-align: right" styleClass="#{item.estilo}">
+                                    <h:outputText  value="#{item.total}"  >
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <h:panelGrid width="100%">
+                    <ace:panel id="panel"
+                               header="#{reporteSaldoVacaionesSfccbdmq.perfil.menu.texto}"
+                               closable="false"
+                               toggleable="false"  >
+
+                        <ui:include src="../BuscarOrganigrama.xhtml"/>
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Cédula:"/>
+                            <h:inputText value="#{reporteSaldoVacaionesSfccbdmq.buscarCedula}" />
+                            <h:outputLabel value="Nombres:"/>
+                            <h:inputText value="#{reporteSaldoVacaionesSfccbdmq.nombres}" />
+                            <h:outputLabel value="Apellidos:"/>
+                            <h:inputText value="#{reporteSaldoVacaionesSfccbdmq.apellidos}" />
+                            <h:outputLabel value="Email:"/>
+                            <h:inputText value="#{reporteSaldoVacaionesSfccbdmq.email}" />
+                            <h:outputLabel value="Estado Civil:" />
+                            <h:selectOneMenu value="#{reporteSaldoVacaionesSfccbdmq.ecivil}" >
+                                <f:selectItems value="#{codigosSfccbdmq.comboEstadoCivil}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Cargo:" />
+                            <h:selectOneMenu value="#{reporteSaldoVacaionesSfccbdmq.cargo}" >
+                                <f:selectItems value="#{cargoxorganigrama.comboCargosOrganigrama}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Género:" />
+                            <h:selectOneMenu value="#{reporteSaldoVacaionesSfccbdmq.genero}" >
+                                <f:selectItems value="#{codigosSfccbdmq.comboGenero}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Grupo Sanguineo:" />
+                            <h:selectOneMenu value="#{reporteSaldoVacaionesSfccbdmq.tipsang}">
+                                <f:selectItems value="#{codigosSfccbdmq.comboGrpSanguineo}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Modalidad de Contratación : " />
+                            <h:selectOneMenu value="#{reporteSaldoVacaionesSfccbdmq.contratoL}" >
+                                <f:selectItems value="#{tipoContrato.comboTiposContrato}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Edificio:"  />
+                            <h:selectOneMenu value="#{oficinasSfccbdmq.edificio}">
+                                <f:selectItems value="#{edificiosSfccbdmq.comboEdificioEspacio}" />
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Oficina:" />
+                            <h:selectOneMenu value="#{reporteSaldoVacaionesSfccbdmq.oficina}" >
+                                <f:selectItems value="#{oficinasSfccbdmq.comboOficinaEspacio}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Nombramiento : " />
+                            <h:selectOneRadio value="#{reporteSaldoVacaionesSfccbdmq.nombramiento}" style="border: 0px" >
+                                <f:selectItem itemValue="1" itemLabel="SI" />
+                                <f:selectItem itemValue="2" itemLabel="NO" />
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneRadio>
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="5">
+                            <h:outputLabel value="Fecha de Nacimiento:" />
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{reporteSaldoVacaionesSfccbdmq.desde}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{reporteSaldoVacaionesSfccbdmq.hasta}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid> 
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Grupo de Información Adicional:"  />
+                            <h:selectOneMenu value="#{cabecerasEmpleados.grupocabecera}" >
+                                <f:selectItems value="#{cabecerasEmpleados.comboCabecera}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu> 
+                            <h:outputLabel value="Campo donde buscar:"/>
+                            <h:selectOneMenu value="#{reporteSaldoVacaionesSfccbdmq.cabeceraRrHh}">
+                                <f:selectItems value="#{cabecerasEmpleados.comboCampos}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu> 
+
+
+                            <!--// primero texto si el campo es texto-->
+                            <h:outputLabel value="Texto a buscar:" rendered="#{reporteSaldoVacaionesSfccbdmq.cabeceraRrHh.tipodato==2}" />
+                            <h:inputText value="#{reporteSaldoVacaionesSfccbdmq.textoBuscar}" rendered="#{reporteSaldoVacaionesSfccbdmq.cabeceraRrHh.tipodato==2}" />
+                            <!--// si el campo es texto-->
+                            <h:outputLabel value="Valor mayor o igual a:" rendered="#{reporteSaldoVacaionesSfccbdmq.cabeceraRrHh.tipodato==1}" />
+                            <h:inputText value="#{reporteSaldoVacaionesSfccbdmq.desdeNumerico}" rendered="#{reporteSaldoVacaionesSfccbdmq.cabeceraRrHh.tipodato==1}" />
+                            <h:outputLabel value="Valor menor o igual a:" rendered="#{reporteSaldoVacaionesSfccbdmq.cabeceraRrHh.tipodato==1}" />
+                            <h:inputText value="#{reporteSaldoVacaionesSfccbdmq.desdeNumerico}" rendered="#{reporteSaldoVacaionesSfccbdmq.cabeceraRrHh.tipodato==1}" />
+                            <!--// si es fecha-->
+                            <h:outputLabel value="Fecha desde:" rendered="#{reporteSaldoVacaionesSfccbdmq.cabeceraRrHh.tipodato==3}" />
+                            <ace:dateTimeEntry navigator="true"  value="#{reporteSaldoVacaionesSfccbdmq.desdeFecha}" rendered="#{reporteSaldoVacaionesSfccbdmq.cabeceraRrHh.tipodato==3}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Fecha hasta:" rendered="#{reporteSaldoVacaionesSfccbdmq.cabeceraRrHh.tipodato==3}" />
+                            <ace:dateTimeEntry navigator="true"  value="#{reporteSaldoVacaionesSfccbdmq.hastaFecha}" rendered="#{reporteSaldoVacaionesSfccbdmq.cabeceraRrHh.tipodato==3}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <!--// si es combo-->
+                            <h:outputLabel value="Seleccione :" rendered="#{reporteSaldoVacaionesSfccbdmq.cabeceraRrHh.tipodato==0}" />
+                            <h:selectOneMenu value="#{reporteSaldoVacaionesSfccbdmq.textoBuscar}" rendered="#{reporteSaldoVacaionesSfccbdmq.cabeceraRrHh.tipodato==0}"  >
+                                <f:selectItems value="#{reporteSaldoVacaionesSfccbdmq.comboRangoBuscar}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Seleccione :" rendered="#{reporteSaldoVacaionesSfccbdmq.cabeceraRrHh.tipodato==4}" />
+                            <h:selectOneMenu value="#{reporteSaldoVacaionesSfccbdmq.textoBuscar}" rendered="#{reporteSaldoVacaionesSfccbdmq.cabeceraRrHh.tipodato==4}"  >
+                                <f:selectItems value="#{codigosSfccbdmq.getComboMaestro(reporteSaldoVacaionesSfccbdmq.cabeceraRrHh.codigo)}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  
+                                              action="#{reporteSaldoVacaionesSfccbdmq.buscar()}"/>
+                                <ace:menuItem value="Hoja Elect." icon="ui-icon ui-icon-calculator" action="#{reporteSaldoVacaionesSfccbdmq.exportar()}" />
+                            </ace:menuBar>
+
+                        </h:panelGrid>
+                        <ace:messages />
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{reporteSaldoVacaionesSfccbdmq.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter  
+                                label="Exportar Archivo" 
+                                type="#{reporteSaldoVacaionesSfccbdmq.formulario.pantalla}" 
+                                target="tablaEmpleados" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%" style="margin-bottom: 20px;">
+
+                            <ace:dataTable id="tablaEmpleados"
+                                           value="#{reporteSaldoVacaionesSfccbdmq.empleados}"
+                                           var="item"
+                                           lazy="false"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="10,15,30,50"
+                                           currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="50"
+                                           style="width: 100%;"
+                                           scrollHeight="600"
+                                           scrollable="true">
+                                 <ace:column id="fechaIngreso" headerText="Fecha Ingreso"  style="text-align: left">
+                                    <h:outputText  value="#{item.fechaingreso}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+<!--                                <ace:column  id="fila" headerText=""  style="text-align: right">
+                                    <h:outputText value="#{row+1}"/>
+                                </ace:column>-->
+                                <ace:column  id="cedula" headerText="Cédula"  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.pin}"/>
+                                </ace:column>
+                                <ace:column  id="apellidos" headerText="Apellidos "  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.apellidos}"/>
+                                </ace:column>
+                                <ace:column id="nombres" headerText="Nombres"  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.nombres}"/>
+                                </ace:column>
+                                <ace:column id="proceso" headerText="Proceso"  style="text-align: left">
+                                    <h:outputText value="#{item.cargoactual.organigrama.superior.nombre}"/>
+                                </ace:column>
+                                <ace:column id="cargo" headerText="Cargo "  style="text-align: left">
+                                    <h:outputText value="#{item.cargoactual.cargo.nombre}"/>
+                                </ace:column>
+                                
+                                <ace:column id="unidadAdministrativa" headerText="Unidad Administrativa"  style="text-align: left">
+                                    <h:outputText value="#{item.cargoactual.organigrama.nombre}"/>
+                                </ace:column>
+                                
+                                <ace:column headerText="Saldo de vacaciones"  style="text-align: left">
+                                    <h:outputText value="#{reporteSaldoVacaionesSfccbdmq.traerSaldoUsuario(item)}" escape="false" style="width: 100%"/>
+                                </ace:column>
+                                
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:panel>
+                    <!--</ace:dialog>-->
+                </h:panelGrid>
+                <ace:dialog 
+                    id="dilaogo2"
+                    header="XLS"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteSaldoVacaionesSfccbdmq.formularioExportar.mostrar}"
+                    visible="#{reporteSaldoVacaionesSfccbdmq.formularioExportar.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="Distributivo.xls" label="Generar XLS"
+                                             mimeType="application/xls" resource="#{reporteSaldoVacaionesSfccbdmq.reporte}" 
+                                             style="" type="button"/>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteSaldoVacaionesSfccbdmq.formularioExportar.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

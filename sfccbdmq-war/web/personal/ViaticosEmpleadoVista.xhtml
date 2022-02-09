@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaPersonal.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="Viaticos Empleados"
+                           closable="false"
+                           toggleable="false"  >
+                    <ace:panel header="Parámetros de Búsqueda">
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Viaje"  />
+                            <h:selectOneMenu  value="#{viaticosEmpleadoSfccbdmq.viaticoEmpleado}" title="Viatico" >
+                                <f:selectItems value="#{viaticosEmpleadoSfccbdmq.comboViaticosEmpleado}"/>
+                            </h:selectOneMenu>
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{viaticosEmpleadoSfccbdmq.buscar()}"/>
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" 
+                                              disabled="#{viaticosEmpleadoSfccbdmq.viaticoEmpleado.estado!=0}"
+                                              action="#{viaticosEmpleadoSfccbdmq.nuevo()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <ace:messages/>
+                    </ace:panel> 
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                   for="panel"
+                                   blockUI="panel"
+                                   autoCenter="true"
+                                   activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="false"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{viaticosEmpleadoSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{viaticosEmpleadoSfccbdmq.formulario.pantalla}" 
+                                          target="cursos" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="detalle" 
+                                       value="#{viaticosEmpleadoSfccbdmq.listaDetalles}"
+                                       var="detalle"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="10,20,50"
+                                       paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="10"
+                                       binding="#{viaticosEmpleadoSfccbdmq.formulario.fila}">
+                            <ace:row condition="group" groupBy="#{detalle.tipo}" pos="before" styleClass="tipo">
+                                <ace:column colspan="9"  >
+                                    #{detalle.tipo eq true ? 'HOSPEDAJE':'ALIMENTACIÓN'}
+                                </ace:column>
+                            </ace:row>
+                            <ace:column  style="text-align: left" rendered="#{!viaticosEmpleadoSfccbdmq.formulario.borrar}" >
+                                <ace:menuButton  effect="slide" effectDuration="200" value="...">
+                                    <ace:menuItem value="Editar" icon="ui-icon ui-icon-pencil" action="#{viaticosEmpleadoSfccbdmq.modificar(detalle)}" disabled="#{detalle.validado}" />
+                                    <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{viaticosEmpleadoSfccbdmq.borrar(detalle)}"  disabled="#{detalle.validado}"/>
+                                </ace:menuButton>
+                            </ace:column>
+                            <ace:column  headerText='Fecha'   style="text-align: left">
+                                <h:outputText  value="#{detalle.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Tipo Consumo" style="text-align: left">
+                                <h:outputText value="#{detalle.tipo==true ? 'HOSPEDAJE' : 'ALIMENTACIÓN'}" />
+                            </ace:column>
+                            <ace:column  headerText="Lugar" style="text-align: left">
+                                <h:outputText value="#{detalle.lugar}"/>
+                            </ace:column>
+                            <ace:column  headerText="Tipo comprobante" style="text-align: left">
+                                <h:outputText value="#{detalle.tipocomprobante}"/>
+                            </ace:column>
+                            <ace:column  headerText="N° Comprobante" style="text-align: left">
+                                <h:outputText value="#{detalle.nrocomprobante}"/>
+                            </ace:column>
+                            <ace:column  headerText="Proveedor" style="text-align: left">
+                                <h:outputText value="#{detalle.proveedor}"/>
+                            </ace:column>
+                            <ace:column  headerText="Valor" style="text-align: left">
+                                <h:outputText  value="#{detalle.valor}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Validado" style="text-align: left">
+                                <h:outputText value="#{detalle.validado==true ? 'VALIDADO' : 'PENDIENTE'}" />
+                            </ace:column>
+                            <f:facet name="footer">Total : #{viaticosEmpleadoSfccbdmq.totalDetallesViaticos} </f:facet>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+
+
+                <ace:dialog 
+                    header="#{viaticosEmpleadoSfccbdmq.viaticoEmpleado.toString()}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{viaticosEmpleadoSfccbdmq.formulario.mostrar}"
+                    visible="#{viaticosEmpleadoSfccbdmq.formulario.mostrar}">
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane >
+                            <f:facet name="label">Detalle</f:facet>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Tipo de Consumo: "  />  
+                                <h:selectOneRadio value="#{viaticosEmpleadoSfccbdmq.detalle.tipo}" >
+                                    <f:selectItem itemValue="true" itemLabel="HOSPEDAJE"/>
+                                    <f:selectItem itemValue="false" itemLabel="ALIMENTACIÓN"/>
+                                </h:selectOneRadio>
+                                <h:outputLabel value="Fecha:" for="Fecha" />
+                                <ace:dateTimeEntry navigator="true" value="#{viaticosEmpleadoSfccbdmq.detalle.fecha}" id="Fecha"
+                                                   popupIcon="ui-icon ui-icon-calendar"    renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                </ace:dateTimeEntry>
+                                <h:outputLabel value="Lugar:" for="lugar" />
+                                <h:inputText id="lugar" value="#{viaticosEmpleadoSfccbdmq.detalle.lugar}" title="Lugar" />
+                                <h:outputLabel value="Tipo Comprobante:" for="tcomprobante" />
+                                <h:inputText id="tcomprobante" value="#{viaticosEmpleadoSfccbdmq.detalle.tipocomprobante}" title="TipComprobante" />
+                                <h:outputLabel value="Nro. Comprobante:" for="nrocomprobante" />
+                                <h:inputText id="nrocomprobante" value="#{viaticosEmpleadoSfccbdmq.detalle.nrocomprobante}" title="NroComprobante" />
+                                <h:outputLabel value="Proveedor:" for="proveedor" />
+                                <h:inputText id="proveedor" value="#{viaticosEmpleadoSfccbdmq.detalle.proveedor}" title="Proveedor" />
+                                <h:outputLabel value="Valor:" for="valor" />
+                                <h:inputText id="valor" value="#{viaticosEmpleadoSfccbdmq.detalle.valor}" title="Valor"  style="text-align: right"/>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane label="Adjuntos" rendered="#{viaticosEmpleadoSfccbdmq.detalle.id ne null}">
+                            <ui:include src="../mostrarImagenes.xhtml" />
+                        </ace:tabPane>
+                    </ace:tabSet>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{viaticosEmpleadoSfccbdmq.insertar()}" rendered="#{viaticosEmpleadoSfccbdmq.formulario.nuevo}" />
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{viaticosEmpleadoSfccbdmq.grabar()}" rendered="#{viaticosEmpleadoSfccbdmq.formulario.modificar}" />
+                        <ace:menuItem value="Está Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{viaticosEmpleadoSfccbdmq.eliminar()}" rendered="#{viaticosEmpleadoSfccbdmq.formulario.borrar}" />
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{viaticosEmpleadoSfccbdmq.formulario.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

@@ -1,0 +1,229 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+    <ace:dialog 
+        header="Detalle de Obligación"
+        closable="false"
+        modal="true"
+        draggable="true"
+        showEffect="clip"
+        hideEffect="fade"
+        rendered="#{pagoLoteSfccbdmq.formularioDetalle.mostrar}"
+        visible="#{pagoLoteSfccbdmq.formularioDetalle.mostrar}">
+        <h:panelGroup>
+            <h:panelGrid columns="1">
+                <h:outputLabel  value="Referencia :"/>
+                <h:inputTextarea value="#{pagoLoteSfccbdmq.detalle.referencia}" rows="4" cols="60"/>
+            </h:panelGrid>
+            <h:panelGrid columns="1">
+                <ace:dataTable  
+                    value="#{pagoLoteSfccbdmq.renglonesInternos}"
+                    var="itemInterno"
+                    paginator="true"
+                    lazy="false"
+                    resizableColumns="true"
+                    rowIndexVar="row"
+                    paginatorPosition="top"
+                    rowsPerPageTemplate="5,10,15,30,50,100"
+                    paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    rows="5"
+                    binding="#{pagoLoteSfccbdmq.formularioDetalleDetalle.fila}">
+                    <!--<ace:ajax event="editSubmit" render="facesMsgs"/>-->
+
+                    <ace:column  headerText="Selecciona" style="text-align: left">
+                        <h:selectBooleanCheckbox   value="#{itemInterno.selecciona}">
+                            <ace:ajax execute="@all"/>
+                        </h:selectBooleanCheckbox>
+                    </ace:column>
+
+                    <ace:column  headerText="Partida" style="text-align: left">
+                        <h:outputText  value="#{itemInterno.detallecompromiso.asignacion.clasificador.codigo}"/>
+                    </ace:column>
+                    <ace:column  headerText="Proyecto" style="text-align: left">
+                        <h:outputText  value="#{itemInterno.detallecompromiso.asignacion.proyecto.codigo}"/>
+                    </ace:column>
+                    <ace:column  headerText="Fuente" style="text-align: left">
+                        <h:outputText  value="#{itemInterno.detallecompromiso.asignacion.fuente.codigo}"/>
+                    </ace:column>
+                    <ace:column  headerText="Valor" style="text-align: left">
+                        <h:outputText  value="#{itemInterno.detallecompromiso.valor}">
+                            <f:convertNumber pattern="###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Cuenta" style="text-align: left">
+                        <h:selectOneMenu value="#{pagoLoteSfccbdmq.cuentaPrueba}">
+                            <f:selectItems value="#{pagoLoteSfccbdmq.comboCuentasNuevo}"/>
+                        </h:selectOneMenu>
+                        
+                    </ace:column>
+                    <f:facet name="footer">Total : #{pagoLoteSfccbdmq.totalInternoSeleccionado}</f:facet>
+                </ace:dataTable> 
+
+            </h:panelGrid>
+            <h:panelGrid columns="4">
+                <h:outputLabel  value="Valor comprometido:"/>
+                <h:outputText  value="#{pagoLoteSfccbdmq.detalle.detallecompromiso.valor}">
+                    <f:convertNumber pattern="###,###,##0.00"/>
+                </h:outputText>
+                <h:outputLabel  value="Saldo del compromiso:"/>
+                <h:outputText  value="#{pagoLoteSfccbdmq.detalle.detallecompromiso.saldo}">
+                    <f:convertNumber pattern="###,###,##0.00"/>
+                </h:outputText>
+            </h:panelGrid>
+            <h:panelGrid columns="2">
+                <!--                <h:outputLabel  value="Cuenta contable :"/>
+                                <h:selectOneMenu value="#{pagoLoteSfccbdmq.detalle.idcuenta}">
+                                    <f:selectItems value="#{pagoLoteSfccbdmq.comboCuentas}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>-->
+                <h:outputLabel  value="Bien o Servicios :"/>
+                <h:selectBooleanCheckbox value="#{pagoLoteSfccbdmq.detalle.bien}">
+                    <ace:ajax execute="@all"/>
+                </h:selectBooleanCheckbox>
+                <h:outputLabel  value="Prima y Descuentos :"/>
+                <h:selectBooleanCheckbox value="#{pagoLoteSfccbdmq.soloRetencion}" >
+                    <ace:ajax execute="@all"/>
+                </h:selectBooleanCheckbox>
+
+                <h:outputLabel  value="Base imponible :" rendered="#{pagoLoteSfccbdmq.soloRetencion}"/>
+                <h:inputText value="#{pagoLoteSfccbdmq.detalle.valorprima}" rendered="#{pagoLoteSfccbdmq.soloRetencion}"/>
+                <h:outputLabel  value="Base Imponible :" rendered="#{!pagoLoteSfccbdmq.soloRetencion}"/>
+                <h:outputLabel  value="Valor Presupuestado:" rendered="#{pagoLoteSfccbdmq.soloRetencion}"/>
+                <h:inputText value="#{pagoLoteSfccbdmq.detalle.valor}"/>
+
+                <h:outputLabel  value="Incluye Impuestos? :"/>
+                <h:selectBooleanCheckbox value="#{pagoLoteSfccbdmq.iva}">
+                    <ace:ajax execute="@all"/>
+                </h:selectBooleanCheckbox>
+                <h:outputLabel  value="Retención :"/>
+                <h:selectOneMenu value="#{pagoLoteSfccbdmq.detalle.retencion}" >
+                    <f:selectItems value="#{pagoLoteSfccbdmq.comboRetenciones}"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="Base imponible impuesto:" />
+                <h:inputText value="#{pagoLoteSfccbdmq.detalle.baseimponibleimpuesto}"/>
+                <h:outputLabel  value="Impuesto :"/>
+                <h:selectOneMenu value="#{pagoLoteSfccbdmq.detalle.impuesto}" >
+                    <f:selectItems value="#{impuestosSfccbdmq.comboImpuestos}"/>
+                </h:selectOneMenu>
+            </h:panelGrid>
+            <h:panelGrid columns="2">
+                <h:outputLabel  value="Ret. sobre Impuesto :"/>
+                <h:selectOneMenu value="#{pagoLoteSfccbdmq.detalle.retimpuesto}" >
+                    <f:selectItems value="#{pagoLoteSfccbdmq.comboRetencionesImpuestos}"/>
+                </h:selectOneMenu>
+            </h:panelGrid>
+            <h:panelGrid columns="1" width="100%">
+                <ace:menuBar autoSubmenuDisplay="true" >
+                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{pagoLoteSfccbdmq.formularioDetalle.nuevo}" 
+                                  action="#{pagoLoteSfccbdmq.insertarDetalle()}"/>
+                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                  action="#{pagoLoteSfccbdmq.grabarDetalle()}" 
+                                  rendered="#{pagoLoteSfccbdmq.formularioDetalle.modificar}" />
+                    <ace:menuItem action="#{pagoLoteSfccbdmq.borrarDetalle()}" 
+                                  value="Esta seguro de Borrar el registro?" 
+                                  rendered="#{pagoLoteSfccbdmq.formularioDetalle.borrar}"/>
+
+                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                  action="#{pagoLoteSfccbdmq.formularioDetalle.cancelar()}"/>
+                </ace:menuBar>
+
+            </h:panelGrid>
+        </h:panelGroup>
+    </ace:dialog>
+    <ace:dialog 
+        header="Detalle de Obligación"
+        closable="false"
+        modal="true"
+        draggable="true"
+        showEffect="clip"
+        hideEffect="fade"
+        rendered="#{pagoLoteSfccbdmq.formularioDetalleCuenta.mostrar}"
+        visible="#{pagoLoteSfccbdmq.formularioDetalleCuenta.mostrar}">
+        <h:panelGroup>
+            <h:panelGrid columns="1">
+                <h:outputLabel  value="Referencia :"/>
+                <h:inputTextarea value="#{pagoLoteSfccbdmq.detalle.referencia}" rows="4" cols="60"/>
+            </h:panelGrid>
+
+            <h:panelGrid columns="2">
+                <h:outputLabel  value="Cuenta proveedor :"/>
+                <h:selectOneMenu value="#{pagoLoteSfccbdmq.cuentaProveedor}" >
+                    <f:selectItems value="#{pagoLoteSfccbdmq.comboCuentasProveedor}"/>
+                    <ace:ajax execute="@all"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="Cuenta contable :"/>
+                <h:selectOneMenu value="#{pagoLoteSfccbdmq.detalle.idcuenta}">
+                    <f:selectItems value="#{pagoLoteSfccbdmq.comboCuentasDetalle}"/>
+                    <ace:ajax execute="@all"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="Auxiliar Empleado? :"/>
+                <h:selectBooleanCheckbox value="#{pagoLoteSfccbdmq.empleado}">
+                    <ace:ajax execute="@all"/>
+                </h:selectBooleanCheckbox>
+            </h:panelGrid>
+            <h:panelGrid columns="1" rendered="#{pagoLoteSfccbdmq.empleado}">
+                <ui:include src="../BuscarUsuario.xhtml" />
+            </h:panelGrid>
+
+            <h:panelGrid columns="2">
+                <h:outputLabel  value="Bien o Servicios :"/>
+                <h:selectBooleanCheckbox value="#{pagoLoteSfccbdmq.detalle.bien}" >
+                    <ace:ajax execute="@all"/>
+                </h:selectBooleanCheckbox>
+                <h:outputLabel  value="Centro de Costo :" rendered="#{pagoLoteSfccbdmq.detalle.idcuenta.ccosto}"/>
+                <h:selectOneMenu value="#{pagoLoteSfccbdmq.detalle.cc}" rendered="#{pagoLoteSfccbdmq.detalle.idcuenta.ccosto}">
+                    <f:selectItems value="#{ccostoSfccbdmq.comboCcostoStr}"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="Base Imponible :"/>
+                <h:inputText value="#{pagoLoteSfccbdmq.detalle.valor}"/>
+                <h:outputLabel  value="Incluye Impuestos? :"/>
+                <h:selectBooleanCheckbox value="#{pagoLoteSfccbdmq.iva}">
+                    <ace:ajax execute="@all"/>
+                </h:selectBooleanCheckbox>
+
+                <h:outputLabel  value="Retención :"/>
+                <h:selectOneMenu value="#{pagoLoteSfccbdmq.detalle.retencion}" >
+                    <f:selectItems value="#{pagoLoteSfccbdmq.comboRetenciones}"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="Impuesto :"/>
+                <h:selectOneMenu value="#{pagoLoteSfccbdmq.detalle.impuesto}" >
+                    <f:selectItems value="#{impuestosSfccbdmq.comboImpuestos}"/>
+                </h:selectOneMenu>
+            </h:panelGrid>
+            <h:panelGrid columns="2">
+                <h:outputLabel  value="Ret. sobre Impuesto :"/>
+                <h:selectOneMenu value="#{pagoLoteSfccbdmq.detalle.retimpuesto}" >
+                    <f:selectItems value="#{pagoLoteSfccbdmq.comboRetencionesImpuestos}"/>
+                </h:selectOneMenu>
+            </h:panelGrid>
+            <h:panelGrid columns="1" width="100%">
+                <ace:menuBar autoSubmenuDisplay="true" >
+                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{pagoLoteSfccbdmq.formularioDetalleCuenta.nuevo}" 
+                                  action="#{pagoLoteSfccbdmq.insertarDetalleCuenta()}"/>
+                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                  action="#{pagoLoteSfccbdmq.grabarDetalleCuenta()}" 
+                                  rendered="#{pagoLoteSfccbdmq.formularioDetalleCuenta.modificar}" />
+                    <ace:menuItem action="#{pagoLoteSfccbdmq.borrarDetalleCuenta()}" 
+                                  value="Esta seguro de Borrar el registro?" 
+                                  rendered="#{pagoLoteSfccbdmq.formularioDetalleCuenta.borrar}"/>
+
+                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                  action="#{pagoLoteSfccbdmq.formularioDetalleCuenta.cancelar()}"/>
+                </ace:menuBar>
+
+            </h:panelGrid>
+        </h:panelGroup>
+    </ace:dialog>
+</html>

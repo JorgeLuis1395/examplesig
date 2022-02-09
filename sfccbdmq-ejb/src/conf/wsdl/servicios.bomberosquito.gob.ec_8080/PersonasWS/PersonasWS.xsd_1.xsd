@@ -1,0 +1,576 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI (http://jax-ws.java.net). RI's version is Metro/2.3.2-b608 (trunk-7979; 2015-01-21T12:50:19+0000) JAXWS-RI/2.2.11-b150120.1832 JAXWS-API/2.2.12 JAXB-RI/2.2.12-b141219.1637 JAXB-API/2.2.13-b141020.1521 svn-revision#unknown. --><xs:schema xmlns:tns="http://ws.personas.com/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://ws.personas.com/">
+
+<xs:element name="ConsultarException" type="tns:ConsultarException"/>
+
+<xs:element name="auxiliarEntidad" type="tns:auxiliarEntidad"/>
+
+<xs:element name="cambioClave" type="tns:cambioClave"/>
+
+<xs:element name="cambioClaveResponse" type="tns:cambioClaveResponse"/>
+
+<xs:element name="cargos" type="tns:cargos"/>
+
+<xs:element name="carrera" type="tns:carrera"/>
+
+<xs:element name="direcciones" type="tns:direcciones"/>
+
+<xs:element name="empleado" type="tns:empleado"/>
+
+<xs:element name="empleadoActivo" type="tns:empleadoActivo"/>
+
+<xs:element name="empleadoActivoResponse" type="tns:empleadoActivoResponse"/>
+
+<xs:element name="entidades" type="tns:entidades"/>
+
+<xs:element name="estacion" type="tns:estacion"/>
+
+<xs:element name="estacionResponse" type="tns:estacionResponse"/>
+
+<xs:element name="estaciones" type="tns:estaciones"/>
+
+<xs:element name="estacionesResponse" type="tns:estacionesResponse"/>
+
+<xs:element name="locales" type="tns:locales"/>
+
+<xs:element name="login" type="tns:login"/>
+
+<xs:element name="loginAD" type="tns:loginAD"/>
+
+<xs:element name="loginADResponse" type="tns:loginADResponse"/>
+
+<xs:element name="loginResponse" type="tns:loginResponse"/>
+
+<xs:element name="organigrama" type="tns:organigrama"/>
+
+<xs:element name="pidePermiso" type="tns:pidePermiso"/>
+
+<xs:element name="pidePermisoFecha" type="tns:pidePermisoFecha"/>
+
+<xs:element name="pidePermisoFechaResponse" type="tns:pidePermisoFechaResponse"/>
+
+<xs:element name="pidePermisoMiliseg" type="tns:pidePermisoMiliseg"/>
+
+<xs:element name="pidePermisoMilisegResponse" type="tns:pidePermisoMilisegResponse"/>
+
+<xs:element name="pidePermisoResponse" type="tns:pidePermisoResponse"/>
+
+<xs:element name="poneIngreso" type="tns:poneIngreso"/>
+
+<xs:element name="poneIngresoResponse" type="tns:poneIngresoResponse"/>
+
+<xs:element name="poneSalida" type="tns:poneSalida"/>
+
+<xs:element name="poneSalidaResponse" type="tns:poneSalidaResponse"/>
+
+<xs:element name="telefonos" type="tns:telefonos"/>
+
+<xs:element name="traerDireccion" type="tns:traerDireccion"/>
+
+<xs:element name="traerDireccionActual" type="tns:traerDireccionActual"/>
+
+<xs:element name="traerDireccionActualResponse" type="tns:traerDireccionActualResponse"/>
+
+<xs:element name="traerDireccionEmpleado" type="tns:traerDireccionEmpleado"/>
+
+<xs:element name="traerDireccionEmpleadoResponse" type="tns:traerDireccionEmpleadoResponse"/>
+
+<xs:element name="traerDireccionResponse" type="tns:traerDireccionResponse"/>
+
+<xs:element name="traerDirecciones" type="tns:traerDirecciones"/>
+
+<xs:element name="traerDireccionesResponse" type="tns:traerDireccionesResponse"/>
+
+<xs:element name="traerEmpleado" type="tns:traerEmpleado"/>
+
+<xs:element name="traerEmpleadoCargo" type="tns:traerEmpleadoCargo"/>
+
+<xs:element name="traerEmpleadoCargoResponse" type="tns:traerEmpleadoCargoResponse"/>
+
+<xs:element name="traerEmpleadoResponse" type="tns:traerEmpleadoResponse"/>
+
+<xs:element name="traerJefeDePeloton" type="tns:traerJefeDePeloton"/>
+
+<xs:element name="traerJefeDePelotonResponse" type="tns:traerJefeDePelotonResponse"/>
+
+<xs:element name="traerJefeDistrital" type="tns:traerJefeDistrital"/>
+
+<xs:element name="traerJefeDistritalResponse" type="tns:traerJefeDistritalResponse"/>
+
+<xs:element name="traerJefeInmediato" type="tns:traerJefeInmediato"/>
+
+<xs:element name="traerJefeInmediatoResponse" type="tns:traerJefeInmediatoResponse"/>
+
+<xs:element name="traerJefeZona" type="tns:traerJefeZona"/>
+
+<xs:element name="traerJefeZonaResponse" type="tns:traerJefeZonaResponse"/>
+
+<xs:element name="traerPersonas" type="tns:traerPersonas"/>
+
+<xs:element name="traerPersonasResponse" type="tns:traerPersonasResponse"/>
+
+<xs:complexType name="traerEmpleado">
+<xs:sequence>
+<xs:element name="cedula" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="traerEmpleadoResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:auxiliarEntidad" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="auxiliarEntidad">
+<xs:sequence>
+<xs:element name="apellidos" type="xs:string" minOccurs="0"/>
+<xs:element name="email" type="xs:string" minOccurs="0"/>
+<xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="nombres" type="xs:string" minOccurs="0"/>
+<xs:element name="pin" type="xs:string" minOccurs="0"/>
+<xs:element name="pregunta" type="xs:string" minOccurs="0"/>
+<xs:element name="pwd" type="xs:string" minOccurs="0"/>
+<xs:element name="rol" type="xs:string" minOccurs="0"/>
+<xs:element name="textoEmail" type="xs:string" minOccurs="0"/>
+<xs:element name="userid" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="ConsultarException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="pidePermisoFecha">
+<xs:sequence>
+<xs:element name="cedula" type="xs:string" minOccurs="0"/>
+<xs:element name="desde" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="hasta" type="xs:dateTime" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="pidePermisoFechaResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="pidePermisoMiliseg">
+<xs:sequence>
+<xs:element name="cedula" type="xs:string" minOccurs="0"/>
+<xs:element name="desde" type="xs:long"/>
+<xs:element name="hasta" type="xs:long"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="pidePermisoMilisegResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="traerJefeInmediato">
+<xs:sequence>
+<xs:element name="cedula" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="traerJefeInmediatoResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="pidePermiso">
+<xs:sequence>
+<xs:element name="cedula" type="xs:string" minOccurs="0"/>
+<xs:element name="horainicio" type="xs:int" minOccurs="0"/>
+<xs:element name="minutoinicio" type="xs:int" minOccurs="0"/>
+<xs:element name="horafin" type="xs:int" minOccurs="0"/>
+<xs:element name="minutofin" type="xs:int" minOccurs="0"/>
+<xs:element name="desde" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="hasta" type="xs:dateTime" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="pidePermisoResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="traerJefeDistrital">
+<xs:sequence>
+<xs:element name="cedula" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="traerJefeDistritalResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="traerDireccionActual">
+<xs:sequence>
+<xs:element name="cedula" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="traerDireccionActualResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:organigrama" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="organigrama">
+<xs:sequence>
+<xs:element name="activo" type="xs:boolean" minOccurs="0"/>
+<xs:element name="auxiliar" type="xs:string" minOccurs="0"/>
+<xs:element name="codigo" type="xs:string" minOccurs="0"/>
+<xs:element name="esdireccion" type="xs:boolean" minOccurs="0"/>
+<xs:element name="grupoecu" type="xs:string" minOccurs="0"/>
+<xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="jefedistrito" type="xs:string" minOccurs="0"/>
+<xs:element name="jefeestacion" type="xs:string" minOccurs="0"/>
+<xs:element name="jefepeloton" type="xs:string" minOccurs="0"/>
+<xs:element name="localidad" type="tns:locales" minOccurs="0"/>
+<xs:element name="nombre" type="xs:string" minOccurs="0"/>
+<xs:element name="operativo" type="xs:boolean" minOccurs="0"/>
+<xs:element name="ordinal" type="xs:int" minOccurs="0"/>
+<xs:element name="superior" type="tns:organigrama" minOccurs="0"/>
+<xs:element name="titulo" type="xs:boolean" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="locales">
+<xs:sequence>
+<xs:element name="alarma" type="xs:boolean" minOccurs="0"/>
+<xs:element name="cerrado" type="xs:int" minOccurs="0"/>
+<xs:element name="cerradoEcu" type="xs:int" minOccurs="0"/>
+<xs:element name="codigo" type="xs:string" minOccurs="0"/>
+<xs:element name="direccion" type="tns:direcciones" minOccurs="0"/>
+<xs:element name="estacion" type="xs:boolean" minOccurs="0"/>
+<xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="idedificiosfc" type="xs:int" minOccurs="0"/>
+<xs:element name="ingresoEstacion" type="xs:int" minOccurs="0"/>
+<xs:element name="latitud" type="xs:decimal" minOccurs="0"/>
+<xs:element name="longitud" type="xs:decimal" minOccurs="0"/>
+<xs:element name="nombre" type="xs:string" minOccurs="0"/>
+<xs:element name="operativo" type="xs:boolean" minOccurs="0"/>
+<xs:element name="ordenpresentacion" type="xs:int" minOccurs="0"/>
+<xs:element name="pendiente" type="xs:int" minOccurs="0"/>
+<xs:element name="telefono" type="tns:telefonos" minOccurs="0"/>
+<xs:element name="telefono1" type="tns:telefonos" minOccurs="0"/>
+<xs:element name="total" type="xs:int" minOccurs="0"/>
+<xs:element name="visible" type="xs:boolean" minOccurs="0"/>
+<xs:element name="zona" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="direcciones">
+<xs:sequence>
+<xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="numero" type="xs:string" minOccurs="0"/>
+<xs:element name="piso" type="xs:string" minOccurs="0"/>
+<xs:element name="primaria" type="xs:string" minOccurs="0"/>
+<xs:element name="referencia" type="xs:string" minOccurs="0"/>
+<xs:element name="secundaria" type="xs:string" minOccurs="0"/>
+<xs:element name="ubicacion" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="telefonos">
+<xs:sequence>
+<xs:element name="entidad" type="tns:entidades" minOccurs="0"/>
+<xs:element name="extencion" type="xs:string" minOccurs="0"/>
+<xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="numero" type="xs:string" minOccurs="0"/>
+<xs:element name="operadora" type="xs:string" minOccurs="0"/>
+<xs:element name="tipo" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="entidades">
+<xs:sequence>
+<xs:element name="activo" type="xs:boolean" minOccurs="0"/>
+<xs:element name="apellidos" type="xs:string" minOccurs="0"/>
+<xs:element name="direccion" type="tns:direcciones" minOccurs="0"/>
+<xs:element name="email" type="xs:string" minOccurs="0"/>
+<xs:element name="empleado" type="tns:empleado" minOccurs="0"/>
+<xs:element name="estacionTemporal" type="xs:string" minOccurs="0"/>
+<xs:element name="fecha" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="nombres" type="xs:string" minOccurs="0"/>
+<xs:element name="pelotonTemporal" type="xs:int"/>
+<xs:element name="pin" type="xs:string" minOccurs="0"/>
+<xs:element name="pregunta" type="xs:string" minOccurs="0"/>
+<xs:element name="pwd" type="xs:string" minOccurs="0"/>
+<xs:element name="rol" type="xs:string" minOccurs="0"/>
+<xs:element name="sexo" type="xs:boolean" minOccurs="0"/>
+<xs:element name="textoEmail" type="xs:string" minOccurs="0"/>
+<xs:element name="textoEmailVista" type="xs:string" minOccurs="0"/>
+<xs:element name="titulo" type="xs:string" minOccurs="0"/>
+<xs:element name="userid" type="xs:string" minOccurs="0"/>
+<xs:element name="usuarioad" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="empleado">
+<xs:sequence>
+<xs:element name="administra" type="tns:organigrama" minOccurs="0"/>
+<xs:element name="antiguedad" type="xs:int" minOccurs="0"/>
+<xs:element name="area" type="xs:string" minOccurs="0"/>
+<xs:element name="autorizapermiso" type="xs:boolean" minOccurs="0"/>
+<xs:element name="autorizarpermiso" type="xs:boolean" minOccurs="0"/>
+<xs:element name="cargo" type="tns:cargos" minOccurs="0"/>
+<xs:element name="contrato" type="xs:string" minOccurs="0"/>
+<xs:element name="directorsiniestros" type="xs:boolean" minOccurs="0"/>
+<xs:element name="disponibilidad" type="xs:string" minOccurs="0"/>
+<xs:element name="disponible" type="xs:boolean" minOccurs="0"/>
+<xs:element name="entidad" type="tns:entidades" minOccurs="0"/>
+<xs:element name="especial" type="xs:boolean" minOccurs="0"/>
+<xs:element name="especialidad" type="xs:string" minOccurs="0"/>
+<xs:element name="estadocontrato" type="xs:string" minOccurs="0"/>
+<xs:element name="fechaingreso" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="funcion" type="xs:string" minOccurs="0"/>
+<xs:element name="gradocarrera" type="tns:carrera" minOccurs="0"/>
+<xs:element name="grupoespecial" type="xs:string" minOccurs="0"/>
+<xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="ingreso" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="jefede" type="xs:int" minOccurs="0"/>
+<xs:element name="jefedezona" type="xs:boolean" minOccurs="0"/>
+<xs:element name="jefedistrito" type="xs:boolean" minOccurs="0"/>
+<xs:element name="jefeestacion" type="xs:boolean" minOccurs="0"/>
+<xs:element name="jefeestaciones" type="xs:boolean" minOccurs="0"/>
+<xs:element name="jefepeloton" type="xs:boolean" minOccurs="0"/>
+<xs:element name="operativo" type="xs:boolean" minOccurs="0"/>
+<xs:element name="orden" type="xs:int" minOccurs="0"/>
+<xs:element name="organigrama" type="tns:organigrama" minOccurs="0"/>
+<xs:element name="peloton" type="xs:int" minOccurs="0"/>
+<xs:element name="promocion" type="xs:string" minOccurs="0"/>
+<xs:element name="reten" type="xs:boolean" minOccurs="0"/>
+<xs:element name="salida" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="superior" type="tns:empleado" minOccurs="0"/>
+<xs:element name="tiposervidor" type="xs:string" minOccurs="0"/>
+<xs:element name="ubicacion" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="cargos">
+<xs:sequence>
+<xs:element name="codigo" type="xs:string" minOccurs="0"/>
+<xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="nombre" type="xs:string" minOccurs="0"/>
+<xs:element name="operativo" type="xs:boolean" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="carrera">
+<xs:sequence>
+<xs:element name="codigo" type="xs:string" minOccurs="0"/>
+<xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="nivel" type="xs:string" minOccurs="0"/>
+<xs:element name="nombre" type="xs:string" minOccurs="0"/>
+<xs:element name="superior" type="tns:carrera" minOccurs="0"/>
+<xs:element name="tipo" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="estacion">
+<xs:sequence>
+<xs:element name="estacion" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="estacionResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:auxiliarLocalidades" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="auxiliarLocalidades">
+<xs:sequence>
+<xs:element name="codigo" type="xs:string" minOccurs="0"/>
+<xs:element name="direccion" type="xs:string" minOccurs="0"/>
+<xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="latitud" type="xs:double"/>
+<xs:element name="longitud" type="xs:double"/>
+<xs:element name="nombre" type="xs:string" minOccurs="0"/>
+<xs:element name="telefono" type="xs:string" minOccurs="0"/>
+<xs:element name="telefono1" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="poneIngreso">
+<xs:sequence>
+<xs:element name="cedula" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="poneIngresoResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="traerJefeZona">
+<xs:sequence>
+<xs:element name="cedula" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="traerJefeZonaResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="empleadoActivo">
+<xs:sequence>
+<xs:element name="ci" type="xs:string" minOccurs="0"/>
+<xs:element name="fecha" type="xs:dateTime" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="empleadoActivoResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="cambioClave">
+<xs:sequence>
+<xs:element name="usuario" type="xs:string" minOccurs="0"/>
+<xs:element name="claveAnterior" type="xs:string" minOccurs="0"/>
+<xs:element name="claveNueva" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="cambioClaveResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="traerDireccion">
+<xs:sequence>
+<xs:element name="codigo" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="traerDireccionResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:organigrama" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="traerEmpleadoCargo">
+<xs:sequence>
+<xs:element name="cedula" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="traerEmpleadoCargoResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:auxiliarEntidad" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="traerJefeDePeloton">
+<xs:sequence>
+<xs:element name="cedula" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="traerJefeDePelotonResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="poneSalida">
+<xs:sequence>
+<xs:element name="cedula" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="poneSalidaResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="traerPersonas">
+<xs:sequence>
+<xs:element name="apellido" type="xs:string" minOccurs="0"/>
+<xs:element name="total" type="xs:int"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="traerPersonasResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:auxiliarEntidad" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="traerDireccionEmpleado">
+<xs:sequence>
+<xs:element name="cedula" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="traerDireccionEmpleadoResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:organigrama" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="login">
+<xs:sequence>
+<xs:element name="usuario" type="xs:string" minOccurs="0"/>
+<xs:element name="calve" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="loginResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:auxiliarEntidad" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="loginAD">
+<xs:sequence>
+<xs:element name="usuario" type="xs:string" minOccurs="0"/>
+<xs:element name="clave" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="loginADResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:auxiliarEntidad" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="traerDirecciones">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="traerDireccionesResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:organigrama" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="estaciones">
+<xs:sequence>
+<xs:element name="tipo" type="xs:int"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="estacionesResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:auxiliarLocalidades" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>

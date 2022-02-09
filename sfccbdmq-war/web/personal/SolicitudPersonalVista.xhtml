@@ -1,0 +1,199 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition template="../plantillas/plantillaPersonal.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel header="Solicitud de Personal"    
+                    id ="panel"
+                    closable="false"
+                    toggleable="true"
+                    rendered="#{!solicitudXPersonal.formulario.modificar}">
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{solicitudXPersonal.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document"  action="#{solicitudXPersonal.crear()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:dataTable 
+                            id="tablaf"
+                            paginatorAlwaysVisible="true"
+                            value="#{solicitudXPersonal.listaSolicitud}"
+                            var="item"
+                            paginator="true"
+                            lazy="false"
+                            resizableColumns="true"
+                            rowIndexVar="row"
+                            paginatorPosition="both"
+                            rowsPerPageTemplate="5,10,15,30,50,100,all"
+                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            rows="15"
+                            binding="#{solicitudXPersonal.formulario.fila}">
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{solicitudXPersonal.modificar()}" 
+                                                  value="Ver" icon="ui-icon ui-icon-pencil"/>
+                                </ace:menuButton>
+                            </ace:column>
+                            <ace:column  headerText="Orden" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column> 
+                            <ace:column  headerText="N°" style="text-align: right">
+                                <h:outputText value="#{item.numero}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Fecha" style="text-align: left">
+                                <h:outputText  value="#{item.fechasolicitud}">
+                                    <f:convertDateTime parent="dd/MM/yyyy"/>
+                                </h:outputText>
+                                <h:outputText value=" - "/>
+                                <h:outputText value="#{item.fechasolicitud}">
+                                    <f:convertDateTime pattern="HH:mm"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Cedula" style="text-align: left">
+                                <h:outputText  value="#{item.empleado.entidad.pin}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nombres" style="text-align: left">
+                                <h:outputText  value="#{item.empleado.entidad.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Descripción" style="text-align: left">
+                                <h:outputText  value="#{item.descripcion}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+
+                <ace:panel
+                    id="panel1"
+                    header="Solicitudes"
+                    closable="false"
+                    toggleable="true"
+                    rendered="#{solicitudXPersonal.formulario.modificar}">
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{solicitudXPersonal.salir()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:dataTable 
+                            paginatorAlwaysVisible="true"
+                            value="#{solicitudXPersonal.listaDetalleSolicitud}"
+                            var="itemd"
+                            paginator="true"
+                            lazy="false"
+                            resizableColumns="true"
+                            rowIndexVar="row"
+                            paginatorPosition="both"
+                            rowsPerPageTemplate="5,10,15,30,50,100,all"
+                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            rows="15">
+                            <ace:column  headerText="Orden" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Fecha Solicitud - Hora" style="background-color: #{itemd.aprobado eq null ? 'red':''}">
+                                <h:outputText  value="#{itemd.solicitudpersonal.fechasolicitud}">
+                                    <f:convertDateTime parent="dd/MM/yyyy" />
+                                </h:outputText>
+                                <h:outputText value=" - "/>
+                                <h:outputText value="#{itemd.solicitudpersonal.fechasolicitud}">
+                                    <f:convertDateTime pattern="HH:mm"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="N° Certificado" style="text-align: right">
+                                <h:outputText value="#{itemd.numerocertificado}"/>
+                            </ace:column>
+<!--                            <ace:column  headerText="Cedula" style="text-align: left">
+                                <h:outputText  value="#{itemd.solicitudpersonal.empleado.entidad.pin}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nombres" style="text-align: left">
+                                <h:outputText  value="#{itemd.solicitudpersonal.empleado.entidad.toString()}"/>
+                            </ace:column>-->
+                            <ace:column  headerText="Tipo de Solicitud" style="text-align: left">
+                                <h:outputText  value="#{solicitudTelento.traerTipo(itemd.tipo)}"/>
+                            </ace:column>
+                            <ace:column  headerText="Descripción" style="text-align: left">
+                                <h:outputText  value="#{itemd.solicitudpersonal.descripcion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Aprobado" style="text-align: left">
+                                <h:outputText  value="#{itemd.aprobado eq null ? '--':itemd.aprobado ? 'SI': 'NO'}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+
+                <ace:dialog 
+                    header="Solicitud de certificaciones de Talento Humano"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    width="500"
+                    height="400"
+                    visible="#{solicitudXPersonal.formulario.nuevo}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="1" style="font-style: italic;font-weight: bold">
+                            <h:outputLabel value="Datos Solicitante"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" width="100%" style="text-align: left">
+                            <h:outputLabel value="Fecha/hora solicitud:" style="font-weight: bold"/>
+                            <h:outputText  value="#{solicitudXPersonal.solicitud.fechasolicitud}">
+                                <f:convertDateTime parent="dd/MM/yyyy"/>
+                            </h:outputText>
+                            <h:outputLabel value="C.C./Pasaporte: " style="font-weight: bold"/>
+                            <h:outputLabel value="#{solicitudXPersonal.empleado.entidad.pin}"/>
+                            <h:outputLabel value="Cargo: " style="font-weight: bold"/>
+                            <h:outputLabel value="#{solicitudXPersonal.empleado.cargoactual.cargo.nombre}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" style="font-weight: bold">
+                            <h:outputLabel value="Tipo de Solicitud: " style="font-weight: bold"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <ace:checkboxButton value="#{solicitudXPersonal.tipo1}" disabled="#{solicitudXPersonal.formulario.modificar}"/>
+                            <h:outputLabel value="Certificado Laboral"/>
+                            <ace:checkboxButton value="#{solicitudXPersonal.tipo2}" disabled="#{solicitudXPersonal.formulario.modificar}"/>
+                            <h:outputLabel value="Certificado de Ingresos"/>
+                            <ace:checkboxButton value="#{solicitudXPersonal.tipo3}" disabled="#{solicitudXPersonal.formulario.modificar}"/>
+                            <h:outputLabel value="Otros"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" style="font-weight: bold">
+                            <h:outputLabel value="Descripción de la solicitud: " style="font-weight: bold"/>
+                            <h:inputTextarea value="#{solicitudXPersonal.descripcion}" rows="5" cols="35" disabled="#{solicitudXPersonal.formulario.modificar}"/>
+                        </h:panelGrid>
+                        <ace:messages />
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              rendered="#{solicitudXPersonal.formulario.nuevo}" 
+                                              action="#{solicitudXPersonal.insertar()}"/>
+                                <ace:menuItem action="#{solicitudXPersonal.borrar()}" 
+                                              value="¿Está seguro de Borrar el registro?" 
+                                              icon="ui-icon ui-icon-trash" 
+                                              rendered="#{solicitudXPersonal.formulario.borrar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{solicitudXPersonal.salir()}"/>
+                            </ace:menuBar>
+
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

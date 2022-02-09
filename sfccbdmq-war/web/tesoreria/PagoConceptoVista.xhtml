@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{pagoConceptoEmpleadoSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+
+                    <h:panelGrid columns="6">
+                        <h:outputText value="Mes:"/>
+                        <h:inputText value="#{pagoConceptoEmpleadoSfccbdmq.mes}" disabled="#{pagoConceptoEmpleadoSfccbdmq.formulario.mostrar}"/>
+                        <h:outputText value="Anio:"/>
+                        <h:inputText value="#{pagoConceptoEmpleadoSfccbdmq.anio}" disabled="#{pagoConceptoEmpleadoSfccbdmq.formulario.mostrar}"/>
+
+                    </h:panelGrid>    
+                    <h:panelGrid columns="2">
+                        <h:outputText value="Concepto :"/>
+                        <h:selectOneMenu value="#{pagoConceptoEmpleadoSfccbdmq.concepto}" disabled="#{pagoConceptoEmpleadoSfccbdmq.formulario.mostrar}">
+                            <f:selectItems value="#{conceptosSfccbdmq.comboProvicionesSinProveedor}"/>
+                        </h:selectOneMenu>
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{pagoConceptoEmpleadoSfccbdmq.buscar()}" rendered="#{!pagoConceptoEmpleadoSfccbdmq.formulario.mostrar}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{pagoConceptoEmpleadoSfccbdmq.grabar()}"/>
+                            <!--<ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{pagoConceptoEmpleadoSfccbdmq.grabar()}" rendered="#{pagoConceptoEmpleadoSfccbdmq.formulario.nuevo}" />-->
+                            <!--<ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash"  action="#{pagoConceptoEmpleadoSfccbdmq.borrar()}" rendered="#{pagoConceptoEmpleadoSfccbdmq.formulario.borrar}" />-->
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{pagoConceptoEmpleadoSfccbdmq.formulario.cancelar()}" rendered="#{pagoConceptoEmpleadoSfccbdmq.formulario.mostrar}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                    <ace:messages/>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{pagoConceptoEmpleadoSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter 
+                            label="Exportar Archivo" 
+                            type="#{pagoConceptoEmpleadoSfccbdmq.formulario.pantalla}" 
+                            target="tablaIngresos" fileName="datosIngresos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tablaIngresos"
+                                       value="#{pagoConceptoEmpleadoSfccbdmq.listaRoles}"
+                                       binding="#{pagoConceptoEmpleadoSfccbdmq.formulario.fila}"
+                                       var="pagoTotal">
+                            <ace:column  headerText="Empleado"  style="text-align: left">
+                                <h:outputText value="#{pagoTotal.entidad.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Banco"  style="text-align: left">
+                                <h:outputText value="#{pagoConceptoEmpleadoSfccbdmq.banco}"/>
+                            </ace:column>
+                            <ace:column  headerText="Tipo de Cuenta"  style="text-align: left">
+                                <h:outputText value="#{pagoConceptoEmpleadoSfccbdmq.tipoCuenta}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nùmero de Cuenta"  style="text-align: left">
+                                <h:outputText value="#{pagoConceptoEmpleadoSfccbdmq.numeroCuenta}"/>
+                            </ace:column>
+                            <ace:column  headerText="A pagar" style="text-align: right">
+                                <h:outputText   value="#{pagoTotal.totalPagar}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+
+
+                    <ace:dialog 
+                        header="#{pagoConceptoEmpleadoSfccbdmq.perfil.menu.texto}"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{pagoConceptoEmpleadoSfccbdmq.formularioEgresos.mostrar}"
+                        visible="#{pagoConceptoEmpleadoSfccbdmq.formularioEgresos.mostrar}"
+                        >
+                        <h:panelGroup>
+                            <h:panelGrid columns="1" width="100%">
+                                <h:outputText value="Valor de Propuesta :"/>
+                                <h:outputText   value="#{pagoConceptoEmpleadoSfccbdmq.totalPropuesta}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                                <h:outputText value="Propuesta :"/>
+                                <h:inputTextarea cols="60" rows="4" 
+                                                 value="#{pagoConceptoEmpleadoSfccbdmq.observacionPropuesta}" 
+                                                 title="Observaciones"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                                  action="#{pagoConceptoEmpleadoSfccbdmq.insertarKardex()}" />
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{pagoConceptoEmpleadoSfccbdmq.formularioEgresos.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                    <ace:dialog 
+                        header="Imprimir"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{pagoConceptoEmpleadoSfccbdmq.formularioReporte.mostrar}"
+                        visible="#{pagoConceptoEmpleadoSfccbdmq.formularioReporte.mostrar}">
+                        <h:panelGroup>
+                            <ace:dynamicResource fileName="Egreso.pdf"  label="Generar Egreso"
+                                                 mimeType="application/pdf" 
+                                                 rendered="#{pagoConceptoEmpleadoSfccbdmq.reporte!=null}"
+                                                 resource="#{pagoConceptoEmpleadoSfccbdmq.reporte}" 
+                                                 style="" type="button"/>
+                            <ace:dynamicResource fileName="Propuesta.pdf" label="Generar Propuesta"
+                                                 mimeType="application/pdf" 
+                                                 rendered="#{pagoConceptoEmpleadoSfccbdmq.reportePropuesta!=null}"
+                                                 resource="#{pagoConceptoEmpleadoSfccbdmq.reportePropuesta}" 
+                                                 style="" type="button"/>
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{pagoConceptoEmpleadoSfccbdmq.formularioReporte.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                    <!--                <ace:dialog 
+                                        header="Imprimir"
+                                        closable="false"
+                                        modal="true"
+                                        draggable="true"
+                                        showEffect="clip"
+                                        hideEffect="fade"
+                                        rendered="#{pagoConceptoEmpleadoSfccbdmq.formularioIngresos.mostrar}"
+                                        visible="#{pagoConceptoEmpleadoSfccbdmq.formularioIngresos.mostrar}">
+                                        <h:panelGroup>
+                                            <h:panelGrid columns="1">
+                                                <h:commandButton  value="Imprimir">
+                                                </h:commandButton>
+                                            </h:panelGrid>
+                                            <ui:include src="imprimirPagoRol.xhtml" />
+                    
+                                            <h:panelGrid columns="1" width="100%">
+                                                <ace:menuBar autoSubmenuDisplay="true" >
+                    
+                                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                                  action="#{pagoConceptoEmpleadoSfccbdmq.formularioIngresos.cancelar()}"/>
+                                                </ace:menuBar>
+                                                <ace:messages />
+                                            </h:panelGrid>
+                                        </h:panelGroup>
+                                    </ace:dialog>-->
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaPersonal.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panelx"
+                           header="Reporte Contrato"
+                           closable="false"
+                           toggleable="false"  >
+                    <ace:panel header="Parámetros de Búsqueda">
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{administradorcontratosSfccbdmq.buscar()}"/>
+
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <ace:messages/>
+                    </ace:panel> 
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                   for="panel"
+                                   blockUI="panel"
+                                   autoCenter="true"
+                                   activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="false"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{administradorcontratosSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{administradorcontratosSfccbdmq.formulario.pantalla}" 
+                                          target="estudios" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="estudios" 
+                                       value="#{administradorcontratosSfccbdmq.listaContratos}"
+                                       var="itemAdmContrato"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,50"
+                                       paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="5"
+                                       binding="#{administradorcontratosSfccbdmq.formulario.fila}">
+
+                            <ace:column  headerText="Número "  style="text-align: left">
+                                <h:outputText value="#{itemAdmContrato.numero}"/>
+                            </ace:column>
+                            <ace:column  headerText="Proveedor"  style="text-align: left">
+                                <h:outputText value="#{itemAdmContrato.proveedor.empresa.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Administrador"  style="text-align: left">
+                                <h:outputText value="#{itemAdmContrato.administrador.toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Inicio"  style="text-align: left">
+                                <h:outputText value="#{itemAdmContrato.inicio}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy "/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Fin"  style="text-align: left">
+                                <h:outputText value="#{itemAdmContrato.fin}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy "/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Fecha firma contrato"  style="text-align: left">
+                                <h:outputText value="#{itemAdmContrato.firma}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy "/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Valor"  style="text-align: right">
+                                <h:outputText value="#{itemAdmContrato.valor}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+
+                            <ace:column  headerText="Objeto"  style="text-align: left">
+                                <h:outputText value="#{itemAdmContrato.objeto}"/>
+                            </ace:column>
+
+                            <ace:column  headerText="Forma de pago" style="text-align: left">
+                                <h:outputText  value="#{itemAdmContrato.fpago.nombre}"/>
+
+                            </ace:column>
+                            <ace:column  headerText="Proceso" style="text-align: left">
+                                <h:outputText  value="#{itemAdmContrato.proceso}"/>
+                            </ace:column>
+
+                            <ace:column  headerText='Subtotal' style="text-align: right">
+                                <h:outputText  value="#{itemAdmContrato.subtotal}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="IVA" style="text-align: right">
+                                <h:outputText  value="#{ itemAdmContrato.valor - (itemAdmContrato.subtotal  + itemAdmContrato.iva)}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+
+                            </ace:column> 
+                            <ace:column  headerText='Total' style="text-align: left">
+                                <h:outputText  value="#{itemAdmContrato.valor+(itemAdmContrato.valor - (itemAdmContrato.subtotal  + itemAdmContrato.iva)) }">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Valor devengado" style="text-align: right">
+                                <h:outputText  value="#{calulosPresupuesto.traerDevengadoCotratos(itemAdmContrato)}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column> 
+
+                            <ace:column  headerText='Tipo de Contrato' style="text-align: left">
+                                <h:outputText  value="#{itemAdmContrato.tipocontrato.descripcion}"/>
+                            </ace:column>
+                            <ace:column  headerText='Saldo anterior' style="text-align: right">
+                                <h:outputText  value="#{itemAdmContrato.saldoanterior}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>                                
+                            <ace:column  headerText='Anticipo' style="text-align: left">
+                                <h:outputText  value="#{itemAdmContrato.anticipo}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText='Historial administrador' style="text-align: left">
+                                <h:outputText  value="#{administradorcontratosSfccbdmq.traerHistorialAdministrador(itemAdmContrato)}"/>
+                            </ace:column>
+                            <ace:column  headerText="URL Compras públicas"  style="text-align: left">
+                                <a href="#{itemAdmContrato.urlcompras}" target="_blank">
+                                    <h:outputText  value="#{itemAdmContrato.urlcompras}"/>
+                                </a>
+
+                            </ace:column>   
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

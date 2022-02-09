@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <h:panelGrid width="100%">
+                    <ace:panel id="panel"
+                               header="#{pagosViaticosReembolsoSfccbdmq.perfil.menu.texto}"
+                               closable="false"
+                               toggleable="false"  >
+                        <h:panelGrid columns="2" width="100%">
+                            <h:outputLabel value="Tipo:" />
+                            <h:selectOneMenu  value="#{pagosViaticosReembolsoSfccbdmq.tipoPartida}" >
+                                <f:selectItem  itemLabel="--- Seleccione uno ---" itemValue=""/>
+                                <f:selectItem  itemLabel="INTERNO" itemValue="0" />
+                                <f:selectItem  itemLabel="EXTERNO" itemValue="1" />
+                                <ace:ajax execute="@all" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Viaje:" />
+                            <h:selectOneMenu  value="#{pagosViaticosReembolsoSfccbdmq.viatico}" >
+                                <f:selectItems value="#{pagosViaticosReembolsoSfccbdmq.comboViaticosNoPagados}"/>
+                                <ace:ajax execute="@all" />
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{pagosViaticosReembolsoSfccbdmq.buscar()}"/>
+                                <ace:menuItem value="Pagar" icon="ui-icon ui-icon-check"  action="#{pagosViaticosReembolsoSfccbdmq.pagarSeleccionados()}"/>
+                                <ace:menuItem value="Pasar Todos" icon="ui-icon ui-icon-seek-end"  
+                                              action="#{pagosViaticosReembolsoSfccbdmq.colocarTodas()}"/>
+                                <ace:menuItem value="Pasar Seleccionados" icon="ui-icon ui-icon-seek-end"  
+                                              action="#{pagosViaticosReembolsoSfccbdmq.colocarSeleccionados()}"/>
+                                <ace:menuItem value="Retirar Seleccionados" icon="ui-icon ui-icon-seek-end"  
+                                              action="#{pagosViaticosReembolsoSfccbdmq.retirarSeleccionados()}"/>
+                                <ace:menuItem value="Retirar Todas" 
+                                              icon="ui-icon ui-icon-seek-first" 
+                                              action="#{pagosViaticosReembolsoSfccbdmq.retirarTodas()}" />
+                                <!--                                <ace:menuItem value="Retirar Seleccionados" 
+                                                                              icon="ui-icon ui-icon-seek-first" 
+                                                                              action="#{pagosViaticosReembolsoSfccbdmq.retirarSeleccionados()}" />-->
+                            </ace:menuBar>
+
+                        </h:panelGrid>
+                        <ace:messages />
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="@all"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+                        <!--                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                                                    <h:outputLabel  value="Exportar a:"/>
+                                                    <h:selectOneRadio  value="#{pagosViaticosReembolsoSfccbdmq.formulario.pantalla}" required="true">
+                                                        <f:ajax disabled="false"/>
+                                                        <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                                        <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                                        <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                                        <f:selectItem itemValue="xml" itemLabel="XML"/>
+                                                    </h:selectOneRadio>
+                                                    <ace:dataExporter id="dataExporter" 
+                                                                      label="Exportar Archivo" 
+                                                                      type="#{pagosViaticosReembolsoSfccbdmq.formulario.pantalla}" 
+                                                                      target="tablaEmpleados" fileName="datos"/>
+                                                </h:panelGrid>-->
+                        <h:panelGrid width="100%">
+                            <ace:splitPane columnDivider="50"
+                                           scrollable="true"
+                                           style="width: 100%;">
+                                <f:facet name="left">
+                                    <ace:dataTable id="tablaEmpleados"
+                                                   value="#{pagosViaticosReembolsoSfccbdmq.listadoEmpleados}"
+                                                   var="item"
+                                                   lazy="false"
+                                                   paginator="true"
+                                                   resizableColumns="true"
+                                                   rowIndexVar="row"
+                                                   paginatorPosition="both"
+                                                   rowsPerPageTemplate="10,15,30,50,100,200,500"
+                                                   currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                                   paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                   rows="30"
+                                                   selectionMode="simple"
+                                                   style="width: 100%;"
+                                                   binding="#{origen}">
+
+                                        <f:facet name="header">Por pagar : 
+                                            <h:outputText value="#{pagosViaticosReembolsoSfccbdmq.valorApagar}">
+                                                <f:convertNumber pattern="###,##0.00"/>
+                                            </h:outputText>
+                                        </f:facet>
+                                        <ace:column  headerText="Seleccionar" style="text-align: right">
+                                            <h:selectBooleanCheckbox value="#{item.seleccionado}"/>
+                                        </ace:column>
+                                        <!--                                        <ace:column style="text-align: left">
+                                                                                    <ace:menuBar autoSubmenuDisplay="true" >
+                                                                                        <ace:menuItem action="#{pagosViaticosReembolsoSfccbdmq.colocar(item.id)}" 
+                                                                                                      value="Selecciona" icon="ui-icon ui-icon-seek-next" >
+                                                                                            <ace:ajax execute="@all"/>
+                                                                                        </ace:menuItem>
+                                                                                    </ace:menuBar>
+                                                                                </ace:column>   -->
+
+                                        <ace:column  headerText="Apellidos "  style="text-align: left" 
+                                                     filterBy="#{item.empleado.entidad.apellidos}" 
+                                                     filterMatchMode="startsWith">
+                                            <h:outputText value="#{item.empleado.entidad.apellidos}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Nombres"  style="text-align: left">
+                                            <h:outputText value="#{item.empleado.entidad.nombres}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Valor" style="text-align: left">
+                                            <h:outputText  value="#{item.valor}">
+                                                <f:convertNumber pattern="###,###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Observaciones"  style="text-align: left">
+                                            <h:outputText value="#{item.viatico.motivo}"/>
+                                        </ace:column>
+                                    </ace:dataTable>
+                                </f:facet>
+                                <f:facet name="right">
+                                    <ace:dataTable id="tablaEmpleadosSeleccionados"
+                                                   value="#{pagosViaticosReembolsoSfccbdmq.listadoEmpleadosSeleccionados}"
+                                                   var="itemSeleccionado"
+                                                   lazy="false"
+                                                   paginator="true"
+                                                   resizableColumns="true"
+                                                   rowIndexVar="row"
+                                                   paginatorPosition="both"
+                                                   rowsPerPageTemplate="10,15,30,50,100,200,500"
+                                                   currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                                   paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                   rows="30"
+                                                   selectionMode="simple"
+                                                   style="width: 100%;"
+                                                   binding="#{destino}">
+
+                                        <f:facet name="header">Seleccionado : 
+                                            <h:outputText value="#{pagosViaticosReembolsoSfccbdmq.valorSeleccionado}">
+                                                <f:convertNumber pattern="###,##0.00"/>
+                                            </h:outputText>
+                                        </f:facet>
+                                        <!--                                        <ace:column style="text-align: left">
+                                                                                    <ace:menuBar autoSubmenuDisplay="true" >
+                                                                                        <ace:menuItem action="#{pagosViaticosReembolsoSfccbdmq.retirar(destino.rowIndex)}" 
+                                                                                                      value="Retira" icon="ui-icon ui-icon-seek-prev" >
+                                                                                            <ace:ajax execute="@all"/>
+                                                                                        </ace:menuItem>
+                                                                                    </ace:menuBar>
+                                                                                </ace:column>-->
+                                        <ace:column  headerText="Seleccionar" style="text-align: right">
+                                            <h:selectBooleanCheckbox value="#{itemSeleccionado.seleccionado}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Apellidos "  style="text-align: left" 
+                                                     filterBy="#{itemSeleccionado.empleado.entidad.apellidos}" 
+                                                     filterMatchMode="startsWith">
+                                            <h:outputText value="#{itemSeleccionado.empleado.entidad.apellidos}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Nombres"  style="text-align: left">
+                                            <h:outputText value="#{itemSeleccionado.empleado.entidad.nombres}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Valor" style="text-align: left">
+                                            <h:outputText  value="#{itemSeleccionado.valor}">
+                                                <f:convertNumber pattern="###,###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Observaciones"  style="text-align: left">
+                                            <h:outputText value="#{itemSeleccionado.viatico.motivo}"/>
+                                        </ace:column>
+                                    </ace:dataTable>
+                                </f:facet>
+                            </ace:splitPane>
+                        </h:panelGrid>
+                    </ace:panel>
+                </h:panelGrid>
+                <!--Poner  con include ya que vista demasiado Cargada;-->
+                <ace:dialog 
+                    header="#{pagosViaticosReembolsoSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{pagosViaticosReembolsoSfccbdmq.formulario.mostrar}"
+                    visible="#{pagosViaticosReembolsoSfccbdmq.formulario.mostrar}">
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane >
+                            <f:facet name="label">Inf. General</f:facet>
+
+                            <h:panelGrid columns="1">
+                                <h:outputLabel value="#{pagosViaticosReembolsoSfccbdmq.periodo}" escape="false"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="4">
+                                <h:outputText value="Tipo de Movimiento Bancario:"/>
+                                <h:selectOneMenu value="#{pagosViaticosReembolsoSfccbdmq.kardex.tipomov}" title="Tipo de Movimiento">
+                                    <f:selectItems value="#{tipoMovBancosSfccbdmq.comboAnticiposEmpleados}"/>
+                                </h:selectOneMenu>
+                                <h:outputText value="Banco:"/>
+                                <h:selectOneMenu value="#{pagosViaticosReembolsoSfccbdmq.kardex.banco}" title="Banco" >
+                                    <f:selectItems value="#{bancosSfccbdmq.comboBancosf}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                                <h:outputText value="Forma de pago:"/>
+                                <h:selectOneMenu value="#{pagosViaticosReembolsoSfccbdmq.kardex.formapago}" title="Formapago">
+                                    <f:selectItems value="#{codigosSfccbdmq.comboFormaDePago}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                                <h:outputText value="Valor : "/>
+                                <h:outputText value="#{pagosViaticosReembolsoSfccbdmq.valorSeleccionado}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                                <h:outputText value="No propuesta : "/>
+                                <h:inputText value="#{pagosViaticosReembolsoSfccbdmq.numeroSpi}" title="No Documento" size="5">
+                                    <f:validateLength maximum="5"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:inputText>
+                                <h:outputLabel value="Fecha Movimiento:"/>
+                                <ace:dateTimeEntry navigator="true"  value="#{pagosViaticosReembolsoSfccbdmq.kardex.fechamov}" 
+                                                   popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    <ace:ajax execute="@all"/>
+                                </ace:dateTimeEntry>
+                            </h:panelGrid>
+                            <h:panelGrid columns="1">
+                                <h:outputLabel value="Observaciones:"/>
+                                <h:inputTextarea cols="60" rows="4" value="#{pagosViaticosReembolsoSfccbdmq.kardex.observaciones}">
+                                    <ace:ajax execute="@all"/>
+                                </h:inputTextarea>
+
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane label="Asiento contable">
+                            <ace:dataTable 
+                                value="#{pagosViaticosReembolsoSfccbdmq.listarenglones}"
+                                var="itemDetalles"
+                                rowIndexVar="row"
+                                paginator="true"
+                                rows="10"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                >
+                                <f:facet name="header">Contabilización</f:facet>
+                                <ace:column  headerText="Cuenta"  style="text-align: left">
+                                    <h:outputText  value="#{itemDetalles.cuenta}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nombre"  style="text-align: left">
+                                    <h:outputText  value="#{cuentasSfccbdmq.traerNombre(itemDetalles.cuenta)}"/>
+                                </ace:column>
+
+                                <ace:column  headerText="Referencia"  style="text-align: left">
+                                    <h:outputText  value="#{itemDetalles.referencia}"/>
+                                </ace:column>
+
+                                <ace:column  headerText="Auxiliar"  style="text-align: left" 
+                                             filterBy="#{itemRenglones.auxiliar}" 
+                                             filterMatchMode="contains">
+                                    <h:outputText  value="#{parametrosSfccbdmq.traerAuxiliar(itemDetalles.auxiliar).toString()}"/>
+                                </ace:column>
+
+                                <ace:column  headerText="Débitos" style="text-align: right">
+                                    <h:outputText  value="#{itemDetalles.valor}" rendered="#{asientosSfccbdmq.isCredito(itemDetalles.valor)}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Créditos" style="text-align: right">
+                                    <h:outputText  value="#{itemDetalles.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemDetalles.valor)}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+
+                            </ace:dataTable>
+                        </ace:tabPane>
+                        <ace:tabPane label="Adjuntos">
+                            <ui:include src="../mostrarImagenes.xhtml" />
+                        </ace:tabPane>
+                    </ace:tabSet>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Pagar" icon="ui-icon ui-icon-check"  action="#{pagosViaticosReembolsoSfccbdmq.aprueba()}" />
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{pagosViaticosReembolsoSfccbdmq.formulario.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{pagosViaticosReembolsoSfccbdmq.formularioReportes.mostrar}"
+                    visible="#{pagosViaticosReembolsoSfccbdmq.formularioReportes.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="Egreso.pdf" id="pdf-button1" label="Generar PDF"
+                                             mimeType="application/pdf" 
+                                             rendered="#{pagosViaticosReembolsoSfccbdmq.reporte!=null}"
+                                             resource="#{pagosViaticosReembolsoSfccbdmq.reporte}" 
+                                             style="" type="button"/>
+                        <ace:dynamicResource fileName="Propuesta.pdf"  label="Generar Propuesta"
+                                             mimeType="application/pdf" 
+                                             rendered="#{pagosViaticosReembolsoSfccbdmq.reportePropuesta!=null}"
+                                             resource="#{pagosViaticosReembolsoSfccbdmq.reportePropuesta}" 
+                                             style="" type="button"/>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{pagosViaticosReembolsoSfccbdmq.formularioReportes.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

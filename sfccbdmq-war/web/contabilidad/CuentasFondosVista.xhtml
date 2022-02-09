@@ -1,0 +1,479 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+
+                <ace:panel id="panel"
+                           header="#{cuentasFondosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true">
+                    <h:panelGroup rendered="#{!cuentasFondosSfccbdmq.formularioVales.nuevo}">
+
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Empleado:"  />
+                            <h:selectOneMenu  value="#{cuentasFondosSfccbdmq.fondo}" 
+                                              title="Empleado" >
+                                <f:selectItems value="#{cuentasFondosSfccbdmq.comboFondos}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{cuentasFondosSfccbdmq.buscar()}"/>
+                            </ace:menuBar>
+                            <ace:submitMonitor id="submitMonitorPanel"
+                                               for="panel"
+                                               blockUI="@all"
+                                               autoCenter="true"
+                                               activeLabel="Un Momento por favor"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{cuentasFondosSfccbdmq.formularioVales.nuevo}">
+                        <h:panelGrid columns="1" width="100%" >
+                            <ace:panel id="panel1"
+                                       header="Datos fondo"
+                                       closable="false"
+                                       toggleable="true">
+                                <h:panelGrid columns="2" width="100%">
+                                    <h:outputLabel value="Departamento:" />
+                                    <h:outputLabel value="#{cuentasFondosSfccbdmq.fondo.departamento.toString()}" />
+                                    <h:outputLabel value="Responsable:" />
+                                    <h:outputLabel value="#{cuentasFondosSfccbdmq.fondo.empleado.toString()}" />
+                                    <h:outputLabel value="Valor:" />
+                                    <h:outputText value="#{cuentasFondosSfccbdmq.fondo.valor}" >
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                    <h:outputLabel value="% Vale de fondo:" />
+                                    <h:outputText value="#{cuentasFondosSfccbdmq.fondo.prcvale}" >
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+
+                                </h:panelGrid>
+
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{cuentasFondosSfccbdmq.buscar()}"/>
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" action="#{cuentasFondosSfccbdmq.formularioVales.cancelar()}"/>
+                                </ace:menuBar>
+                            </ace:panel>
+                            <ace:dataTable 
+                                value="#{cuentasFondosSfccbdmq.listaVales}"
+                                var="itemVales"
+                                paginator="true"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="top"
+                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rows="30"
+                                binding="#{filavale}">
+
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{cuentasFondosSfccbdmq.modificar(filavale.rowIndex)}" value="Editar" 
+                                                      icon="ui-icon ui-icon-pencil" disabled="#{itemFondos.kardexbanco!=null}" />
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column  headerText="Fecha Mov"  style="text-align: left">
+                                    <h:outputText  value="#{itemVales.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Solicitante"  style="text-align: left">
+                                    <h:outputText  value="#{itemVales.solicitante.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Proveedor"  style="text-align: left">
+                                    <h:outputText  value="#{itemVales.proveedor.empresa.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor" style="text-align: right">
+                                    <h:outputText  value="#{itemVales.valor}">
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Nro. Factura"  style="text-align: left">
+                                    <h:outputText  value="#{valesFondoSfccbdmq.traeNroFactura(itemVales)}"/>
+                                </ace:column>
+                                <ace:column  headerText="Base Imponible Cero" style="text-align: right">
+                                    <h:outputText  value="#{itemVales.baseimponiblecero}">
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Base Imponible" style="text-align: right">
+                                    <h:outputText  value="#{itemVales.baseimponible}">
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Valor IVA" style="text-align: right">
+                                    <h:outputText  value="#{itemVales.iva}">
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Total Documento" style="text-align: right">
+                                    <h:outputText  value="#{itemVales.baseimponiblecero+itemVales.baseimponible+itemVales.iva}">
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Estado"  style="text-align: left">
+                                    <h:outputText  value="INGRESADO" rendered="#{itemVales.estado==0}"/>
+                                    <h:outputText  value="SOLICITA REEMBOLSO" rendered="#{itemVales.estado==1}"/>
+                                    <h:outputText  value="LISTO PARA CONTABILIDAD" rendered="#{itemVales.estado==2}"/>
+                                    <h:outputText  value="LISTO PARA REEMBOLSO" rendered="#{itemVales.estado==4}"/>
+                                    <h:outputText  value="NEGADO REEMBOLSO" rendered="#{itemVales.estado==3}"/>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+
+                    <!--dialogo para editar cada linea-->
+                    <ace:dialog 
+                        header="Detalle Vale"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{cuentasFondosSfccbdmq.formulario.mostrar}"
+                        visible="#{cuentasFondosSfccbdmq.formulario.mostrar}">
+                        <h:panelGroup>
+                            <h:panelGrid columns="4">                            
+                                <h:outputText value="Solicitante"  style="text-align: left"/>
+                                <h:outputText  value="#{cuentasFondosSfccbdmq.vale.solicitante.entidad.toString()}"/>
+                                <h:outputText value="Proveedor"  style="text-align: left"/>
+                                <h:outputText  value="#{cuentasFondosSfccbdmq.vale.proveedor.empresa.toString()}"/>
+                                <h:outputText value="Razón Social del Proveedor"  style="text-align: left"/>
+                                <h:outputText  value="#{cuentasFondosSfccbdmq.vale.proveedor.empresa.nombre}"/>
+                                <h:outputText value="R.U.C. del Proveedor"  style="text-align: left"/>
+                                <h:outputText  value="#{cuentasFondosSfccbdmq.vale.proveedor.empresa.ruc}"/>
+                                <h:outputText value="Código"  style="text-align: left"/>
+                                <h:outputText  value="#{cuentasFondosSfccbdmq.vale.proveedor.codigo}"/>
+                                <h:outputText value="Nombre comercial del Proveedor"  style="text-align: left"/>
+                                <h:outputText  value="#{cuentasFondosSfccbdmq.vale.proveedor.empresa.nombrecomercial}"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="4">
+                                <h:outputLabel value="Tipo documento:" for="tipodocumento" />
+                                <h:selectOneMenu id="tipodocumento" value="#{cuentasFondosSfccbdmq.vale.tipodocumento}" title="Tipodocumento" >
+                                    <f:selectItems value="#{codigosSfccbdmq.comboDocumentos}"/>
+                                </h:selectOneMenu>
+                                <h:outputLabel value="Punto emisión:" for="puntoemision" />
+                                <h:inputText id="puntoemision" size="5"
+                                             value="#{cuentasFondosSfccbdmq.vale.puntoemision}" title="Puntoemision" >
+                                    <f:validateLength maximum="3" minimum="3"/>
+                                </h:inputText>
+                                <h:outputLabel value="Establecimiento:" for="establecimiento" />
+                                <h:inputText id="establecimiento"  size="5"
+                                             value="#{cuentasFondosSfccbdmq.vale.establecimiento}" title="Establecimiento" >
+                                    <f:validateLength maximum="3" minimum="3"/>
+                                </h:inputText>
+                                <h:outputLabel value="Número:" for="numero" />
+                                <h:inputText id="numero" value="#{cuentasFondosSfccbdmq.vale.numero}" title="Numero" />
+                                <h:outputLabel value="Fecha Emisión:" for="fecha" />
+                                <ace:dateTimeEntry navigator="true"  value="#{cuentasFondosSfccbdmq.vale.fecha}" 
+                                                   popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </ace:dateTimeEntry>
+                                <h:outputLabel value="Autorización:" for="autorizacion" />
+                                <h:inputText id="autorizacion" value="#{cuentasFondosSfccbdmq.vale.autorizacion}" title="Autorizacion" >
+                                    <!--<f:validateLength maximum="10" minimum="10"/>-->
+                                </h:inputText>
+                                <h:outputLabel value="Base imponible cero:" for="baseimponiblecero" />
+                                <h:inputText id="baseimponiblecero" value="#{cuentasFondosSfccbdmq.vale.baseimponiblecero}" title="Baseimponiblecero" 
+                                             valueChangeListener="#{cuentasFondosSfccbdmq.cambiaValorImponibleCero}" >
+                                    <ace:ajax execute="@all" render="@all"/>
+                                </h:inputText>
+                                <h:outputLabel value="Base imponible:" for="baseimponible" />
+                                <h:inputText id="baseimponible" value="#{cuentasFondosSfccbdmq.vale.baseimponible}" title="Baseimponible" 
+                                             valueChangeListener="#{cuentasFondosSfccbdmq.cambiaValorImponible}" >
+                                    <ace:ajax execute="@all" render="@all"/>
+                                </h:inputText>
+                                <h:outputLabel value="Impuesto:" for="Impuesto" />
+                                <h:selectOneMenu id="Impuesto" value="#{cuentasFondosSfccbdmq.vale.impuesto}" title="Impuesto" >
+                                    <f:selectItems value="#{impuestosSfccbdmq.comboImpuestos}" />
+                                    <ace:ajax execute="@all" />
+                                </h:selectOneMenu>
+
+
+                                <h:outputLabel value="Iva:" for="iva" />
+    <!--                            <h:outputText id="iva" value="#{cuentasFondosSfccbdmq.vale.iva}" title="Iva" />-->
+                                <h:outputText id="iva" value="#{cuentasFondosSfccbdmq.vale.baseimponible*cuentasFondosSfccbdmq.vale.impuesto.porcentaje/100+cuentasFondosSfccbdmq.vale.ajuste/100}" title="Iva" >
+                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                </h:outputText>
+                                <h:commandButton value="+" action="#{cuentasFondosSfccbdmq.sube()}"/>
+                                <h:commandButton value="-" action="#{cuentasFondosSfccbdmq.baja()}"/>
+                                <h:outputLabel value="Total:" for="total" />
+    <!--                            <h:outputText  value="#{cuentasFondosSfccbdmq.vale.baseimponiblecero+cuentasFondosSfccbdmq.vale.baseimponible+cuentasFondosSfccbdmq.vale.iva}">-->
+                                <h:outputText  value="#{cuentasFondosSfccbdmq.vale.baseimponiblecero+cuentasFondosSfccbdmq.vale.baseimponible+(cuentasFondosSfccbdmq.vale.baseimponible*cuentasFondosSfccbdmq.vale.impuesto.porcentaje/100+cuentasFondosSfccbdmq.vale.ajuste/100)}">
+                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                </h:outputText>
+                            </h:panelGrid>
+                            <h:panelGrid columns="4" rendered="#{cuentasFondosSfccbdmq.vale.tipodocumento.codigo  eq 'FACT'}">
+                                <h:outputLabel value="Sucursal de emisión :" />
+                                <h:selectOneMenu  value="#{puntosemisionSfccbdmq.sucursal}" 
+                                                  >
+                                    <f:selectItems value="#{sucursalesSfccbdmq.comboSucursales}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                                <h:outputLabel value="Punto de emisión :"/>
+                                <h:selectOneMenu  value="#{cuentasFondosSfccbdmq.puntoEmision}">
+                                    <f:selectItems value="#{puntosemisionSfccbdmq.comboPuntoemision}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                                <h:outputLabel value="Autorización Retención Anterior:" />
+                                <h:inputText  value="#{cuentasFondosSfccbdmq.obligacion.autoretencion}" />
+                                <h:outputLabel value="Fecha Retención:" />
+                                <ace:dateTimeEntry navigator="true"  value="#{cuentasFondosSfccbdmq.obligacion.fechar}" 
+                                                   popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </ace:dateTimeEntry>
+                            </h:panelGrid>
+                            <ace:tabSet style="clear:both;" clientSide="true">
+                                <ace:tabPane label="Detalle">
+                                    <h:panelGrid columns="1" width="100%">
+                                        <ace:dataTable 
+                                            value="#{cuentasFondosSfccbdmq.listaDetalle}"
+                                            var="itemDetalles"
+                                            paginator="true"
+                                            lazy="false"
+                                            resizableColumns="true"
+                                            rowIndexVar="row"
+                                            paginatorPosition="top"
+                                            rowsPerPageTemplate="5,10,15,30,50,100"
+                                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                            rows="30" >
+
+                                            <ace:column  headerText="Detalle Certificación" style="text-align: left">
+                                                <h:outputText  value="#{itemDetalles.detallecertificacion.toString()}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Cuenta" style="text-align: left">
+                                                <h:selectOneMenu  value="#{itemDetalles.cuenta}">
+                                                    <f:selectItems value="#{cuentasFondosSfccbdmq.getComboCuentas(itemDetalles)}"/>
+                                                    <!--<f:ajax execute="@all" render="@all" />-->
+                                                </h:selectOneMenu>
+                                                        <!--<h:outputText  value="#{itemDetalles.cuenta}"/>-->
+                                            </ace:column>
+                                            <ace:column  headerText="Valor"  style="text-align: left">
+                                                <h:outputText  value="#{itemDetalles.valor}">
+                                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                            <f:facet name="footer">Total : #{cuentasFondosSfccbdmq.totalVale}</f:facet>
+                                        </ace:dataTable>
+                                    </h:panelGrid>
+                                </ace:tabPane>
+                                <ace:tabPane label="Retenciones" rendered="#{cuentasFondosSfccbdmq.listaRetenciones.size()>0}">
+                                    <ace:dataTable  
+                                        value="#{cuentasFondosSfccbdmq.listaRetenciones}"
+                                        var="itemRetenciones"
+                                        paginator="true"
+                                        lazy="false"
+                                        resizableColumns="true"
+                                        rowIndexVar="row"
+                                        paginatorPosition="top"
+                                        rowsPerPageTemplate="5,10,15,30,50,100"
+                                        paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        rows="5"
+                                        binding="#{fila}">
+                                        <f:facet name="header">Retenciones</f:facet> 
+                                        <ace:column style="text-align: left">
+                                            <ace:menuButton  effect="slide" effectDuration="200" value="..." >
+                                                <ace:menuItem action="#{cuentasFondosSfccbdmq.modificaRetencion(itemRetenciones)}" 
+                                                              value="Editar" icon="ui-icon ui-icon-pencil" 
+                                                              />
+                                                <ace:menuItem action="#{cuentasFondosSfccbdmq.borraRetencion(itemRetenciones)}" 
+                                                              value="Borrar" icon="ui-icon ui-icon-trash" 
+                                                              />
+                                            </ace:menuButton>
+                                        </ace:column>
+                                        <ace:column  headerText="Partida" style="text-align: left">
+                                            <h:outputText  value="#{itemRetenciones.partida}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Tipo de compra"  style="text-align: left">
+                                            <h:outputText  value="BIEN" rendered="#{itemRetenciones.bien}"/>
+                                            <h:outputText  value="SERVICIO" rendered="#{!itemRetenciones.bien}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Base imponible 0"  style="text-align: right">
+                                            <h:outputText  value="#{itemRetenciones.baseimponible0}">
+                                                <f:convertNumber pattern="###,###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Base imponible"  style="text-align: right">
+                                            <h:outputText  value="#{itemRetenciones.baseimponible}">
+                                                <f:convertNumber pattern="###,###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="IVA" style="text-align: left">
+                                            <h:outputText  value="#{itemRetenciones.iva}">
+                                                <f:convertNumber pattern="###,###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Código IR" style="text-align: left">
+                                            <h:outputText  value="#{itemRetenciones.retencion.etiqueta}#{itemRetenciones.retencion.ats}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Retención IR" style="text-align: left">
+                                            <h:outputText  value="#{itemRetenciones.retencion.toString()}"/>
+                                            <!--<h:outputText  value="#{itemRetenciones.retencion.etiqueta}#{itemRetenciones.retencion.ats}"/>-->
+                                        </ace:column>
+                                        <ace:column  headerText="Valor IR"  style="text-align: right">
+                                            <h:outputText  value="#{itemRetenciones.valor}">
+                                                <f:convertNumber pattern="###,###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                        <ace:column  headerText="Códig IVA" style="text-align: left">
+                                            <h:outputText  value="#{itemRetenciones.retencionimpuesto.etiqueta}#{itemRetenciones.retencionimpuesto.ats}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Retención IVA" style="text-align: left">
+                                            <h:outputText  value="#{itemRetenciones.retencionimpuesto.toString()}"/>
+                                        </ace:column>
+                                        <ace:column  headerText="Valor IVA"  style="text-align: right">
+                                            <h:outputText  value="#{itemRetenciones.valoriva}">
+                                                <f:convertNumber pattern="###,###,##0.00"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                    </ace:dataTable>
+                                </ace:tabPane>
+                            </ace:tabSet>
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Nueva retención" icon="ui-icon ui-icon-document" 
+                                                  action="#{cuentasFondosSfccbdmq.nuevaRetencion()}"
+                                                  rendered="#{cuentasFondosSfccbdmq.vale.tipodocumento.codigo  eq 'FACT'}"/>
+                                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                                  action="#{cuentasFondosSfccbdmq.grabarVale()}"/> 
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{cuentasFondosSfccbdmq.formulario.cancelar()}"/>
+                                </ace:menuBar>
+                            </h:panelGrid>
+
+                        </h:panelGroup>
+                    </ace:dialog>
+                    <ace:dialog 
+                        header="Retenciones"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{cuentasFondosSfccbdmq.formularioRetencion.mostrar}"
+                        visible="#{cuentasFondosSfccbdmq.formularioRetencion.mostrar}">
+                        <h:panelGroup>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel  value="Bien o Servicios :"/>
+                                <h:selectBooleanCheckbox value="#{cuentasFondosSfccbdmq.retencion.bien}">
+                                    <ace:ajax execute="@all"/>
+                                </h:selectBooleanCheckbox>
+                                <h:outputLabel  value="Base imponible 0:"/>
+                                <h:inputText value="#{cuentasFondosSfccbdmq.retencion.baseimponible0}">
+                                    <ace:ajax execute="@all"/>
+                                </h:inputText>
+                                <h:outputLabel  value="Base imponible :"/>
+                                <h:inputText value="#{cuentasFondosSfccbdmq.retencion.baseimponible}">
+                                    <ace:ajax execute="@all"/>
+                                </h:inputText>
+                                <h:outputLabel  value="Valor Prima :"/>
+                                <h:inputText value="#{cuentasFondosSfccbdmq.retencion.valorprima}">
+                                    <ace:ajax execute="@all"/>
+                                </h:inputText>
+                                <h:outputLabel  value="Impuesto :"/>
+                                <h:selectOneMenu value="#{cuentasFondosSfccbdmq.retencion.impuesto}" 
+                                                 disabled="#{cuentasFondosSfccbdmq.formularioRetencion.modificar}">
+                                    <f:selectItems value="#{impuestosSfccbdmq.comboImpuestos}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                                <h:outputLabel  value="IVA:" rendered="#{cuentasFondosSfccbdmq.formularioRetencion.nuevo}"/>
+                                <h:outputLabel  value="#{((cuentasFondosSfccbdmq.retencion.baseimponible
+                                                         )*
+                                                         cuentasFondosSfccbdmq.retencion.impuesto.porcentaje/100)
+                                                         +cuentasFondosSfccbdmq.retencion.ajusteIva/100}"
+                                                rendered="#{cuentasFondosSfccbdmq.formularioRetencion.nuevo}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputLabel>
+                            </h:panelGrid>
+                            <h:panelGrid columns="4" rendered="#{cuentasFondosSfccbdmq.formularioRetencion.modificar}">
+                                <h:outputLabel  value="IVA :"/>
+                                <h:inputText  value="#{cuentasFondosSfccbdmq.retencion.iva}"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="2" >
+                                <h:outputLabel  value="Retención IR:"/>
+                                <h:selectOneMenu value="#{cuentasFondosSfccbdmq.retencion.retencion}" 
+                                                 disabled="#{cuentasFondosSfccbdmq.formularioRetencion.modificar}">
+                                    <f:selectItems value="#{cuentasFondosSfccbdmq.comboRetenciones}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                                <h:outputLabel  value="Valor retención :" rendered="#{cuentasFondosSfccbdmq.formularioRetencion.nuevo}"/>
+                                <h:outputLabel  value="#{((cuentasFondosSfccbdmq.retencion.baseimponible+
+                                                         cuentasFondosSfccbdmq.retencion.baseimponible0)*
+                                                         cuentasFondosSfccbdmq.retencion.retencion.porcentaje/100)
+                                                         +cuentasFondosSfccbdmq.retencion.ajusteRf/100}"
+                                                rendered="#{cuentasFondosSfccbdmq.formularioRetencion.nuevo}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputLabel>
+                            </h:panelGrid>
+                            <h:panelGrid columns="4" rendered="#{cuentasFondosSfccbdmq.formularioRetencion.modificar}">
+                                <h:outputLabel  value="Valor retención :"/>
+                                <h:inputText  value="#{cuentasFondosSfccbdmq.retencion.valor}"/>
+                            </h:panelGrid>   
+                            <h:panelGrid columns="2" >
+                                <h:outputLabel  value="Retención IVA:"/>
+                                <h:selectOneMenu value="#{cuentasFondosSfccbdmq.retencion.retencionimpuesto}" 
+                                                 disabled="#{cuentasFondosSfccbdmq.formularioRetencion.modificar}">
+                                    <f:selectItems value="#{cuentasFondosSfccbdmq.comboRetencionesImpuestos}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                                <h:outputLabel  value="Valor retención :" rendered="#{cuentasFondosSfccbdmq.formularioRetencion.nuevo}"/>
+                                <h:outputLabel  value="#{(cuentasFondosSfccbdmq.retencion.baseimponible
+                                                         )*
+                                                         (cuentasFondosSfccbdmq.retencion.impuesto.porcentaje*
+                                                         cuentasFondosSfccbdmq.retencion.retencionimpuesto.porcentaje/10000)
+                                                         +cuentasFondosSfccbdmq.retencion.ajusteRf/100}"
+                                                rendered="#{cuentasFondosSfccbdmq.formularioRetencion.nuevo}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputLabel>
+                            </h:panelGrid>
+                            <h:panelGrid columns="4" rendered="#{cuentasFondosSfccbdmq.formularioRetencion.modificar}">
+                                <h:outputLabel  value="Valor retención :"/>
+                                <h:inputText  value="#{cuentasFondosSfccbdmq.retencion.valoriva}"/>
+                            </h:panelGrid>   
+                            <h:panelGrid columns="2">
+                                <h:outputLabel  value="Partidas :"/>
+                                <h:selectOneMenu value="#{cuentasFondosSfccbdmq.retencion.partida}">
+                                    <f:selectItems value="#{cuentasFondosSfccbdmq.comboPartidas}"/>
+                                </h:selectOneMenu>
+                            </h:panelGrid>
+
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{cuentasFondosSfccbdmq.formularioRetencion.nuevo}" 
+                                                  action="#{cuentasFondosSfccbdmq.insertarRetenciones()}"/>
+                                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                                  action="#{cuentasFondosSfccbdmq.grabarRetenciones()}" 
+                                                  rendered="#{cuentasFondosSfccbdmq.formularioRetencion.modificar}" />
+                                    <ace:menuItem action="#{cuentasFondosSfccbdmq.borrarRetenciones()}" 
+                                                  value="Esta seguro de Borrar el registro?" 
+                                                  rendered="#{cuentasFondosSfccbdmq.formularioRetencion.borrar}"/>
+
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{cuentasFondosSfccbdmq.formularioRetencion.cancelar()}"/>
+                                </ace:menuBar>
+
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

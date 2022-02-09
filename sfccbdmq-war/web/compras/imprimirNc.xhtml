@@ -1,0 +1,158 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+    <ace:panel id="panelImprimir" style="display:block;">
+        <h:panelGrid width="90%">
+            <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+            <h:panelGrid  width="90%" columns="2" style="text-align: right">
+                <h:outputText value="Usuario :"/>
+                <h:outputText value="#{parametrosSfccbdmq.logueado.userid}"/>
+                <h:outputText value="Fecha :"/>
+                <h:outputText value="#{parametrosSfccbdmq.fechaActual}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                </h:outputText>
+                <!--<h:outputText value="RE-Impresión" rendered="#{notasCreditoSfccbdmq.imprimir}"/>-->
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="1" style="text-align: center">
+                <h3>Nota de Crédito No: #{notasCreditoSfccbdmq.notaCredito.id}</h3>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="1" style="text-align: right">
+                <h3>Valor : #{notasCreditoSfccbdmq.valorStr}</h3>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                <h:outputLabel value="Fecha de emisión :" />
+                <h:outputLabel value="#{notasCreditoSfccbdmq.notaCredito.emision}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputLabel>
+                <h:outputLabel value="Documento :" />
+                <h:outputLabel value="#{notasCreditoSfccbdmq.notaCredito.establecimiento} #{notasCreditoSfccbdmq.notaCredito.punto} #{notasCreditoSfccbdmq.notaCredito.numero} "/>
+                <h:outputLabel value="Beneficiario:" />
+                <h:outputLabel value="#{notasCreditoSfccbdmq.notaCredito.obligacion.proveedor.empresa.toString()}"/>
+                <h:outputLabel value="e-mail:" />
+                <h:outputLabel value="#{notasCreditoSfccbdmq.obligacion.proveedor.empresa.email}"/>
+            </h:panelGrid>
+
+            <h:panelGrid  width="90%" columns="1" style="text-align: left">
+                <h:outputLabel value="Concepto:" />
+                <p>#{notasCreditoSfccbdmq.notaCredito.concepto}</p>
+            </h:panelGrid>
+            
+            <h:panelGrid columns="1" width="100%">
+                <ace:dataTable  
+                    value="#{notasCreditoSfccbdmq.renglonesnc}"
+                    var="itemContab"
+                    paginator="false"
+                    lazy="false"
+                    resizableColumns="true"
+                    rowIndexVar="row"
+                    paginatorPosition="both"
+                    rowsPerPageTemplate="5,10,15,30,50,100"
+                    paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    >
+                    <f:facet name="header">Contabilización #{itemContab.cabecera.tipo.nombre} - #{itemContab.cabecera.numero}</f:facet> 
+                    <ace:column  headerText="Cuenta"  style="text-align: left">
+                        <h:outputText  value="#{itemContab.cuenta}"/>
+                    </ace:column>
+                    <ace:column  headerText="N. Cuenta"  style="text-align: left">
+                        <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemContab.cuenta).nombre}"/>
+                    </ace:column>
+                    <ace:column  headerText="Referencia"  style="text-align: left">
+                        <h:outputText  value="#{itemContab.referencia}"/>
+                    </ace:column>
+                    <ace:column  headerText="Centro Costo"  style="text-align: left">
+                        <h:outputText  value="#{itemContab.centrocosto}"/>
+                    </ace:column>
+                    <ace:column  headerText="Auxiliar"  style="text-align: left">
+                        <h:outputText  value="#{itemContab.auxiliar}"/>
+                    </ace:column>
+                    <ace:column  headerText="Débitos" style="text-align: right">
+                        <h:outputText  value="#{itemContab.valor}" rendered="#{asientosSfccbdmq.isCredito(itemContab.valor)}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Créditos" style="text-align: right">
+                        <h:outputText  value="#{itemContab.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemContab.valor)}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+
+                </ace:dataTable>
+            </h:panelGrid>
+            <h:panelGrid columns="1" width="100%">
+                <ace:dataTable  
+                    value="#{notasCreditoSfccbdmq.detalles}"
+                    var="itemPresupuesto"
+                    paginator="false"
+                    lazy="false"
+                    resizableColumns="true"
+                    rowIndexVar="row"
+                    paginatorPosition="both"
+                    rowsPerPageTemplate="5,10,15,30,50,100"
+                    paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    >
+                    <f:facet name="header">Afectación Presupuestaria</f:facet> 
+                    <ace:column  headerText="Partida"  style="text-align: left">
+                        <h:outputText  value="#{itemPresupuesto.detallecompromiso.toString()}" escape="false"/>
+                    </ace:column>
+                    <ace:column  headerText="Valor" style="text-align: right">
+                        <h:outputText  value="#{itemPresupuesto.valor+itemPresupuesto.valorimpuesto}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                </ace:dataTable>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="1">
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <!--                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />
+                                <h:outputLabel value="" />-->
+
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="5">
+                <h:outputLabel value="f.----------------------------" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="f.----------------------------" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="f.----------------------------" />
+                <h:outputLabel value="Preparado por"  />
+                <h:outputLabel value="" />
+                <h:outputLabel value="Revisado"  />
+                <h:outputLabel value="" />
+                <h:outputLabel value="Aprobado por"  />
+               
+            </h:panelGrid>
+        </h:panelGrid>
+
+    </ace:panel>
+</html>

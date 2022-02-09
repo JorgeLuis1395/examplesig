@@ -1,0 +1,317 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{tipoMovActivosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{tipoMovActivosSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{tipoMovActivosSfccbdmq.crear()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                </ace:panel>
+
+                <ace:panel 
+                    header="Resultado Bùsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{tipoMovActivosSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{tipoMovActivosSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <!--                    <h:panelGrid styleClass="centeredPanelGrid">
+                                            
+                                        </h:panelGrid>-->
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{tipoMovActivosSfccbdmq.tipos}"
+                                       var="item"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       binding="#{tipoMovActivosSfccbdmq.formulario.fila}">
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{tipoMovActivosSfccbdmq.modificar()}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{tipoMovActivosSfccbdmq.eliminar()}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="Descripción" style="text-align: left">
+                                <h:outputText  value="#{item.descripcion}"/>
+                            </ace:column>
+                            <ace:column  headerText="Ingreso" style="text-align: left">
+                                <h:outputText  value="#{item.ingreso}"/>
+                            </ace:column>
+                            <ace:column  headerText="Tipo de Asiento" style="text-align: left">
+                                <h:outputText  value="#{item.tipoasiento.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Cuenta"  style="text-align: left">
+                                <h:outputText  value="#{item.cuenta1}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nombre"  style="text-align: left">
+                                <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(item.cuenta1).nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Tipo de Asiento Control" style="text-align: left">
+                                <h:outputText  value="#{item.tipoasientocontrol.nombre}"/>
+                            </ace:column>
+
+
+                            <ace:column  headerText="Cuenta Crédito"  style="text-align: left">
+                                <h:outputText  value="#{item.cuenta}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nombre"  style="text-align: left">
+                                <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(item.cuenta).nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Cuenta Débito"  style="text-align: left">
+                                <h:outputText  value="#{item.debito}"/>
+                            </ace:column>
+                            <ace:column  headerText="Nombre"  style="text-align: left">
+                                <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(item.debito).nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Tipo"  style="text-align: left">
+                                <h:outputText  rendered="#{item.tipo==0}" value="Compras"/>
+                                <h:outputText  rendered="#{item.tipo==1}" value="Donación"/>
+                                <h:outputText  rendered="#{item.tipo==2}" value="Otros"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{tipoMovActivosSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{tipoMovActivosSfccbdmq.formulario.mostrar}"
+                    visible="#{tipoMovActivosSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <ace:tabSet style="clear:both;" clientSide="true">
+                            <ace:tabPane >
+                                <f:facet name="label">Inf. General</f:facet>
+                                <h:panelGrid columns="4">
+                                    <h:outputLabel value="Es Ingreso?:"/>
+                                    <ace:checkboxButton value="#{tipoMovActivosSfccbdmq.tipo.ingreso}">
+                                        <ace:ajax  rendered="prueba"/>
+                                    </ace:checkboxButton>
+                                    <h:outputLabel value="Contabiliza?:"/>
+                                    <ace:checkboxButton value="#{tipoMovActivosSfccbdmq.tipo.contabiliza}">
+                                        <ace:ajax execute="@this" rendered="@all"/>
+                                    </ace:checkboxButton>
+                                </h:panelGrid>    
+                                <h:panelGrid columns="2" >
+
+                                    <h:outputLabel value="Descripción:"/>
+                                    <h:inputTextarea cols="60" rows="4" value="#{tipoMovActivosSfccbdmq.tipo.descripcion}" title="Nombre" />
+
+                                </h:panelGrid>
+                                <h:panelGrid columns="2" rendered="#{tipoMovActivosSfccbdmq.tipo.ingreso==true}" id="prueba">
+                                    <h:outputLabel value="Tipo :"/>
+                                    <h:selectOneMenu  value="#{tipoMovActivosSfccbdmq.tipo.tipo}">
+                                        <f:selectItems value="#{tipoMovActivosSfccbdmq.comboTipo}"/>
+                                    </h:selectOneMenu>
+                                </h:panelGrid>
+                                <h:panelGrid columns="1" rendered="#{tipoMovActivosSfccbdmq.tipo.contabiliza}">
+                                    <h:panelGrid columns="2" width="100%">
+                                        <h:outputLabel value="Tipo de asiento:" />
+                                        <h:selectOneMenu   label="Tipo de asiento:" value="#{tipoMovActivosSfccbdmq.tipo.tipoasiento}" title="Tasiento" >
+                                            <f:selectItems value="#{tipoAsientoSfccbdmq.comboTipoasiento}"/>
+                                        </h:selectOneMenu>
+                                        <!--<h:outputLabel value="Cuenta :" />-->
+                                        <ace:autoCompleteEntry 
+                                                               value="#{tipoMovActivosSfccbdmq.tipo.cuenta1}"
+                                                               rows="10" width="300"
+                                                               filterMatchMode="none"
+                                                               listVar="cuentasAutocompletarCuenta"
+                                                               listValue="#{cuentasSfccbdmq.listadoCuentas}"
+                                                               filterBy="#{cuentasAutocompletarCuenta.codigo}"
+                                                               textChangeListener="#{cuentasSfccbdmq.cuentaChangeEventHandler}"
+                                                               label="Cuentas :"
+                                                               labelPosition="left">
+                                            <f:facet name="row">
+                                                <h:panelGrid columns="2" width="100%"  style="text-align: left;font-size: xx-small">
+                                                    <h:outputText value="#{cuentasAutocompletarCuenta.codigo}" />
+                                                    <h:outputText value="#{cuentasAutocompletarCuenta.nombre}" />
+                                                </h:panelGrid>
+                                            </f:facet>
+                                        </ace:autoCompleteEntry>
+<!--                                        <ice:selectInputText  listValue="#{cuentasSfccbdmq.listaCuenta}" value="#{tipoMovActivosSfccbdmq.tipo.cuenta1}"
+                                                              listVar="clasificadores" rows="3" 
+                                                              valueChangeListener="#{cuentasSfccbdmq.cambiaCodigo}" width="300px" >
+                                            <f:facet name="selectInputText">
+                                                <h:panelGrid  columns="2"  width="100%" >
+                                                    <h:outputText value="#{clasificadores.codigo}"/>
+                                                    <h:outputText value="#{clasificadores.nombre}"/>
+                                                </h:panelGrid>
+                                            </f:facet>
+                                            <f:ajax render="nombrecla"/>
+                                        </ice:selectInputText>-->
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" >
+                                        <h:outputLabel value="Nombre Cuenta :" />
+                                        <h:outputLabel value="#{cuentasSfccbdmq.traerCodigo(tipoMovActivosSfccbdmq.tipo.cuenta1).nombre}"  />
+                                    </h:panelGrid>
+                                </h:panelGrid>
+                            </ace:tabPane>
+                            <ace:tabPane rendered="#{tipoMovActivosSfccbdmq.tipo.ingreso}" >
+                                <f:facet name="label">Inf. Act. Control</f:facet>
+                                <h:panelGrid columns="1" >
+                                    <h:panelGrid columns="2">
+                                        <!--<h:outputLabel value="Cuenta Débito:" />-->
+                                        <ace:autoCompleteEntry 
+                                                               value="#{tipoMovActivosSfccbdmq.tipo.debito}"
+                                                               rows="15" width="300"
+                                                               filterMatchMode="none"
+                                                               listVar="cuentasAutocompletarDebito"
+                                                               listValue="#{cuentasSfccbdmq.listadoCuentas}"
+                                                               filterBy="#{cuentasAutocompletarDebito.codigo}"
+                                                               textChangeListener="#{cuentasSfccbdmq.cuentaChangeEventHandler}"
+                                                               label="Cuenta Débito :"
+                                                               labelPosition="left">
+                                            <f:facet name="row">
+                                                <h:panelGrid columns="2" width="100%"  style="text-align: left;font-size: xx-small">
+                                                    <h:outputText value="#{cuentasAutocompletarDebito.codigo}" />
+                                                    <h:outputText value="#{cuentasAutocompletarDebito.nombre}" />
+                                                </h:panelGrid>
+                                            </f:facet>
+                                        </ace:autoCompleteEntry>
+<!--                                        <ice:selectInputText  listValue="#{cuentasSfccbdmq.listaCuenta}" value="#{tipoMovActivosSfccbdmq.tipo.debito}"
+                                                              listVar="clasificadores" rows="3" 
+                                                              valueChangeListener="#{cuentasSfccbdmq.cambiaCodigo}" width="300px" >
+                                            <f:facet name="selectInputText">
+                                                <h:panelGrid  columns="2"  width="100%" >
+                                                    <h:outputText value="#{clasificadores.codigo}"/>
+                                                    <h:outputText value="#{clasificadores.nombre}"/>
+                                                </h:panelGrid>
+                                            </f:facet>
+                                            <f:ajax render="nombrecla"/>
+                                        </ice:selectInputText>-->
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" >
+                                        <h:outputLabel value="Nombre Cuenta Débito:" />
+                                        <h:outputLabel value="#{cuentasSfccbdmq.traerCodigo(tipoMovActivosSfccbdmq.tipo.debito).nombre}"  />
+                                    </h:panelGrid>
+                                </h:panelGrid>
+                                <h:panelGrid columns="1" >
+                                    <h:panelGrid columns="2">
+                                        <!--<h:outputLabel value="Cuenta Crédito:" />-->
+                                        <ace:autoCompleteEntry 
+                                                               value="#{tipoMovActivosSfccbdmq.tipo.cuenta}"
+                                                               rows="15" width="300"
+                                                               filterMatchMode="none"
+                                                               listVar="cuentasAutocompletar"
+                                                               listValue="#{cuentasSfccbdmq.listadoCuentas}"
+                                                               filterBy="#{cuentasAutocompletar.codigo}"
+                                                               textChangeListener="#{cuentasSfccbdmq.cuentaChangeEventHandler}"
+                                                               label="Cuenta Crédito :"
+                                                               labelPosition="left">
+                                            <f:facet name="row">
+                                                <h:panelGrid columns="2" width="100%"  style="text-align: left;font-size: xx-small">
+                                                    <h:outputText value="#{cuentasAutocompletar.codigo}" />
+                                                    <h:outputText value="#{cuentasAutocompletar.nombre}" />
+                                                </h:panelGrid>
+                                            </f:facet>
+                                        </ace:autoCompleteEntry>
+
+<!--
+                                        <ice:selectInputText  listValue="#{cuentasSfccbdmq.listaCuenta}" value="#{tipoMovActivosSfccbdmq.tipo.cuenta}"
+                                                              listVar="clasificadores" rows="3" 
+                                                              valueChangeListener="#{cuentasSfccbdmq.cambiaCodigo}" width="300px" >
+                                            <f:facet name="selectInputText">
+                                                <h:panelGrid  columns="2"  width="100%" >
+                                                    <h:outputText value="#{clasificadores.codigo}"/>
+                                                    <h:outputText value="#{clasificadores.nombre}"/>
+                                                </h:panelGrid>
+                                            </f:facet>
+                                        </ice:selectInputText>-->
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2">
+                                        <h:outputLabel value="Nombre Crédito:" />
+                                        <h:outputLabel value="#{cuentasSfccbdmq.traerCodigo(tipoMovActivosSfccbdmq.tipo.cuenta).nombre}"  />
+                                    </h:panelGrid>
+                                </h:panelGrid>
+                                <h:panelGrid columns="2">
+
+                                    <h:outputLabel value="Tipo de asiento control:" />
+                                    <h:selectOneMenu  value="#{tipoMovActivosSfccbdmq.tipo.tipoasientocontrol}" title="Tasiento" >
+                                        <f:selectItems value="#{tipoAsientoSfccbdmq.comboTipoasiento}"/>
+                                    </h:selectOneMenu>
+
+                                </h:panelGrid>
+                            </ace:tabPane>
+                        </ace:tabSet>
+
+
+
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{tipoMovActivosSfccbdmq.formulario.nuevo}" 
+                                          action="#{tipoMovActivosSfccbdmq.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{tipoMovActivosSfccbdmq.grabar()}" 
+                                          rendered="#{tipoMovActivosSfccbdmq.formulario.modificar}" />
+                            <ace:menuItem action="#{tipoMovActivosSfccbdmq.borrar()}" 
+                                          value="Esta seguro de Borrar el registro?" 
+                                          rendered="#{tipoMovActivosSfccbdmq.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{tipoMovActivosSfccbdmq.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

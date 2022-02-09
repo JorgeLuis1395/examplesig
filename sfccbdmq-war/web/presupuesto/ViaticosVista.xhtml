@@ -1,0 +1,448 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="Viajes"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Tipo:" />
+                        <h:selectOneMenu  value="#{viaticosSfccbdmq.tipoPartida}" >
+                            <f:selectItem  itemLabel="--- Seleccione uno ---" itemValue=""/>
+                            <f:selectItem  itemLabel="INTERNO" itemValue="0" />
+                            <f:selectItem  itemLabel="EXTERNO" itemValue="1" />
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Lugar:" />
+                        <h:inputText value="#{viaticosSfccbdmq.lugar}"/>
+                        
+                        <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{viaticosSfccbdmq.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{viaticosSfccbdmq.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{viaticosSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{viaticosSfccbdmq.nuevo()}" />
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                   for="panel"
+                                   blockUI="panel"
+                                   autoCenter="true"
+                                   activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Viajes encontrados"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <!--<ui:include src="totalesAnio.xhtml" />-->
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{viaticosSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{viaticosSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{viaticosSfccbdmq.listadoViaticos}"
+                                       var="item"
+                                       paginator="true"
+                                       lazy="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="50" >
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column style="text-align: left">
+                                <ace:menuButton  effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem  value="Editar" icon="ui-icon ui-icon-pencil" action="#{viaticosSfccbdmq.modificar()}"/>
+                                    <ace:menuItem  value="Borrar" icon="ui-icon ui-icon-trash" action="#{viaticosSfccbdmq.eliminar()}"/>
+                                    <ace:menuItem  value="#{item.vigente ? 'Poner No Vigente' : 'Poner Vigente' }" icon="ui-icon ui-icon-pencil" action="#{viaticosSfccbdmq.ponerVigencia(item)}"/>
+                                    <ace:menuItem action="#{viaticosSfccbdmq.imprimir()}" value="Imprimir" icon="ui-icon ui-icon-print"/>
+
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="Tipo" style="text-align: left">
+                                <h:outputText value="#{item.partida eq '530303' ? 'INTERNO' : 'EXTERNO'}"/>
+                            </ace:column>
+                            <ace:column  headerText="Lugar" style="text-align: left">
+                                <h:outputText value="#{item.lugar}"/>
+                            </ace:column>
+                            <ace:column  headerText="Motivo" style="text-align: left">
+                                <h:outputText value="#{item.motivo}"/>
+                            </ace:column>
+                            <ace:column  headerText="Fecha desde"  style="text-align: left">
+                                <h:outputText  value="#{item.desde}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Fecha hasta"  style="text-align: left">
+                                <h:outputText  value="#{item.hasta}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Nro. Certificación" style="text-align: right">
+                                <h:outputText value="#{item.certificacion.numerocert}"/>
+                            </ace:column>
+                            <ace:column  headerText="Vigencia" style="text-align: left">
+                                <h:outputText value="#{item.vigente ? 'VIGENTE' : 'NO VIGENTE'}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="Viaje"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{viaticosSfccbdmq.formulario.mostrar}"
+                    visible="#{viaticosSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2" style="width: 100%" >
+                            <h:outputLabel value="Pais:" rendered="#{viaticosSfccbdmq.tipoPartida eq 1}" />
+                            <h:selectOneMenu id="pais" value="#{viaticosSfccbdmq.viatico.pais}" rendered="#{viaticosSfccbdmq.tipoPartida eq 1}" >
+                                <f:selectItems value="#{codigosSfccbdmq.comboPaises}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Lugar : "/>
+                            <h:inputText value="#{viaticosSfccbdmq.viatico.lugar}" id="Lugar"/>
+                            <h:outputLabel value="Motivo : "/>
+                            <h:inputTextarea value="#{viaticosSfccbdmq.viatico.motivo}" id="Fecha"/>
+                            <h:outputLabel value="Desde:" />
+                            <ace:dateTimeEntry navigator="true" value="#{viaticosSfccbdmq.viatico.desde}" id="Vdesde"
+                                               popupIcon="ui-icon ui-icon-calendar"    renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            </ace:dateTimeEntry> 
+                            <h:outputLabel value="Hasta:" />
+                            <ace:dateTimeEntry navigator="true" value="#{viaticosSfccbdmq.viatico.hasta}" id="Vhasta"
+                                               popupIcon="ui-icon ui-icon-calendar"    renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            </ace:dateTimeEntry> 
+                            <h:outputLabel value="Fecha Certificación:" />
+                            <ace:dateTimeEntry navigator="true" value="#{viaticosSfccbdmq.fechaCertificacion}" id="fcertificacion"
+                                               popupIcon="ui-icon ui-icon-calendar"    renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            </ace:dateTimeEntry> 
+                            <h:outputLabel value="Certificación Anterior:" />
+                            <h:inputText value="#{viaticosSfccbdmq.certificacion.numeroanterior}" id="CertAnt"/>
+                            <h:outputLabel value="Partida:" />
+                            <h:outputText value="#{viaticosSfccbdmq.viatico.partida}" />
+                            <h:outputLabel value="Tipo Documento:"  />
+                            <h:selectOneMenu  value="#{certificacionesSfccbdmq.certificacion.tipodocumento}" title="Fuente" disabled="#{!certificacionesSfccbdmq.formulario.nuevo}" >
+                                <f:selectItems value="#{codigosSfccbdmq.comboDocumentosPresupuestof}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1">
+                            <h:outputLabel value="Empleados" />
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{viaticosSfccbdmq.nuevoEmp()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>   
+                        <h:panelGrid width="100%">
+                            <ace:dataTable
+                                paginatorAlwaysVisible="true"
+                                value="#{viaticosSfccbdmq.listaEmpleados}"
+                                var="emp"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                binding="#{viaticosSfccbdmq.formulario.fila}">
+                                <ace:column  headerText="Registro" style="text-align: right">
+                                    <h:outputText value="#{row+1}"/>
+                                </ace:column>
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton  effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem  value="Editar" icon="ui-icon ui-icon-pencil" action="#{viaticosSfccbdmq.modificarEmp()}"/>
+                                        <ace:menuItem  value="Editar Valor" icon="ui-icon ui-icon-pencil" action="#{viaticosSfccbdmq.editarValorEmp()}"/>
+                                        <ace:menuItem  value="Borrar" icon="ui-icon ui-icon-trash" action="#{viaticosSfccbdmq.eliminarEmp()}"/>
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column headerText="Empleado" style="text-align: left">
+                                    <h:outputText value="#{emp.empleado.toString()}" />
+                                </ace:column>  
+                                <ace:column  headerText="Fecha desde"  style="text-align: left">
+                                    <h:outputText  value="#{emp.desde}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Fecha hasta"  style="text-align: left">
+                                    <h:outputText  value="#{emp.hasta}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column headerText="Tipo" style="text-align: left">
+                                    <h:outputText value="#{emp.tipo.nombre}" />
+                                </ace:column>   
+                                <ace:column headerText="Días" style="text-align: left">
+                                    <h:outputText value="#{viaticosSfccbdmq.consultaDias(emp.desde, emp.hasta)}" />
+                                </ace:column>   
+                                <ace:column headerText="Coeficiente" style="text-align: right" rendered="#{viaticosSfccbdmq.tipoPartida eq 1}" >
+                                    <h:outputText  value="#{emp.viatico.pais.parametros}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column headerText="Valor diario" style="text-align: right" rendered="#{viaticosSfccbdmq.tipoPartida eq 1}" >
+                                    <h:outputText  value="#{emp.tipo.parametros}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column headerText="Nro. Subsistencias" style="text-align: right" rendered="#{viaticosSfccbdmq.tipoPartida eq 1}" >
+                                    <h:outputText  value="#{emp.nrosubsistencias}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column headerText="Valor Subsistencias" style="text-align: right" rendered="#{viaticosSfccbdmq.tipoPartida eq 1}" >
+                                    <h:outputText  value="#{emp.subsistencia}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column headerText="Valor Días" style="text-align: right" rendered="#{viaticosSfccbdmq.tipoPartida eq 1}" >
+                                    <h:outputText  value="#{emp.valorParcial}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+
+                                <ace:column headerText="Valor Total" style="text-align: right">
+                                    <h:outputText  value="#{emp.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <f:facet name="footer">Total : #{viaticosSfccbdmq.totalViaticos} </f:facet>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              rendered="#{!viaticosSfccbdmq.formulario.borrar}"
+                                              action="#{viaticosSfccbdmq.confirmacion()}" />
+                                <ace:menuItem value="¿Está seguro de Borrar el registro?" icon="ui-icon ui-icon-disk"  
+                                              rendered="#{viaticosSfccbdmq.formulario.borrar}"
+                                              action="#{viaticosSfccbdmq.borrar()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{viaticosSfccbdmq.formulario.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+
+                <!--                INGRESO DE EMPLEADOS-->
+                <ace:dialog 
+                    header="Empleado"
+                    closable="false"
+                    modal="true"
+                    draggable="false"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{viaticosSfccbdmq.formularioEmpleados.mostrar}"
+                    visible="#{viaticosSfccbdmq.formularioEmpleados.mostrar}">
+
+                    <h:panelGrid columns="2" rendered="#{viaticosSfccbdmq.formularioEmpleados.nuevo}">
+                        <ui:include src="../BuscarEmpleado.xhtml" />
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" rendered="#{!viaticosSfccbdmq.formularioEmpleados.nuevo}">
+                        <h:outputLabel value="#{viaticosSfccbdmq.empleado.empleado.toString()}"/>
+                    </h:panelGrid>
+                    <h:panelGrid rendered="#{viaticosSfccbdmq.tipoPartida eq 0}" columns="2" width="100%">
+                        <h:outputLabel value="Tipo Organizacional:" />
+                        <h:selectOneMenu id="tipo" value="#{viaticosSfccbdmq.empleado.tipo}">
+                            <f:selectItems value="#{codigosSfccbdmq.comboTiposOrganizacional}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>  
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Desde:" />
+                        <ace:dateTimeEntry navigator="true" value="#{viaticosSfccbdmq.empleado.desde}" id="Edesde"
+                                           popupIcon="ui-icon ui-icon-calendar"    renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                        </ace:dateTimeEntry> 
+                        <h:outputLabel value="Hasta:" />
+                        <ace:dateTimeEntry navigator="true" value="#{viaticosSfccbdmq.empleado.hasta}" id="Ehasta"
+                                           popupIcon="ui-icon ui-icon-calendar"    renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                        </ace:dateTimeEntry> 
+                        <h:panelGrid rendered="#{viaticosSfccbdmq.tipoPartida ne 0}" columns="2" width="100%">
+                            <h:outputLabel value="Tipo Organizacional:" />
+                            <h:selectOneMenu id="tipoe" value="#{viaticosSfccbdmq.empleado.tipo}">
+                                <f:selectItems value="#{codigosSfccbdmq.comboTiposOrganizacionalExterior}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Nro. Subsistencias:" for="nrosus" />
+                            <h:inputText id="nrosus" value="#{viaticosSfccbdmq.empleado.nrosubsistencias}" title="Subsistencias" style="text-align: right"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Contrafactura:" />
+                            <h:selectOneRadio value="#{viaticosSfccbdmq.empleado.contrafactura}" >
+                                <f:selectItem itemValue="true" itemLabel="SI"/>
+                                <f:selectItem itemValue="false" itemLabel="NO"/>
+                            </h:selectOneRadio>
+                        </h:panelGrid>
+                    </h:panelGrid>           
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                      rendered="#{viaticosSfccbdmq.formularioEmpleados.nuevo}"
+                                      action="#{viaticosSfccbdmq.insertarEmp()}"/>
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                      rendered="#{viaticosSfccbdmq.formularioEmpleados.modificar}"
+                                      action="#{viaticosSfccbdmq.grabarEmp()}"/>
+                        <ace:menuItem value="¿Está seguro de Borrar el registro?" icon="ui-icon ui-icon-disk"  
+                                      rendered="#{viaticosSfccbdmq.formularioEmpleados.borrar}"
+                                      action="#{viaticosSfccbdmq.borrarEmp()}"/>
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                      action="#{viaticosSfccbdmq.formularioEmpleados.cancelar()}"/>
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+
+                <ace:dialog header="Confirmación" 
+                            modal="true"
+                            closable="false" 
+                            visible="#{viaticosSfccbdmq.formularioConfirmacion.mostrar}" 
+                            rendered="#{viaticosSfccbdmq.formularioConfirmacion.mostrar}" >
+                    <h:panelGrid columns="2">
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Valor Asignación:" />
+                            <h:outputText value="#{certificacionesSfccbdmq.asignacion.valor}" >
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Valor reformas :"/>
+                            <h:outputText value="#{certificacionesSfccbdmq.valorReformas}" >
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Valor certificaciones :"/>
+                            <h:outputText value="#{certificacionesSfccbdmq.valorCertificaciones}" >
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Saldo por Certificar :"/>
+                            <h:outputText value="#{certificacionesSfccbdmq.asignacion.valor+certificacionesSfccbdmq.valorReformas-certificacionesSfccbdmq.valorCertificaciones}" >
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+
+                            <h:outputLabel value="Valor viaticos :"/>
+                            <h:outputText value="#{viaticosSfccbdmq.totalViaticos}" >
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                        </h:panelGrid>
+                        <!--                        <h:panelGrid columns="2" >
+                                                    <h:outputLabel value="Se utilizará la certificación" for="certificacion" />
+                                                    <h:outputText value="#{viaticosSfccbdmq.viatico.certificacion.toString()}" title="Certificacion" />
+                                                </h:panelGrid>-->
+                    </h:panelGrid>
+                    <h:panelGrid columns="2"  width="100%">
+                        <ace:menuBar>
+                            <ace:menuItem value="Grabar"
+                                          rendered="#{viaticosSfccbdmq.viatico.id==null}"
+                                          icon="ui-icon ui-icon-check"
+                                          action="#{viaticosSfccbdmq.insertar()}" >
+                            </ace:menuItem>
+                            <ace:menuItem value="Grabar" 
+                                          rendered="#{viaticosSfccbdmq.viatico.id!=null}"
+                                          icon="ui-icon ui-icon-check"
+                                          action="#{viaticosSfccbdmq.grabar()}" >
+                            </ace:menuItem>
+                            <ace:menuItem value="Cancelar" 
+                                          icon="ui-icon ui-icon-close"
+                                          action="#{viaticosSfccbdmq.formularioConfirmacion.cancelar()}" >
+                            </ace:menuItem>
+                        </ace:menuBar>
+                    </h:panelGrid>
+                </ace:dialog> 
+
+                <!--                EDICION VALOR EMPLEADOS-->
+                <ace:dialog 
+                    header="Editar valor"
+                    closable="false"
+                    modal="true"
+                    draggable="false"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{viaticosSfccbdmq.formularioEditarValor.mostrar}"
+                    visible="#{viaticosSfccbdmq.formularioEditarValor.mostrar}">
+
+                    <h:panelGrid columns="2" rendered="#{!viaticosSfccbdmq.formularioEditarValor.nuevo}">
+                        <h:outputLabel value="#{viaticosSfccbdmq.empleado.empleado.toString()}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="4">
+                        <h:outputLabel value="Valor:"/>
+                        <h:inputText value="#{viaticosSfccbdmq.empleado.valor}" />
+
+                    </h:panelGrid>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                      rendered="#{viaticosSfccbdmq.formularioEditarValor.modificar}"
+                                      action="#{viaticosSfccbdmq.grabarValorEmp()}"/>
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                      action="#{viaticosSfccbdmq.formularioEditarValor.cancelar()}"/>
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{viaticosSfccbdmq.formularioImprimir.mostrar}"
+                    visible="#{viaticosSfccbdmq.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="Viaticos.pdf" id="pdf-button2" label="Imprimir"
+                                             mimeType="application/pdf" resource="#{viaticosSfccbdmq.reportepdf}" 
+                                             style="" type="button"/>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{viaticosSfccbdmq.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                            <h:messages style="color: red;font-style: italic;font-weight: bold"/> 
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

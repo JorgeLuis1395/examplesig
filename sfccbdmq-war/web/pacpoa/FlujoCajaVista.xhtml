@@ -1,0 +1,506 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{flujoCajaPoa.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true">
+                    <h:panelGrid columns="4">
+                        <h:outputLabel value="Año :" />
+                        <h:inputText value="#{flujoCajaPoa.anio}" />
+                        <h:outputLabel value="Fuente:" for="fuente" />
+                        <h:selectOneMenu id="fuente" value="#{flujoCajaPoa.fuenteFinanciamiento}">
+                            <f:selectItems value="#{consultasPoa.comboFuenteFinanciamiento}"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <ui:include src="BuscarProyecto.xhtml" />
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Partida:" />
+                        <ace:autoCompleteEntry  listValue="#{partidasPoa.partidasLista}" 
+                                                listVar="itemClasificador" 
+                                                rows="8" 
+                                                value="#{flujoCajaPoa.partida}" 
+                                                valueChangeListener="#{partidasPoa.cambiaCodigo}" 
+                                                filterBy="#{itemClasificador.codigo}"
+                                                textChangeListener="#{partidasPoa.codigoChangeEventHandler}"
+                                                width="400"
+                                                >
+                            <f:facet name="row">
+                                <h:panelGrid  columns="2"  width="100%" columnClasses="tipo" style="text-align: left;font-size: xx-small">
+                                    <h:outputText value="#{itemClasificador.codigo}"/>
+                                    <h:outputText value="#{itemClasificador.nombre}"/>
+                                </h:panelGrid>
+                            </f:facet>
+
+                        </ace:autoCompleteEntry>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" width="30%">
+                        <h:outputLabel value="Separador de campos :"/>
+                        <h:inputText value="#{flujoCajaPoa.separador}"  size="3">
+                            <ace:ajax execute="@all"/>
+                        </h:inputText>
+                        <ace:fileEntry id="file-entry"
+                                       label="Archivo"
+                                       maxFileCount="1" 
+                                       maxFileCountMessage="Máximo un archivo" 
+                                       fileEntryListener="#{flujoCajaPoa.archivoListener}" 
+                                       maxFileSize="6291456" 
+                                       maxFileSizeMessage="Tamaño muy grande." 
+                                       maxTotalSize="18874368" 
+                                       maxTotalSizeMessage="Total del tamaño muy grande." 
+                                       useOriginalFilename="true" 
+                                       useSessionSubdir="true"/>
+                        <h:commandButton type="submit" value="Cargar datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{flujoCajaPoa.buscar()}"/>
+                            <ace:menuItem value="Generar" icon="ui-icon ui-icon-folder-open"  action="#{flujoCajaPoa.generar()}"/>
+                            <ace:menuItem value="Borrar" icon="ui-icon ui-icon-folder-open"  action="#{flujoCajaPoa.borrar()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="panel"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+                        <ace:dynamicResource
+                            fileName="Flujo.pdf" id="pdf-buttonCedula" label="Generar PDF"
+                            mimeType="application/pdf" 
+                            rendered="#{flujoCajaPoa.reporte ne null}"
+                            resource="#{flujoCajaPoa.reporte}" 
+                            style="" type="button"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{flujoCajaPoa.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{flujoCajaPoa.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                </ace:panel>
+
+                <ace:panel id="panelImprimir">
+                    <h:panelGrid width="100%">
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable id="tabla"
+                                           value="#{flujoCajaPoa.listaFlujo}"
+                                           var="item"
+                                           lazy="false"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           paginatorAlwaysVisible="true"
+                                           rowsPerPageTemplate="10,15,30,50"
+                                           currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="30"
+                                           style="width: 100%;">
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{flujoCajaPoa.modificar(item)}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <c:forEach var="itemProducto" items="#{proyectosPoa.titulos}">
+                                    <ace:column  headerText="#{itemProducto.titulo1}"  style="text-align: left">
+                                        <h:outputText  value="#{proyectosPoa.dividir(itemProducto, item.proyecto)}"/>
+                                    </ace:column>
+                                </c:forEach>
+                                <ace:column  headerText="Código Producto" style="text-align: left" >
+                                    <h:outputText  value="#{item.proyecto.codigo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nombre Producto"  style="text-align: left">
+                                    <h:outputText  value="#{item.proyecto.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Partida" style="text-align: left">
+                                    <h:outputText  value="#{item.partida.codigo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nombre"  style="text-align: left">
+                                    <h:outputText  value="#{item.partida.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Fuente"  style="text-align: left">
+                                    <h:outputText  value="#{item.fuente}"/>
+                                </ace:column>
+                                <ace:column  headerText="Enero" style="text-align: right">
+                                    <h:outputText  value="#{item.eneror}"  >
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value=" - "  />
+                                    <h:outputText  value="#{item.eneror/(item.totalr eq 0.00 ? 1:item.totalr)}"  >
+                                        <f:convertNumber type="percent" pattern="00.00%"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Febrero" style="text-align: right">
+                                    <h:outputText  value="#{item.febreror}"  >
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value=" - "  />
+                                    <h:outputText  value="#{item.febreror/(item.totalr eq 0.00 ? 1:item.totalr)}"  >
+                                        <f:convertNumber type="percent" pattern="00.00%"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Marzo" style="text-align: right">
+                                    <h:outputText  value="#{item.marzor}"  >
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value=" - "  />
+                                    <h:outputText  value="#{item.marzor/(item.totalr eq 0.00 ? 1:item.totalr)}"  >
+                                        <f:convertNumber type="percent" pattern="00.00%"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Abril" style="text-align: right">
+                                    <h:outputText  value="#{item.abrilr}"  >
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value=" - "  />
+                                    <h:outputText  value="#{item.abrilr/(item.totalr eq 0.00 ? 1:item.totalr)}"  >
+                                        <f:convertNumber type="percent" pattern="00.00%"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Mayo" style="text-align: right">
+                                    <h:outputText  value="#{item.mayor}"  >
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value=" - "  />
+                                    <h:outputText  value="#{item.mayor/(item.totalr eq 0.00 ? 1:item.totalr)}"  >
+                                        <f:convertNumber type="percent" pattern="00.00%"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Junio" style="text-align: right">
+                                    <h:outputText  value="#{item.junior}"  >
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value=" - "  />
+                                    <h:outputText  value="#{item.junior/(item.totalr eq 0.00 ? 1:item.totalr)}"  >
+                                        <f:convertNumber type="percent" pattern="00.00%"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Julio" style="text-align: right">
+                                    <h:outputText  value="#{item.julior}"  >
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value=" - "  />
+                                    <h:outputText  value="#{item.julior/(item.totalr eq 0.00 ? 1:item.totalr)}"  >
+                                        <f:convertNumber type="percent" pattern="00.00%"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Agosto" style="text-align: right">
+                                    <h:outputText  value="#{item.agostor}"  >
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value=" - "  />
+                                    <h:outputText  value="#{item.agostor/(item.totalr eq 0.00 ? 1:item.totalr)}"  >
+                                        <f:convertNumber type="percent" pattern="00.00%"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Septiembre" style="text-align: right">
+                                    <h:outputText  value="#{item.septiembrer}"  >
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value=" - "  />
+                                    <h:outputText  value="#{item.septiembrer/(item.totalr eq 0.00 ? 1:item.totalr)}"  >
+                                        <f:convertNumber type="percent" pattern="00.00%"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Octubre" style="text-align: right">
+                                    <h:outputText  value="#{item.octubrer}"  >
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value=" - "  />
+                                    <h:outputText  value="#{item.octubrer/(item.totalr eq 0.00 ? 1:item.totalr)}"  >
+                                        <f:convertNumber type="percent" pattern="00.00%"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Noviembre" style="text-align: right" >
+                                    <h:outputText  value="#{item.noviembrer}"  >
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value=" - "  />
+                                    <h:outputText  value="#{item.noviembrer/(item.totalr eq 0.00 ? 1:item.totalr)}"  >
+                                        <f:convertNumber type="percent" pattern="00.00%"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Diciembre" style="text-align: right" >
+                                    <h:outputText  value="#{item.diciembrer}"  >
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value=" - "  />
+                                    <h:outputText  value="#{item.diciembrer/(item.totalr eq 0.00 ? 1:item.totalr)}"  >
+                                        <f:convertNumber type="percent" pattern="00.00%"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Total" style="text-align: right" >
+                                    <h:outputText  value="#{item.totalr}"  >
+                                        <f:convertNumber pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </ace:column>
+
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%" rendered="#{flujoCajaPoa.listaMeses ne null}">
+                        <ace:chart id="chart"
+                                   animated="false"
+                                   value="#{flujoCajaPoa.datosBarras}"
+                                   stackSeries="false"
+                                   xAxis="#{flujoCajaPoa.barDemoXAxis}"
+                                   defaultAxesConfig="#{flujoCajaPoa.barDemoDefaultAxis}"
+                                   legend="true"
+                                   legendPlacement="OUTSIDE_GRID"
+                                   highlighter="true"
+                                   highlighterLocation="N"
+                                   highlighterShowMarker="false"
+                                   highlighterBringSeriesToFront="true"/>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{flujoCajaPoa.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{flujoCajaPoa.formulario.mostrar}"
+                    visible="#{flujoCajaPoa.formulario.mostrar}">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Proyecto:" />
+                        <h:outputLabel value="#{flujoCajaPoa.flujo.proyecto.toString()}"  />
+                        <h:outputLabel value="Partida:" />
+                        <h:outputLabel value="#{flujoCajaPoa.flujo.partida.toString()}"  />
+                        <h:outputLabel value="Fuente de financiamientos:" />
+                        <h:outputLabel value="#{flujoCajaPoa.flujo.fuente.toString()}"  />
+                    </h:panelGrid>
+                    <h:panelGrid columns="4">
+                        <h:outputLabel value="Enero :" />
+                        <h:inputText id="eneror" value="#{flujoCajaPoa.flujo.eneror}" title="Eneror" />
+                        <h:outputLabel value="Febrero:" for="febreror" />
+                        <h:inputText id="febreror" value="#{flujoCajaPoa.flujo.febreror}" title="Febrero" />
+                        <h:outputLabel value="Marzo:" for="marzor" />
+                        <h:inputText id="marzor" value="#{flujoCajaPoa.flujo.marzor}" title="Marzo" />
+                        <h:outputLabel value="Abril:" for="abrilr" />
+                        <h:inputText id="abrilr" value="#{flujoCajaPoa.flujo.abrilr}" title="Abril" />
+                        <h:outputLabel value="Mayor:" for="mayor" />
+                        <h:inputText id="mayor" value="#{flujoCajaPoa.flujo.mayor}" title="Mayo" />
+                        <h:outputLabel value="Junio:" for="junior" />
+                        <h:inputText id="junior" value="#{flujoCajaPoa.flujo.junior}" title="Junio" />
+                        <h:outputLabel value="Julio:" for="julior" />
+                        <h:inputText id="julior" value="#{flujoCajaPoa.flujo.julior}" title="Julio" />
+                        <h:outputLabel value="Agosto:" for="agostor" />
+                        <h:inputText id="agostor" value="#{flujoCajaPoa.flujo.agostor}" title="Agosto" />
+                        <h:outputLabel value="Septiembre:" for="septiembrer" />
+                        <h:inputText id="septiembrer" value="#{flujoCajaPoa.flujo.septiembrer}" title="Septiembre" />
+                        <h:outputLabel value="Octubre:" for="octubrer" />
+                        <h:inputText id="octubrer" value="#{flujoCajaPoa.flujo.octubrer}" title="Octubre" />
+                        <h:outputLabel value="Noviembre:" for="noviembrer" />
+                        <h:inputText id="noviembrer" value="#{flujoCajaPoa.flujo.noviembrer}" title="Noviembre" />
+                        <h:outputLabel value="Diciembre:" for="diciembrer" />
+                        <h:inputText id="diciembrer" value="#{flujoCajaPoa.flujo.diciembrer}" title="Diciembre" />
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{flujoCajaPoa.grabar()}" 
+                                          rendered="#{flujoCajaPoa.formulario.modificar}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{flujoCajaPoa.formulario.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Subida de Flujos de Caja"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    width="900"
+                    height="600"
+                    rendered="#{flujoCajaPoa.formularioSubida.mostrar}"
+                    visible="#{flujoCajaPoa.formularioSubida.mostrar}">
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{flujoCajaPoa.grabarSubida()}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{flujoCajaPoa.formularioSubida.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                    <ace:dataTable
+                        value="#{flujoCajaPoa.listaFlujodecaja}"
+                        var="itemFlujo"
+                        lazy="false"
+                        paginator="true"
+                        resizableColumns="true"
+                        rowIndexVar="row"
+                        paginatorPosition="both"
+                        paginatorAlwaysVisible="true"
+                        rowsPerPageTemplate="10,15,30,50"
+                        currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        rows="10"
+                        style="width: 100%;">
+                        <ace:column  headerText="#" style="text-align: right" >
+                            <h:outputText  value="#{row+1}"/>
+                        </ace:column>
+                        <ace:column  headerText="Código Producto" style="text-align: left" >
+                            <h:outputText  value="#{itemFlujo.proyecto.codigo}"/>
+                        </ace:column>
+                        <ace:column  headerText="Nombre Producto"  style="text-align: left">
+                            <h:outputText  value="#{itemFlujo.proyecto.nombre}"/>
+                        </ace:column>
+                        <ace:column  headerText="Partida" style="text-align: left">
+                            <h:outputText  value="#{itemFlujo.partida.codigo}"/>
+                        </ace:column>
+                        <ace:column  headerText="Nombre"  style="text-align: left">
+                            <h:outputText  value="#{itemFlujo.partida.nombre}"/>
+                        </ace:column>
+                        <ace:column  headerText="Fuente"  style="text-align: left">
+                            <h:outputText  value="#{itemFlujo.fuente}"/>
+                        </ace:column>
+                        <ace:column  headerText="Enero" style="text-align: right">
+                            <h:outputText  value="#{itemFlujo.eneror}"  >
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                            <h:outputText  value=" - "  />
+                            <h:outputText  value="#{itemFlujo.eneror/itemFlujo.totalr}"  >
+                                <f:convertNumber type="percent" pattern="00.00%"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Febrero" style="text-align: right">
+                            <h:outputText  value="#{itemFlujo.febreror}"  >
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                            <h:outputText  value=" - "  />
+                            <h:outputText  value="#{itemFlujo.febreror/itemFlujo.totalr}"  >
+                                <f:convertNumber type="percent" pattern="00.00%"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Marzo" style="text-align: right">
+                            <h:outputText  value="#{itemFlujo.marzor}"  >
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                            <h:outputText  value=" - "  />
+                            <h:outputText  value="#{itemFlujo.marzor/itemFlujo.totalr}"  >
+                                <f:convertNumber type="percent" pattern="00.00%"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Abril" style="text-align: right">
+                            <h:outputText  value="#{itemFlujo.abrilr}"  >
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                            <h:outputText  value=" - "  />
+                            <h:outputText  value="#{itemFlujo.abrilr/itemFlujo.totalr}"  >
+                                <f:convertNumber type="percent" pattern="00.00%"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Mayo" style="text-align: right">
+                            <h:outputText  value="#{itemFlujo.mayor}"  >
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                            <h:outputText  value=" - "  />
+                            <h:outputText  value="#{itemFlujo.mayor/itemFlujo.totalr}"  >
+                                <f:convertNumber type="percent" pattern="00.00%"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Junio" style="text-align: right">
+                            <h:outputText  value="#{itemFlujo.junior}"  >
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                            <h:outputText  value=" - "  />
+                            <h:outputText  value="#{itemFlujo.junior/itemFlujo.totalr}"  >
+                                <f:convertNumber type="percent" pattern="00.00%"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Julio" style="text-align: right">
+                            <h:outputText  value="#{itemFlujo.julior}"  >
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                            <h:outputText  value=" - "  />
+                            <h:outputText  value="#{itemFlujo.julior/itemFlujo.totalr}"  >
+                                <f:convertNumber type="percent" pattern="00.00%"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Agosto" style="text-align: right">
+                            <h:outputText  value="#{itemFlujo.agostor}"  >
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                            <h:outputText  value=" - "  />
+                            <h:outputText  value="#{itemFlujo.agostor/itemFlujo.totalr}"  >
+                                <f:convertNumber type="percent" pattern="00.00%"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Septiembre" style="text-align: right">
+                            <h:outputText  value="#{itemFlujo.septiembrer}"  >
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                            <h:outputText  value=" - "  />
+                            <h:outputText  value="#{itemFlujo.septiembrer/itemFlujo.totalr}"  >
+                                <f:convertNumber type="percent" pattern="00.00%"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Octubre" style="text-align: right">
+                            <h:outputText  value="#{itemFlujo.octubrer}"  >
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                            <h:outputText  value=" - "  />
+                            <h:outputText  value="#{itemFlujo.octubrer/itemFlujo.totalr}"  >
+                                <f:convertNumber type="percent" pattern="00.00%"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Noviembre" style="text-align: right" >
+                            <h:outputText  value="#{itemFlujo.noviembrer}"  >
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                            <h:outputText  value=" - "  />
+                            <h:outputText  value="#{itemFlujo.noviembrer/itemFlujo.totalr}"  >
+                                <f:convertNumber type="percent" pattern="00.00%"/>
+                            </h:outputText>
+                        </ace:column>
+                        <ace:column  headerText="Diciembre" style="text-align: right" >
+                            <h:outputText  value="#{itemFlujo.diciembrer}"  >
+                                <f:convertNumber pattern="###,###,#00.00"/>
+                            </h:outputText>
+                            <h:outputText  value=" - "  />
+                            <h:outputText  value="#{itemFlujo.diciembrer/itemFlujo.totalr}"  >
+                                <f:convertNumber type="percent" pattern="00.00%"/>
+                            </h:outputText>
+                        </ace:column>
+                    </ace:dataTable>
+
+
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

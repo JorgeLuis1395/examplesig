@@ -1,0 +1,733 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <h:panelGrid width="100%">
+                    <ace:panel id="panel"
+                               header="#{empleados.perfil.menu.texto}"
+                               closable="false"
+                               toggleable="false"  >
+
+                        <ui:include src="../BuscarOrganigrama.xhtml"/>
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Cédula:"/>
+                            <h:inputText value="#{empleados.buscarCedula}" />
+                            <h:outputLabel value="Nombres:"/>
+                            <h:inputText value="#{empleados.nombres}" />
+                            <h:outputLabel value="Apellidos:"/>
+                            <h:inputText value="#{empleados.apellidos}" />
+                            <h:outputLabel value="Email:"/>
+                            <h:inputText value="#{empleados.email}" />
+                            <h:outputLabel value="Estado Civil:" />
+                            <h:selectOneMenu value="#{empleados.ecivil}" >
+                                <f:selectItems value="#{codigosSfccbdmq.comboEstadoCivil}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Cargo:" />
+                            <h:selectOneMenu value="#{empleados.cargo}" >
+                                <f:selectItems value="#{cargoxorganigrama.comboCargosOrganigrama}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Género:" />
+                            <h:selectOneMenu value="#{empleados.genero}" >
+                                <f:selectItems value="#{codigosSfccbdmq.comboGenero}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Grupo Sanguineo:" />
+                            <h:selectOneMenu value="#{empleados.tipsang}">
+                                <f:selectItems value="#{codigosSfccbdmq.comboGrpSanguineo}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Modalidad de Contratación : " />
+                            <h:selectOneMenu value="#{empleados.contratoL}" >
+                                <f:selectItems value="#{tipoContrato.comboTiposContrato}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Edificio:"  />
+                            <h:selectOneMenu value="#{oficinasSfccbdmq.edificio}">
+                                <f:selectItems value="#{edificiosSfccbdmq.comboEdificioEspacio}" />
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Oficina:" />
+                            <h:selectOneMenu value="#{empleados.oficina}" >
+                                <f:selectItems value="#{oficinasSfccbdmq.comboOficinaEspacio}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Nombramiento : " />
+                            <h:selectOneRadio value="#{empleados.tipoHorario}"  style="border: 0px" >
+                                <f:selectItem itemValue="0" itemLabel="--" />
+                                <f:selectItem itemValue="1" itemLabel="OPERATIVO" />
+                                <f:selectItem itemValue="2" itemLabel="HORARIO ADMINISTRATIVO" />
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneRadio>
+                            <h:outputLabel value="Tipo de Horario : " />
+                            <h:selectOneRadio value="#{empleados.nombramiento}"  style="border: 0px" >
+                                <f:selectItem itemValue="1" itemLabel="SI" />
+                                <f:selectItem itemValue="2" itemLabel="NO" />
+                            </h:selectOneRadio>
+                        </h:panelGrid>
+                        <h:panelGrid columns="5">
+                            <h:outputLabel value="Fecha de Nacimiento:" />
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{empleados.desde}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{empleados.hasta}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid> 
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Grupo de Información Adicional:"  />
+                            <h:selectOneMenu value="#{cabecerasEmpleados.grupocabecera}">
+                                <f:selectItems value="#{cabecerasEmpleados.comboCabecera}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu> 
+                            <h:outputLabel value="Campo donde buscar:"/>
+                            <h:selectOneMenu value="#{empleados.cabeceraRrHh}" >
+                                <f:selectItems value="#{cabecerasEmpleados.comboCampos}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu> 
+
+
+                            <!--// primero texto si el campo es texto-->
+                            <h:outputLabel value="Texto a buscar:" rendered="#{empleados.cabeceraRrHh.tipodato==2}" />
+                            <h:inputText value="#{empleados.textoBuscar}" rendered="#{empleados.cabeceraRrHh.tipodato==2}" />
+                            <!--// si el campo es texto-->
+                            <h:outputLabel value="Valor mayor o igual a:" rendered="#{empleados.cabeceraRrHh.tipodato==1}" />
+                            <h:inputText value="#{empleados.desdeNumerico}" rendered="#{empleados.cabeceraRrHh.tipodato==1}" />
+                            <h:outputLabel value="Valor menor o igual a:" rendered="#{empleados.cabeceraRrHh.tipodato==1}" />
+                            <h:inputText value="#{empleados.desdeNumerico}" rendered="#{empleados.cabeceraRrHh.tipodato==1}" />
+                            <!--// si es fecha-->
+                            <h:outputLabel value="Fecha desde:" rendered="#{empleados.cabeceraRrHh.tipodato==3}" />
+                            <ace:dateTimeEntry navigator="true"  value="#{empleados.desdeFecha}" rendered="#{empleados.cabeceraRrHh.tipodato==3}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Fecha hasta:" rendered="#{empleados.cabeceraRrHh.tipodato==3}" />
+                            <ace:dateTimeEntry navigator="true"  value="#{empleados.hastaFecha}" rendered="#{empleados.cabeceraRrHh.tipodato==3}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <!--// si es combo-->
+                            <h:outputLabel value="Seleccione :" rendered="#{empleados.cabeceraRrHh.tipodato==0}" />
+                            <h:selectOneMenu value="#{empleados.textoBuscar}" rendered="#{empleados.cabeceraRrHh.tipodato==0}"  >
+                                <f:selectItems value="#{empleados.comboRangoBuscar}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Seleccione :" rendered="#{empleados.cabeceraRrHh.tipodato==4}" />
+                            <h:selectOneMenu value="#{empleados.textoBuscar}" rendered="#{empleados.cabeceraRrHh.tipodato==4}"  >
+                                <f:selectItems value="#{codigosSfccbdmq.getComboMaestro(empleados.cabeceraRrHh.codigo)}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{empleados.buscar()}"/>
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document"  action="#{empleados.crear()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{empleados.salir()}"/>
+                                <ace:menuItem value="Hoja Elect." icon="ui-icon ui-icon-calculator" action="#{empleados.exportar()}"/>
+
+                            </ace:menuBar>
+
+                        </h:panelGrid>
+                        <ace:messages />
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="panel"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{solicitudesCargo.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter  
+                                label="Exportar Archivo" 
+                                type="#{solicitudesCargo.formulario.pantalla}" 
+                                target="tablaEmpleados" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%" style="margin-bottom: 20px;">
+
+                            <ace:dataTable id="tablaEmpleados"
+                                           value="#{empleados.empleados}"
+                                           var="item"
+                                           lazy="true"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="10,15,30,50"
+                                           currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="30"
+                                           style="width: 100%;"
+                                           >
+
+                                <ace:column style="text-align: left" >
+                                    <ace:menuButton  effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem value="Editar" icon="ui-icon ui-icon-document" action="#{empleados.modificar()}"  />
+                                        <ace:menuItem value="Fecha de salida" icon="ui-icon ui-icon-trash" action="#{empleados.cesar()}"  />
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column  headerText="Cédula"  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.pin}"/>
+                                </ace:column>
+                                <ace:column  headerText="Apellidos "  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.apellidos}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nombres"  style="text-align: left">
+                                    <h:outputText value="#{item.entidad.nombres}"/>
+                                </ace:column>
+                                <!--                                <ace:column  headerText="Partida Individual"  style="text-align: left">
+                                                                    <h:outputText value="#{item.partidaindividual}"/>
+                                                                    <h:outputText value="#{item.partida}.#{item.tipocontrato.codigoalterno}.#{item.cargoactual.organigrama.codigoalterno}.#{cargos.formatoId(item.cargoactual.cargo)}.#{item.codigo}"/>
+                                                                </ace:column>-->
+                                <!--                                <c:forEach var="itemProducto" items="#{proyectosSfccbdmq.titulos}">
+                                                                    <ace:column  headerText="#{itemProducto.titulo1}"  style="text-align: left">
+                                                                        <h:outputText  value="#{proyectosSfccbdmq.dividir(itemProducto, item.proyecto)}"/>
+                                                                    </ace:column>
+                                                                </c:forEach>-->
+                                <ace:column  headerText="Subactividad"  style="text-align: left">
+                                    <h:outputText value="#{item.proyecto.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Partida"  style="text-align: left">
+                                    <h:outputText value="#{item.partida}"/>
+                                </ace:column>
+                                <ace:column  headerText="Modalidad de Contratación"  style="text-align: left">
+                                    <h:outputText value="#{item.tipocontrato.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Denominación"  style="text-align: left">
+                                    <h:outputText value="#{item.cargoactual.cargo.escalasalarial.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Grado"  style="text-align: left">
+                                    <h:outputText value="#{item.cargoactual.cargo.escalasalarial.codigo}"/>
+                                </ace:column>
+
+                                <ace:column  headerText="Cargo "  style="text-align: left">
+                                    <h:outputText value="#{item.cargoactual.cargo.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Proceso"  style="text-align: left">
+                                    <h:outputText value="#{item.cargoactual.organigrama.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Operativo"  style="text-align: left">
+                                    <h:graphicImage url="../resources/images/si.png" rendered="#{item.operativo}"/>
+                                    <h:graphicImage url="../resources/images/no.png" rendered="#{!item.operativo}"/>
+                                </ace:column>
+                                <ace:column  headerText="R.M.U." style="text-align: right">
+                                    <h:outputText  value="#{item.cargoactual.cargo.escalasalarial.sueldobase}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column headerText="Nombramiento" style="text-align: left">
+                                    <h:graphicImage url="../resources/images/si.png" rendered="#{item.tipocontrato.nombramiento}"/>
+                                    <h:graphicImage url="../resources/images/no.png" rendered="#{!item.tipocontrato.nombramiento}"/>
+                                </ace:column> 
+
+                                <ace:column  headerText="Fecha Ingreso"  style="text-align: left">
+                                    <h:outputText  value="#{item.fechaingreso}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:panel>
+                    <!--</ace:dialog>-->
+                </h:panelGrid>
+                <ace:dialog
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    header="#{empleados.perfil.menu.texto}"
+                    rendered="#{empleados.formulario.mostrar}"
+                    visible="#{empleados.formulario.mostrar}">
+                    <ui:include src="DatosEmpleadoExistente.xhtml"/>
+
+                </ace:dialog> 
+                <ace:dialog 
+                    header="Formación Específica"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{estudiosEmpleado.formularioPrincipal.mostrar}"
+                    visible="#{estudiosEmpleado.formularioPrincipal.mostrar}">
+                    <ui:include src="EstudiosVista.xhtml" />
+                </ace:dialog>
+                <ace:dialog 
+                    header="Idiomas"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{idiomasEmpleado.formularioPrincipal.mostrar}"
+                    visible="#{idiomasEmpleado.formularioPrincipal.mostrar}">
+                    <ui:include src="IdiomasVista.xhtml" />
+                </ace:dialog>
+                <ace:dialog 
+                    header="Experiencia"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{experienciasEmpleado.formularioPrincipal.mostrar}"
+                    visible="#{experienciasEmpleado.formularioPrincipal.mostrar}">
+                    <ui:include src="ExperienciasVista.xhtml" />
+                </ace:dialog>
+                <ace:dialog 
+                    header="Habilidades"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{habilidadesEmpleado.formularioPrincipal.mostrar}"
+                    visible="#{habilidadesEmpleado.formularioPrincipal.mostrar}">
+                    <ui:include src="HabilidadesVista.xhtml" />
+                </ace:dialog>
+                <ace:dialog 
+                    header="Recomendaciones"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{recomendacionesEmpleado.formularioPrincipal.mostrar}"
+                    visible="#{recomendacionesEmpleado.formularioPrincipal.mostrar}">
+                    <ui:include src="RecomendacionesVista.xhtml" />
+                </ace:dialog>
+                <ace:dialog 
+                    header="Direcciones"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{direccionesEmpleado.formularioPrincipal.mostrar}"
+                    visible="#{direccionesEmpleado.formularioPrincipal.mostrar}">
+                    <ui:include src="DireccionesVista.xhtml" />
+                </ace:dialog>
+                <ace:dialog 
+                    header="Familias"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{familiasEmpleado.formularioPrincipal.mostrar}"
+                    visible="#{familiasEmpleado.formularioPrincipal.mostrar}">
+                    <ui:include src="FamiliasVista.xhtml" />
+                </ace:dialog>
+                <ace:dialog 
+                    header="Cursos"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{cursosEmpleado.formularioPrincipal.mostrar}"
+                    visible="#{cursosEmpleado.formularioPrincipal.mostrar}">
+                    <ui:include src="CursosVista.xhtml" />
+                </ace:dialog>
+                <ace:dialog 
+                    header="Curriculum"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{curriculumEmpleado.formularioPrincipal.mostrar}"
+                    visible="#{curriculumEmpleado.formularioPrincipal.mostrar}">
+                    <ui:include src="CurriculumVista.xhtml" />
+                </ace:dialog>
+                <!--Poner  con include ya que vista demasiado Cargada;-->
+                <ace:dialog 
+                    header="Formación Específica"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{estudiosEmpleado.formulario.mostrar}"
+                    visible="#{estudiosEmpleado.formulario.mostrar}">
+                    <ace:tabSet style="clear:both;">
+                        <ace:tabPane >
+                            <f:facet name="label">Inf. General</f:facet>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Institución:" for="estudio" />
+                                <h:inputText  value="#{estudiosEmpleado.estudio.universidad}" 
+                                              title="Universidad" />
+                                <h:outputLabel value="Fecha del título:" for="desde" />
+                                <ace:dateTimeEntry navigator="true" value="#{estudiosEmpleado.estudio.fecha}" 
+                                                   popupIcon="ui-icon ui-icon-calendar"  renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                </ace:dateTimeEntry>  
+                                <h:outputLabel value="Título:" for="titulo" />
+                                <h:inputText value="#{estudiosEmpleado.estudio.titulo}" title="Título" />
+                                <h:outputLabel value="País:" for="pais" />
+                                <h:inputText  value="#{estudiosEmpleado.estudio.pais}" title="País" />
+                                <h:outputLabel value="Nivel:" />
+                                <h:selectOneMenu  value="#{estudiosEmpleado.estudio.nivel}" >
+                                    <f:selectItems value="#{codigosSfccbdmq.comboNiveleducacionf}"/>
+                                </h:selectOneMenu>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane label="Adjuntos" rendered="#{!estudiosEmpleado.formulario.nuevo}">
+                            <ui:include src="../mostrarImagenes.xhtml" />
+                        </ace:tabPane>
+                    </ace:tabSet>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{estudiosEmpleado.insertar()}" rendered="#{estudiosEmpleado.formulario.nuevo}" />
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{estudiosEmpleado.grabar()}" rendered="#{estudiosEmpleado.formulario.modificar}" />
+                        <ace:menuItem value="Está Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{estudiosEmpleado.eliminar()}" rendered="#{estudiosEmpleado.formulario.borrar}" />
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{estudiosEmpleado.formulario.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+                <!--Idiomas-->
+                <ace:dialog 
+                    header="Idiomas"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{idiomasEmpleado.formulario.mostrar}"
+                    visible="#{idiomasEmpleado.formulario.mostrar}">
+                    <ace:tabSet style="clear:both;">
+                        <ace:tabPane >
+                            <f:facet name="label">Inf. General</f:facet>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Idioma:" for="idioma" />
+                                <h:inputText value="#{idiomasEmpleado.idiome.idioma}" 
+                                             title="Idioma" />
+                                <h:outputLabel value="Porcentaje Hablado:" for="hablado" />
+                                <h:inputText  value="#{idiomasEmpleado.idiome.hablado}" title="hablado" />
+                                <h:outputLabel value="Porcentaje Escrito:" for="escrito" />
+                                <h:inputText  value="#{idiomasEmpleado.idiome.escrito}" title="escrito" />
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane label="Adjuntos" rendered="#{!idiomasEmpleado.formulario.nuevo}">
+                            <ui:include src="../mostrarImagenes.xhtml" />
+                        </ace:tabPane>
+                    </ace:tabSet>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{idiomasEmpleado.insertar()}" rendered="#{idiomasEmpleado.formulario.nuevo}" />
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{idiomasEmpleado.grabar()}" rendered="#{idiomasEmpleado.formulario.modificar}" />
+                        <ace:menuItem value="Está Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{idiomasEmpleado.eliminar()}" rendered="#{idiomasEmpleado.formulario.borrar}" />
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{idiomasEmpleado.formulario.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+                <!--experiencia-->
+                <ace:dialog 
+                    header="Experiencia"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{experienciasEmpleado.formulario.mostrar}"
+                    visible="#{experienciasEmpleado.formulario.mostrar}">
+                    <ace:tabSet style="clear:both;">
+                        <ace:tabPane >
+                            <f:facet name="label">Inf. General</f:facet>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Empresa:" for="empresa" />
+                                <h:inputText  value="#{experienciasEmpleado.experiencia.empresa}" 
+                                              title="Empresa" />
+                                <h:outputLabel value="Cargo:" for="cargo" />
+                                <h:inputText  value="#{experienciasEmpleado.experiencia.cargo}" title="Cargo" />
+                                <h:outputLabel value="Desde:" for="desde" />
+                                <ace:dateTimeEntry navigator="true" value="#{experienciasEmpleado.experiencia.desde}" 
+                                                   popupIcon="ui-icon ui-icon-calendar"    renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                </ace:dateTimeEntry>    
+                                <h:outputLabel value="Hasta:" for="desde" />
+                                <ace:dateTimeEntry navigator="true" value="#{experienciasEmpleado.experiencia.hasta}" 
+                                                   popupIcon="ui-icon ui-icon-calendar"  renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                </ace:dateTimeEntry>  
+                                <h:outputLabel value="Nombre de Informante:" for="infor" />
+                                <h:inputText  value="#{experienciasEmpleado.experiencia.noombre}" title="Infor" />
+                                <h:outputLabel value="Teléfono de Informante:" for="telf" />
+                                <h:inputText  value="#{experienciasEmpleado.experiencia.nrcontacto}" title="Telf" />
+                                <h:outputLabel value="Cargo Informante:" for="cargoi" />
+                                <h:inputText  value="#{experienciasEmpleado.experiencia.cargocontacto}" title="Cargoi" />
+                                <h:outputLabel value="Descripción:" />
+                                <h:inputTextarea cols="16"  rows="5"  value="#{experienciasEmpleado.experiencia.descripcion}" title="Descripción" />
+                            </h:panelGrid>    
+
+                        </ace:tabPane>
+                        <ace:tabPane label="Adjuntos" rendered="#{!experienciasEmpleado.formulario.nuevo}">
+                            <ui:include src="../mostrarImagenes.xhtml" />
+                        </ace:tabPane>
+                    </ace:tabSet>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{experienciasEmpleado.insertar()}" rendered="#{experienciasEmpleado.formulario.nuevo}" />
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{experienciasEmpleado.grabar()}" rendered="#{experienciasEmpleado.formulario.modificar}" />
+                        <ace:menuItem value="Está Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{experienciasEmpleado.eliminar()}" rendered="#{experienciasEmpleado.formulario.borrar}" />
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{experienciasEmpleado.formulario.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+                <!--habilidades-->
+                <ace:dialog 
+                    header="Habilidades"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{habilidadesEmpleado.formulario.mostrar}"
+                    visible="#{habilidadesEmpleado.formulario.mostrar}">
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane >
+                            <f:facet name="label">Inf. General</f:facet>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Habilidades:" for="habilidad" />
+                                <h:inputTextarea cols="60" rows="6"  value="#{habilidadesEmpleado.habilidadEmpleado.habilidad}" 
+                                                 title="Habilidades" />
+
+
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane label="Adjuntos" rendered="#{!habilidadesEmpleado.formulario.nuevo}">
+                            <ui:include src="../mostrarImagenes.xhtml" />
+                        </ace:tabPane>
+                    </ace:tabSet>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{habilidadesEmpleado.insertar()}" rendered="#{habilidadesEmpleado.formulario.nuevo}" />
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{habilidadesEmpleado.grabar()}" rendered="#{habilidadesEmpleado.formulario.modificar}" />
+                        <ace:menuItem value="Está Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{habilidadesEmpleado.eliminar()}" rendered="#{habilidadesEmpleado.formulario.borrar}" />
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{habilidadesEmpleado.formulario.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Recomendaciones"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{recomendacionesEmpleado.formulario.mostrar}"
+                    visible="#{recomendacionesEmpleado.formulario.mostrar}">
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane >
+                            <f:facet name="label">Inf. General</f:facet>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Nombre:" for="referencia" />
+                                <h:inputText  value="#{recomendacionesEmpleado.recomendacion.nombre}" 
+                                              title="Referencia" />
+                                <h:outputLabel value="Empresa:" for="empresa2" />
+                                <h:inputText value="#{recomendacionesEmpleado.recomendacion.empresa}" title="Empresa" />
+                                <h:outputLabel value="Télefono:" for="telefono" />
+                                <h:inputText value="#{recomendacionesEmpleado.recomendacion.telefono}" title="Télefono" />
+                                <h:outputLabel value="Cargo:" for="cargo2" />
+                                <h:inputText  value="#{recomendacionesEmpleado.recomendacion.cargo}" title="Cargo" /> 
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane label="Adjuntos" rendered="#{!recomendacionesEmpleado.formulario.nuevo}">
+                            <ui:include src="../mostrarImagenes.xhtml" />
+                        </ace:tabPane>
+                    </ace:tabSet>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{recomendacionesEmpleado.insertar()}" rendered="#{recomendacionesEmpleado.formulario.nuevo}" />
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{recomendacionesEmpleado.grabar()}" rendered="#{recomendacionesEmpleado.formulario.modificar}" />
+                        <ace:menuItem value="Está Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{recomendacionesEmpleado.eliminar()}" rendered="#{recomendacionesEmpleado.formulario.borrar}" />
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{recomendacionesEmpleado.formulario.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+                <!--direcciones-->
+                <ace:dialog 
+                    header="Direcciones"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{direccionesEmpleado.formulario.mostrar}"
+                    visible="#{direccionesEmpleado.formulario.mostrar}">
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane >
+                            <f:facet name="label">Inf. General</f:facet>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Calle Primaria:"   for="representanteprimarian"/>
+                                <h:inputText value="#{direccionesEmpleado.bkdireccion.principal}" />
+                                <h:outputLabel value="Calle Secundaria:"   for="representantesecundarian"/>
+                                <h:inputText value="#{direccionesEmpleado.bkdireccion.secundaria}"/>
+                                <h:outputLabel value="Número:"   for="representantenron"/>
+                                <h:inputText value="#{direccionesEmpleado.bkdireccion.numero}"  />
+                                <h:outputLabel value="Teléfonos :"   for="representantetfl1n"/>
+                                <h:inputText value="#{direccionesEmpleado.bkdireccion.telefonos}"  />
+                                <h:outputLabel value="Referencia:"   for="representanterefn"/>
+                                <h:inputTextarea value="#{direccionesEmpleado.bkdireccion.referencia}"
+                                                 rows="4" cols="20" />
+                            </h:panelGrid>
+                        </ace:tabPane>
+
+                    </ace:tabSet>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{direccionesEmpleado.insertar()}" rendered="#{direccionesEmpleado.formulario.nuevo}" />
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{direccionesEmpleado.grabar()}" rendered="#{direccionesEmpleado.formulario.modificar}" />
+                        <ace:menuItem value="Está Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{direccionesEmpleado.eliminar()}" rendered="#{direccionesEmpleado.formulario.borrar}" />
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{direccionesEmpleado.formulario.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+                <!--familias-->
+                <ace:dialog 
+                    header="#{familiasEmpleado.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{familiasEmpleado.formulario.mostrar}"
+                    visible="#{familiasEmpleado.formulario.mostrar}">
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane >
+                            <f:facet name="label">Inf. General</f:facet>
+                            <h:panelGroup>
+                                <h:panelGrid columns="4" width="100%"  >
+                                    <h:outputLabel value="Cédula:" styleClass="bold"/>
+                                    <h:inputText value="#{familiasEmpleado.familiaEmpleado.cedula}" disabled="#{familiasEmpleado.familiaEmpleado.id!=null}"
+                                                 >
+                                        <f:validator  validatorId="org.auxiliares.sfccbdmq.ValidadorRuc"/>
+                                    </h:inputText>
+                                    <!--                                </h:panelGrid>
+                                    
+                                                                    <h:panelGrid columns="4" width="100%" >-->
+                                    <h:outputLabel value="Nombres:" styleClass="bold" />
+                                    <h:inputText value="#{familiasEmpleado.familiaEmpleado.nombres}" />
+                                    <h:outputLabel value="Apellidos:" styleClass="bold" />
+                                    <h:inputText value="#{familiasEmpleado.familiaEmpleado.apellidos}" />
+                                    <h:outputLabel value="Email:" styleClass="bold" />
+                                    <h:inputText value="#{familiasEmpleado.familiaEmpleado.email}" >
+                                        <f:validator  validatorId="org.auxiliares.sfccbdmq.ValidadorEmail"/>
+                                    </h:inputText>
+                                    <h:outputLabel value="Fecha Nacimiento:" styleClass="bold"/>
+                                    <ace:dateTimeEntry navigator="true" value="#{familiasEmpleado.familiaEmpleado.fechanacimiento}" 
+                                                       popupIcon="ui-icon ui-icon-calendar"    renderAsPopup="true" 
+                                                       pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield"  
+                                                       >
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </ace:dateTimeEntry>
+                                    <h:outputLabel value="Parentezco con familia:" styleClass="bold"/>
+                                    <h:selectOneMenu value="#{familiasEmpleado.familiaEmpleado.parentesco}" >
+                                        <f:selectItems value="#{codigosSfccbdmq.comboPatentezco}"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Estado civil:" styleClass="bold" />
+                                    <h:selectOneMenu value="#{familiasEmpleado.familiaEmpleado.estadocivil}">
+                                        <f:selectItems value="#{codigosSfccbdmq.comboEstadoCivil}"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Género:" styleClass="bold" />
+                                    <h:selectOneMenu value="#{familiasEmpleado.familiaEmpleado.genero}">
+                                        <f:selectItems value="#{codigosSfccbdmq.comboGenero}"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Grupo Sanguineo:" styleClass="bold" />
+                                    <h:selectOneMenu value="#{familiasEmpleado.familiaEmpleado.gruposanguineo}">
+                                        <f:selectItems value="#{codigosSfccbdmq.comboGrpSanguineo}"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel value="Tiene discapacidades?:" styleClass="bold" />
+                                    <h:selectBooleanCheckbox value="#{familiasEmpleado.familiaEmpleado.discapacidad}" >
+                                        <ace:ajax execute="@all"/>
+                                    </h:selectBooleanCheckbox>
+                                    <h:outputLabel value="Describa:" styleClass="bold" rendered="#{familiasEmpleado.familiaEmpleado.discapacidad}"/>
+                                    <h:inputTextarea cols="40" rows="4" value="#{familiasEmpleado.familiaEmpleado.detallediscapacidad}" rendered="#{familiasEmpleado.familiaEmpleado.discapacidad}"/>
+                                </h:panelGrid>
+
+                            </h:panelGroup>
+                        </ace:tabPane>
+                        <ace:tabPane label="Adjuntos" rendered="#{!familiasEmpleado.formulario.nuevo}">
+                            <ui:include src="../mostrarImagenes.xhtml" />
+                        </ace:tabPane>
+
+                    </ace:tabSet>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{familiasEmpleado.insertar()}" rendered="#{familiasEmpleado.formulario.nuevo}" />
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{familiasEmpleado.grabar()}" rendered="#{familiasEmpleado.formulario.modificar}" />
+                        <ace:menuItem value="Está Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{familiasEmpleado.eliminar()}" rendered="#{familiasEmpleado.formulario.borrar}" />
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{familiasEmpleado.formulario.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+                <!--fin familias-->
+                <!--cursos-->
+                <ace:dialog 
+                    header="Cursos"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{cursosEmpleado.formulario.mostrar}"
+                    visible="#{cursosEmpleado.formulario.mostrar}">
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane >
+                            <f:facet name="label">Inf. General</f:facet>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Empresa:" for="empresas" />
+                                <h:inputText id="empresas" value="#{cursosEmpleado.curso.empresa}" 
+                                             title="Empresa" />
+                                <h:outputLabel value="Nombre:" for="nombrecc" />
+                                <h:inputText id="nombrecc" value="#{cursosEmpleado.curso.nombre}" title="Curso" />
+                                <h:outputLabel value="Fecha:" for="Fecha" />
+                                <ace:dateTimeEntry navigator="true" value="#{cursosEmpleado.curso.fecha}" 
+                                                   popupIcon="ui-icon ui-icon-calendar"    renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                </ace:dateTimeEntry>    
+                                <h:outputLabel value="Duración/Horas:" for="años" />
+                                <h:inputText id="años" value="#{cursosEmpleado.curso.duracion}" title="Duración Cursos"  style="text-align: right"/>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane label="Adjuntos" rendered="#{!cursosEmpleado.formulario.nuevo}">
+                            <ui:include src="../mostrarImagenes.xhtml" />
+                        </ace:tabPane>
+                    </ace:tabSet>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{cursosEmpleado.insertar()}" rendered="#{cursosEmpleado.formulario.nuevo}" />
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{cursosEmpleado.grabar()}" rendered="#{cursosEmpleado.formulario.modificar}" />
+                        <ace:menuItem value="Está Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{cursosEmpleado.eliminar()}" rendered="#{cursosEmpleado.formulario.borrar}" />
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{cursosEmpleado.formulario.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Fecha de salida empleado"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{empleados.formularioCese.mostrar}"
+                    visible="#{empleados.formularioCese.mostrar}">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Empleado:"  />
+                        <h:outputLabel value="#{empleados.empleado.toString()}"  />
+                        <h:outputLabel value="Fecha deSalida:" for="desde" />
+                        <ace:dateTimeEntry navigator="true" value="#{empleados.empleado.fechasalida}" 
+                                           popupIcon="ui-icon ui-icon-calendar"  renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                        </ace:dateTimeEntry>  
+                    </h:panelGrid>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{empleados.grabarCese()}"/>
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{empleados.formularioCese.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Exportar"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{empleados.formularioReporte.mostrar}"
+                    visible="#{empleados.formularioReporte.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="Empleados.xls" id="pdf-botonMayor" label="Exportar a XLS"
+                                             mimeType="application/xls" resource="#{empleados.reporteXls}" 
+                                             style="" type="button"/>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{empleados.formularioReporte.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

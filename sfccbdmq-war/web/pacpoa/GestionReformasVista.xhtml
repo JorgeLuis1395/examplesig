@@ -1,0 +1,413 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+
+    </h:head>
+    <h:body>
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel1"
+                           header="Gestionar Reformas"
+                           closable="false"
+                           toggleable="true"
+                           rendered="#{!gestionReformasPoa.formularioCabecera.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Año:" />
+                            <h:inputText value="#{gestionReformasPoa.anio}" title="Año" />
+                            <h:outputLabel value="Número de Control:" />
+                            <h:inputText value="#{gestionReformasPoa.id}" title="Número de Control" />
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{gestionReformasPoa.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{gestionReformasPoa.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{gestionReformasPoa.crearCabecera()}" />
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{gestionReformasPoa.buscar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable 
+                                paginatorAlwaysVisible="true"
+                                value="#{gestionReformasPoa.cabecerasReformaspoa}"
+                                var="itemCabeceras"
+                                paginator="true"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="both"
+                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rows="30">
+                                <ace:column  headerText="Registro" style="text-align: right">
+                                    <h:outputText value="#{row+1}"/>
+                                </ace:column>
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{gestionReformasPoa.modificarCabecera(itemCabeceras)}" 
+                                                      value="Editar" icon="ui-icon ui-icon-pencil" disabled="#{itemCabeceras.definitivo}"/>
+                                        <ace:menuItem action="#{gestionReformasPoa.definitivaCabecera(itemCabeceras)}"  
+                                                      value="Definitiva" icon="ui-icon ui-icon-check" disabled="#{itemCabeceras.definitivo}"/>
+                                        <ace:menuItem action="#{gestionReformasPoa.imprimirCabecera(itemCabeceras)}"  
+                                                      value="Imprimir" icon="ui-icon ui-icon-print" disabled="#{!itemCabeceras.definitivo}"/>
+                                        <ace:menuItem action="#{gestionReformasPoa.eliminarCabecera(itemCabeceras)}" 
+                                                      value="Borrar" icon="ui-icon ui-icon-trash" disabled="#{itemCabeceras.definitivo}"/>
+                                        <ace:menuItem action="#{imagenesPoa.verDocumentosCertificaciones(itemCertificaciones)}" 
+                                                      value="Documentos" icon="ui-icon ui-icon-script"/>
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column  headerText="Número de Control" style="text-align: left">
+                                    <h:outputText  value="#{itemCabeceras.id}"/>
+                                </ace:column>
+                                <ace:column  headerText="Observaciones" style="text-align: left">
+                                    <h:outputText  value="#{itemCabeceras.motivo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Fecha"  style="text-align: left">
+                                    <h:outputText  value="#{itemCabeceras.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Definitiva" style="text-align: left">
+                                    <h:panelGrid rendered="#{itemCabeceras.definitivo}">
+                                        <img src="../resources/images/si.png" width="16" height="16" alt="imputable"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid rendered="#{!itemCabeceras.definitivo}">
+                                        <img src="../resources/images/no.png" width="16" height="16" alt="imputable"/>
+                                    </h:panelGrid>
+                                </ace:column>
+
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <!--</ace:dialog>-->
+                </ace:panel>
+                <ace:panel id="panel"
+                           header="Mantenimiento reformas"
+                           closable="false"
+                           toggleable="true"
+                           rendered="#{gestionReformasPoa.formularioCabecera.mostrar}">          
+                    <h:panelGrid columns="2" width="100%">
+                        <h:outputLabel value="Tipo :"/>
+                        <h:outputLabel value="Traspasos"/>
+<!--                        <h:selectOneMenu value="#{gestionReformasPoa.cabeceraReforma.tipo}">
+                            <f:selectItems value="#{consultasPoa.comboTipoReforma}"/>
+                        </h:selectOneMenu>-->
+                        <h:outputLabel value="Fecha:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{gestionReformasPoa.cabeceraReforma.fecha}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Observaciones:" />
+                        <h:inputTextarea cols="40" rows="4" value="#{gestionReformasPoa.cabeceraReforma.motivo}"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="1" width="100%">
+                       <ace:menuBar autoSubmenuDisplay="true" >
+                             <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{gestionReformasPoa.crear()}" 
+                                          rendered="#{!gestionReformasPoa.formularioCabecera.borrar}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{gestionReformasPoa.formularioCabecera.nuevo}" 
+                                          action="#{gestionReformasPoa.insertarCabecera()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{gestionReformasPoa.grabarCabecera()}" 
+                                          rendered="#{gestionReformasPoa.formularioCabecera.modificar}" />
+                            <ace:menuItem action="#{gestionReformasPoa.borrarCabecera()}" 
+                                          value="Esta seguro de Borrar el registro?" 
+                                          rendered="#{gestionReformasPoa.formularioCabecera.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{gestionReformasPoa.salir()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+
+
+                    <ace:tabSet style="clear:both; width: 100%" >
+                        <ace:tabPane label="Registros">
+                            <h:panelGrid width="100%">
+                                <ace:dataTable id="tabla" 
+                                               paginatorAlwaysVisible="true"
+                                               value="#{gestionReformasPoa.reformaspoa}"
+                                               var="item"
+                                               paginator="true"
+                                               lazy="false"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="15,20,25,50,100"
+                                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="15"
+                                               binding="#{gestionReformasPoa.formulario.fila}">
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+                                    <ace:column style="text-align: left">
+                                        <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                            <ace:menuItem action="#{gestionReformasPoa.modificar()}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                            <ace:menuItem action="#{gestionReformasPoa.eliminar()}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                        </ace:menuButton>
+                                    </ace:column> 
+
+                                    <ace:column  headerText="Proyecto"  style="text-align: left">
+                                        <h:outputText  value="#{item.asignacion.proyecto.toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Fuente" style="text-align: left">
+                                        <h:outputText  value="#{consultasPoa.traerFuenteFinanciamiento(item.asignacion.fuente)}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Partida"  style="text-align: left">
+                                        <h:outputText  value="#{item.asignacion.partida.toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Asignación"  style="text-align: right">
+                                        <h:outputText  value="#{item.asignacion.valor}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Reformas"  style="text-align: right">
+                                        <h:outputText  value="#{gestionReformasPoa.totalReformaspoa}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Certificaciones"  style="text-align: right">
+                                        <h:outputText  value="#{gestionReformasPoa.totalCertificaciones}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Reforma Actual" style="text-align: right">
+                                        <h:outputText  value="#{item.valor}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Total" style="text-align: right">
+                                        <h:outputText  value="#{item.asignacion.valor+(gestionReformasPoa.totalReformaspoa -gestionReformasPoa.totalCertificaciones ) +item.valor}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+
+                        <ace:tabPane label="Totales">
+                            <h:panelGrid width="100%">
+                                <ace:dataTable id="tablaTotales" 
+                                               paginatorAlwaysVisible="true"
+                                               value="#{gestionReformasPoa.totales}"
+                                               var="itemTotales"
+                                               paginator="true"
+                                               lazy="false"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="15,20,25,50,100"
+                                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="15">
+                                    <!--<f:facet name="header">Totales</f:facet>-->
+                                    <ace:column  headerText="Fuente"  style="text-align: left">  
+                                        <h:outputText  value="#{itemTotales.fuente.nombre}" rendered="#{itemTotales.fuente ne null}"/>  
+                                        <h:outputText  value="#{itemTotales.total}" rendered="#{itemTotales.fuente eq null}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Ingresos" style="text-align: right">
+                                        <h:outputText  value="#{itemTotales.ingresos}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Egresos" style="text-align: right">
+                                        <h:outputText  value="#{itemTotales.egresos}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Total" style="text-align: right">
+                                        <h:outputText  value="#{itemTotales.ingresos-itemTotales.egresos}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>   
+
+                        <ace:tabPane label="Documentos">
+                            <h:panelGrid columns="3" >
+                                <ace:fileEntry 
+                                    relativePath="/files/"
+                                    maxFileCount="10"
+                                    maxFileCountMessage="Alerta se pueden Subir hasta 10 archivos."
+                                    fileEntryListener="#{imagenesPoa.ficheroDocumentoLista}"
+                                    maxFileSize="10242880"
+                                    maxFileSizeMessage="El Tamaño del Archivo Maximo 10 MB."
+                                    maxTotalSize="102428800"
+                                    maxTotalSizeMessage="EL Tamaño Total de Los Archivos Subídos es demasiado grande."
+                                    requiredMessage="El archivo/s es/son requeridos para enviar esta forma."
+                                    useOriginalFilename="true"
+                                    useSessionSubdir="true"
+                                    label="Archivo Subido con Éxito"/>
+                                <h:commandButton  type="submit" value="Subir Archivos"/>
+                            </h:panelGrid>
+                            <ace:dataTable value="#{imagenesPoa.listaDocumentos}" 
+                                           var="documentosol"
+                                           style="width: 99%;"
+                                           paginator="true"
+                                           paginatorAlwaysVisible="true"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="5,10"
+                                           currentPageReportTemplate="Documento {startRecord}/{totalRecords} Página {currentPage}/{totalPages}"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="10"
+                                           rowIndexVar="row"> 
+                                <ace:column style="text-align: left" headerText="Acciones">                             
+                                    <ace:menuBar autoSubmenuDisplay="true" >
+                                        <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" 
+                                                      action="#{imagenesPoa.borrarDocumento(documentosol)}" 
+                                                      helpText="Borrar"/>
+                                    </ace:menuBar>
+                                </ace:column>
+                                <ace:column headerText="Nombre Documento" style="text-align: left" >
+                                    <h:outputText value="#{documentosol.nombrearchivo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Doc. Digital" style="text-align: left">
+                                    <h:commandLink value="Ver Documento"  action="#{imagenesPoa.traerImagen(documentosol.path, documentosol.nombrearchivo, documentosol.tipo)}" rendered="#{documentosol.path ne null}" />
+                                </ace:column>
+                            </ace:dataTable>
+                        </ace:tabPane>
+                    </ace:tabSet>
+                </ace:panel>
+                <ace:dialog 
+                    header="Partidas"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{gestionReformasPoa.formulario.mostrar}"
+                    visible="#{gestionReformasPoa.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2" width="100%" style="text-align: center">
+                            <h:outputLabel value="Dirección:"  />
+                            <h:selectOneMenu  value="#{gestionReformasPoa.direccion}" title="Dirección" disabled="#{parametrosSfccbdmq.grpUsuario.grupo.codigo ne 'ADMIN'}">
+                            <!--<h:selectOneMenu  value="#{gestionReformasPoa.direccion}" title="Dirección">-->
+                                <f:selectItems value="#{consultasPoa.comboDireccionesF}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="1" rendered="#{gestionReformasPoa.formulario.nuevo}">
+                            <ui:include src="BuscarPartida.xhtml" />
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="2" width="100%" rendered="#{gestionReformasPoa.formulario.nuevo}">
+                            <h:outputLabel value="Fuente :" for="fuente" />
+                            <h:selectOneMenu id="fuente" value="#{asignacionesPoa.fuente}" disabled="#{gestionReformasPoa.bloqueaFuente}">
+                                <f:selectItems value="#{consultasPoa.comboFuenteFinanciamiento}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="1" width="100%" rendered="#{gestionReformasPoa.formulario.nuevo}">
+                            <ui:include src="BuscarProyecto.xhtml" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" width="100%" rendered="#{!gestionReformasPoa.formulario.nuevo}">
+                            <h:outputLabel value="Fuente:" for="fuente" />
+                            <h:outputText value="#{gestionReformasPoa.reforma.asignacion.fuente}" />
+                            <h:outputLabel value="Partidas :"/>
+                            <h:outputText value="#{gestionReformasPoa.reforma.asignacion.toString()}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" width="100%">
+                            <h:outputLabel value="Valor Asignación:"/>
+                            <h:outputText value="#{gestionReformasPoa.valorAsignaciones}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Valor Reformas:"/>
+                            <h:outputText value="#{gestionReformasPoa.totalReformaspoaAisgnacion}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Valor Certificaciones:"/>
+                            <h:outputText value="#{gestionReformasPoa.valorCertificacion}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Saldo Actual:"/>
+                            <h:outputText value="#{gestionReformasPoa.saldoActual}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Valor:" for="Valor" />
+                            <h:inputText value="#{gestionReformasPoa.reforma.valor}" id="Valor"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{gestionReformasPoa.formulario.nuevo}" 
+                                              action="#{gestionReformasPoa.insertar()}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{gestionReformasPoa.grabar()}" 
+                                              rendered="#{gestionReformasPoa.formulario.modificar}" />
+                                <ace:menuItem action="#{gestionReformasPoa.borrar()}" 
+                                              value="Esta seguro de Borrar el registro?" 
+                                              rendered="#{gestionReformasPoa.formulario.borrar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{gestionReformasPoa.formulario.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                            <h:messages style="color: red;font-style: italic;font-weight: bold"/> 
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    width="900"
+                    height="600"
+                    rendered="#{gestionReformasPoa.formularioImprimir.mostrar}"
+                    visible="#{gestionReformasPoa.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource 
+                            fileName="Reformas.pdf"                                            
+                            attachment="true"                                             
+                            label="Descargar archivo"
+                            mimeType="application/pdf"
+                            resource="#{gestionReformasPoa.reportepdf}" 
+                            type="button" rendered="#{gestionReformasPoa.reportepdf ne null}"/>
+                        <ui:include src="imprimirGestionReforma.xhtml" />
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{gestionReformasPoa.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ui:include src="DescargarDocumentos.xhtml"/>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

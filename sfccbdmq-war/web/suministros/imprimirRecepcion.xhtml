@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+    <ace:panel id="panelImprimir" style="display:block;">
+        <h:panelGrid width="90%">
+            <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+            <h:panelGrid  width="90%" columns="2" style="text-align: right">
+                <h:outputText value="Usuario :"/>
+                <h:outputText value="#{parametrosSfccbdmq.logueado.userid}"/>
+                <h:outputText value="Fecha :"/>
+                <h:outputText value="#{parametrosSfccbdmq.fechaActual}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                </h:outputText>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="1" style="text-align: center">
+                <h3>#{despachoTxSfccbdmq.cabecera.txid.nombre} No: #{despachoTxSfccbdmq.cabecera.numero}</h3>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="2" style="text-align: left">
+
+                <h:outputLabel value="Proveddor :" rendered="#{despachoTxSfccbdmq.cabecera.txid.proveedor}"/>
+                <h:outputLabel value="#{despachoTxSfccbdmq.cabecera.ordencompra.compromiso.proveedor.empresa.toString()}" rendered="#{despachoTxSfccbdmq.cabecera.txid.proveedor}"/>
+                <h:outputLabel value="Contrato :" rendered="#{despachoTxSfccbdmq.cabecera.txid.proveedor}"/>
+                <h:outputLabel value="#{despachoTxSfccbdmq.cabecera.ordencompra.compromiso.contrato.toString()}" rendered="#{despachoTxSfccbdmq.cabecera.txid.proveedor}"/>
+                <h:outputLabel value="Fecha de emisión:" />
+                <h:outputLabel value="#{despachoTxSfccbdmq.cabecera.fecha}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputLabel>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                <ace:panel  header ="Origen">
+                    <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                        <h:outputLabel value="Bodega :" />
+                        <h:outputLabel value="#{despachoTxSfccbdmq.cabecera.bodega.nombre}"/>
+                        <h:outputLabel value="Transacción:" />
+                        <h:outputLabel value="#{despachoTxSfccbdmq.cabecera.txid.nombre}"/>
+                        <h:outputLabel value="No:" />
+                        <h:outputLabel value="#{despachoTxSfccbdmq.cabecera.numero}"/>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:panel  header="Destino" rendered="#{despachoTxSfccbdmq.transferencia}">
+                    <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                        <h:outputLabel value="Bodega :" />
+                        <h:outputLabel value="#{despachoTxSfccbdmq.cabecera.cabecera.bodega}"/>
+                        <h:outputLabel value="Transacción:" />
+                        <h:outputLabel value="#{despachoTxSfccbdmq.cabecera.cabecera.txid.nombre}"/>
+                        <h:outputLabel value="No:" />
+                        <h:outputLabel value="#{despachoTxSfccbdmq.cabecera.cabecera.numero}"/>
+                    </h:panelGrid>
+                </ace:panel>
+            </h:panelGrid>
+            
+            <h:panelGrid  width="90%" columns="1" style="text-align: left">
+                <h:outputLabel value="Observaciones:" />
+                <p>#{despachoTxSfccbdmq.cabecera.observaciones}</p>
+            </h:panelGrid>
+            <h:panelGrid columns="1" width="100%">
+                <ace:dataTable 
+                    value="#{despachoTxSfccbdmq.listaKardex}"
+                    var="itemDetalles"
+                    paginator="false"
+                    lazy="false"
+                    resizableColumns="true"
+                    rowIndexVar="row"
+                    paginatorPosition="both"
+                    rowsPerPageTemplate="5,10,15,30,50,100"
+                    paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    >
+                   
+                    <ace:column  headerText="Suministro"  style="text-align: left">
+                        <h:outputText  value="#{itemDetalles.suministro.nombre}"/>
+                    </ace:column>
+                    <ace:column  headerText="Observaciones"  style="text-align: left">
+                        <h:outputText  value="#{itemDetalles.observaciones}"/>
+                    </ace:column>
+                    <ace:column  headerText="Unidades"  style="text-align: left">
+                        <h:outputText  value="#{itemDetalles.unidad.equivalencia}"/>
+                    </ace:column>
+                    <ace:column  headerText="Cantidad"  style="text-align: right">
+                        <h:outputText  value="#{itemDetalles.cantidad}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Costo"  style="text-align: right">
+                        <h:outputText  value="#{itemDetalles.costo}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Total"  style="text-align: right">
+                        <h:outputText  value="#{itemDetalles.costo*itemDetalles.cantidad}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    
+                </ace:dataTable>
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="1">
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="" />
+                
+
+            </h:panelGrid>
+            <h:panelGrid  width="90%" columns="5">
+                <h:outputLabel value="f.----------------------------" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="f.----------------------------" />
+                <h:outputLabel value="" />
+                <h:outputLabel value="f.----------------------------" />
+                <h:outputLabel value="Preparado por"  />
+                <h:outputLabel value="" />
+                <h:outputLabel value="Revisado"  />
+                <h:outputLabel value="" />
+                <h:outputLabel value="Aprobado por"  />
+
+            </h:panelGrid>
+        </h:panelGrid>
+
+    </ace:panel>
+</html>

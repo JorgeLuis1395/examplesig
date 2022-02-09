@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{prestamosEmpleado.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <ace:panel header="Parámetros de Búsqueda">
+                        <ui:include src="../BuscarEmpleado.xhtml"/>
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{prestamosEmpleado.buscar()}"/>
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{prestamosEmpleado.nuevo()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <ace:messages/>
+                    </ace:panel> 
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                   for="panel"
+                                   blockUI="panel"
+                                   autoCenter="true"
+                                   activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="false"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{prestamosEmpleado.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{prestamosEmpleado.formulario.pantalla}" 
+                                          target="prestamoItems" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="prestamoItems" 
+                                       value="#{prestamosEmpleado.listaPrestamos}"
+                                       var="prestamoItem"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,50"
+
+                                       paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="5"
+                                       binding="#{prestamosEmpleado.formulario.fila}">
+
+                            <ace:column  style="text-align: left" rendered="#{!prestamosEmpleado.formulario.borrar}" >
+                                <ace:menuButton  effect="slide" effectDuration="200" value="...">
+                                    <ace:menuItem value="Editar" icon="ui-icon ui-icon-pencil" action="#{prestamosEmpleado.modifica(prestamoItem)}" disabled="#{prestamoItem.aprobado!=null}" />
+                                    <ace:menuItem value="T. Amort." icon="ui-icon ui-icon-pencil" action="#{prestamosEmpleado.modificaTabla(prestamoItem)}" disabled="#{prestamoItem.aprobado==null}" />
+                                    <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{prestamosEmpleado.borra(prestamoItem)}" disabled="#{prestamoItem.aprobado!=null}" />
+                                </ace:menuButton>
+                            </ace:column>
+
+
+                            <ace:column  headerText="Descripción"  style="text-align: left">
+                                <h:outputText value="#{prestamoItem.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Valor" style="text-align: right">
+                                <h:outputText  value="#{prestamoItem.valor}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <!--                            FM 05OCT2018-->
+
+                            <ace:column  headerText="Valor a Diciembre" style="text-align: right">
+                                <h:outputText  value="#{prestamoItem.valordiciembre}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+
+                            <ace:column  headerText="Saldo a pagar" style="text-align: right">
+                                <h:outputText  value="#{prestamoItem.valor-prestamosEmpleado.saldoPagar}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Hasta" style="text-align: right">
+                                <h:outputText  value="#{prestamosEmpleado.maximo}"/>
+                            </ace:column>
+                            <ace:column  headerText="Fecha de Solicitud" style="text-align: left">
+                                <h:outputText  value="#{prestamoItem.fechasolicitud}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Fecha de Aprobación" style="text-align: left">
+                                <h:outputText  value="#{prestamoItem.fechaaprobacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+
+                            <ace:column headerText="Revisado por" style="text-align: left">
+                                <h:outputText value="#{prestamoItem.aprobadopor.entidad.toString()}"/>
+                            </ace:column>
+                            <ace:column headerText="Observaciones" style="text-align: left">
+                                <h:outputText value="#{prestamoItem.aprobadopor.entidad.toString()}"/>
+                            </ace:column>
+                            <ace:column headerText="Tipo" style="text-align: left">
+                                <h:outputText value="#{prestamoItem.tipo.nombre}"/>
+                            </ace:column>
+                            <ace:column headerText="Aprobado" style="text-align: left">
+                                <h:graphicImage url="../resources/images/si.png" rendered="#{prestamoItem.aprobado}"/>
+                                <h:graphicImage url="../resources/images/no.png" rendered="#{!prestamoItem.aprobado}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{prestamosEmpleado.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{prestamosEmpleado.formulario.mostrar}"
+                    visible="#{prestamosEmpleado.formulario.mostrar}">
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane >
+                            <f:facet name="label">Inf. General</f:facet>
+
+                            <h:panelGrid columns="1">
+                                <h:outputLabel value="#{prestamosEmpleado.periodo}" escape="false"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Tipo : " />
+                                <h:selectOneMenu value="#{prestamosEmpleado.prestamo.tipo}">
+                                    <f:selectItems value="#{codigosSfccbdmq.comboTipoPrestamosf}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+
+                                <h:outputLabel value="Descripción:"/>
+                                <h:inputTextarea cols="60" rows="4" value="#{prestamosEmpleado.prestamo.nombre}" title="Descripción" />
+                                <h:outputLabel value="Valor:" for="valor" />
+                                <h:inputText id="valor" value="#{prestamosEmpleado.prestamo.valor}" title="Valor" />
+                                <!--                                FM 05OCT 2018-->
+                                <h:outputLabel value="Valor a Diciembre:" for="valor" />
+                                <h:inputText id="valor2" value="#{prestamosEmpleado.prestamo.valordiciembre}" title="Valor a Diciembre" />
+
+                                <h:outputLabel value="No de Coutas:" for="couta" />
+                                <h:inputText id="couta" value="#{prestamosEmpleado.prestamo.couta}" title="Cuota" />
+                                <h:outputLabel value="Fecha Aprobación:"/>
+                                <ace:dateTimeEntry navigator="true"  value="#{prestamosEmpleado.prestamo.fechaaprobacion}" id="tres"
+                                                   popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </ace:dateTimeEntry>
+
+                                <!--                                <h:outputLabel value="Aprobado:" for="aprobado" />
+                                                                <h:inputText id="aprobado" value="#{prestamosEmpleado.prestamo.aprobado}" title="Aprobado" />-->
+                                <!--                                <h:outputLabel value="Proveedor:" for="proveedor" />
+                                                                <h:selectOneMenu id="proveedor" value="#{prestamosEmpleado.prestamo.proveedor}" title="Proveedor" >
+                                                                     TODO: update below reference to list of available items
+                                                                    <f:selectItems value="#{fixme}"/>
+                                                                </h:selectOneMenu>-->
+                                <!--                                <h:outputLabel value="Observaciones:" for="observaciones" />
+                                                                <h:inputTextarea cols="60" rows="4" id="observaciones" value="#{prestamosEmpleado.prestamo.observaciones}" title="Observaciones" />-->
+
+                            </h:panelGrid>
+                        </ace:tabPane>
+                        <ace:tabPane label="Adjuntos">
+                            <ui:include src="../mostrarImagenes.xhtml" />
+                        </ace:tabPane>
+                    </ace:tabSet>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{prestamosEmpleado.insertar()}" rendered="#{prestamosEmpleado.formulario.nuevo}" />
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{prestamosEmpleado.grabar()}" rendered="#{prestamosEmpleado.formulario.modificar}" />
+                        <ace:menuItem value="Aprobar" icon="ui-icon ui-icon-check"  action="#{prestamosEmpleado.aprueba()}"  rendered="#{prestamosEmpleado.formulario.modificar}"/>
+                        <ace:menuItem value="Negar" icon="ui-icon ui-icon-trash"  action="#{prestamosEmpleado.niega()}" rendered="#{prestamosEmpleado.formulario.modificar}"/>
+                        <ace:menuItem value="Está Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{prestamosEmpleado.eliminar()}" rendered="#{prestamosEmpleado.formulario.borrar}" />
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{prestamosEmpleado.formulario.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Tabla Amortización"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{prestamosEmpleado.formularioAmortizacion.mostrar}"
+                    visible="#{prestamosEmpleado.formularioAmortizacion.mostrar}">
+                    <h:panelGrid columns="1">
+                        <h:commandButton  value="Imprimir">
+                            <!--<h:outputText id="printBoth" value="Imprimir"/>-->
+                            <ace:printer for="panelImprimir"/>
+                        </h:commandButton>
+                    </h:panelGrid>
+                    <ace:panel id="panelImprimir" style="display:block;">
+                        <h:panelGrid  width="100%" columns="1" style="text-align: center;font-size: small"  >
+                            <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+                            <h3><strong>TABLA DE AMORIZACION DEL PRESTAMO</strong></h3>
+                            <h3><strong>#{prestamosEmpleado.prestamo.nombre}</strong></h3>
+                            <h3><strong>#{prestamosEmpleado.prestamo.empleado.entidad.toString()}</strong></h3>
+                        </h:panelGrid>
+                        <ace:dataTable  value="#{prestamosEmpleado.listaAmortizaciones}"
+                                        var="amortizacionItem"
+                                        >
+
+                            <ace:column  headerText="Año"  style="text-align: left">
+                                <h:outputText value="#{amortizacionItem.anio}"/>
+                            </ace:column>
+                            <ace:column  headerText="Mes"  style="text-align: left">
+                                <h:outputText value="#{amortizacionItem.mes}"/>
+                            </ace:column>
+                            <ace:column  headerText="Couta" style="text-align: right">
+                                <h:outputText  value="#{amortizacionItem.cuota}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                                <!--<h:inputText value="#{amortizacionItem.cuota}" rendered="#{prestamosEmpleado.formularioAmortizacion.nuevo}" disabled="#{amortizacionItem.valorpagado!=0}"/>-->
+                            </ace:column>
+
+                            <ace:column  headerText="Valor Pagado" style="text-align: right">
+                                <h:outputText  value="#{amortizacionItem.valorpagado}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>
+
+
+                        <!--                        FM 05OCT2018-->
+                        <h:panelGrid  width="100%" columns="1"  >
+
+                            <h:outputText  value="Valor: #{prestamosEmpleado.prestamo.valor}">
+
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+
+                            <h:outputText  value="Valor a Diciembre: #{prestamosEmpleado.prestamo.valordiciembre}">
+
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                        </h:panelGrid>
+
+
+                    </ace:panel>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <!--<ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{prestamosEmpleado.grabarTabla()}" rendered="#{prestamosEmpleado.formularioAmortizacion.nuevo}" />-->
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{prestamosEmpleado.formularioAmortizacion.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

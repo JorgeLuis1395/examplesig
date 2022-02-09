@@ -1,0 +1,560 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : luisfernando
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+
+    </h:head>
+    <h:body>
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{facturasSfcbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true">
+                    <ui:include src="../BuscarCliente.xhtml" />
+                    <h:panelGrid columns="6">
+                        <h:outputLabel value="Fecha de :" />
+                        <h:selectOneMenu value="#{facturasSfcbdmq.tipoFecha}" id="ecivilbusqueda" >
+                            <f:selectItem itemLabel="Inicio" itemValue="o.fecha"/>
+                            <f:selectItem itemLabel="Creación" itemValue="o.fechacreacion"/>
+                            <f:selectItem itemLabel="Contabilización" itemValue="o.fechacontabilizacion"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Desde:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{facturasSfcbdmq.desde}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Hasta:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{facturasSfcbdmq.hasta}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                    </h:panelGrid>
+                    <h:panelGrid columns="7">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{facturasSfcbdmq.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{facturasSfcbdmq.nuevo()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <!--                </ace:panel>
+                                    <ace:panel 
+                                        header="Resultado Búsqueda"
+                                        closable="false"
+                                        toggleable="true">-->
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{facturasSfcbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{facturasSfcbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       paginatorAlwaysVisible="true"
+                                       value="#{facturasSfcbdmq.listaFacturas}"
+                                       var="item"
+                                       paginator="true"
+                                       lazy="false"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,30,50,100"
+                                       paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="30" 
+                                       binding="#{facturasSfcbdmq.formulario.fila}">
+                            <ace:column headerText="Acciones" style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem 
+                                        action="#{facturasSfcbdmq.modificar(item)}" 
+                                        value="Editar" rendered="#{item.fechacontabilizacion==null}"
+                                        icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem 
+                                        action="#{facturasSfcbdmq.contabilizar(item)}" 
+                                        value="Contabilizar"  rendered="#{item.fechacontabilizacion==null}"
+                                        icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem 
+                                        action="#{facturasSfcbdmq.autorizar(item)}" 
+                                        value="Autorizar"  rendered="#{item.fechacontabilizacion!=null}"
+                                        icon="ui-icon ui-icon-calc"/>
+                                    <ace:menuItem action="#{facturasSfcbdmq.consultarFactura(item)}" 
+                                                  value="Consultar" icon="ui-icon ui-icon-search"/>
+                                    <ace:menuItem action="#{facturasSfcbdmq.imprimirFactura(item)}" 
+                                                  value="Imprimir" icon="ui-icon ui-icon-print"/>
+                                    <ace:menuItem 
+                                        action="#{facturasSfcbdmq.eliminar(item)}" 
+                                        value="Borrar" 
+                                        icon="ui-icon ui-icon-trash"/>
+                                    <ace:menuItem action="#{facturasSfcbdmq.reenviar(item)}" 
+                                                  value="Correo" icon="ui-icon ui-icon-mail-open"/>
+                                    <ace:menuItem 
+                                        action="#{facturasSfcbdmq.grabarEnHoja(item)}" 
+                                        value="Comprobante" 
+                                        icon="ui-icon ui-icon-print"
+                                        rendered="#{item.fechacontabilizacion!=null}"/>
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="Sucursal"  
+                                         filterBy="#{item.sucursal}"
+                                         filterMatchMode="startsWith"
+                                         style="text-align: left">
+                                <h:outputText  value="#{item.sucursal}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Punto Emision"  
+                                         filterBy="#{item.puntoemision}"
+                                         filterMatchMode="startsWith"
+                                         style="text-align: left">
+                                <h:outputText  value="#{item.puntoemision}"/>
+                            </ace:column> 
+
+                            <ace:column  headerText="N°" 
+                                         filterBy="#{item.nrodocumento}"
+                                         filterMatchMode="startsWith"
+                                         style="text-align: left">
+                                <h:outputText  value="#{item.nrodocumento}"/>
+                            </ace:column>
+                            <ace:column  headerText="Fecha" 
+                                         filterBy="#{item.fecha}"
+                                         filterMatchMode="startsWith"
+                                         style="text-align: left">
+                                <h:outputText  value="#{item.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column> 
+                            <ace:column  headerText="Cliente"  
+                                         filterBy="#{item.cliente.empresa.nombrecomercial}"
+                                         filterMatchMode="startsWith"
+                                         style="text-align: left">
+
+                                <h:outputText  value="#{item.cliente.empresa.nombrecomercial}"/>
+                            </ace:column> 
+                            <ace:column  headerText="CONTABILIZADO"  
+                                         style="text-align: left">
+                                <h:outputText  value="#{item.fechacontabilizacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column> 
+                            <ace:column  headerText="Total" style="text-align: left">
+                                <h:outputText  value="#{facturasSfcbdmq.traerTotal(item)}">
+                                    <f:convertNumber  pattern="###,###,#00.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Clave"  
+                                         filterBy="#{item.clave}"
+                                         filterMatchMode="startsWith"
+                                         style="text-align: left">
+
+                                <h:outputText  value="#{item.clave}"/>
+                            </ace:column> 
+                        </ace:dataTable>
+                    </h:panelGrid>
+
+                    <ace:dialog 
+                        header="#{facturasSfcbdmq.perfil.menu.texto}"
+                        closable="false"
+                        modal="true"
+                        draggable="false"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{facturasSfcbdmq.formulario.mostrar}"
+                        visible="#{facturasSfcbdmq.formulario.mostrar}">
+                        <ace:panel header="#{facturasSfcbdmq.factura.cliente.empresa.toString()}">
+
+                            <h:panelGrid columns="2" rendered="#{!facturasSfcbdmq.formulario.borrar}">
+                                <h:outputLabel value="Sucursal de emisión :" />
+                                <h:selectOneMenu  value="#{facturasSfcbdmq.sucursal}" >
+                                    <f:selectItems value="#{facturasSfcbdmq.comboSucursales}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                                <h:outputLabel value="Punto de emisión :"/>
+                                <h:selectOneMenu  value="#{facturasSfcbdmq.puntoEmision}">
+                                    <f:selectItems value="#{facturasSfcbdmq.comboPuntoemision}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+
+                                <h:outputLabel value="Fecha: "/>
+                                <ace:dateTimeEntry navigator="true"
+                                                   value="#{facturasSfcbdmq.factura.fecha}" 
+                                                   popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </ace:dateTimeEntry>
+                            </h:panelGrid>
+                            <h:panelGrid rendered="#{!facturasSfcbdmq.formulario.borrar}">
+                                <ace:autoCompleteEntry 
+                                    listValue="#{facturasSfcbdmq.productos}"
+                                    value="#{facturasSfcbdmq.clave}"
+                                    listVar="producto"
+                                    rows="10" width="300"                                
+                                    filterBy="#{producto.nombre}"                                
+                                    valueChangeListener="#{facturasSfcbdmq.cambiaProducto}"
+                                    textChangeListener="#{facturasSfcbdmq.productoNombreChangeEventHandler}"
+                                    label="Nombre Item: "
+                                    labelPosition="left">
+                                    <f:facet name="row">
+                                        <h:panelGrid columns="3" width="100%" columnClasses="tipo">                                   
+                                            <h:outputText value="#{producto.nombre}"/>
+                                            <h:outputText value="#{producto.categoria}"/>
+                                            <h:outputText value="#{producto.codigo}"/>                                                                              
+                                        </h:panelGrid>
+                                    </f:facet>
+                                    <ace:ajax execute="@all"/>
+                                </ace:autoCompleteEntry>
+                                <h:panelGrid columns="2">
+                                    <h:outputLabel value="Producto: " for="prod" />
+                                    <h:outputText id="prod" value="#{facturasSfcbdmq.detalle.producto.nombre}" title="Producto" />
+                                    <h:outputLabel value="Categoría: " for="cat" />
+                                    <h:outputText id="cat" value="#{facturasSfcbdmq.detalle.producto.categoria}" title="Categoria" />
+                                    <h:outputLabel value="Código:  " for="cod" />
+                                    <h:outputText id="cod" value="#{facturasSfcbdmq.detalle.producto.codigo}" title="Codigo" />
+                                    <h:outputLabel value="Precio Unitario: " for="precuni" />
+                                    <h:outputText id="precuni" value="#{facturasSfcbdmq.detalle.producto.preciounitario}" title="Precio Unitario">
+                                        <f:convertNumber type="currency" currencySymbol="$" pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                    <h:outputLabel value="IVA: " />
+                                    <h:outputText id="iva" value="#{facturasSfcbdmq.detalle.producto.impuesto.porcentaje / 100}" title="IVA">
+                                        <f:convertNumber type="currency" currencySymbol="$" pattern="###,###,#00.00"/>
+                                    </h:outputText>
+                                </h:panelGrid>
+                                <h:panelGrid columns="2" rendered="#{facturasSfcbdmq.detalle.producto!=null}">
+                                    <h:outputLabel value="Cantidad: " for="cant" />
+                                    <h:inputText id="cant" value="#{facturasSfcbdmq.detalle.cantidad}" title="Cantidad" />
+                                    <h:outputLabel value="P.V.P: " />
+                                    <h:inputText  value="#{facturasSfcbdmq.detalle.valor}" title="Valor" />
+                                    <h:outputLabel value="Descuento %: " for="descuento" />
+                                    <h:inputText id="descuento" value="#{facturasSfcbdmq.detalle.descuento}" title="Descuento" />
+                                    <ace:menuBar autoSubmenuDisplay="true" >
+                                        <ace:menuItem value="Añadir" icon="ui-icon ui-icon-disk"
+                                                      action="#{facturasSfcbdmq.insertarDetalle()}"/>
+                                    </ace:menuBar>
+                                </h:panelGrid>  
+                            </h:panelGrid>
+                            <h:panelGrid columns="2" rendered="#{facturasSfcbdmq.formulario.borrar}">
+                                <h:outputLabel value="Cliente : "/>
+                                <h:outputLabel value="#{facturasSfcbdmq.factura.cliente.empresa.toString()}"/>
+                                <h:outputLabel value="Sucursal de emisión :" />
+                                <h:outputLabel value="#{facturasSfcbdmq.factura.sucursal}"/>
+                                <h:outputLabel value="Punto de emisión :"/>
+                                <h:outputLabel value="#{facturasSfcbdmq.factura.puntoemision}"/>
+                                <h:outputLabel value="Fecha Factura: "/>
+                                <h:outputLabel value="#{facturasSfcbdmq.factura.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputLabel>
+                                <h:outputLabel value="Autorización :" />
+                                <h:outputLabel value="#{facturasSfcbdmq.factura.autorizacionsri}"/>
+                                <h:outputLabel value="No :" />
+                                <h:outputLabel value="#{facturasSfcbdmq.factura.nrodocumento}"/>
+                                <h:outputLabel value="Referencia:" />
+                                <h:inputTextarea cols="60" rows="4" value="#{facturasSfcbdmq.factura.observaciones}" disabled="true" />
+                                <h:outputLabel value="Fecha: "/>
+                                <ace:dateTimeEntry navigator="true"
+                                                   disabled="true"
+                                                   value="#{facturasSfcbdmq.factura.fechacontabilizacion}" 
+                                                   popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </ace:dateTimeEntry>
+
+
+                            </h:panelGrid>
+                            <ace:messages />                          
+                            <h:panelGrid width="100%">
+                                <ace:dataTable 
+                                    paginatorAlwaysVisible="true"
+                                    value="#{facturasSfcbdmq.listadoDetalle}"
+                                    var="registro"
+                                    rowIndexVar="row"
+                                    resizableColumns="true"
+                                    paginatorPosition="both"
+                                    rowsPerPageTemplate="5,10,15,30,50,100"
+                                    paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                    rows="30" 
+                                    >
+                                    <f:facet name="header">Detalle</f:facet>
+                                    <ace:column headerText="Acciones" style="text-align: left">
+                                        <ace:menuButton  effect="slide" effectDuration="200" value="..." >
+                                            <ace:menuItem action="#{facturasSfcbdmq.eliminarDetalle(registro)}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                        </ace:menuButton>
+                                    </ace:column> 
+                                    <ace:column  headerText="Producto" style="text-align: left">
+                                        <h:outputText  value="#{registro.producto.nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Cantidad" style="text-align: right">
+                                        <h:outputText  value="#{registro.cantidad}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Valor Unitario" style="text-align: left">
+                                        <h:outputText  value="#{registro.valor}">
+                                            <f:convertNumber  pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="% IVA" style="text-align: right">
+                                        <h:outputText  value="#{registro.producto.impuesto.porcentaje}">
+                                            <f:convertNumber  pattern="00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="% Descuento" style="text-align: right">
+                                        <h:outputText  value="#{registro.descuento}">
+                                            <f:convertNumber  pattern="00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Subtotal" style="text-align: right">
+                                        <h:outputText  value="#{registro.valor* registro.cantidad*(1+registro.producto.impuesto.porcentaje/100)}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:row condition="group" groupBy="#{facturasSfcbdmq.listadoDetalle}" pos="after" >
+                                        <ace:column colspan="6" style="text-align: right">
+                                            <h:outputText value="DESCUENTO" styleClass="bold"/>
+                                        </ace:column>
+                                        <ace:column style="text-align: right" >
+                                            <h:outputText value="#{facturasSfcbdmq.sumaDesc}" styleClass="bold">
+                                                <f:convertNumber currencySymbol="- $" maxFractionDigits="2" type="currency"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                    </ace:row>
+                                    <ace:row condition="group" groupBy="#{facturasSfcbdmq.listadoDetalle}" pos="after" >
+                                        <ace:column colspan="6" style="text-align: right">
+                                            <h:outputText value="IVA" styleClass="bold"/><b> %</b>
+                                        </ace:column>
+                                        <ace:column style="text-align: right" >
+                                            <h:outputText value="#{facturasSfcbdmq.sumaIva}" styleClass="bold">
+                                                <f:convertNumber currencySymbol="$" maxFractionDigits="2" type="currency"/>
+                                            </h:outputText>
+                                        </ace:column>
+                                    </ace:row>
+                                    <ace:row condition="group" groupBy="#{facturasSfcbdmq.listadoDetalle}" pos="after" >
+                                        <ace:column colspan="6" style="text-align: right">
+                                            <h:outputText value="TOTAL" styleClass="bold"/>
+                                        </ace:column>
+                                        <ace:column style="text-align: right" >
+                                            <h:outputText value="#{facturasSfcbdmq.suma}" styleClass="bold">
+                                                <f:convertNumber currencySymbol="$" maxFractionDigits="2" type="currency" />
+                                            </h:outputText>
+                                        </ace:column>
+                                    </ace:row>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:panel>
+                        <ace:messages />   
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"
+                                          action="#{facturasSfcbdmq.insertar()}"
+                                          rendered="#{facturasSfcbdmq.formulario.nuevo}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"
+                                          action="#{facturasSfcbdmq.grabar()}"
+                                          rendered="#{facturasSfcbdmq.formulario.modificar}"/>
+                            <ace:menuItem value="¿Está seguro de Borrar el registro?" icon="ui-icon ui-icon-disk"
+                                          action="#{facturasSfcbdmq.borrar()}"
+                                          rendered="#{facturasSfcbdmq.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{facturasSfcbdmq.cancelar()}"/>
+                        </ace:menuBar>
+                    </ace:dialog>
+                    <!--para contabilizar-->
+                    <ace:dialog 
+                        header="#{facturasSfcbdmq.perfil.menu.texto}"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{facturasSfcbdmq.formularioContabilizar.mostrar}"
+                        visible="#{facturasSfcbdmq.formularioContabilizar.mostrar}">
+                        <!--                        <ace:tabSet style="clear:both;" clientSide="true">
+                                                    <ace:tabPane label="Ingreso">-->
+                        <h:panelGroup>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Cliente : "/>
+                                <h:outputLabel value="#{facturasSfcbdmq.factura.cliente.empresa.toString()}"/>
+                                <h:outputLabel value="Sucursal de emisión :" />
+                                <h:outputLabel value="#{facturasSfcbdmq.factura.sucursal}"/>
+                                <h:outputLabel value="Punto de emisión :"/>
+                                <h:outputLabel value="#{facturasSfcbdmq.factura.puntoemision}"/>
+                                <h:outputLabel value="Fecha Factura: "/>
+                                <h:outputLabel value="#{facturasSfcbdmq.factura.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputLabel>
+                                <h:outputLabel value="Autorización :" />
+                                <h:selectOneMenu  value="#{facturasSfcbdmq.documento}" 
+                                                  >
+                                    <f:selectItems value="#{facturasSfcbdmq.comboDocumentos}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                                <h:outputLabel value="Ultima Factura : " />
+                                <h:outputLabel value="#{facturasSfcbdmq.documento.numeroactual}" />
+                                <h:outputLabel value="No : " />
+                                <h:inputText value="#{facturasSfcbdmq.factura.nrodocumento}" />
+                                <h:outputLabel value="Referencia:" />
+                                <h:inputTextarea cols="60" rows="4" value="#{facturasSfcbdmq.factura.observaciones}" title="Referencia" />
+                                <h:outputLabel value="Fecha: "/>
+                                <ace:dateTimeEntry navigator="true"
+                                                   value="#{facturasSfcbdmq.factura.fechacontabilizacion}" 
+                                                   popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </ace:dateTimeEntry>
+
+
+                            </h:panelGrid>
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                                  action="#{facturasSfcbdmq.grabarContabilizar()}"/>
+
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{facturasSfcbdmq.cancelaContabilizar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                        <!--                            </ace:tabPane>
+                                                    <ace:tabPane label="Previsualización del Asiento">-->
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable 
+                                value="#{facturasSfcbdmq.renglones}"
+                                var="itemSegundo"
+                                paginator="false"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="both"
+                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                >
+
+                                <ace:column  headerText="Cuenta"  style="text-align: left">
+                                    <h:outputText  value="#{itemSegundo.cuenta}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nombre"  style="text-align: left">
+                                    <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemSegundo.cuenta).nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Auxiliar"  style="text-align: left">
+                                    <h:outputText  value="#{itemSegundo.auxiliar}"/>
+                                </ace:column>
+                                <ace:column  headerText="Referencia"  style="text-align: left">
+                                    <h:outputText  value="#{itemSegundo.referencia}"/>
+                                </ace:column>
+                                <ace:column  headerText="Débitos" style="text-align: right">
+                                    <h:outputText  value="#{itemSegundo.valor}" rendered="#{asientosSfccbdmq.isCredito(itemSegundo.valor)}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Créditos" style="text-align: right">
+                                    <h:outputText  value="#{itemSegundo.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemSegundo.valor)}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                        <!--                            </ace:tabPane>
+                                                </ace:tabSet>-->
+                    </ace:dialog>
+                    <ace:dialog 
+                        header="Imprimir"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{facturasSfcbdmq.formularioReporte.mostrar}"
+                        visible="#{facturasSfcbdmq.formularioReporte.mostrar}">
+                        <h:panelGroup>
+                            <ace:dynamicResource fileName="Factura.pdf"  label="Generar PDF"
+                                                 mimeType="application/pdf" resource="#{facturasSfcbdmq.reporte}" 
+                                                 style="" type="button"/>
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{facturasSfcbdmq.formularioReporte.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                    <ace:dialog 
+                        header="Correo"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{facturasSfcbdmq.formularioCorreo.mostrar}"
+                        visible="#{facturasSfcbdmq.formularioCorreo.mostrar}">
+                        <h:panelGroup>
+
+                            <h:panelGrid columns="1" width="100%">
+                                <h:outputLabel value="Dirección de correo:"/>
+                                <h:inputTextarea cols="60" rows="4" value="#{facturasSfcbdmq.correo}"/>
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Enviar" icon="ui-icon ui-icon-close" 
+                                                  action="#{facturasSfcbdmq.reenviarCorreo()}"/>
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-mail-closed" 
+                                                  action="#{facturasSfcbdmq.formularioCorreo.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                    <!--Previsualizar Asiento-->
+
+                    <ace:dialog 
+                        header="Imprimir"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{facturasSfcbdmq.formularioImprimir.mostrar}"
+                        visible="#{facturasSfcbdmq.formularioImprimir.mostrar}">
+                        <h:panelGroup>
+                            <h:panelGrid columns="1">
+                                <ace:dynamicResource fileName="Ingreso.xls" id="xls-button" label="Comprobante"
+                                                     mimeType="application/pdf" resource="#{facturasSfcbdmq.reporteRecibo}" 
+                                                     style="" type="button" rendered="#{facturasSfcbdmq.reporteRecibo!=null}"/>
+                                <ace:dynamicResource fileName="Egreso.pdf" id="pdf-button1" label="Generar PDF"
+                                                     mimeType="application/pdf" resource="#{facturasSfcbdmq.reporteFac}" 
+                                                     style="" type="button" rendered="#{facturasSfcbdmq.reporteFac!=null}"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{facturasSfcbdmq.formularioImprimir.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

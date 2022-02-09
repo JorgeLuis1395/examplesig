@@ -1,0 +1,995 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+
+    </h:head>
+    <h:body>
+
+        <ui:composition template="../plantillas/plantillaPersonal.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel1"
+                           header="Solicitud de Reformas"
+                           closable="false"
+                           toggleable="true"
+                           rendered="#{!solicitudReformasPersonal.formularioCabecera.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Año:" />
+                            <h:inputText value="#{solicitudReformasPersonal.anio}" title="Año" />
+                            <h:outputLabel value="Número de Control:" />
+                            <h:inputText value="#{solicitudReformasPersonal.id}" title="Número de Control" />
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{solicitudReformasPersonal.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{solicitudReformasPersonal.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{solicitudReformasPersonal.crearCabecera()}" />
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{solicitudReformasPersonal.buscar()}"/>
+                            </ace:menuBar>
+                            <ace:submitMonitor id="submitMonitorPanel"
+                                               for="panel1"
+                                               blockUI="@all"
+                                               autoCenter="true"
+                                               activeLabel="Un Momento por favor"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable 
+                                paginatorAlwaysVisible="true"
+                                value="#{solicitudReformasPersonal.cabecerasReformaspoa}"
+                                var="itemCabeceras"
+                                paginator="true"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="both"
+                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rows="30">
+                                <ace:column  headerText="Registro" style="text-align: right">
+                                    <h:outputText value="#{row+1}"/>
+                                </ace:column>
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{solicitudReformasPersonal.imprimirCabecera(itemCabeceras)}"  
+                                                      value="Aprobar" icon="ui-icon ui-icon-print"/>
+                                        <ace:menuItem action="#{solicitudReformasPersonal.solicitud(itemCabeceras,false)}" 
+                                                      value="Solicitud" icon="ui-icon ui-icon-print"/>
+                                        <ace:menuItem action="#{solicitudReformasPersonal.eliminarCabecera(itemCabeceras)}" 
+                                                      value="Borrar" icon="ui-icon ui-icon-trash" disabled="#{itemCabeceras.definitivo}"/>
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column  headerText="Número de Control" style="text-align: left">
+                                    <h:outputText  value="#{itemCabeceras.id}"/>
+                                </ace:column>
+                                <ace:column  headerText="Observaciones" style="text-align: left">
+                                    <h:outputText  value="#{itemCabeceras.motivo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Fecha"  style="text-align: left">
+                                    <h:outputText  value="#{itemCabeceras.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Utilizado" style="text-align: left">
+                                    <h:panelGrid rendered="#{itemCabeceras.utilizado}">
+                                        <img src="../resources/images/si.png" width="16" height="16" alt="imputable"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid rendered="#{!itemCabeceras.utilizado}">
+                                        <img src="../resources/images/no.png" width="16" height="16" alt="imputable"/>
+                                    </h:panelGrid>
+                                </ace:column>
+                                <ace:column  headerText="Estado" style="text-align: left">
+                                    <h:outputText  value="#{solicitudReformasPersonal.estadoDirector(itemCabeceras.director)}"/>
+                                </ace:column>
+                                <ace:column  headerText="Utilización" style="text-align: left">
+                                    <h:outputText  value="#{solicitudReformasPersonal.estadoExtra(itemCabeceras)}"/>
+                                </ace:column>
+
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:panel>
+                <ace:panel id="panel"
+                           header="Reformas"
+                           closable="false"
+                           toggleable="true"
+                           rendered="#{solicitudReformasPersonal.formularioCabecera.mostrar}">   
+                    <ace:tabSet style="clear:both; width: 100%" >
+                        <ace:tabPane label="POA">
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Tipo :" />
+                                <h:selectOneMenu value="#{solicitudReformasPersonal.cabeceraReforma.tipo}">
+                                    <f:selectItems value="#{consultasPoa.comboTipoReforma}"/>
+                                </h:selectOneMenu>
+                            </h:panelGrid>
+                            <h:panelGrid columns="4" width="75%">
+                                <h:outputLabel value="Fecha:"/>
+                                <ace:dateTimeEntry navigator="true" value="#{solicitudReformasPersonal.cabeceraReforma.fecha}"
+                                                   popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                   pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </ace:dateTimeEntry>
+                                <h:outputLabel value="Documento:"/>
+                                <h:inputText style="width: 270px" value="#{solicitudReformasPersonal.cabeceraReforma.documento}"/>
+                                <h:outputLabel value="Motivo:" />
+                                <h:inputTextarea cols="40" rows="4" value="#{solicitudReformasPersonal.cabeceraReforma.motivo}"/>
+                                <h:outputLabel value="Observación:" />
+                                <h:inputTextarea cols="40" rows="4" value="#{solicitudReformasPersonal.cabeceraReforma.observacion}"/>
+                            </h:panelGrid>
+                            <ace:submitMonitor id="submitMonitorPanel2"
+                                               for="panel"
+                                               blockUI="@all"
+                                               autoCenter="true"
+                                               activeLabel="Un Momento por favor"/>
+                            <h:panelGrid columns="2" width="30%">
+                                <h:outputLabel value="Separador de campos :"/>
+                                <h:inputText value="#{solicitudReformasPersonal.separador}"  size="3">
+                                    <ace:ajax execute="@all"/>
+                                </h:inputText>
+                                <h:outputLabel value="Archivo a Subir:" />
+                            </h:panelGrid>
+                            <h:panelGrid columns="3" width="30%">
+                                <ace:fileEntry id="file-entry1" 
+
+                                               maxFileCount="1" 
+                                               maxFileCountMessage="Máximo un archivo" 
+                                               fileEntryListener="#{solicitudReformasPersonal.archivoListener}" 
+                                               maxFileSize="6291456" 
+                                               maxFileSizeMessage="Tamaño muy grande." 
+                                               maxTotalSize="18874368" 
+                                               maxTotalSizeMessage="Total del tamaño muy grande." 
+                                               useOriginalFilename="true" 
+                                               useSessionSubdir="true"/>
+                                <h:commandButton type="submit" value="Cargar datos"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{solicitudReformasPersonal.crear()}" 
+                                                  rendered="#{!solicitudReformasPersonal.formularioCabecera.borrar}"/>
+                                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{solicitudReformasPersonal.formularioCabecera.nuevo}" 
+                                                  action="#{solicitudReformasPersonal.insertarCabecera()}"/>
+                                    <!--                                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                                                                      action="#{solicitudReformasPersonal.grabarCabecera()}" 
+                                                                                      rendered="#{solicitudReformasPersonal.formularioCabecera.modificar}" />-->
+                                    <ace:menuItem action="#{solicitudReformasPersonal.borrarCabecera()}" 
+                                                  value="Esta seguro de Borrar el registro?" 
+                                                  rendered="#{solicitudReformasPersonal.formularioCabecera.borrar}"/>
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{solicitudReformasPersonal.salir()}"/>
+                                </ace:menuBar>
+                                <ace:messages/>
+                            </h:panelGrid>
+                            <ace:tabSet style="clear:both; width: 100%" >
+                                <ace:tabPane label="Registros">
+                                    <h:panelGrid width="100%">
+                                        <ace:dataTable id="tabla" 
+                                                       paginatorAlwaysVisible="true"
+                                                       value="#{solicitudReformasPersonal.reformaspoa}"
+                                                       var="item"
+                                                       paginator="true"
+                                                       lazy="false"
+                                                       resizableColumns="true"
+                                                       rowIndexVar="row"
+                                                       paginatorPosition="both"
+                                                       rowsPerPageTemplate="15,20,25,50,100"
+                                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                       rows="15"
+                                                       binding="#{solicitudReformasPersonal.formulario.fila}">
+                                            <ace:column style="text-align: left">
+                                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                                    <ace:menuItem action="#{solicitudReformasPersonal.modificar()}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                                    <ace:menuItem action="#{solicitudReformasPersonal.eliminar()}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                                    <ace:menuItem action="#{solicitudReformasPersonal.nuevo(item.asignacion.proyecto)}" value="Reforma PAC" icon="ui-icon ui-icon-document" rendered="#{item.asignacion.proyecto.pac}"/>
+                                                </ace:menuButton>
+                                            </ace:column> 
+                                            <ace:column  headerText="Registro" style="text-align: right">
+                                                <h:outputText value="#{row+1}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Dirección"  style="text-align: left">
+                                                <h:outputText  value="#{parametrosSfccbdmq.traerDireccion(item.asignacion.proyecto.direccion).toString()}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Proyecto"  style="text-align: left">
+                                                <h:outputText  value="#{item.asignacion eq null ? item.proyecto.toString() : item.asignacion.proyecto.toString()}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Fuente" style="text-align: left">
+                                                <h:outputText  value="#{consultasPoa.traerFuenteFinanciamiento(item.asignacion eq null ? '' : item.asignacion.fuente)}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Partida"  style="text-align: left">
+                                                <h:outputText  value="#{item.asignacion eq null ? '' : item.asignacion.partida.toString()}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Asignación"  style="text-align: right">
+                                                <h:outputText  value="#{item.asignacion eq null ? '' : item.asignacion.valor}">
+                                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                            <ace:column  headerText="Reformas"  style="text-align: right">
+                                                <h:outputText  value="#{solicitudReformasPersonal.totalReformaspoa}">
+                                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                            <ace:column  headerText="Certificaciones"  style="text-align: right">
+                                                <h:outputText  value="#{solicitudReformasPersonal.totalCertificaciones}">
+                                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                            <ace:column  headerText="Reforma Actual" style="text-align: right">
+                                                <h:outputText  value="#{item.valor}">
+                                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                            <ace:column  headerText="Total" style="text-align: right">
+                                                <h:outputText  value="#{(item.asignacion eq null ? 0 : item.asignacion.valor)+(solicitudReformasPersonal.totalReformaspoa -solicitudReformasPersonal.totalCertificaciones ) +item.valor}">
+                                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                            <ace:column  headerText="Requerimiento" style="text-align: right">
+                                                <h:outputText  value="#{item.requerimiento}">
+                                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                        </ace:dataTable>
+                                    </h:panelGrid>
+                                </ace:tabPane>
+
+                                <ace:tabPane label="Totales">
+                                    <h:panelGrid width="100%">
+                                        <ace:dataTable id="tablaTotales" 
+                                                       paginatorAlwaysVisible="true"
+                                                       value="#{solicitudReformasPersonal.totales}"
+                                                       var="itemTotales"
+                                                       paginator="true"
+                                                       lazy="false"
+                                                       resizableColumns="true"
+                                                       rowIndexVar="row"
+                                                       paginatorPosition="both"
+                                                       rowsPerPageTemplate="15,20,25,50,100"
+                                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                       rows="15">
+                                            <!--<f:facet name="header">Totales</f:facet>-->
+                                            <ace:column  headerText="Fuente"  style="text-align: left">  
+                                                <h:outputText  value="#{itemTotales.fuente.nombre}" rendered="#{itemTotales.fuente ne null}"/>  
+                                                <h:outputText  value="#{itemTotales.total}" rendered="#{itemTotales.fuente eq null}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Ingresos" style="text-align: right">
+                                                <h:outputText  value="#{itemTotales.ingresos}">
+                                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                            <ace:column  headerText="Egresos" style="text-align: right">
+                                                <h:outputText  value="#{itemTotales.egresos}">
+                                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                            <ace:column  headerText="Total" style="text-align: right">
+                                                <h:outputText  value="#{itemTotales.ingresos-itemTotales.egresos}">
+                                                    <f:convertNumber pattern="###,###,#00.00"/>
+                                                </h:outputText>
+                                            </ace:column>
+                                        </ace:dataTable>
+                                    </h:panelGrid>
+                                </ace:tabPane>   
+                                <ace:tabPane label="Errores de Carga">
+                                    <ace:dataTable id="tablaErrores" 
+                                                   value="#{solicitudReformasPersonal.errores}"
+                                                   var="error"
+                                                   paginator="true"
+                                                   lazy="false"
+                                                   resizableColumns="true"
+                                                   rowIndexVar="row2"
+                                                   paginatorPosition="top"
+                                                   paginatorAlwaysVisible="true"
+                                                   rowsPerPageTemplate="5,10,15,30,50,100"
+                                                   paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                   rows="10"
+                                                   style="width: 100%">
+                                        <ace:column  headerText="Error" style="text-align: left">
+                                            <h:outputText  value="#{error}">
+                                            </h:outputText>
+                                        </ace:column>
+                                    </ace:dataTable>
+                                </ace:tabPane>
+                            </ace:tabSet>
+                        </ace:tabPane>
+                        <ace:tabPane label="PAC">
+                            <ace:submitMonitor id="submitMonitorPanel1"
+                                               for="panel"
+                                               blockUI="@all"
+                                               autoCenter="true"
+                                               activeLabel="Un Momento por favor"/>
+                            <h:panelGrid columns="2">
+                                <h:outputText value="Concepto:"/>
+                                <h:inputTextarea rows="5" cols="40" value="#{solicitudReformasPersonal.traking.observaciones}"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="2" width="30%">
+                                <h:outputLabel value="Separador de campos :"/>
+                                <h:inputText value="#{solicitudReformasPersonal.separadorPac}"  size="3">
+                                    <ace:ajax execute="@all"/>
+                                </h:inputText>
+                                <h:outputLabel value="Archivo a Subir:" />
+                            </h:panelGrid>
+                            <h:panelGrid columns="3" width="30%">
+                                <ace:fileEntry id="file-entry" 
+                                               maxFileCount="1" 
+                                               maxFileCountMessage="Máximo un archivo" 
+                                               fileEntryListener="#{solicitudReformasPersonal.archivoListenerPac}" 
+                                               maxFileSize="6291456" 
+                                               maxFileSizeMessage="Tamaño muy grande." 
+                                               maxTotalSize="18874368" 
+                                               maxTotalSizeMessage="Total del tamaño muy grande." 
+                                               useOriginalFilename="true" 
+                                               useSessionSubdir="true"/>
+                                <h:commandButton type="submit" value="Cargar datos"/>
+                            </h:panelGrid>
+                            <ace:tabSet style="clear:both; width: 100%" >
+                                <ace:tabPane label="Registros">
+                                    <h:panelGrid width="100%">
+                                        <ace:dataTable id="tablaPac" 
+                                                       paginatorAlwaysVisible="true"
+                                                       value="#{solicitudReformasPersonal.listaProyectos}"
+                                                       var="itemPac"
+                                                       paginator="true"
+                                                       lazy="false"
+                                                       resizableColumns="true"
+                                                       rowIndexVar="row"
+                                                       paginatorPosition="both"
+                                                       rowsPerPageTemplate="15,20,25,50,100"
+                                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                       rows="15">
+                                            <ace:column  headerText="N°" style="text-align: right">
+                                                <h:outputText value="#{row+1}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Proyecto"  style="text-align: left">
+                                                <h:outputText  value="#{itemPac.codigo}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="CPC" style="text-align: left">
+                                                <h:outputText  value="#{itemPac.cpc}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Tipo de Compra"  style="text-align: left">
+                                                <h:outputText  value="#{consultasPoa.traerTipoCompra(itemPac.tipocompra)}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Detalle"  style="text-align: left">
+                                                <h:outputText  value="#{itemPac.detalle}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Cuatrimestre 1"  style="text-align: left">
+                                                <h:outputText  value="#{itemPac.cuatrimestre1?'S':''}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Cuatrimestre 2"  style="text-align: left">
+                                                <h:outputText  value="#{itemPac.cuatrimestre2?'S':''}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Cuatrimestre 3"  style="text-align: left">
+                                                <h:outputText  value="#{itemPac.cuatrimestre3?'S':''}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Tipo de Producto"  style="text-align: left">
+                                                <h:outputText  value="#{consultasPoa.traerTipoProducto(itemPac.tipoproducto)}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Procedimiento Contratacion"  style="text-align: left">
+                                                <h:outputText  value="#{consultasPoa.traerTipoProcedimiento(itemPac.procedimientocontratacion)}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Regimen"  style="text-align: left">
+                                                <h:outputText  value="#{consultasPoa.traerTipoRegimen(itemPac.regimen)}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Modificación"  style="text-align: left">
+                                                <h:outputText  value="#{itemPac.modificacion}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Responsable"  style="text-align: left">
+                                                <h:outputText  value="#{itemPac.responsable}"/>
+                                            </ace:column>
+                                            <ace:column  headerText="Documento"  style="text-align: left">
+                                                <h:outputText  value="#{itemPac.documento}"/>
+                                            </ace:column>
+                                        </ace:dataTable>
+                                    </h:panelGrid>
+                                </ace:tabPane> 
+                                <!--errores-->
+                                <ace:tabPane label="Errores de Carga">
+                                    <ace:dataTable id="tablaErroresPac" 
+                                                   value="#{solicitudReformasPersonal.erroresPac}"
+                                                   var="errorPac"
+                                                   paginator="true"
+                                                   lazy="false"
+                                                   resizableColumns="true"
+                                                   rowIndexVar="row2"
+                                                   paginatorPosition="top"
+                                                   paginatorAlwaysVisible="true"
+                                                   rowsPerPageTemplate="5,10,15,30,50,100"
+                                                   paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                   rows="10"
+                                                   style="width: 100%">
+                                        <ace:column  headerText="Error" style="text-align: left">
+                                            <h:outputText  value="#{errorPac}">
+                                            </h:outputText>
+                                        </ace:column>
+                                    </ace:dataTable>
+                                </ace:tabPane>
+                            </ace:tabSet>
+
+                        </ace:tabPane>
+                    </ace:tabSet>
+                </ace:panel>
+
+                <ace:dialog 
+                    header="Partidas"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    height="650"
+                    rendered="#{solicitudReformasPersonal.formulario.mostrar}"
+                    visible="#{solicitudReformasPersonal.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2" width="100%">
+                            <h:outputLabel value="Dirección:"  rendered="#{solicitudReformasPersonal.tipoReforma.parametros ne '7'}"/>
+                            <h:outputLabel value="#{solicitudReformasPersonal.direccionMostrar}" rendered="#{solicitudReformasPersonal.tipoReforma.parametros ne '7'}" />
+                            <h:outputLabel value="Requerimiento :" />
+                            <h:selectOneMenu value="#{solicitudReformasPersonal.tipoReforma}"
+                                             rendered="#{!solicitudReformasPersonal.formulario.modificar}"
+                                             id="requerimiento">
+                                <f:selectItems value="#{consultasPoa.comboTiposDeReformas}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="#{solicitudReformasPersonal.tipoReforma.nombre}" 
+                                           rendered="#{solicitudReformasPersonal.formulario.modificar}"/>
+                        </h:panelGrid>
+                        <!--Creacion de proyecto-->
+                        <h:panelGrid columns="2" rendered="#{(solicitudReformasPersonal.tipoReforma.parametros eq '3' or solicitudReformasPersonal.tipoReforma.parametros eq '5') and !solicitudReformasPersonal.formulario.modificar}">
+                            <h:outputLabel value="Actividad: "/>
+                            <ace:autoCompleteEntry
+                                value="#{solicitudReformasPersonal.codigo}"
+                                rows="10" width="400"
+                                listVar="proyectoAuto"
+                                filterBy="#{proyectoAuto.codigo}"
+                                filterMatchMode="startsWith"
+                                listValue="#{solicitudReformasPersonal.listaProyecto}"
+                                valueChangeListener="#{solicitudReformasPersonal.cambiaCodigo}"
+                                textChangeListener="#{solicitudReformasPersonal.codigoChangeEventHandler}">
+                                <f:facet name="row">
+                                    <h:panelGrid columns="2">
+                                        <h:outputText value="#{proyectoAuto.codigo}"/>
+                                        <h:outputText value="#{proyectoAuto.nombre}"/>
+                                    </h:panelGrid>
+                                </f:facet>
+                                <ace:ajax execute="@all"/>
+                            </ace:autoCompleteEntry>
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+                                    <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{solicitudReformasPersonal.nuevaSubactividad()}" />
+                                </ace:menuBar>
+                            </h:panelGrid>
+                        </h:panelGrid>
+                        <!--cambio de nombre-->
+                        <h:panelGrid rendered="#{(solicitudReformasPersonal.tipoReforma.parametros eq '2') and !solicitudReformasPersonal.formulario.modificar}">
+                            <h:panelGrid columns="2" width="100%">
+                                <h:outputLabel value="Producto: "/>
+                                <ace:autoCompleteEntry
+                                    value="#{solicitudReformasPersonal.codigoNombre}"
+                                    rows="10" width="400"
+                                    listVar="proyectoNombre"
+                                    filterBy="#{proyectoNombre.codigo}"
+                                    filterMatchMode="startsWith"
+                                    listValue="#{solicitudReformasPersonal.listaProyectoNombre}"
+                                    valueChangeListener="#{solicitudReformasPersonal.cambiaCodigoNombre}"
+                                    textChangeListener="#{solicitudReformasPersonal.codigoChangeEventHandlerNombre}">
+                                    <f:facet name="row">
+                                        <h:panelGrid columns="2">
+                                            <h:outputText value="#{proyectoNombre.codigo}"/>
+                                            <h:outputText value="#{proyectoNombre.nombre}"/>
+                                        </h:panelGrid>
+                                    </f:facet>
+                                    <ace:ajax execute="@all"/>
+                                </ace:autoCompleteEntry>
+                                <h:outputLabel value="Nombre:"/>
+                                <h:inputTextarea cols="40" rows="4" value="#{solicitudReformasPersonal.proyectoCambia}"/>
+                            </h:panelGrid>
+                        </h:panelGrid>
+
+                        <!--Disminucion o aumento de valor-->                      
+                        <h:panelGrid rendered="#{solicitudReformasPersonal.tipoReforma.parametros eq '1' or solicitudReformasPersonal.tipoReforma.parametros eq '4' or solicitudReformasPersonal.tipoReforma.parametros eq '5'}">
+                            <h:panelGrid  rendered="#{!solicitudReformasPersonal.formulario.modificar}">
+                                <h:panelGrid  rendered="#{!solicitudReformasPersonal.formulario.modificar}">
+                                    <ui:include src="BuscarProyecto_1.xhtml" rendered="#{!solicitudReformasPersonal.formulario.modificar}"/>
+                                </h:panelGrid>
+                                <h:outputLabel value="Nombre:" rendered="#{solicitudReformasPersonal.tipoReforma.parametros eq '4'}"/>
+                                <h:inputTextarea cols="40" rows="4" value="#{solicitudReformasPersonal.proyectoCambia}" rendered="#{solicitudReformasPersonal.tipoReforma.parametros eq '4'}"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="2" rendered="#{!solicitudReformasPersonal.formulario.modificar and (solicitudReformasPersonal.tipoReforma.parametros eq '1' or solicitudReformasPersonal.tipoReforma.parametros eq '4')}">
+                                <h:outputLabel value="Partidas: " style="width: 100px;" rendered="#{solicitudReformasPersonal.comboPartidas2 ne null}"/>
+                                <h:selectOneMenu value="#{partidasPoa.partidaPoa}" id="partida" rendered="#{solicitudReformasPersonal.comboPartidas2 ne null}">
+                                    <f:selectItems value="#{solicitudReformasPersonal.comboPartidas2}" />
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                            </h:panelGrid>
+                            <h:panelGrid columns="2" rendered="#{!solicitudReformasPersonal.formulario.modificar and solicitudReformasPersonal.tipoReforma.parametros eq '5'}">
+                                <ui:include src="BuscarPartida.xhtml"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Fuente :" for="fuente" />
+                                <h:selectOneMenu  value="#{asignacionesPoa.fuente}" rendered="#{!solicitudReformasPersonal.formulario.modificar}" id="fuente">
+                                    <f:selectItems value="#{consultasPoa.comboFuenteFinanciamiento}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                            </h:panelGrid>
+                            <h:panelGrid columns="2" rendered="#{solicitudReformasPersonal.formulario.modificar}">
+                                <h:outputLabel value="Proyecto:"/>
+                                <h:outputLabel value="#{solicitudReformasPersonal.reforma.asignacion.proyecto.toString()}"/>
+                                <h:outputLabel value="Partida:"/>
+                                <h:outputLabel value="#{solicitudReformasPersonal.reforma.asignacion.partida.toString()}"/>
+                                <h:outputLabel value="Fuente :" for="fuente" />
+                                <h:outputLabel value="#{solicitudReformasPersonal.reforma.asignacion.fuente}" />
+                            </h:panelGrid>
+
+
+                            <h:panelGrid columns="2" width="100%">
+                                <h:outputLabel value="Valor Asignación:"/>
+                                <h:outputText value="#{solicitudReformasPersonal.valorAsignaciones}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                                <h:outputLabel value="Valor Reformas:"/>
+                                <h:outputText value="#{solicitudReformasPersonal.totalReformaspoaAisgnacion}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                                <h:outputLabel value="Valor Certificaciones:"/>
+                                <h:outputText value="#{solicitudReformasPersonal.valorCertificacion}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                                <h:outputLabel value="Saldo Actual:"/>
+                                <h:outputText value="#{solicitudReformasPersonal.saldoActual}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                                <h:outputLabel value="Valor:" for="Valor" />
+                                <h:inputText value="#{solicitudReformasPersonal.reforma.valor}" id="Valor"/>
+                            </h:panelGrid>
+                        </h:panelGrid>
+                        <!--CAMBIO DE NOMBRE DE SUBACTIVIDAD, CAMBIO DE PARTIDA PRESUPUESTARIA-->                      
+                        <h:panelGrid rendered="#{solicitudReformasPersonal.tipoReforma.parametros eq '6'}">
+                            <h:panelGrid  rendered="#{!solicitudReformasPersonal.formulario.modificar}">
+                                <h:panelGrid  rendered="#{!solicitudReformasPersonal.formulario.modificar}">
+                                    <ui:include src="BuscarProyecto.xhtml" rendered="#{!solicitudReformasPersonal.formulario.modificar}"/>
+                                </h:panelGrid>
+                                <h:outputLabel value="Nombre:"/>
+                                <h:inputTextarea cols="40" rows="4" value="#{solicitudReformasPersonal.proyectoCambia}"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Fuente :" for="fuente" />
+                                <h:selectOneMenu value="#{asignacionesPoa.fuente}" rendered="#{!solicitudReformasPersonal.formulario.modificar}" id="fuente2">
+                                    <f:selectItems value="#{consultasPoa.comboFuenteFinanciamiento}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                            </h:panelGrid>
+                            <h:panelGrid columns="2" rendered="#{!solicitudReformasPersonal.formulario.modificar}">
+                                <!--<ui:include src="BuscarPartida.xhtml"/>-->
+                                <h:outputLabel value="Partidas: " style="width: 100px;" />
+                                <h:selectOneMenu value="#{partidasPoa.partidaPoa}" id="partida2">
+                                    <f:selectItems value="#{solicitudReformasPersonal.comboPartidas2}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                            </h:panelGrid>
+
+                            <h:panelGrid columns="2" width="100%">
+                                <h:outputLabel value="Valor Asignación:"/>
+                                <h:outputText value="#{solicitudReformasPersonal.valorAsignaciones}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                                <h:outputLabel value="Valor Reformas:"/>
+                                <h:outputText value="#{solicitudReformasPersonal.totalReformaspoaAisgnacion}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                                <h:outputLabel value="Valor Certificaciones:"/>
+                                <h:outputText value="#{solicitudReformasPersonal.valorCertificacion}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                                <h:outputLabel value="Saldo Actual:"/>
+                                <h:outputText value="#{solicitudReformasPersonal.saldoActual}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </h:panelGrid>
+
+
+                            <h:panelGrid  rendered="#{!solicitudReformasPersonal.formulario.modificar}">
+                                <h:panelGrid columns="4">
+                                    <h:outputLabel value="Cambiar a Partida :" />
+                                    <h:selectOneMenu value="#{solicitudReformasPersonal.tipoBuscar}" id="partidaCambiar">
+                                        <f:selectItem itemLabel="Código" itemValue="1"/>
+                                        <f:selectItem itemLabel="Nombre" itemValue="2"/>
+                                        <ace:ajax execute="@all"/>
+                                    </h:selectOneMenu>
+                                    <ace:autoCompleteEntry 
+                                        rendered="#{solicitudReformasPersonal.tipoBuscar eq 1}"
+                                        value="#{solicitudReformasPersonal.codigo}"
+                                        rows="10" width="400"
+                                        listVar="clasificador"
+                                        filterBy="#{clasificador.codigo}"
+                                        filterMatchMode="startsWith"
+                                        listValue="#{solicitudReformasPersonal.partidasLista}"
+                                        valueChangeListener="#{solicitudReformasPersonal.cambiaCodigoPartida}"
+                                        textChangeListener="#{solicitudReformasPersonal.codigoPartidaChangeEventHandler}"
+                                        labelPosition="left"
+                                        id="clasificadorCodigo">
+                                        <f:facet name="row">
+                                            <h:panelGrid columns="3" width="100%" columnClasses="tipo">
+                                                <h:outputText value="#{clasificador.codigo}"/>
+                                                <h:outputText value="#{clasificador.nombre}"/>
+                                            </h:panelGrid>
+                                        </f:facet>
+                                        <ace:ajax execute="@all"/>
+                                    </ace:autoCompleteEntry>
+                                    <ace:autoCompleteEntry 
+                                        rendered="#{solicitudReformasPersonal.tipoBuscar eq 2}"
+                                        value="#{solicitudReformasPersonal.codigo}"
+                                        rows="10" width="400"
+                                        listVar="clasificador"
+                                        filterBy="#{clasificador.nombre}"
+                                        filterMatchMode="contains"
+                                        listValue="#{solicitudReformasPersonal.partidasLista}"
+                                        valueChangeListener="#{solicitudReformasPersonal.cambiaCodigoPartida}"
+                                        textChangeListener="#{solicitudReformasPersonal.partidaChangeEventHandler}"
+                                        labelPosition="left"
+                                        id="clasificadorNombre">
+                                        <f:facet name="row">
+                                            <h:panelGrid columns="3" width="100%" columnClasses="tipo">
+                                                <h:outputText value="#{clasificador.codigo}"/>
+                                                <h:outputText value="#{clasificador.nombre}"/>
+                                            </h:panelGrid>
+                                        </f:facet>
+                                        <ace:ajax execute="@all"/>
+                                    </ace:autoCompleteEntry>
+                                </h:panelGrid>
+                                <ace:panel rendered="#{solicitudReformasPersonal.partidaPoa!=null}">
+                                    <h:panelGrid columns="2" >
+                                        <h:outputLabel value="Partida:"/>
+                                        <h:outputLabel value="#{solicitudReformasPersonal.partidaPoa.toString()}"  />
+                                        <h:outputLabel value="Ingreso" rendered="#{solicitudReformasPersonal.partidaPoa.ingreso}" style="color: green;"/>
+                                        <h:outputLabel value="Egreso"  rendered="#{!solicitudReformasPersonal.partidaPoa.ingreso}" style="color: red;"/>
+                                    </h:panelGrid>
+                                </ace:panel>
+                            </h:panelGrid>
+
+
+                            <h:panelGrid columns="2" rendered="#{solicitudReformasPersonal.formulario.modificar}">
+                                <h:outputLabel value="Proyecto:"/>
+                                <h:outputLabel value="#{solicitudReformasPersonal.reforma.asignacion.proyecto.toString()}"/>
+                                <h:outputLabel value="Partida:"/>
+                                <h:outputLabel value="#{solicitudReformasPersonal.reforma.asignacion.partida.toString()}"/>
+                                <h:outputLabel value="Fuente :" for="fuente" />
+                                <h:outputLabel value="#{solicitudReformasPersonal.reforma.asignacion.fuente}" />
+                            </h:panelGrid>
+                        </h:panelGrid>
+                        <!--utilizar fondos de otra direccion-->
+                        <h:panelGrid rendered="#{(solicitudReformasPersonal.tipoReforma.parametros eq '7') and !solicitudReformasPersonal.formulario.modificar}">
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Dirección: " style="width: 100px;" />
+                                <h:selectOneMenu value="#{solicitudReformasPersonal.direccionFondo}" id="direccion">
+                                    <f:selectItems value="#{consultasPoa.comboDirecciones}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                                <h:outputLabel value="Subactividad: " style="width: 100px;" />
+<!--                                <h:selectOneMenu value="#{solicitudReformasPersonal.proyectoFondo}">
+                                    <f:selectItems value="#{solicitudReformasPersonal.comboSubactividad}" />
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>-->
+                                <ace:comboBox value="#{solicitudReformasPersonal.proyectoFondo}" 
+                                              listValue="#{solicitudReformasPersonal.listaPro}"  
+                                              itemValue="#{itemPro.codigo}"
+                                              filterMatchMode="startsWith"
+                                              width="500"
+                                              listVar="itemPro"
+                                              id="comboBox">
+                                    <f:facet name="row">
+                                        <h:panelGrid columns="2" width="100%" columnClasses="tipo">
+                                            <h:outputText value="#{itemPro.codigo}" />
+                                            <h:outputText value="#{itemPro.nombre}" />
+                                        </h:panelGrid>
+                                    </f:facet>
+                                    <ace:ajax execute="@all"/>    
+                                </ace:comboBox>
+                                <h:outputLabel value="Fuente: " for="fuente" />
+                                <h:selectOneMenu value="#{asignacionesPoa.fuente}" rendered="#{!solicitudReformasPersonal.formulario.modificar}" id="fuente3">
+                                    <f:selectItems value="#{consultasPoa.comboFuenteFinanciamiento}"/>
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                                <h:outputLabel value="Partidas: " style="width: 100px;" />
+                                <h:selectOneMenu value="#{solicitudReformasPersonal.asignacionFondo}" id="partida3">
+                                    <f:selectItems value="#{solicitudReformasPersonal.comboPartidas}" />
+                                    <ace:ajax execute="@all"/>
+                                </h:selectOneMenu>
+                            </h:panelGrid> 
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Valor Asignación:"/>
+                                <h:outputText value="#{solicitudReformasPersonal.asignacionFondo.valor}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                                <h:outputLabel value="Valor Reformas:"/>
+                                <h:outputText value="#{solicitudReformasPersonal.totalReformaspoaAisgnacionFondo}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                                <h:outputLabel value="Valor Certificaciones:"/>
+                                <h:outputText value="#{solicitudReformasPersonal.valorCertificacionFondo}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                                <h:outputLabel value="Saldo Actual:"/>
+                                <h:outputText value="#{solicitudReformasPersonal.saldoActualFondo}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                                <h:outputLabel value="Valor:" for="Valor" />
+                                <h:inputText value="#{solicitudReformasPersonal.reforma.valor}" id="valor"/>
+                            </h:panelGrid> 
+                        </h:panelGrid>                        
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{solicitudReformasPersonal.formulario.nuevo}" 
+                                              action="#{solicitudReformasPersonal.insertar()}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{solicitudReformasPersonal.grabar()}" 
+                                              rendered="#{solicitudReformasPersonal.formulario.modificar}" />
+                                <ace:menuItem action="#{solicitudReformasPersonal.borrar()}" 
+                                              value="Esta seguro de Borrar el registro?" 
+                                              rendered="#{solicitudReformasPersonal.formulario.borrar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{solicitudReformasPersonal.formulario.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+
+                <ace:dialog 
+                    header="Reforma PAC "
+                    closable="false"
+                    modal="true"
+                    draggable="false"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    width="800"
+                    height="550"
+                    rendered="#{solicitudReformasPersonal.formularioLinea.mostrar}"
+                    visible="#{solicitudReformasPersonal.formularioLinea.mostrar}">
+                    <h:panelGroup>    
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Proyecto: "/>
+                            <h:outputLabel  value="#{solicitudReformasPersonal.proyectoSeleccionado.toString()}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Año: " />
+                            <h:outputLabel value="#{solicitudReformasPersonal.anio}" />
+                            <h:outputLabel value="Pac:" />
+                            <ace:checkboxButton value="#{solicitudReformasPersonal.proyectoSeleccionado.pac}"/>
+                            <h:outputLabel value="CPC:" />
+                            <h:selectOneMenu value="#{solicitudReformasPersonal.proyectoSeleccionado.cpc}" style="width: 300px" >
+                                <f:selectItems value="#{consultasPoa.comboCPC}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Tipo de Compra:" />
+                            <h:selectOneMenu value="#{solicitudReformasPersonal.proyectoSeleccionado.tipocompra}"  >
+                                <f:selectItems value="#{consultasPoa.tipoCompra}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Cantidad:" />
+                            <h:inputText value="#{solicitudReformasPersonal.proyectoSeleccionado.cantidad}" />
+                            <h:outputLabel value="Unidad" />
+                            <h:selectOneMenu value="#{solicitudReformasPersonal.proyectoSeleccionado.unidad}"  >
+                                <f:selectItems value="#{consultasPoa.tipoUnidad}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Tipo de Presupuesto de Inversión:" />
+                            <h:selectOneMenu value="#{solicitudReformasPersonal.proyectoSeleccionado.presupuesto}"   >
+                                <f:selectItems value="#{consultasPoa.tipoPresupuesto}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Impuesto:" />
+                            <h:selectOneMenu  value="#{solicitudReformasPersonal.proyectoSeleccionado.impuesto}">
+                                <f:selectItems value="#{impuestosSfccbdmq.comboImpuestos2}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Costo Unitario: " />
+                            <h:outputText  value="#{solicitudReformasPersonal.proyectoSeleccionado.valoriva}">
+                                <f:convertNumber pattern="##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Valor total: " />
+                            <h:outputText  value="#{solicitudReformasPersonal.proyectoSeleccionado.valoriva + solicitudReformasPersonal.valorTotal}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputText>
+                            <h:outputLabel value="Cuatrimestre 1:" />
+                            <ace:checkboxButton value="#{solicitudReformasPersonal.proyectoSeleccionado.cuatrimestre1}"/>
+                            <h:outputLabel value="Cuatrimestre 2:" />
+                            <ace:checkboxButton value="#{solicitudReformasPersonal.proyectoSeleccionado.cuatrimestre2}"/>
+                            <h:outputLabel value="Cuatrimestre 3:" />
+                            <ace:checkboxButton value="#{solicitudReformasPersonal.proyectoSeleccionado.cuatrimestre3}"/>
+                            <h:outputLabel value="Tipo de Producto:" />
+                            <h:selectOneMenu value="#{solicitudReformasPersonal.proyectoSeleccionado.tipoproducto}"  >
+                                <f:selectItems value="#{consultasPoa.tipoProducto}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Catálogo Electrónico:" />
+                            <ace:checkboxButton value="#{solicitudReformasPersonal.proyectoSeleccionado.catalogoelectronico}"/>
+                            <h:outputLabel value="Procedimiento de Contratación:" />
+                            <h:selectOneMenu value="#{solicitudReformasPersonal.proyectoSeleccionado.procedimientocontratacion}"   >
+                                <f:selectItems value="#{consultasPoa.tipoProcedimiento}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Fondos Bid:"/>
+                            <ace:checkboxButton value="#{solicitudReformasPersonal.proyectoSeleccionado.fondobid}">
+                                <ace:ajax execute="all"/>
+                            </ace:checkboxButton>
+                            <h:outputLabel value="Código de Operación: " rendered="#{solicitudReformasPersonal.proyectoSeleccionado.fondobid}"/>
+                            <h:inputText value="#{solicitudReformasPersonal.proyectoSeleccionado.codigooperacion}" rendered="#{solicitudReformasPersonal.proyectoSeleccionado.fondobid}"/>
+                            <h:outputLabel value="Número de Operación: " rendered="#{solicitudReformasPersonal.proyectoSeleccionado.fondobid}"/>
+                            <h:inputText value="#{solicitudReformasPersonal.proyectoSeleccionado.numerooperacion}" rendered="#{solicitudReformasPersonal.proyectoSeleccionado.fondobid}"/>
+                            <h:outputLabel value="Tipo de Régimen:" />
+                            <h:selectOneMenu value="#{solicitudReformasPersonal.proyectoSeleccionado.regimen}"  >
+                                <f:selectItems value="#{consultasPoa.tipoRegimen}" />
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Detalle:" />
+                            <h:inputTextarea value="#{solicitudReformasPersonal.proyectoSeleccionado.detalle}" title="Detalle" cols="40"/>
+                            <h:outputLabel value="Modificación:" />
+                            <h:inputTextarea value="#{solicitudReformasPersonal.proyectoSeleccionado.modificacion}" title="Detalle" cols="40"/>
+                            <h:outputLabel value="Responsable:" />
+                            <h:inputTextarea value="#{solicitudReformasPersonal.proyectoSeleccionado.responsable}" title="Detalle" cols="40"/>
+                            <h:outputLabel value="Documento:" />
+                            <h:inputTextarea value="#{solicitudReformasPersonal.proyectoSeleccionado.documento}" title="Detalle" cols="40"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{solicitudReformasPersonal.grabarCertificacionPAC()}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{solicitudReformasPersonal.formularioLinea.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+                </ace:dialog>
+
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{solicitudReformasPersonal.formularioImprimir.mostrar}"
+                    visible="#{solicitudReformasPersonal.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="Reforma POA.pdf"  label="Reforma POA"
+                                             mimeType="application/pdf" 
+                                             rendered="#{solicitudReformasPersonal.reportepdf!=null}"
+                                             resource="#{solicitudReformasPersonal.reportepdf}" 
+                                             style="" type="button"/>
+                        <ace:dynamicResource fileName="Reforma PAC.pdf" label="Reforma PAC"
+                                             mimeType="application/pdf" 
+                                             rendered="#{solicitudReformasPersonal.reportepdfPac!=null}"
+                                             resource="#{solicitudReformasPersonal.reportepdfPac}" 
+                                             style="" type="button"/>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Aprobar Director" icon="ui-icon ui-icon-check" 
+                                              action="#{solicitudReformasPersonal.aprobarDirector()}"
+                                              rendered="#{certificacionPoa.puedeEditar}"/>
+                                <ace:menuItem value="Negar Director" icon="ui-icon ui-icon-check" 
+                                              action="#{solicitudReformasPersonal.negarDirector()}"
+                                              rendered="#{certificacionPoa.puedeEditar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{solicitudReformasPersonal.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="CREACIÓN DE SUBACTIVIDAD"
+                    closable="false"
+                    modal="true"
+                    draggable="false"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{solicitudReformasPersonal.formularioSubactividad.mostrar}"
+                    visible="#{solicitudReformasPersonal.formularioSubactividad.mostrar}">
+
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Código:" for="codigo" />
+                        <h:inputText value="#{solicitudReformasPersonal.proyectoSubactividadNuevo.codigo}" maxlength="3" size="3"/>
+                        <h:outputLabel value="Nombre:" for="nombre" />
+                        <h:inputTextarea cols="60" rows="4" id="nombre" value="#{solicitudReformasPersonal.proyectoSubactividadNuevo.nombre}" title="Nombre" />
+                        <h:outputLabel value="Observaciones:" />
+                        <h:inputTextarea cols="60" rows="4" value="#{solicitudReformasPersonal.proyectoSubactividadNuevo.observaciones}"/>
+                        <!--                        <h:outputLabel value="¿Es Ingreso?:" />
+                                                <h:selectBooleanCheckbox value="#{solicitudReformasPersonal.proyectoSubactividadNuevo.ingreso}" title="Ingreso"/>
+                                                <h:outputLabel value="¿Es Pac?:" />
+                                                <h:selectBooleanCheckbox value="#{solicitudReformasPersonal.proyectoSubactividadNuevo.pac}" title="Pac"/>-->
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"
+                                          action="#{solicitudReformasPersonal.insertarSubactividad()}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{solicitudReformasPersonal.formularioSubactividad.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Imprimir Solicitud de certificación"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{solicitudReformasPersonal.formularioSolicitud.mostrar}"
+                    visible="#{solicitudReformasPersonal.formularioSolicitud.mostrar}">
+                    <h:panelGroup>    
+                        <ace:dynamicResource 
+                            fileName="SolicitudCertificacion.pdf"                                            
+                            attachment="true"                                             
+                            label="Descargar archivo"
+                            mimeType="application/pdf"
+                            resource="#{solicitudReformasPersonal.reporteSolicitudpdf}" 
+                            type="button" rendered="#{solicitudReformasPersonal.reporteSolicitudpdf ne null}"/>
+                        <ace:dynamicResource 
+                            fileName="#{solicitudReformasPersonal.nombreArchivo}"                                            
+                            attachment="true"                                             
+                            label="Descargar archivo firmado"
+                            mimeType="#{solicitudReformasPersonal.tipoArchivo}"
+                            resource="#{solicitudReformasPersonal.recurso}" 
+                            type="button" rendered="#{solicitudReformasPersonal.recurso ne null}"/>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Firmar" icon="ui-icon ui-icon-key" 
+                                              action="#{solicitudReformasPersonal.firma()}"
+                                              rendered="#{certificacionPoa.puedeEditar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{solicitudReformasPersonal.formularioSolicitud.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages style="white-space: pre-wrap"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>  
+                <!--Firmar el documento-->
+                <ace:dialog 
+                    header="Firmar"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{solicitudReformasPersonal.formularioFirma.mostrar}"
+                    visible="#{solicitudReformasPersonal.formularioFirma.mostrar}">
+                    <h:panelGroup>    
+                        <h:outputLabel value="Clave:" />
+                        <h:inputSecret value="#{solicitudReformasPersonal.clave}" />
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Firmar" icon="ui-icon ui-icon-disk" 
+                                              action="#{solicitudReformasPersonal.grabarFirma()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{solicitudReformasPersonal.formularioFirma.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages style="white-space: pre-wrap"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>       
+                <!--<ui:include src="DescargarDocumentos.xhtml"/>-->
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

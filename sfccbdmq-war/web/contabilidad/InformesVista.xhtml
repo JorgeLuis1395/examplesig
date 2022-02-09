@@ -1,0 +1,249 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{generarInformesSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGrid columns="2" width="100%">
+                        <h:panelGrid columns="2" >
+                            <h:outputLabel value="Reporte :"/>
+                            <h:selectOneMenu value="#{generarInformesSfccbdmq.reporte}" >
+                                <!-- TODO: update below reference to list of available items-->
+                                <f:selectItems value="#{codigosSfccbdmq.comboReportes}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Incluye Columna de Totales? :"/>
+                            <h:selectBooleanCheckbox value="#{generarInformesSfccbdmq.total}"  >
+                                <ace:ajax execute="@all"/>
+                            </h:selectBooleanCheckbox>
+                            <h:outputLabel value="Título Columna de Totales:"/>
+                            <h:inputText value="#{generarInformesSfccbdmq.tituloTotal}" title="Nombre" />
+                        </h:panelGrid>
+                        <h:panelGrid >
+                            <ace:dataTable id="tablaParametros" 
+                                           value="#{generarInformesSfccbdmq.listaParametros}"
+                                           var="itemParametro"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="top"
+                                           rowsPerPageTemplate="15,20,25,50,100"
+                                           rows="5"
+                                           currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           binding="#{generarInformesSfccbdmq.formularioParametro.fila}">
+                                <ace:column  headerText="Registro" style="text-align: right">
+                                    <h:outputText value="#{row+1}"/>
+                                </ace:column>
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{generarInformesSfccbdmq.eliminaRenglon()}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column  headerText="Nombre"  style="text-align: left">
+                                    <h:outputText  value="#{itemParametro.nombre}"/>
+                                </ace:column>  
+                                <ace:column  headerText="Desde"  style="text-align: left">
+                                    <h:outputText  value="#{itemParametro.desde}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>  
+                                <ace:column  headerText="Hasta"  style="text-align: left">
+                                    <h:outputText  value="#{itemParametro.hasta}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>  
+                                <ace:column  headerText="Conserva el Signo en total"  style="text-align: left">
+                                    <h:outputText  value="#{itemParametro.positivo}"/>
+                                </ace:column>  
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{generarInformesSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Imprimir" icon="ui-icon ui-icon-print"  action="#{generarInformesSfccbdmq.imprimir()}"/>
+                            <ace:menuItem value="Nueva Columna" icon="ui-icon ui-icon-document" action="#{generarInformesSfccbdmq.nuevoRenglon()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                </ace:panel>
+                <ace:panel 
+                    header="Resultado Bùsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{generarInformesSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{generarInformesSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                        <!--                        <h:commandButton  value="Imprimir">
+                                                    <h:outputText id="printBoth" value="Imprimir"/>
+                                                    <ace:printer for="imprimirGrid"/>
+                                                </h:commandButton>-->
+                    </h:panelGrid>
+                    <!--                    <h:panelGrid styleClass="centeredPanelGrid">
+                                            
+                                        </h:panelGrid>-->
+                    <h:panelGrid width="100%" id="imprimirGrid" style="display: block">
+                        <img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>
+                        <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                            <h:outputText value="#{configuracionSfccbdmq.configuracion.nombre}"/>
+                            <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                                <h:outputText value="Usuario :"/>
+                                <h:outputText value="#{parametrosSfccbdmq.logueado.userid}"/>
+                                <h:outputText value="Fecha :"/>
+                                <h:outputText value="#{parametrosSfccbdmq.fechaActual}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                                </h:outputText>
+                            </h:panelGrid>
+                            <h:outputText value="Valores expresados en #{configuracionSfccbdmq.configuracion.expresado}"/>
+                        </h:panelGrid>
+                        <ace:dataTable id="tabla" 
+                                       value="#{generarInformesSfccbdmq.listaLineas}"
+                                       var="item"
+                                       paginator="false"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       >
+                            <f:facet name="header">#{generarInformesSfccbdmq.reporte.nombre}</f:facet>
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column  headerText="Código"  style="text-align: left">
+                                <h:outputText  value="#{item.codigo}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Nombre"  style="text-align: left">
+                                <h:outputText  value="#{item.texto}"/>
+                                <h:outputText  value="#{item.campo.nombre}"/>
+                                <h:outputText  value="#{item.operacion.nombre}"/>
+                            </ace:column>  
+                            <c:forEach items="#{generarInformesSfccbdmq.listaParametros}" var="cabecera">
+                                <ace:column headerText="#{cabecera.nombre}" style="text-align: right">
+                                    <h:outputText  value="#{generarInformesSfccbdmq.calcula(item, cabecera)}"/>
+                                </ace:column>
+                            </c:forEach>
+                            <ace:column headerText="#{generarInformesSfccbdmq.tituloTotal}" style="text-align: right" rendered="#{generarInformesSfccbdmq.total}">
+                                <h:outputText  value="#{generarInformesSfccbdmq.calculaTotal(item)}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{generarInformesSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{generarInformesSfccbdmq.formularioParametro.mostrar}"
+                    visible="#{generarInformesSfccbdmq.formularioParametro.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Nombre:"/>
+                            <h:inputText value="#{generarInformesSfccbdmq.parametro.nombre}" title="Nombre" />
+                            <h:outputLabel value="Desde :"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{generarInformesSfccbdmq.parametro.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta :"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{generarInformesSfccbdmq.parametro.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+                        <h:outputLabel value="Conserva el signo en total? :"/>
+                        <h:selectBooleanCheckbox value="#{generarInformesSfccbdmq.parametro.positivo}"/>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                          action="#{generarInformesSfccbdmq.insertarRenglon()}"/>
+
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{generarInformesSfccbdmq.formularioParametro.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                        <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                    </h:panelGrid>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{generarInformesSfccbdmq.formularioImprimir.mostrar}"
+                    visible="#{generarInformesSfccbdmq.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <!--                        <h:panelGrid columns="1">
+                                                    <h:commandButton  value="Imprimir">
+                                                        <h:outputText id="printBoth" value="Imprimir"/>
+                                                        <ace:printer for="panelImprimir"/>
+                                                    </h:commandButton>
+                                                </h:panelGrid>
+                                                <ui:include src="imprimirOrden.xhtml" />-->
+                        <ace:dynamicResource fileName="Informe.pdf" id="pdf-buttonxx" label="Generar PDF"
+                                             mimeType="application/pdf" resource="#{generarInformesSfccbdmq.recurso}" 
+                                             style="" type="button"/>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{generarInformesSfccbdmq.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

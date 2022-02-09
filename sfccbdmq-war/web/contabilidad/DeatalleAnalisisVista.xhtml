@@ -1,0 +1,217 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{detalleAnalisisSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGroup>
+
+                        <h:panelGrid columns="2" width="100%">
+                            <h:outputLabel value="Ver:"/>
+                            <h:selectOneRadio value="#{detalleAnalisisSfccbdmq.que}">
+                                <f:selectItem itemLabel="Auxiliar" itemValue="0"/>
+                                <f:selectItem itemLabel="Centro de Costo" itemValue="1"/>
+                                <f:selectItem itemLabel="Partida" itemValue="2"/>
+                                <f:selectItem itemLabel="Fuente de Financiamiento" itemValue="3"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneRadio>
+                        </h:panelGrid>
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="Auxiliar :" rendered="#{detalleAnalisisSfccbdmq.que==0}"/>
+                            <h:inputText  value="#{detalleAnalisisSfccbdmq.auxiliar}" rendered="#{detalleAnalisisSfccbdmq.que==0}"/>
+                            <h:outputLabel value="Fuente:" for="fuente" rendered="#{detalleAnalisisSfccbdmq.que==3}"/>
+                            <h:selectOneMenu id="fuente" value="#{detalleAnalisisSfccbdmq.fuenteFinanciamiento}" rendered="#{detalleAnalisisSfccbdmq.que==3}">
+                                <f:selectItems value="#{codigosSfccbdmq.comboFuenteFinv}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Centro de Costo :" rendered="#{detalleAnalisisSfccbdmq.que==1}"/>
+                            <ace:comboBox value="#{detalleAnalisisSfccbdmq.centrocosto}" rendered="#{detalleAnalisisSfccbdmq.que==1}"
+                                          listValue="#{proyectosSfccbdmq.listaProyectos}"  
+                                          itemValue="#{itemProyecto.codigo}"
+                                          filterMatchMode="startsWith"
+                                          listVar="itemProyecto" width="400">
+                                <f:facet name="row">
+                                    <h:panelGrid columns="1" width="100%" >
+                                        <h:outputText value="#{itemProyecto.codigo} - #{itemProyecto.nombre} " />
+                                    </h:panelGrid>
+                                </f:facet>
+                            </ace:comboBox>
+                            <h:outputLabel value="Partida :" rendered="#{detalleAnalisisSfccbdmq.que==2}"/>
+                            <ace:comboBox value="#{detalleAnalisisSfccbdmq.partida}" rendered="#{detalleAnalisisSfccbdmq.que==2}"
+                                          listValue="#{clasificadorSfccbdmq.listaClasificadoresCompleto}"  
+                                          itemValue="#{itemPartida.codigo}"
+                                          filterMatchMode="startsWith"
+                                          listVar="itemPartida" width="400">
+                                <f:facet name="row">
+                                    <h:panelGrid columns="1" width="100%" >
+                                        <h:outputText value="#{itemPartida.codigo} - #{itemPartida.nombre} " />
+                                    </h:panelGrid>
+                                </f:facet>
+                            </ace:comboBox>
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{detalleAnalisisSfccbdmq.desde}" id="dos"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{detalleAnalisisSfccbdmq.hasta}" id="tres"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{detalleAnalisisSfccbdmq.buscar()}"/>
+                                <ace:menuItem value="Imprimir" icon="ui-icon ui-icon-print" action="#{detalleAnalisisSfccbdmq.imprimir()}" rendered="#{detalleAnalisisSfccbdmq.listaMayor.size()>0}" />
+                                <ace:menuItem value="Hoja Elect." icon="ui-icon ui-icon-calculator" action="#{detalleAnalisisSfccbdmq.exportar()}" rendered="#{detalleAnalisisSfccbdmq.listaMayor.size()>0}" />
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <ace:submitMonitor 
+                            for="panel"
+                            blockUI="panel"
+                            autoCenter="true"
+                            activeLabel="Un Momento por favor"/>
+                        <ace:dataTable id="tabla" 
+                                       value="#{detalleAnalisisSfccbdmq.listaMayor}"
+                                       var="item"
+                                       style="width: 100%"
+                                       scrollHeight="600"
+                                       scrollable="true">
+                            <!--                            <f:facet name="header">
+                            
+                                                            <h:panelGrid columns="1">
+                            #{detalleAnalisisSfccbdmq.cuentaContable.codigo} #{detalleAnalisisSfccbdmq.cuentaContable.nombre}
+                        </h:panelGrid>
+
+                    </f:facet>-->
+                            <ace:column  headerText="Fecha" style="text-align: right">
+                                <h:outputText  value="#{item.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Cuenta" style="text-align: right">
+                                <h:outputText  value="#{item.cuenta}"/>
+                            </ace:column>
+                            <ace:column  headerText="Equivalencia" style="text-align: right" >
+                                <h:outputText  value="#{item.equivalencia}"/>
+                            </ace:column>
+
+                            <ace:column  headerText="Tipo" style="text-align: right" >
+                                <h:outputText  value="#{item.tipo}"/>
+                            </ace:column>
+                            <ace:column  headerText="No" style="text-align: right" >
+                                <h:commandLink  value="#{item.numero}" action="#{consultarAsientosSfccbdmq.imprimir(item.cabecera)}"/>
+                            </ace:column>
+
+                            <ace:column  headerText="Referencia" style="text-align: left" >
+                                <h:outputText  value="#{item.referencia}"/>
+                            </ace:column>  
+
+                            <ace:column  headerText="Debe"  style="text-align: right" >
+                                <h:outputText  value="#{item.debe}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Haber"  style="text-align: right" >
+                                <h:outputText  value="#{item.haber}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Saldo Deudor"  style="text-align: right" >
+                                <h:outputText  value="#{item.saldoDeudor}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Saldo Acreedor"  style="text-align: right" >
+                                <h:outputText  value="#{item.saldoAcreedor}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGroup>
+                </ace:panel>
+
+                <!--imprimir-->
+                <ace:dialog 
+                    header="#{detalleAnalisisSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{consultarAsientosSfccbdmq.formulario.mostrar}"
+                    visible="#{consultarAsientosSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <!--                        <h:panelGrid columns="1">
+                                                    <h:commandButton  value="Imprimir">
+                                                        <h:outputText id="printBoth" value="Imprimir"/>
+                                                        <ace:printer for="panelImprimir"/>
+                                                    </h:commandButton>
+                                                </h:panelGrid>-->
+                        <ui:include src="consultaAsiento.xhtml" />
+
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{consultarAsientosSfccbdmq.formulario.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Imprimir "
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{detalleAnalisisSfccbdmq.formularioReporte.mostrar}"
+                    visible="#{detalleAnalisisSfccbdmq.formularioReporte.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="#{detalleAnalisisSfccbdmq.nombreArchivo}" id="pdf-botonMayor" label="#{detalleAnalisisSfccbdmq.tipoArchivo}"
+                                             mimeType="#{detalleAnalisisSfccbdmq.tipoMime}" resource="#{detalleAnalisisSfccbdmq.reporte}" 
+                                             style="" type="button"/>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{detalleAnalisisSfccbdmq.formularioReporte.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

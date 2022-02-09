@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{reportePrestamosTalento.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <ace:panel header="Parámetros de Búsqueda">
+                        <!--                        <ui:include src="../BuscarEmpleado.xhtml"/>-->
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reportePrestamosTalento.buscarContabilidad()}"/>
+                                <!--<ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{reportePrestamosTalento.nuevo()}"/>-->
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <ace:messages/>
+                    </ace:panel> 
+
+                    <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <ace:panel 
+                        header="Resultado Búsqueda"
+                        closable="false"
+                        toggleable="false"
+                        >
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{reportePrestamosTalento.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{reportePrestamosTalento.formulario.pantalla}" 
+                                              target="prestamoItems" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%">
+                            <ace:dataTable id="prestamoItems" 
+                                           value="#{reportePrestamosTalento.listaPrestamos}"
+                                           var="prestamoItem"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="10,15,50,75"
+                                           paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="10"
+                                           binding="#{reportePrestamosTalento.formulario.fila}"
+                                           scrollHeight="600"
+                                           scrollable="true">
+                                <ace:column  headerText="Solicitante"  style="text-align: left">
+                                    <h:outputText value="#{prestamoItem.empleado.entidad.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Garante"  style="text-align: left">
+                                    <h:outputText value="#{reportePrestamosTalento.traerGarante(prestamoItem.garante)}"/>
+                                </ace:column>
+                                <ace:column headerText="Tipo" style="text-align: left">
+                                    <h:outputText value="#{prestamoItem.tipo.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Motivo"  style="text-align: left">
+                                    <h:outputText value="#{prestamoItem.motivo.descripcion}"/>
+                                </ace:column>
+
+                                <ace:column  headerText="Valor" style="text-align: right">
+                                    <h:outputText  value="#{prestamoItem.valorcontabilidad eq null?'0':prestamoItem.valorcontabilidad }">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Valor de Décimo" style="text-align: right">
+                                    <h:outputText  value="#{prestamoItem.valordiciembre}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Fecha de Solicitud" style="text-align: left">
+                                    <h:outputText  value="#{prestamoItem.fechasolicitud}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Fecha de Aprobación del Anticipo" style="text-align: left">
+                                    <h:outputText  value="#{prestamoItem.fechaFinanciero}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Garante"  style="text-align: left">
+                                    <h:outputText value="#{reportePrestamosTalento.traerGarante(prestamoItem.garante)}"/>
+                                </ace:column>
+                                <ace:column  headerText="Observaciones "  style="text-align: right">
+                                    <h:outputText value="#{prestamoItem.observaciones}"/>
+                                </ace:column>
+                                <ace:column  headerText="Observaciones en Tesorería"  style="text-align: right">
+                                    <h:outputText value="#{prestamoItem.observacionliberarsaldo}"/>
+                                </ace:column>
+                                <ace:column headerText="Aprobación Garante" style="text-align: left">
+                                    <h:graphicImage url="../resources/images/si.png" rendered="#{prestamoItem.aprobadogarante}"/>
+                                    <h:graphicImage url="../resources/images/no.png" rendered="#{prestamoItem.niegagarante}"/>
+                                </ace:column>
+                                <ace:column headerText="Aprobación en Tesorería" style="text-align: left">
+                                    <h:graphicImage url="../resources/images/si.png" rendered="#{prestamoItem.aprobado}"/>
+                                    <h:graphicImage url="../resources/images/no.png" rendered="#{!prestamoItem.aprobado}"/>
+                                </ace:column>
+                                <ace:column headerText="Aprobación en Financiero" style="text-align: left">
+                                    <h:graphicImage url="../resources/images/si.png" rendered="#{prestamoItem.aprobadoFinanciero}"/>
+                                    <h:graphicImage url="../resources/images/no.png" rendered="#{!prestamoItem.aprobadoFinanciero}"/>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:panel>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

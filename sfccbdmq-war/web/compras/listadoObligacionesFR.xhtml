@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+    <ace:dialog 
+        header="Obligaciones"
+        closable="false"
+        modal="true"
+        draggable="true"
+        showEffect="clip"
+        hideEffect="fade"
+        rendered="#{fondoRotativoSfccbdmq.formularioObligacion.mostrar}"
+        visible="#{fondoRotativoSfccbdmq.formularioObligacion.mostrar}">
+        <h:panelGroup>
+            <ace:panel 
+                header="Responsable del fondo"
+                closable="false"
+                toggleable="true"
+                >
+                <h:panelGrid columns="2">
+                    <h:outputText value="Beneficiario Proveedores [SI] / Empleados [NO]:"/>
+                    <ace:checkboxButton value="#{fondoRotativoSfccbdmq.proveedorBeneficiario}">
+                        <ace:ajax execute="@all"/>
+                    </ace:checkboxButton>
+                </h:panelGrid>
+                <h:panelGrid rendered="#{fondoRotativoSfccbdmq.proveedorBeneficiario}">
+                    <ui:include src="../BuscarProveedor.xhtml" />
+                </h:panelGrid>
+                <h:panelGrid rendered="#{!fondoRotativoSfccbdmq.proveedorBeneficiario}">
+                    <ui:include src="../BuscarUsuario.xhtml"/>
+                </h:panelGrid>
+                <h:panelGrid columns="2" width="100%">
+                    <h:outputText value="Fondo Rotativo:"/>
+                    <h:selectOneMenu value="#{fondoRotativoSfccbdmq.compromiso.banco}" title="Banco">
+                        <f:selectItems value="#{bancosSfccbdmq.comboBancosFondo}"/>
+                    </h:selectOneMenu>
+                </h:panelGrid>
+            </ace:panel>
+
+            <h:panelGrid columns="1" width="100%">
+                <ace:menuBar autoSubmenuDisplay="true" >
+                    <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{fondoRotativoSfccbdmq.nuevaObligacion()}" />
+                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                  action="#{fondoRotativoSfccbdmq.garbarTodo()}"/>
+                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                  action="#{fondoRotativoSfccbdmq.salirObligacion()}"/>
+                </ace:menuBar>
+                <ace:messages/>
+            </h:panelGrid>
+            <h:panelGrid width="100%">
+                <ace:dataTable id="tabla" 
+                               value="#{fondoRotativoSfccbdmq.obligaciones}"
+                               var="itemObligaciones"
+                               paginator="true"
+                               lazy="false"
+                               resizableColumns="true"
+                               rowIndexVar="row"
+                               paginatorPosition="top"
+                               rowsPerPageTemplate="15,20,25,50,100"
+                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                               rows="15"
+                               binding="#{fondoRotativoSfccbdmq.formularioObligacion.fila}">
+                    <ace:column  headerText="Registro" style="text-align: right">
+                        <h:outputText value="#{row+1}"/>
+                    </ace:column>
+                    <ace:column style="text-align: left">
+                        <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                            <ace:menuItem action="#{fondoRotativoSfccbdmq.modificarObligacion(itemObligaciones)}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                            <ace:menuItem action="#{fondoRotativoSfccbdmq.borraObligacion(itemObligaciones)}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                        </ace:menuButton>
+                    </ace:column>
+                    <ace:column  headerText="Fecha emisión"  style="text-align: left">
+                        <h:outputText  value="#{itemObligaciones.fechaemision}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Concepto"  style="text-align: left">
+                        <h:outputText  value="#{itemObligaciones.concepto}"/>
+                    </ace:column>
+                    <ace:column  headerText="Proveedor" style="text-align: left">
+                        <h:outputText  value="#{itemObligaciones.proveedor.empresa.toString()}"/>
+                    </ace:column>
+                    <ace:column  headerText="Tipo de Documento"  style="text-align: left">
+                        <h:outputText  value="#{itemObligaciones.tipodocumento.nombre}"/>
+                    </ace:column>
+                    <ace:column  headerText="Número"  style="text-align: left">
+                        <h:outputText  value="#{itemObligaciones.documento}"/>
+                    </ace:column>
+                    <ace:column  headerText="Valor del gasto"  style="text-align: right">
+                        <h:outputText  value="#{fondoRotativoSfccbdmq.valorObligacion}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="A pagar"  style="text-align: right">
+                        <h:outputText  value="#{itemObligaciones.apagar}">
+                            <f:convertNumber pattern="###,###,##0.00"/>
+                        </h:outputText>
+                    </ace:column>
+                    <ace:column  headerText="Estado"  style="text-align: left">
+                        <h:outputText  value="COMPROMISO" rendered="#{itemObligaciones.estado==0}"/>
+                        <h:outputText  value="INGRESADO" rendered="#{itemObligaciones.estado==1}"/>
+                        <h:outputText  value="CONTABILIZADO" rendered="#{itemObligaciones.estado==2}"/>
+                        <h:outputText  value="ANULADO" rendered="#{itemObligaciones.estado==-1}"/>
+                    </ace:column>
+                </ace:dataTable>
+            </h:panelGrid>  
+        </h:panelGroup>
+    </ace:dialog>
+</html>

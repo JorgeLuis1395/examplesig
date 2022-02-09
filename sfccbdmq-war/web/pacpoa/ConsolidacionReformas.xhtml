@@ -1,0 +1,205 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+
+    </h:head>
+    <h:body>
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel1"
+                           header="Consolidación de Reformas"
+                           closable="false"
+                           toggleable="true"
+                           rendered="#{!consolidarPoa.formularioCabecera.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Año:" />
+                            <h:inputText value="#{consolidarPoa.anio}" title="Año" />
+                            <h:outputLabel value="Número de Control:" />
+                            <h:inputText value="#{consolidarPoa.id}" title="Número de Control" />
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{consolidarPoa.desde}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{consolidarPoa.hasta}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Consolidar" icon="ui-icon ui-icon-document" action="#{consolidarPoa.crearCabecera()}" />
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{consolidarPoa.buscar()}"/>
+                            </ace:menuBar>
+                            <ace:submitMonitor id="submitMonitorPanel"
+                                               for="panel1"
+                                               blockUI="@all"
+                                               autoCenter="true"
+                                               activeLabel="Un Momento por favor"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable 
+                                paginatorAlwaysVisible="true"
+                                value="#{consolidarPoa.cabecerasReformaspoa}"
+                                var="itemCabeceras"
+                                paginator="true"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="both"
+                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rows="30">
+                                <ace:column  headerText="Registro" style="text-align: right">
+                                    <h:outputText value="#{row+1}"/>
+                                </ace:column>
+                                <ace:column style="text-align: left" headerText="Utilizar" >
+                                    <h:selectBooleanCheckbox value="#{itemCabeceras.utilizado}"/>
+                                </ace:column> 
+                                <ace:column  headerText="Número de Control" style="text-align: left">
+                                    <h:outputText  value="#{itemCabeceras.id}"/>
+                                </ace:column>
+                                <ace:column  headerText="Observaciones" style="text-align: left">
+                                    <h:outputText  value="#{itemCabeceras.motivo}"/>
+                                </ace:column>
+                                <ace:column  headerText="Fecha"  style="text-align: left">
+                                    <h:outputText  value="#{itemCabeceras.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Estado" style="text-align: left">
+                                    <h:outputText  value="#{consolidarPoa.estadoDirector(itemCabeceras.director)}"/>
+                                </ace:column>
+
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:panel>
+                <ace:panel id="panel"
+                           header="Mantenimiento reformas"
+                           closable="false"
+                           toggleable="true"
+                           rendered="#{consolidarPoa.formularioCabecera.mostrar}">          
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Tipo :" />
+                        <h:selectOneMenu value="#{consolidarPoa.cabeceraReforma.tipo}">
+                            <f:selectItems value="#{consultasPoa.comboTipoReforma}"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="4" width="75%">
+                        <h:outputLabel value="Fecha:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{consolidarPoa.cabeceraReforma.fecha}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Documento:"/>
+                        <h:inputText style="width: 270px" value="#{consolidarPoa.cabeceraReforma.documento}"/>
+                        <h:outputLabel value="Motivo:" />
+                        <h:inputTextarea cols="40" rows="4" value="#{consolidarPoa.cabeceraReforma.motivo}"/>
+                        <h:outputLabel value="Observación:" />
+                        <h:inputTextarea cols="40" rows="4" value="#{consolidarPoa.cabeceraReforma.observacion}"/>
+                    </h:panelGrid>
+                    <ace:submitMonitor id="submitMonitorPanel1"
+                                       for="panel"
+                                       blockUI="@all"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{consolidarPoa.formularioCabecera.nuevo}" 
+                                          action="#{consolidarPoa.insertarCabecera()}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{consolidarPoa.salir()}"/>
+                        </ace:menuBar>
+                        <ace:messages/>
+                    </h:panelGrid>
+
+
+                    <ace:tabSet style="clear:both; width: 100%" >
+                        <ace:tabPane label="Registros">
+                            <h:panelGrid width="100%">
+                                <ace:dataTable id="tabla" 
+                                               paginatorAlwaysVisible="true"
+                                               value="#{consolidarPoa.reformas}"
+                                               var="item"
+                                               paginator="true"
+                                               lazy="false"
+                                               resizableColumns="true"
+                                               rowIndexVar="row"
+                                               paginatorPosition="both"
+                                               rowsPerPageTemplate="15,20,25,50,100"
+                                               currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                               paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rows="15"
+                                               binding="#{consolidarPoa.formulario.fila}">
+                                    <ace:column  headerText="Registro" style="text-align: right">
+                                        <h:outputText value="#{row+1}"/>
+                                    </ace:column>
+
+                                    <ace:column  headerText="Requerimiento"  style="text-align: left">
+                                        <h:outputText  value="#{item.requerimiento}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Proyecto"  style="text-align: left">
+                                        <h:outputText  value="#{item.asignacion eq null ? item.proyecto.toString() : item.asignacion.proyecto.toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Fuente" style="text-align: left">
+                                        <h:outputText  value="#{consultasPoa.traerFuenteFinanciamiento(item.asignacion eq null ? '' : item.asignacion.fuente)}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Partida"  style="text-align: left">
+                                        <h:outputText  value="#{item.asignacion eq null ? '' : item.asignacion.partida.toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Asignación"  style="text-align: right">
+                                        <h:outputText  value="#{item.asignacion eq null ? '' : item.asignacion.valor}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Reformas"  style="text-align: right">
+                                        <h:outputText  value="#{consolidarPoa.totalReformaspoa}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Certificaciones"  style="text-align: right">
+                                        <h:outputText  value="#{consolidarPoa.totalCertificaciones}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Reforma Actual" style="text-align: right">
+                                        <h:outputText  value="#{item.valor}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Total" style="text-align: right">
+                                        <h:outputText  value="#{(item.asignacion eq null ? 0 : item.asignacion.valor)+(consolidarPoa.totalReformaspoa -consolidarPoa.totalCertificaciones ) +item.valor}">
+                                            <f:convertNumber pattern="###,###,#00.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </ace:tabPane>
+                    </ace:tabSet>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

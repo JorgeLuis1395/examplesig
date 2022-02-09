@@ -1,0 +1,207 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+
+                <ace:panel id="panel"
+                           header="#{aperturasFondosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+                    <h:panelGroup>
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Dirección Solicitante:"  />
+                            <h:selectOneMenu  value="#{aperturasFondosSfccbdmq.direccion}" 
+                                              title="Dirección Solicitante" >
+<!--                                <f:selectItems value="#{organigrama.comboDirecciones}"/>-->
+                                <f:selectItems value="#{organigrama.comboOrganigramaV}"/>
+                                <ace:ajax execute="@all"/>    
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+
+                        <ui:include src="../BuscarEmpleado.xhtml"/>
+
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{aperturasFondosSfccbdmq.nuevo()}" />
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{aperturasFondosSfccbdmq.buscar()}"/>
+                            </ace:menuBar>
+                            <ace:submitMonitor id="submitMonitorPanel"
+                                               for="panel"
+                                               blockUI="panel"
+                                               autoCenter="true"
+                                               activeLabel="Un Momento por favor"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable 
+                                value="#{aperturasFondosSfccbdmq.listaFondos}"
+                                var="itemFondos"
+                                paginator="true"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="top"
+                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rows="30"
+                                binding="#{fila}">
+
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{aperturasFondosSfccbdmq.modificar(fila.rowIndex)}" value="Editar" icon="ui-icon ui-icon-pencil" disabled="#{itemFondos.kardexbanco!=null}" />
+                                        <ace:menuItem action="#{aperturasFondosSfccbdmq.imprimir(itemFondos)}" value="Imprimir" icon="ui-icon ui-icon-print"/>
+                                        <ace:menuItem action="#{aperturasFondosSfccbdmq.eliminar(fila.rowIndex)}" value="Borrar" icon="ui-icon ui-icon-trash" disabled="#{itemFondos.kardexbanco!=null}"/>
+                                    </ace:menuButton>
+                                </ace:column> 
+                                <ace:column  headerText="Número de Control" style="text-align: right">
+                                    <h:outputText  value="#{itemFondos.id}"/>
+                                </ace:column>
+                                <ace:column  headerText="Descripción"  style="text-align: left">
+                                    <h:outputText  value="#{itemFondos.observaciones}"/>
+                                </ace:column>
+                                <ace:column  headerText="Dirección Solicitante"  style="text-align: left">
+                                    <h:outputText  value="#{itemFondos.departamento.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Custodio"  style="text-align: left">
+                                    <h:outputText  value="#{itemFondos.empleado.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Jefe dirección"  style="text-align: left">
+                                    <h:outputText  value="#{itemFondos.jefe.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Fecha" style="text-align: left">
+                                    <h:outputText  value="#{itemFondos.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Valor"  style="text-align: left">
+                                    <h:outputText  value="#{itemFondos.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+
+                                </ace:column>
+                                <ace:column  headerText="% Vale de fondo"  style="text-align: left">
+                                    <h:outputText  value="#{itemFondos.prcvale}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Referencia"  style="text-align: left">
+                                    <h:outputText  value="#{itemFondos.referencia}"/>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:panel>
+
+                <!--dialogo para editar cada linea-->
+                <ace:dialog 
+                    header="#{aperturasFondosSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{aperturasFondosSfccbdmq.formulario.mostrar}"
+                    visible="#{aperturasFondosSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+
+                        <h:panelGrid columns="2" rendered="#{aperturasFondosSfccbdmq.formulario.nuevo}">
+                      
+                            <ui:include src="../BuscarEmpleado.xhtml" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" rendered="#{!aperturasFondosSfccbdmq.formulario.nuevo}">
+                            <h:outputLabel value="Custodio:"/>
+                            <h:outputText  value="#{aperturasFondosSfccbdmq.fondo.empleado.toString()}"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" >
+                            <h:outputLabel value="Dirección Solicitante:"  />
+                            <h:selectOneMenu  value="#{aperturasFondosSfccbdmq.fondo.departamento}" 
+                                              title="Dirección Solicitante" disabled="#{!aperturasFondosSfccbdmq.formulario.nuevo}" >
+                                <f:selectItems value="#{organigrama.comboOrganigramaV}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2" >
+                            <h:outputLabel value="Fecha:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{aperturasFondosSfccbdmq.fondo.fecha}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Certificación:" for="certificacion" />
+                            <h:inputText id="certificacion" value="#{aperturasFondosSfccbdmq.certificacion}" title="certificacion" />
+                            <h:outputLabel value="Referencia:" for="referencia" />
+                            <h:inputText id="referencia" value="#{aperturasFondosSfccbdmq.fondo.referencia}" title="Referencia" />
+                            <h:outputLabel value="Valor:" for="valor" />
+                            <h:inputText id="valor" value="#{aperturasFondosSfccbdmq.fondo.valor}" title="Valor" />
+                            <h:outputLabel value="% Vale de fondo :" for="vale" />
+                            <h:inputText id="vale" value="#{aperturasFondosSfccbdmq.fondo.prcvale}" title="Vale" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="1">
+                            <h:outputLabel value="Observaciones :" />
+                            <h:inputTextarea cols="80" rows="5" value="#{aperturasFondosSfccbdmq.fondo.observaciones}" title="Observaciones" />
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{aperturasFondosSfccbdmq.formulario.nuevo}" 
+                                              action="#{aperturasFondosSfccbdmq.insertar()}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{aperturasFondosSfccbdmq.grabar()}" 
+                                              rendered="#{aperturasFondosSfccbdmq.formulario.modificar}" />
+                                <ace:menuItem action="#{aperturasFondosSfccbdmq.borrar()}" 
+                                              value="Esta seguro de Borrar el registro?" 
+                                              rendered="#{aperturasFondosSfccbdmq.formulario.borrar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{aperturasFondosSfccbdmq.formulario.cancelar()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{aperturasFondosSfccbdmq.formularioImpresion.mostrar}"
+                    visible="#{aperturasFondosSfccbdmq.formularioImpresion.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="Apertura.pdf" id="pdf-button1" label="Imprimir"
+                                             mimeType="application/pdf" resource="#{aperturasFondosSfccbdmq.reporte}" 
+                                             style="" type="button"/>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{aperturasFondosSfccbdmq.formularioImpresion.cancelar()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

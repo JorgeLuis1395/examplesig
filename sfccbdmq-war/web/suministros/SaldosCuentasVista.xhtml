@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <h:panelGrid width="100%">
+                    <ace:panel id="panel"
+                               header="#{saldosCuentas.perfil.menu.texto}"
+                               closable="false"
+                               toggleable="false"  >
+
+
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="Bodega :" />
+                            <h:selectOneMenu  value="#{saldosCuentas.bodega}">
+                                <f:selectItems value="#{bodegasSfccbdmq.comboBodegasSuministros}"/>
+                            </h:selectOneMenu>
+                            
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{saldosCuentas.buscar()}"/>
+                            </ace:menuBar>
+                            <ace:dynamicResource fileName="KardexInv.pdf" id="pdf-button1" label="Generar PDF"
+                                                 mimeType="application/pdf" 
+                                                 rendered="#{saldosCuentas.reporte!=null}"
+                                                 resource="#{saldosCuentas.reporte}" 
+                                                 style="" type="button"/>
+                        </h:panelGrid>
+                        <ace:messages />
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{solicitudesCargo.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{saldosCuentas.formulario.pantalla}" 
+                                              target="tabla" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%" style="margin-bottom: 20px;">
+
+                            <ace:dataTable id="tabla"
+                                           value="#{saldosCuentas.listaKardex}"
+                                           var="item"
+                                           lazy="false"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="10,15,30,50,all"
+                                           currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="30"
+                                           style="width: 100%;"
+                                           scrollHeight="600"
+                                           scrollable="true">
+                                <ace:column  headerText="Cuenta"  style="text-align: left" >
+                                    <h:outputText value="#{item.observaciones}"/>
+                                </ace:column>
+                                <ace:column  headerText="Suministro"  style="text-align: left" >
+                                    <h:outputText value="#{item.suministro.nombre}" rendered="#{item.suministro!=null}"/>
+                                    <h:outputText value="***** TOTAL *****" style="color: navy;" rendered="#{item.suministro==null}"/>
+                                </ace:column>
+                                <ace:column  headerText="Cantidad"  style="text-align: right">
+                                    <h:outputText  value="#{item.cantidad}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                
+                                <ace:column  headerText="Costo Promedio"  style="text-align: right">
+                                    <h:outputText  value="#{item.costopromedio}">
+                                        <f:convertNumber pattern="###,###,##0.00000"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Total"  style="text-align: right">
+                                    <h:outputText  value="#{item.cantidad*item.costopromedio}" rendered="#{item.suministro!=null}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                    <h:outputText  value="#{item.saldoanterior}" rendered="#{item.suministro==null}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:panel>
+                    <!--</ace:dialog>-->
+                </h:panelGrid>
+
+                <!--Poner  con include ya que vista demasiado Cargada;-->
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

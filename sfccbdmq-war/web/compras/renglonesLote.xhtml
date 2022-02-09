@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+    <ace:dialog 
+        header="Retenciones"
+        closable="false"
+        modal="true"
+        draggable="true"
+        showEffect="clip"
+        hideEffect="fade"
+        rendered="#{pagoRetencionesSfccbdmq.formularioDetalle.mostrar}"
+        visible="#{pagoRetencionesSfccbdmq.formularioDetalle.mostrar}">
+        <h:panelGroup>
+            <h:panelGrid columns="2">
+                <h:outputLabel  value="Bien o Servicios :"/>
+                <h:selectBooleanCheckbox value="#{pagoRetencionesSfccbdmq.retencion.bien}">
+                    <ace:ajax execute="@all"/>
+                </h:selectBooleanCheckbox>
+                <h:outputLabel  value="Base imponible 0:"/>
+                <h:inputText value="#{pagoRetencionesSfccbdmq.retencion.baseimponible0}">
+                    <ace:ajax execute="@all"/>
+                </h:inputText>
+                <h:outputLabel  value="Base imponible :"/>
+                <h:inputText value="#{pagoRetencionesSfccbdmq.retencion.baseimponible}">
+                    <ace:ajax execute="@all"/>
+                </h:inputText>
+<!--                 <h:outputLabel  value="Valor Prima :"/>
+                 <h:inputText value="#{pagoRetencionesSfccbdmq.retencion.valorprima}">
+                    <ace:ajax execute="@all"/>
+                </h:inputText>-->
+                <h:outputLabel  value="Impuesto :"/>
+                <h:selectOneMenu value="#{pagoRetencionesSfccbdmq.retencion.impuesto}" 
+                                 disabled="#{pagoRetencionesSfccbdmq.formularioDetalle.modificar}">
+                    <f:selectItems value="#{impuestosSfccbdmq.comboImpuestos}"/>
+                    <ace:ajax execute="@all"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="IVA:" rendered="#{pagoRetencionesSfccbdmq.formularioDetalle.nuevo}"/>
+                <h:outputLabel  value="#{((pagoRetencionesSfccbdmq.retencion.baseimponible
+                                         )*
+                                         pagoRetencionesSfccbdmq.retencion.impuesto.porcentaje/100)
+                                         +pagoRetencionesSfccbdmq.retencion.ajusteIva/100}"
+                                rendered="#{pagoRetencionesSfccbdmq.formularioDetalle.nuevo}">
+                    <f:convertNumber pattern="###,##0.00"/>
+                </h:outputLabel>
+            </h:panelGrid>
+            <h:panelGrid columns="4" rendered="#{pagoRetencionesSfccbdmq.formularioDetalle.modificar}">
+                <h:outputLabel  value="IVA :"/>
+                <h:inputText  value="#{pagoRetencionesSfccbdmq.retencion.iva}"/>
+                    <!--<f:convertNumber pattern="###,##0.00"/>-->
+<!--                <h:commandButton value="+" action="#{pagoRetencionesSfccbdmq.subeIva()}"/>
+                <h:commandButton value="-" action="#{pagoRetencionesSfccbdmq.bajaIva()}"/>-->
+            </h:panelGrid>
+            <h:panelGrid columns="2" >
+                <h:outputLabel  value="Retención IR:"/>
+                <h:selectOneMenu value="#{pagoRetencionesSfccbdmq.retencion.retencion}" 
+                                 disabled="#{pagoRetencionesSfccbdmq.formularioDetalle.modificar}">
+                    <f:selectItems value="#{pagoRetencionesSfccbdmq.comboRetenciones}"/>
+                    <ace:ajax execute="@all"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="Valor retención :" rendered="#{pagoRetencionesSfccbdmq.formularioDetalle.nuevo}"/>
+                <h:outputLabel  value="#{((pagoRetencionesSfccbdmq.retencion.baseimponible+
+                                         pagoRetencionesSfccbdmq.retencion.baseimponible0)*
+                                         pagoRetencionesSfccbdmq.retencion.retencion.porcentaje/100)
+                                         +pagoRetencionesSfccbdmq.retencion.ajusteRf/100}"
+                                rendered="#{pagoRetencionesSfccbdmq.formularioDetalle.nuevo}">
+                    <f:convertNumber pattern="###,##0.00"/>
+                </h:outputLabel>
+            </h:panelGrid>
+            <h:panelGrid columns="4" rendered="#{pagoRetencionesSfccbdmq.formularioDetalle.modificar}">
+                <h:outputLabel  value="Valor retención :"/>
+                <h:inputText  value="#{pagoRetencionesSfccbdmq.retencion.valor}"/>
+<!--                <h:outputLabel  value="#{pagoRetencionesSfccbdmq.retencion.valor+pagoRetencionesSfccbdmq.retencion.ajusteRf/100}">
+                    <f:convertNumber pattern="###,##0.00"/>
+                </h:outputLabel>
+                <h:commandButton value="+" action="#{pagoRetencionesSfccbdmq.subeRf()}"/>
+                <h:commandButton value="-" action="#{pagoRetencionesSfccbdmq.bajaRf()}"/>-->
+            </h:panelGrid>   
+            <h:panelGrid columns="2" >
+                <h:outputLabel  value="Retención IVA:"/>
+                <h:selectOneMenu value="#{pagoRetencionesSfccbdmq.retencion.retencionimpuesto}" 
+                                 disabled="#{pagoRetencionesSfccbdmq.formularioDetalle.modificar}">
+                    <f:selectItems value="#{pagoRetencionesSfccbdmq.comboRetencionesImpuestos}"/>
+                    <ace:ajax execute="@all"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="Valor retención :" rendered="#{pagoRetencionesSfccbdmq.formularioDetalle.nuevo}"/>
+                <h:outputLabel  value="#{(pagoRetencionesSfccbdmq.retencion.baseimponible
+                                         )*
+                                         (pagoRetencionesSfccbdmq.retencion.impuesto.porcentaje*
+                                          pagoRetencionesSfccbdmq.retencion.retencionimpuesto.porcentaje/10000)
+                                         +pagoRetencionesSfccbdmq.retencion.ajusteRf/100}"
+                                rendered="#{pagoRetencionesSfccbdmq.formularioDetalle.nuevo}">
+                    <f:convertNumber pattern="###,##0.00"/>
+                </h:outputLabel>
+            </h:panelGrid>
+            <h:panelGrid columns="4" rendered="#{pagoRetencionesSfccbdmq.formularioDetalle.modificar}">
+                <h:outputLabel  value="Valor retención :"/>
+                <h:inputText  value="#{pagoRetencionesSfccbdmq.retencion.valoriva}"/>
+<!--                <h:outputLabel  value="#{pagoRetencionesSfccbdmq.retencion.valoriva+pagoRetencionesSfccbdmq.retencion.ajusteRi/100}">
+                    <f:convertNumber pattern="###,##0.00"/>
+                </h:outputLabel>
+                <h:commandButton value="+" action="#{pagoRetencionesSfccbdmq.subeRi()}"/>
+                <h:commandButton value="-" action="#{pagoRetencionesSfccbdmq.bajaRi()}"/>-->
+            </h:panelGrid>   
+            <h:panelGrid columns="2">
+                <h:outputLabel  value="Partidas :"/>
+                <h:selectOneMenu value="#{pagoRetencionesSfccbdmq.retencion.partida}">
+                    <f:selectItems value="#{pagoRetencionesSfccbdmq.comboPartidas}"/>
+                </h:selectOneMenu>
+            </h:panelGrid>
+
+            <h:panelGrid columns="1" width="100%">
+                <ace:menuBar autoSubmenuDisplay="true" >
+                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{pagoRetencionesSfccbdmq.formularioDetalle.nuevo}" 
+                                  action="#{pagoRetencionesSfccbdmq.insertarDetalle()}"/>
+                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                  action="#{pagoRetencionesSfccbdmq.grabarDetalle()}" 
+                                  rendered="#{pagoRetencionesSfccbdmq.formularioDetalle.modificar}" />
+                    <ace:menuItem action="#{pagoRetencionesSfccbdmq.borrarDetalle()}" 
+                                  value="Esta seguro de Borrar el registro?" 
+                                  rendered="#{pagoRetencionesSfccbdmq.formularioDetalle.borrar}"/>
+
+                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                  action="#{pagoRetencionesSfccbdmq.formularioDetalle.cancelar()}"/>
+                </ace:menuBar>
+
+            </h:panelGrid>
+        </h:panelGroup>
+    </ace:dialog>
+
+</html>

@@ -1,0 +1,180 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <ace:tabSet clientSide="true" style="width: 100%">
+        <ace:tabPane label="Datos Básicos" >
+            <ui:include src="../BuscarUsuario.xhtml" />
+            <h:panelGrid  width="100%" columns="2">
+
+                <h:panelGrid columns="2" width="90%"  rendered="#{egresosSuministrosSfccbdmq.formulario.nuevo}">
+
+                    <h:outputLabel value="Transacción :" />
+                    <h:selectOneMenu  value="#{egresosSuministrosSfccbdmq.cabecera.txid}" 
+                                      disabled="#{egresosSuministrosSfccbdmq.listaKardex.size()>0}">
+                        <f:selectItems value="#{txSuministrosSfccbdmq.comboEgresos}"/>
+                        <!--<f:ajax execute="@this"/>-->
+                        <ace:ajax execute="@all"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="Bodega"  />
+                    <h:selectOneMenu value="#{egresosSuministrosSfccbdmq.cabecera.bodega}" 
+                                     disabled="true">
+                        <f:selectItems value="#{permisosBodegasEmpleadosSfccbdmq.comboBodegasLogueado}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="Bodega transferencia"  rendered="#{egresosSuministrosSfccbdmq.cabecera.txid.transaferencia!=null}"/>
+                    <h:selectOneMenu value="#{egresosSuministrosSfccbdmq.cabeceraTransferencia.bodega}" rendered="#{egresosSuministrosSfccbdmq.cabecera.txid.transaferencia!=null}"
+                                     >
+                        <f:selectItems value="#{permisosBodegasEmpleadosSfccbdmq.comboBodegasLogueado}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="Fecha de Transacción:"  />
+                    <ace:dateTimeEntry navigator="true" value="#{egresosSuministrosSfccbdmq.cabecera.fecha}"
+                                       popupIcon="ui-icon ui-icon-calendar"    renderAsPopup="true" 
+                                       pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield"  
+                                       >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </ace:dateTimeEntry>
+<!--                    <h:outputLabel value="% de Descuento global:" />
+                    <h:inputText value="#{egresosSuministrosSfccbdmq.descuentoExterno}"/>-->
+                </h:panelGrid>
+                <h:panelGrid  width="90%"  id="panelProveedor"
+                              rendered="#{egresosSuministrosSfccbdmq.cabecera.txid.proveedor
+                                          and egresosSuministrosSfccbdmq.formulario.nuevo}">
+                    <ui:include src="../BuscarProveedor.xhtml" />
+                    
+                </h:panelGrid>
+
+                <h:panelGrid columns="2" width="90%" rendered="#{!egresosSuministrosSfccbdmq.formulario.nuevo}">
+                    <h:outputLabel value="Movimiento :" />
+                    <h:outputText value="#{egresosSuministrosSfccbdmq.cabecera.txid.toString()}"/>
+                    <h:outputLabel value="Bodega :" />
+                    <h:outputText value="#{egresosSuministrosSfccbdmq.cabecera.bodega.toString()}"/>
+                    <h:outputLabel value="Bodega transferencia:" rendered="#{egresosSuministrosSfccbdmq.cabecera.txid.transaferencia!=null}"/>
+                    <h:outputText value="#{egresosSuministrosSfccbdmq.cabeceraTransferencia.bodega.toString()}" rendered="#{egresosSuministrosSfccbdmq.cabecera.txid.transaferencia!=null}"/>
+                    <h:outputLabel value="No documento :" />
+                    <h:outputText value="#{egresosSuministrosSfccbdmq.cabecera.numero}"/>
+                    <h:outputLabel value="Solicitante :" />
+                    <h:outputText value="#{egresosSuministrosSfccbdmq.cabecera.solicitante.entidad.toString()}"/>
+                    <h:outputLabel value="Dirección :" />
+                    <h:outputText value="#{egresosSuministrosSfccbdmq.cabecera.direccion.toString()}"/>
+                </h:panelGrid> 
+                <h:panelGrid columns="1" width="90%" >
+                    <h:outputLabel value="Observaciones :" />
+                    <h:inputTextarea cols="60" rows="6" value="#{egresosSuministrosSfccbdmq.cabecera.observaciones}"/>
+                </h:panelGrid> 
+            </h:panelGrid>
+        </ace:tabPane>
+        <ace:tabPane label="Adjuntos" rendered="#{egresosSuministrosSfccbdmq.cabecera.id!=null}">
+            <ui:include src="../mostrarImagenes.xhtml" />
+        </ace:tabPane>
+    </ace:tabSet>
+    <h:panelGrid columns="6" >
+        <h:outputLabel value="Separador de campos :"/>
+        <h:inputText value="#{egresosSuministrosSfccbdmq.separador}"  size="3">
+            <ace:ajax execute="@all"/>
+        </h:inputText>
+        <h:outputLabel value="Archivo a Subir:" />
+        <ace:fileEntry id="file-entry1"
+                       maxFileCount="1" 
+                       maxFileCountMessage="Máximo un archivo" 
+                       fileEntryListener="#{egresosSuministrosSfccbdmq.archivoListener}" 
+                       maxFileSize="6291456" 
+                       maxFileSizeMessage="Tamaño muy grande." 
+                       maxTotalSize="18874368" 
+                       autoUpload="true"
+                       maxTotalSizeMessage="Total del tamaño muy grande." 
+                       useOriginalFilename="true" 
+                       useSessionSubdir="true"/>
+    </h:panelGrid>
+    <ace:submitMonitor id="submitMonitorPanel"
+                       for="panel"
+                       blockUI="panel"
+                       autoCenter="true"
+                       activeLabel="Un Momento por favor"/>
+    <h:panelGrid width="100%" style="margin-bottom: 20px;">
+        <ace:dataTable 
+            value="#{egresosSuministrosSfccbdmq.listaKardex}"
+            var="itemKardex"
+            lazy="false"
+            paginator="true"
+            resizableColumns="true"
+            rowIndexVar="row"
+            paginatorPosition="both"
+            rowsPerPageTemplate="10,15,30,50"
+            currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+            rows="10"
+            style="width: 100%;"
+            binding="#{egresosSuministrosSfccbdmq.formularioRenglones.fila}">
+            <ace:column style="text-align: left" >
+                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                    <ace:menuItem value="Editar" icon="ui-icon ui-icon-document" action="#{egresosSuministrosSfccbdmq.modificaKardex(itemKardex)}"  />
+                    <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{egresosSuministrosSfccbdmq.borraKardex(itemKardex)}"/>                                   </ace:menuButton>
+            </ace:column> 
+             <ace:column  headerText="Código"  style="text-align: left">
+                 <h:outputText value="#{itemKardex.suministro.codigobarras}"/>
+            </ace:column>
+            <ace:column  headerText="Suministro"  style="text-align: left">
+                <h:outputText value="#{itemKardex.suministro.nombre}"/>
+            </ace:column>
+            <ace:column  headerText="Cantidad"  style="text-align: right">
+                <h:outputText value="#{itemKardex.cantidad}">
+                    <f:convertNumber pattern="###,###,##0.00"/>
+                </h:outputText>
+            </ace:column>
+            <ace:column  headerText="Costo Promedio"  style="text-align: right">
+
+                <h:outputText value="#{itemKardex.costopromedio}" >
+                    <f:convertNumber pattern="###,###,##0.00000"/>
+                </h:outputText>
+            </ace:column>
+
+            <ace:column  headerText="Cantidad inversión"  style="text-align: right">
+                <h:outputText value="#{itemKardex.cantidadinversion}">
+                    <f:convertNumber pattern="###,###,##0.00"/>
+                </h:outputText>
+            </ace:column>
+            <ace:column  headerText="Costo Promedio"  style="text-align: right">
+
+                <h:outputText value="#{itemKardex.costopinversion}" >
+                    <f:convertNumber pattern="###,###,##0.00000"/>
+                </h:outputText>
+            </ace:column>
+            <ace:column  headerText="Total"  style="text-align: right">
+                <h:outputText value="#{(itemKardex.costopromedio*itemKardex.cantidad)+(itemKardex.costopinversion*itemKardex.cantidadinversion)}" >
+                    <f:convertNumber pattern="###,###,##0.00"/>
+                </h:outputText>
+
+            </ace:column>
+            <ace:column  headerText="Unidad"  style="text-align: left">
+                <h:outputText value="#{itemKardex.unidad.equivalencia}"/>
+            </ace:column>
+        </ace:dataTable>
+
+    </h:panelGrid>
+    <h:panelGrid columns="2" width="90%">
+
+        <h:outputLabel value="Total:" />
+        <h:outputLabel value="#{egresosSuministrosSfccbdmq.total}">
+            <f:convertNumber pattern="###,###,##0.00"/>
+        </h:outputLabel>
+    </h:panelGrid> 
+
+    <h:panelGrid columns="2">
+        <ace:menuBar autoSubmenuDisplay="true" >
+            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{egresosSuministrosSfccbdmq.insertar()}" rendered="#{egresosSuministrosSfccbdmq.formulario.nuevo}"/>
+            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" action="#{egresosSuministrosSfccbdmq.grabar()}" rendered="#{egresosSuministrosSfccbdmq.formulario.modificar}" />
+            <!--<ace:menuItem value="Grabar definitivo" icon="ui-icon ui-icon-disk" action="#{egresosSuministrosSfccbdmq.grabarDefinitivo()}" rendered="#{egresosSuministrosSfccbdmq.formulario.modificar}" />-->
+            <ace:menuItem value="Esta Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{egresosSuministrosSfccbdmq.borrar()}" rendered="#{egresosSuministrosSfccbdmq.formulario.borrar}" />
+            <ace:menuItem value="Nuevo Suministro" icon="ui-icon ui-icon-document"  action="#{egresosSuministrosSfccbdmq.nuevoKardex()}"/>
+            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" action="#{egresosSuministrosSfccbdmq.salir()}" />
+        </ace:menuBar>
+        <ace:messages />
+    </h:panelGrid>
+
+
+</html>

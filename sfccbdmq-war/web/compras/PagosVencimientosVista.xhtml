@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <h:panelGrid width="100%">
+                    <ace:panel id="panel"
+                               header="#{pagosVencimientosSfccbdmq.perfil.menu.texto}"
+                               closable="false"
+                               toggleable="false"  >
+                        <ui:include src="../BuscarProveedor.xhtml" />
+                        <h:panelGrid columns="4">
+                            <h:outputLabel value="No factura :"/>
+                            <h:inputText value="#{pagosVencimientosSfccbdmq.factura}"/>
+                            <h:outputLabel value="Estado :"/>
+                            <h:selectOneMenu  value="#{pagosVencimientosSfccbdmq.pagado}">
+                                <f:selectItem itemLabel="Todos" itemValue="-1"/>
+                                <f:selectItem itemLabel="Pagados" itemValue="1"/>
+                                <f:selectItem itemLabel="No Pagados" itemValue="0"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{pagosVencimientosSfccbdmq.desde}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{pagosVencimientosSfccbdmq.hasta}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid> 
+
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{pagosVencimientosSfccbdmq.buscar()}"/>
+                            </ace:menuBar>
+                            <ace:submitMonitor id="submitMonitorPanel"
+                                               for="panel"
+                                               blockUI="panel"
+                                               autoCenter="true"
+                                               activeLabel="Un Momento por favor"/>
+                        </h:panelGrid>
+                        <ace:messages />
+
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{pagosVencimientosSfccbdmq.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{pagosVencimientosSfccbdmq.formulario.pantalla}" 
+                                              target="tablaObligaciones" fileName="datos"/>
+                        </h:panelGrid>
+
+                        <h:panelGrid width="100%" style="margin-bottom: 20px;">
+
+                            <ace:dataTable id="tablaObligaciones"
+                                           value="#{pagosVencimientosSfccbdmq.listadoPagosvencimientos}"
+                                           var="itemObligaciones"
+                                           lazy="true"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="10,15,30,50"
+                                           currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="30"
+                                           style="width: 100%;"
+                                           scrollHeight="600"
+                                           scrollable="true">
+                                <f:facet name="header">Obligaciones</f:facet>
+                                <ace:column  headerText="Concepto" style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.obligacion.concepto}"/>
+                                </ace:column>
+                                <ace:column  headerText="Contrato" style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.obligacion.contrato.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Número" style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.obligacion.documento}"/>
+                                </ace:column>
+                                <ace:column  headerText="Retención" style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.obligacion.numeror}"/>
+                                </ace:column>
+                                <!--                                <ace:column  headerText="Compromiso" style="text-align: left">
+                                                                    <h:outputText  value="#{itemObligaciones.obligacion.compromiso.toString()}"/>
+                                                                </ace:column>-->
+
+                                <ace:column  headerText="Tipo documento" style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.obligacion.tipodocumento.nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Egreso" style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.kardexbanco.id}"/>
+                                </ace:column>
+                                <ace:column  headerText="SPI" style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.kardexbanco.spi.id}"/>
+                                </ace:column>
+                                <ace:column  headerText="SPI Número" style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.kardexbanco.spi.numero}"/>
+                                </ace:column>
+                                <ace:column  headerText="SPI Fecha" style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.kardexbanco.spi.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="propuesta" style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.kardexbanco.propuesta}"/>
+                                </ace:column>
+                                <ace:column  headerText="EstadoSPI" style="text-align: left">
+                                    <h:outputText  value="INGRESADO" rendered="#{itemObligaciones.kardexbanco.estado==0}"/>
+                                    <h:outputText  value="GENERADO" rendered="#{itemObligaciones.kardexbanco.estado==1}"/>
+                                    <h:outputText  value="ANULADO" rendered="#{itemObligaciones.kardexbanco.estado==-1}"/>
+                                </ace:column>
+                                <ace:column  headerText="Valor" style="text-align: left">
+                                    <h:outputText  value="#{itemObligaciones.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <f:facet name="footer">
+                                    Total :
+                                    <h:outputText  value="#{pagosVencimientosSfccbdmq.totalPagosvencimientos}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </f:facet>
+                            </ace:dataTable>
+
+                        </h:panelGrid>
+                    </ace:panel>
+                    <!--</ace:dialog>-->
+                </h:panelGrid>
+                <!--Poner  con include ya que vista demasiado Cargada;-->
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

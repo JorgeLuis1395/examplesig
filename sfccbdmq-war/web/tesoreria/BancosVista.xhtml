@@ -1,0 +1,249 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{bancosSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{bancosSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{bancosSfccbdmq.crear()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                   for="panel"
+                                   blockUI="panel"
+                                   autoCenter="true"
+                                   activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Bùsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{bancosSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{bancosSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{bancosSfccbdmq.bancos}"
+                                       var="item"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       binding="#{bancosSfccbdmq.formulario.fila}">
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <!--<ace:menuItem action="#{bancosSfccbdmq.crearAnticipo(item)}" value="Nuevo Anticipo" icon="ui-icon ui-icon-document" rendered="#{item.padre==null}"/>-->
+                                    <ace:menuItem action="#{bancosSfccbdmq.modificar(item)}" value="Editar" icon="ui-icon ui-icon-pencil"/>
+                                    <ace:menuItem action="#{bancosSfccbdmq.eliminar(item)}" value="Borrar" icon="ui-icon ui-icon-trash"/>
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="Nombre"  style="text-align: left">
+                                <h:outputText  value="#{item.nombre}"/>
+                            </ace:column>  
+                            <ace:column  headerText="No. Cuenta"  style="text-align: left">
+                                <h:outputText  value="#{item.numerocuenta}"/>
+                            </ace:column>  
+                            <ace:column  headerText="Cuenta"  style="text-align: left">
+                                <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(item.cuenta).toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Cuenta Fondo Rotativo"  style="text-align: left">
+                                <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(item.fondorotativo).toString()}"/>
+                            </ace:column>
+                            <ace:column  headerText="Banco transf"  style="text-align: left">
+                                <h:outputText  value="#{item.transferencia.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Corriente / Ahorros"  style="text-align: left">
+                                <h:outputText  value="#{item.corriente}"/>
+                            </ace:column>
+                            <ace:column  headerText="Contacto"  style="text-align: left">
+                                <h:outputText  value="#{item.contacto}"/>
+                            </ace:column>
+                            <ace:column  headerText="Teléfono"  style="text-align: left">
+                                <h:outputText  value="#{item.telefono}"/>
+                            </ace:column>
+                            <ace:column  headerText="e-mail"  style="text-align: left">
+                                <h:outputText  value="#{item.email}"/>
+                            </ace:column>
+                            <ace:column  headerText="U. Numero"  style="text-align: left">
+                                <h:outputText  value="#{item.ultimo}"/>
+                            </ace:column>
+
+                            <ace:column  headerText="Fecha"  style="text-align: right">
+                                <h:outputText  value="#{item.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{bancosSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{bancosSfccbdmq.formulario.mostrar}"
+                    visible="#{bancosSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="1">
+                            <ace:autoCompleteEntry 
+                                value="#{bancosSfccbdmq.banco.cuenta}"
+                                rows="10" width="300"
+                                filterMatchMode="none"
+                                listVar="cuentasAutocompletarCuenta"
+                                listValue="#{cuentasSfccbdmq.listadoCuentas}"
+                                filterBy="#{cuentasAutocompletarCuenta.codigo}"
+                                textChangeListener="#{cuentasSfccbdmq.cuentaChangeEventHandler}"
+                                label="Cuenta contable Banco :"
+                                labelPosition="left">
+                                <f:facet name="row">
+                                    <h:panelGrid columns="2" width="100%"  style="text-align: left;font-size: xx-small">
+                                        <h:outputText value="#{cuentasAutocompletarCuenta.codigo}" />
+                                        <h:outputText value="#{cuentasAutocompletarCuenta.nombre}" />
+                                    </h:panelGrid>
+                                </f:facet>
+                                <ace:ajax execute="@all"/>
+                            </ace:autoCompleteEntry>
+
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Nombre Cuenta Contable:" />
+                                <h:outputLabel value="#{cuentasSfccbdmq.traerCodigo(bancosSfccbdmq.banco.cuenta).nombre}"  />
+                            </h:panelGrid>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1">
+                            <h:panelGrid columns="2">
+
+                                <ace:autoCompleteEntry 
+                                    value="#{bancosSfccbdmq.banco.fondorotativo}"
+                                    rows="10" width="300"
+                                    filterMatchMode="none"
+                                    listVar="cuentasAutocompletarCuenta"
+                                    listValue="#{cuentasSfccbdmq.listadoCuentas}"
+                                    filterBy="#{cuentasAutocompletarCuenta.codigo}"
+                                    textChangeListener="#{cuentasSfccbdmq.cuentaChangeEventHandler}"
+                                    label="Cuenta contable Fondo rotativo :"
+                                    labelPosition="left">
+                                    <f:facet name="row">
+                                        <h:panelGrid columns="2" width="100%"  style="text-align: left;font-size: xx-small">
+                                            <h:outputText value="#{cuentasAutocompletarCuenta.codigo}" />
+                                            <h:outputText value="#{cuentasAutocompletarCuenta.nombre}" />
+                                        </h:panelGrid>
+                                    </f:facet>
+                                    <ace:ajax execute="@all"/>
+                                </ace:autoCompleteEntry>
+
+
+
+                                <!--                                <h:outputLabel value="Cuenta Banco Fondo Rotativo:" />
+                                                                <h:selectInputText  listValue="#{cuentasSfccbdmq.listaCuenta}" value="#{bancosSfccbdmq.banco.fondorotativo}"
+                                                                                    listVar="clasificadores" rows="3" 
+                                                                                    valueChangeListener="#{cuentasSfccbdmq.cambiaCodigo}" width="300px" >
+                                                                    <f:facet name="selectInputText">
+                                                                        <h:panelGrid  columns="2"  width="100%" >
+                                                                            <h:outputText value="#{clasificadores.codigo}"/>
+                                                                            <h:outputText value="#{clasificadores.nombre}"/>
+                                                                        </h:panelGrid>
+                                                                    </f:facet>
+                                                                    <f:ajax render="nombrecla"/>
+                                                                </h:selectInputText>-->
+                            </h:panelGrid>
+                            <h:panelGrid columns="2" >
+                                <h:outputLabel value="Nombre Cuenta Fondo Rotativo:" />
+                                <h:outputLabel value="#{cuentasSfccbdmq.traerCodigo(bancosSfccbdmq.banco.fondorotativo).nombre}"  />
+                            </h:panelGrid>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Nombre:" for="nombre" />
+                            <h:inputText id="nombre" value="#{bancosSfccbdmq.banco.nombre}" title="Nombre" />
+                            <h:outputLabel value="Corriente / Ahorros:" for="corriente" />
+                            <h:selectBooleanCheckbox id="corriente" value="#{bancosSfccbdmq.banco.corriente}" title="Corriente" />
+                            <h:outputLabel value="Número de cuenta:" for="numerocuenta" />
+                            <h:inputText id="numerocuenta" value="#{bancosSfccbdmq.banco.numerocuenta}" title="Número de cuenta" />
+                            <h:outputLabel value="Persona de Contacto:" for="contacto" />
+                            <h:inputText id="contacto" value="#{bancosSfccbdmq.banco.contacto}" title="Contacto" />
+                            <h:outputLabel value="Email:" for="email" />
+                            <h:inputText id="email" value="#{bancosSfccbdmq.banco.email}" title="Email" >
+                                <f:validator  validatorId="org.auxiliares.sfccbdmq.ValidadorEmail"/>
+                            </h:inputText>
+                            <h:outputLabel value="Teléfono:" for="telefono" />
+                            <h:inputText id="telefono" value="#{bancosSfccbdmq.banco.telefono}" title="Teléfono" />
+                            <h:outputLabel value="Conciliable:" for="conciliable" />
+                            <h:selectBooleanCheckbox  id="conciliable" value="#{bancosSfccbdmq.banco.conciliable}" title="Conciliable" />
+                            <h:outputLabel value="Código Banco Transferencia:" for="banco" />
+                            <h:selectOneMenu id="banco" value="#{bancosSfccbdmq.banco.transferencia}" title="Banco" >
+                                <!-- TODO: update below reference to list of available items-->
+                                <f:selectItems value="#{codigosSfccbdmq.comboBancos}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{bancosSfccbdmq.formulario.nuevo}" 
+                                          action="#{bancosSfccbdmq.insertar()}"/>
+                            <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                          action="#{bancosSfccbdmq.grabar()}" 
+                                          rendered="#{bancosSfccbdmq.formulario.modificar}" />
+                            <ace:menuItem action="#{bancosSfccbdmq.borrar()}" 
+                                          value="Esta seguro de Borrar el registro?" 
+                                          rendered="#{bancosSfccbdmq.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{bancosSfccbdmq.formulario.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>

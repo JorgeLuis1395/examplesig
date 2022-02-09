@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <h:panelGrid width="100%">
+                    <ace:panel id="panel"
+                               header="#{planificarVacacionesEmpleadoSfcCBDMQ.perfil.menu.texto}"
+                               closable="false"
+                               toggleable="false"  >
+                        <ui:include src="../BuscarEmpleado.xhtml"/>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Aprobado:" />
+                            <h:selectOneMenu  value="#{planificarVacacionesEmpleadoSfcCBDMQ.aprobado}" >
+                                <f:selectItem itemLabel="---Seleccione Uno----" itemValue="0"/>
+                                <f:selectItem itemLabel="SI" itemValue="1"/>
+                                <f:selectItem itemLabel="NO" itemValue="-1"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="6">
+                            <h:outputLabel value="Fecha de :" />
+                            <h:selectOneMenu value="#{planificarVacacionesEmpleadoSfcCBDMQ.tipoFecha}" id="ecivilbusqueda" >
+                                <f:selectItem itemLabel="Inicio" itemValue="o.desde"/>
+                                <f:selectItem itemLabel="Fin" itemValue="o.hasta"/>
+                            </h:selectOneMenu>
+
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{planificarVacacionesEmpleadoSfcCBDMQ.desdeBuscar}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{planificarVacacionesEmpleadoSfcCBDMQ.hastaBuscar}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+                        <ace:messages />
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{planificarVacacionesEmpleadoSfcCBDMQ.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{planificarVacacionesEmpleadoSfcCBDMQ.nuevo()}"/>
+                            <ace:menuItem value="Nuevo Excel" icon="ui-icon ui-icon-document" action="#{planificarVacacionesEmpleadoSfcCBDMQ.nuevoCarga()}"/>
+                            <ace:menuItem value="Aprobar" icon="ui-icon ui-icon-document" action="#{planificarVacacionesEmpleadoSfcCBDMQ.aprobar()}"/>
+                        </ace:menuBar>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="panel"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{planificarVacacionesEmpleadoSfcCBDMQ.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{planificarVacacionesEmpleadoSfcCBDMQ.formulario.pantalla}" 
+                                              target="tablaEmpleados" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%" style="margin-bottom: 20px;">
+
+                            <ace:dataTable id="tablaEmpleados"
+                                           value="#{planificarVacacionesEmpleadoSfcCBDMQ.listaVacaciones}"
+                                           var="item"
+                                           lazy="false"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="10,15,30,50"
+                                           currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="30"
+                                           style="width: 100%;"
+                                           binding="#{planificarVacacionesEmpleadoSfcCBDMQ.formulario.fila}">
+                                <ace:column style="text-align: left">
+                                    <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                        <ace:menuItem action="#{planificarVacacionesEmpleadoSfcCBDMQ.modifica()}" value="Modificar" icon="ui-icon ui-icon-pencil"/>
+                                        <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{planificarVacacionesEmpleadoSfcCBDMQ.borra()}"  />
+                                    </ace:menuButton>
+                                </ace:column>
+                                <ace:column  headerText="Empleado "  style="text-align: left">
+                                    <h:outputText value="#{item.empleado.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Observaciones "  style="text-align: left">
+                                    <h:outputText value="#{item.observaciones}"/>
+                                </ace:column>
+                                <ace:column  headerText="Desde"  style="text-align: left">
+                                    <h:outputText value="#{item.desde}">
+                                        <f:convertDateTime  pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Hasta"  style="text-align: left">
+                                    <h:outputText value="#{item.hasta}">
+                                        <f:convertDateTime  pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:panel>
+                    <!--</ace:dialog>-->
+                </h:panelGrid>
+                <ace:dialog 
+                    header="#{planificarVacacionesEmpleadoSfcCBDMQ.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{planificarVacacionesEmpleadoSfcCBDMQ.formulario.mostrar}"
+                    visible="#{planificarVacacionesEmpleadoSfcCBDMQ.formulario.mostrar}">
+                    <h:panelGroup>
+                        <ui:include src="../BuscarEmpleado.xhtml"/>
+                        <h:panelGrid width="100%" columns="2">
+                            <h:outputLabel value="Observaciones:" for="licencia" />
+                            <h:inputTextarea cols="60" rows="4" id="licencia" 
+                                             value="#{planificarVacacionesEmpleadoSfcCBDMQ.vacacion.observaciones}" 
+                                             title="Observaciones" />
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{planificarVacacionesEmpleadoSfcCBDMQ.vacacion.desde}" id="dos"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true"  value="#{planificarVacacionesEmpleadoSfcCBDMQ.vacacion.hasta}" id="tres"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" 
+                                          icon="ui-icon ui-icon-disk"  
+                                          rendered="#{planificarVacacionesEmpleadoSfcCBDMQ.formulario.nuevo}"
+                                          action="#{planificarVacacionesEmpleadoSfcCBDMQ.insertar()}" />
+                            <ace:menuItem value="Grabar" 
+                                          rendered="#{planificarVacacionesEmpleadoSfcCBDMQ.formulario.modificar}"
+                                          icon="ui-icon ui-icon-disk"  
+                                          action="#{planificarVacacionesEmpleadoSfcCBDMQ.grabar()}" />
+                            <ace:menuItem action="#{planificarVacacionesEmpleadoSfcCBDMQ.borrar()}" 
+                                          value="¿Está seguro de Borrar el registro?" 
+                                          icon="ui-icon ui-icon-trash"
+                                          rendered="#{planificarVacacionesEmpleadoSfcCBDMQ.formulario.borrar}"/>
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{planificarVacacionesEmpleadoSfcCBDMQ.formulario.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+                <ace:dialog 
+                    header="#{planificarVacacionesEmpleadoSfcCBDMQ.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{planificarVacacionesEmpleadoSfcCBDMQ.formularioCarga.mostrar}"
+                    visible="#{planificarVacacionesEmpleadoSfcCBDMQ.formularioCarga.mostrar}">
+                    <h:panelGroup>
+
+                        <h:panelGrid columns="3">
+                            <h:outputLabel value="Archivo a Subir:" />
+                            <ace:fileEntry id="file-entry" 
+                                           maxFileCount="1" 
+                                           maxFileCountMessage="Máximo un archivo" 
+                                           fileEntryListener="#{planificarVacacionesEmpleadoSfcCBDMQ.archivoListener}" 
+                                           maxFileSize="6291456" 
+                                           maxFileSizeMessage="Tamaño muy grande." 
+                                           maxTotalSize="18874368" 
+                                           maxTotalSizeMessage="Total del tamaño muy grande." 
+                                           useOriginalFilename="true" 
+                                           useSessionSubdir="true"/>
+                            <h:commandButton type="submit" value="Cargar datos"/>
+                        </h:panelGrid>
+
+                        <h:panelGrid>
+                            <ace:dataTable id="tablaEmpleadosS"
+                                           value="#{planificarVacacionesEmpleadoSfcCBDMQ.listaVacacionesSubir}"
+                                           var="itemS"
+                                           lazy="false"
+                                           paginator="true"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="both"
+                                           rowsPerPageTemplate="10,15,30,50"
+                                           currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="30"
+                                           style="width: 100%;">
+                                <ace:column  headerText="Empleado "  style="text-align: left">
+                                    <h:outputText value="#{itemS.empleado.toString()}"/>
+                                </ace:column>
+                                <ace:column  headerText="Observaciones "  style="text-align: left">
+                                    <h:outputText value="#{itemS.observaciones}"/>
+                                </ace:column>
+                                <ace:column  headerText="Desde"  style="text-align: left">
+                                    <h:outputText value="#{itemS.desde}">
+                                        <f:convertDateTime  pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Hasta"  style="text-align: left">
+                                    <h:outputText value="#{itemS.hasta}">
+                                        <f:convertDateTime  pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" 
+                                          icon="ui-icon ui-icon-disk" 
+                                          action="#{planificarVacacionesEmpleadoSfcCBDMQ.insertarCarga()}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{planificarVacacionesEmpleadoSfcCBDMQ.formularioCarga.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Aprobar Planificación de Vacaciones"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{planificarVacacionesEmpleadoSfcCBDMQ.formularioAprobar.mostrar}"
+                    visible="#{planificarVacacionesEmpleadoSfcCBDMQ.formularioAprobar.mostrar}">
+                    <h:outputLabel value="¿Está seguto de aprobar las vaciones planificadas?"/>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Grabar" 
+                                          icon="ui-icon ui-icon-disk" 
+                                          action="#{planificarVacacionesEmpleadoSfcCBDMQ.grabarAprobar()}" />
+                            <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                          action="#{planificarVacacionesEmpleadoSfcCBDMQ.formularioAprobar.cancelar()}"/>
+                        </ace:menuBar>
+                        <ace:messages />
+                    </h:panelGrid>
+                </ace:dialog>
+                <!--Poner  con include ya que vista demasiado Cargada;-->
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

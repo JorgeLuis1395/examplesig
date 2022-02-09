@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components">
+
+    <ace:panel id="panelImprimir" style="border: 0px;">
+        <h:panelGrid width="100%" style="text-align: center;">          
+            <h3>Reformas Presupuesto año #{reformasPac.anio}</h3>
+
+            <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                <h:outputLabel value="Número de control :" />
+                <h:outputLabel value="#{reformasPac.traking.reformapac}"/>
+                <h:outputLabel value="Fecha :" />
+                <h:outputLabel value="#{reformasPac.traking.fecha}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputLabel>
+            </h:panelGrid>
+
+            <h:panelGrid  width="100%" columns="1" style="text-align: left">
+                <p><strong>Concepto : </strong>#{reformasPac.traking.observaciones}</p>
+            </h:panelGrid>
+            <h:panelGrid columns="1" width="100%">
+                <h:panelGrid width="100%">
+                    <ace:dataTable 
+                        paginatorAlwaysVisible="true"
+                        value="#{reformasPac.listaProyectos}"
+                        var="itemImp"
+                        paginator="false"
+                        lazy="false"
+                        resizableColumns="true"
+                        rowIndexVar="row"
+                        paginatorPosition="both"
+                        rowsPerPageTemplate="5,10,15,30,50,100"
+                        paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                        <ace:column  headerText="Proyecto" style="text-align: right">
+                            <h:outputText  value="#{itemImp.codigo}"/>
+                        </ace:column>
+                        <ace:column  headerText="CPC" style="text-align: right">
+                            <h:outputText  value="#{itemImp.cpc}"/>
+                        </ace:column>
+                        <ace:column  headerText="Tipo de Compra"  style="text-align: left">
+                            <h:outputText  value="#{consultasPoa.traerTipoCompra(itemImp.tipocompra)}"/>
+                        </ace:column>
+                        <ace:column  headerText="Detalle"  style="text-align: left">
+                            <h:outputText  value="#{itemImp.detalle}"/>
+                        </ace:column>
+                        <ace:column  headerText="Cuatrimestre 1"  style="text-align: left">
+                            <h:outputText  value="#{itemImp.cuatrimestre1?'S':''}"/>
+                        </ace:column>
+                        <ace:column  headerText="Cuatrimestre 2"  style="text-align: left">
+                            <h:outputText  value="#{itemImp.cuatrimestre2?'S':''}"/>
+                        </ace:column>
+                        <ace:column  headerText="Cuatrimestre 3"  style="text-align: left">
+                            <h:outputText  value="#{itemImp.cuatrimestre3?'S':''}"/>
+                        </ace:column>
+                        <ace:column  headerText="Tipo de Producto"  style="text-align: left">
+                            <h:outputText  value="#{consultasPoa.traerTipoProducto(itemImp.tipoproducto)}"/>
+                        </ace:column>
+                        <ace:column  headerText="Catalogo Electronico"  style="text-align: left">
+                            <h:outputText  value="#{itemImp.catalogoelectronico?'S':''}"/>
+                        </ace:column>
+                        <ace:column  headerText="Procedimiento Contratacion"  style="text-align: left">
+                            <h:outputText  value="#{consultasPoa.traerTipoProcedimiento(itemImp.procedimientocontratacion)}"/>
+                        </ace:column>
+                        <ace:column  headerText="Fondo bid"  style="text-align: left">
+                            <h:outputText  value="#{itemImp.fondobid?'S':''}"/>
+                        </ace:column>
+                        <ace:column  headerText="Número Operación"  style="text-align: left">
+                            <h:outputText  value="#{itemImp.numerooperacion}"/>
+                        </ace:column>
+                        <ace:column  headerText="Código Operación"  style="text-align: left">
+                            <h:outputText  value="#{itemImp.codigooperacion}"/>
+                        </ace:column>
+                        <ace:column  headerText="Regimen"  style="text-align: left">
+                            <h:outputText  value="#{consultasPoa.traerTipoRegimen(itemImp.regimen)}"/>
+                        </ace:column>
+                        <ace:column  headerText="Presupuesto"  style="text-align: left">
+                            <h:outputText  value="#{consultasPoa.traerTipoPresupuesto(itemImp.presupuesto)}"/>
+                        </ace:column>
+                    </ace:dataTable>
+                </h:panelGrid>
+            </h:panelGrid>
+        </h:panelGrid>
+    </ace:panel>
+</html>

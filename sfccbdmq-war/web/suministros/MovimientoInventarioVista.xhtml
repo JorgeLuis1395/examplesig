@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{ingresosTxSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  
+                           rendered="#{!ingresosTxSfccbdmq.formulario.mostrar}">
+
+                    <ui:include src="../BuscarProveedor.xhtml" />
+                    <h:panelGrid columns="4" width="90%" rendered="#{proveedoresSfccbdmq.proveedor!=null}">
+                        <h:outputLabel value="Contrato :" />
+                        <h:selectOneMenu  value="#{ingresosTxSfccbdmq.contrato}">
+                            <f:selectItems value="#{contratosSfccbdmq.comboContratos}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Número de Documento :"/>
+                        <h:inputText  value="#{ingresosTxSfccbdmq.factura}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="4">
+                        <h:outputLabel value="Bodega :" />
+                        <h:selectOneMenu  value="#{ingresosTxSfccbdmq.bodega}">
+                            <f:selectItems value="#{bodegasSfccbdmq.comboBodegasSuministros}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Tipo de Movimiento :" />
+                        <h:selectOneMenu  value="#{ingresosTxSfccbdmq.tipo}">
+                            <f:selectItems value="#{txSuministrosSfccbdmq.comboTipos}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Número de Movimiento" />
+                        <h:inputText value="#{ingresosTxSfccbdmq.numero}"/>
+                        <h:outputLabel value="Estado :" />
+                        <h:selectOneMenu  value="#{ingresosTxSfccbdmq.estado}">
+                            <f:selectItem itemLabel="---" itemValue="-11"/>
+                            <f:selectItem itemLabel="Digitadas" itemValue="0"/>
+                            <!--<f:selectItem itemLabel="Recibidas/Despachadas" itemValue="1"/>-->
+                            <f:selectItem itemLabel="Contabilizadas" itemValue="1"/>
+                            <f:selectItem itemLabel="Anuladas" itemValue="-1"/>
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1">
+                        <h:outputLabel value="Observaciones" />
+                        <h:inputTextarea cols="80" rows="4" value="#{ingresosTxSfccbdmq.observaciones}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="5">
+                        <h:outputLabel value="Fecha de Digitación:"/>
+                        <h:outputLabel value="Desde:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{ingresosTxSfccbdmq.desde}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Hasta:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{ingresosTxSfccbdmq.hasta}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                    </h:panelGrid> 
+
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{ingresosTxSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document"  action="#{ingresosTxSfccbdmq.nuevo()}"/>
+                        </ace:menuBar>
+
+                    </h:panelGrid>
+                    <ace:messages />
+                    <ace:submitMonitor 
+                                       for="panel"
+                                       blockUI="panel"
+                                       autoCenter="true"
+                                       activeLabel="Un Momento por favor"/>
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{solicitudesCargo.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{solicitudesCargo.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%" style="margin-bottom: 20px;">
+
+                        <ace:dataTable id="tabla"
+                                       value="#{ingresosTxSfccbdmq.cabeceras}"
+                                       var="item"
+                                       lazy="true"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="10,15,30,50"
+                                       currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="30"
+                                       style="width: 100%;"
+                                       >
+                            <ace:column style="text-align: left" >
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem value="Editar" icon="ui-icon ui-icon-pencil" action="#{ingresosTxSfccbdmq.modifica()}" rendered="#{ingresosTxSfccbdmq.mostrarModificar}" />
+                                    <!--<ace:menuItem value="Colocar obligación" icon="ui-icon ui-icon-pencil" action="#{ingresosTxSfccbdmq.traerObligaciones()}" rendered="#{ingresosTxSfccbdmq.mostrarObligacion}" />-->
+                                    <ace:menuItem value="Imprimir" icon="ui-icon ui-icon-print" action="#{ingresosTxSfccbdmq.imprimir()}"  />
+                                    <!--<ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{ingresosTxSfccbdmq.elimina()}"  />-->
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="Observaciones"  style="text-align: left">
+                                <h:outputText value="#{item.observaciones}"/>
+                            </ace:column>
+                            <ace:column  headerText="Estado "  style="text-align: left">
+                                <h:outputText value="Digitadas" rendered="#{item.estado==0}"/>
+                                <h:outputText value="Contabilizadas" rendered="#{item.estado==1}"/>
+                                <!--<h:outputText value="Contabilizadas" rendered="#{item.estado==2}"/>-->
+                                <h:outputText value="Anuladas" rendered="#{item.estado==-1}"/>
+                            </ace:column>
+                            <ace:column  headerText="Transacción"  style="text-align: left">
+                                <h:outputText value="#{item.txid.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Número "  style="text-align: left">
+                                <h:outputText value="#{item.numero}"/>
+                            </ace:column>
+                            <ace:column  headerText="Número Documento "  style="text-align: left">
+                                <h:outputText value="#{item.factura}"/>
+                            </ace:column>
+                            <ace:column  headerText="Solicitud"  style="text-align: left">
+                                <h:outputText value="#{item.solicitud.id}"/>
+                            </ace:column>
+                            <ace:column  headerText="Bodega"  style="text-align: left">
+                                <h:outputText value="#{item.bodega.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Obligacion"  style="text-align: left">
+                                <h:outputText value="#{item.obligacion.concepto}"/>
+                            </ace:column>
+                            <ace:column  headerText="Fecha Ingreso"  style="text-align: left">
+                                <h:outputText  value="#{item.fechadigitacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Fecha Contab."  style="text-align: left">
+                                <h:outputText  value="#{item.fechacontable}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="Fecha Mov."  style="text-align: left">
+                                <h:outputText  value="#{item.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column headerText="Ingreso" style="text-align: left">
+                                <h:graphicImage url="../resources/images/si.png" rendered="#{item.txid.ingreso}"/>
+                                <h:graphicImage url="../resources/images/no.png" rendered="#{!item.txid.ingreso}"/>
+                            </ace:column> 
+                            <ace:column  headerText="Proveedor"  style="text-align: left">
+                                <h:outputText value="#{item.proveedor.empresa.toString()}"/>
+                                <!--<h:outputText value="#{item.ordencompra.compromiso.proveedor.empresa.nombrecomercial}"/>-->
+
+                            </ace:column>
+                            <ace:column  headerText="Contrato"  style="text-align: left">
+                                <h:outputText value="#{item.contrato.toString()}"/>
+                                <!--<h:outputText value="#{item.ordencompra.compromiso.contrato.titulo}"/>-->
+                            </ace:column>
+                            <ace:column  headerText="Tx Destino"  style="text-align: left">
+                                <h:outputText value="#{item.cabecera.txid.nombre}"/>
+                            </ace:column>
+                            <ace:column  headerText="Bodega Destino"  style="text-align: left">
+                                <h:outputText value="#{item.cabecera.bodega}"/>
+                            </ace:column>
+                            <ace:column  headerText="Número"  style="text-align: left">
+                                <h:outputText value="#{item.cabecera.numero}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <!--</ace:dialog>-->
+                <ace:panel id="panel1"
+                           header="#{ingresosTxSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  
+                           rendered="#{ingresosTxSfccbdmq.formulario.mostrar}">
+                    <ui:include src="RegistroKardex.xhtml"/>
+                </ace:panel>
+                <!--                <ace:dialog
+                                    closable="false"
+                                    modal="true"
+                                    draggable="true"
+                                    showEffect="clip"
+                                    hideEffect="fade"
+                                    header="#{ingresosTxSfccbdmq.perfil.menu.texto}"
+                                    rendered="#{ingresosTxSfccbdmq.formulario.mostrar}"
+                                    visible="#{ingresosTxSfccbdmq.formulario.mostrar}">
+                                    <ui:include src="RegistroKardex.xhtml"/>
+                
+                                </ace:dialog> -->
+                <ace:dialog
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    header="Modificar/Crear Registro"
+                    rendered="#{ingresosTxSfccbdmq.formularioRenglones.mostrar}"
+                    visible="#{ingresosTxSfccbdmq.formularioRenglones.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2" width="90%" >
+                            <h:outputLabel value="Familia :"  rendered="#{ingresosTxSfccbdmq.formularioRenglones.nuevo}"/>
+                            <h:selectOneMenu value="#{tiposSuministrosSfccbdmq.familiaSuministros}" 
+                                             rendered="#{ingresosTxSfccbdmq.formularioRenglones.nuevo}">
+                                <f:selectItems value="#{codigosSfccbdmq.comboFamiliaSuministros}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Tipo :"  rendered="#{ingresosTxSfccbdmq.formularioRenglones.nuevo}"/>
+                            <h:selectOneMenu value="#{suministrosSfccbdmq.tipo}" rendered="#{ingresosTxSfccbdmq.formularioRenglones.nuevo}" 
+                                             >
+                                <f:selectItems value="#{tiposSuministrosSfccbdmq.comboTipoFamiliaEspacio}" />
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Suministro:" />
+                            <h:selectOneMenu id="suministro" value="#{ingresosTxSfccbdmq.kardex.suministro}" title="Suministro" 
+                                             rendered="#{ingresosTxSfccbdmq.formularioRenglones.nuevo}">
+                                <f:selectItems value="#{suministrosSfccbdmq.comboSuministroTipo}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="#{ingresosTxSfccbdmq.kardex.suministro.toString()}" rendered="#{!ingresosTxSfccbdmq.formularioRenglones.nuevo}"/>
+                            <h:outputLabel value="Cantidad:" />
+                            <h:inputText id="cantidad" value="#{ingresosTxSfccbdmq.kardex.cantidad}" title="Cantidad" />
+                            <h:outputLabel value="Cantidad Inversión:"  />
+                            <h:inputText value="#{ingresosTxSfccbdmq.kardex.cantidadinversion}" title="Cantidad" />
+                            <h:outputLabel value="Costo Unitario:" rendered="#{ingresosTxSfccbdmq.cabecera.txid.ingreso}"/>
+                            <h:inputText id="costo" value="#{ingresosTxSfccbdmq.kardex.costo}" title="Costo" rendered="#{ingresosTxSfccbdmq.cabecera.txid.ingreso}"/>
+                            <h:outputLabel value="% Descuento:" rendered="#{ingresosTxSfccbdmq.cabecera.txid.ingreso}"/>
+                            <h:inputText  value="#{ingresosTxSfccbdmq.descuentoInterno}" title="% Descuento" rendered="#{ingresosTxSfccbdmq.cabecera.txid.ingreso}"/>
+                            <h:outputLabel value="Unidad:"  />
+                            <h:selectOneMenu id="unidad" value="#{ingresosTxSfccbdmq.kardex.unidad}" title="Unidad" >
+                                <f:selectItems value="#{ingresosTxSfccbdmq.unidadesSuministro}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Saldo:" />
+                            <h:outputLabel value="#{ingresosTxSfccbdmq.saldo}" />
+                            <h:outputLabel value="Saldo Inversión:" />
+                            <h:outputLabel value="#{ingresosTxSfccbdmq.saldoInversion}" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="1">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{ingresosTxSfccbdmq.insertarRenglon()}" rendered="#{ingresosTxSfccbdmq.formularioRenglones.nuevo}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" action="#{ingresosTxSfccbdmq.grabarRenglon()}" rendered="#{ingresosTxSfccbdmq.formularioRenglones.modificar}" />
+                                <ace:menuItem value="Esta Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{ingresosTxSfccbdmq.borrarRenglon()}" rendered="#{ingresosTxSfccbdmq.formularioRenglones.borrar}" />
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" action="#{ingresosTxSfccbdmq.formularioRenglones.cancelar()}" />
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog> 
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{ingresosTxSfccbdmq.formularioImprimir.mostrar}"
+                    visible="#{ingresosTxSfccbdmq.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <!--                        <h:panelGrid columns="1">
+                                                    <h:commandButton  value="Imprimir">
+                                                        <h:outputText id="printBoth" value="Imprimir"/>
+                                                        <ace:printer for="panelImprimir"/>
+                                                    </h:commandButton>
+                                                </h:panelGrid>
+                                                <ui:include src="imprimirMovimiento.xhtml" />-->
+                        <ace:dynamicResource fileName="MovimientoInv.pdf" id="pdf-button1" label="Generar PDF"
+                                             mimeType="application/pdf" resource="#{ingresosTxSfccbdmq.reporte}" 
+                                             style="" type="button"/>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{ingresosTxSfccbdmq.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ui:include src="listadoObligaciones.xhtml"/>
+                <!--Poner  con include ya que vista demasiado Cargada;-->
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

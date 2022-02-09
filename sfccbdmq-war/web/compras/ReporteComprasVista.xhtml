@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <h:panelGrid width="100%">
+                    <ace:panel id="panel"
+                               header="#{reporteCompras.perfil.menu.texto}"
+                               closable="false"
+                               toggleable="false"  >
+
+                        <h:panelGrid columns="6">
+
+
+                            <h:outputLabel value="Desde:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{reporteCompras.desde}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Hasta:"/>
+                            <ace:dateTimeEntry navigator="true" value="#{reporteCompras.hasta}"
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+
+
+                        </h:panelGrid> 
+
+
+
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteCompras.buscar()}"/>
+                                <ace:menuItem value="Exportar" icon="ui-icon ui-icon-calculator"  action="#{reporteCompras.exportar()}"/>
+                            </ace:menuBar>
+                            <ace:submitMonitor id="submitMonitorPanel"
+                                               for="panel"
+                                               blockUI="panel"
+                                               autoCenter="true"
+                                               activeLabel="Un Momento por favor"/>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="2">
+                            <h:outputLabel  value="Total Base Imponible 0"/>
+                            <h:outputLabel  value="#{reporteCompras.totalBase0}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputLabel>
+                            <h:outputLabel  value="Total Base Imponible IVA"/>
+                            <h:outputLabel  value="#{reporteCompras.totalBaseIva}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputLabel>
+                            <h:outputLabel  value="IVA"/>
+                            <h:outputLabel  value="#{reporteCompras.totalIva}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputLabel>
+                            <h:outputLabel  value="VALOR"/>
+                            <h:outputLabel  value="#{reporteCompras.totalValor}">
+                                <f:convertNumber pattern="###,###,##0.00"/>
+                            </h:outputLabel>
+                        </h:panelGrid>
+                        <ace:messages />
+
+                        <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                            <h:outputLabel  value="Exportar a:"/>
+                            <h:selectOneRadio  value="#{reporteCompras.formulario.pantalla}" required="true">
+                                <f:ajax disabled="false"/>
+                                <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                                <!--<f:selectItem itemValue="pdf" itemLabel="PDF"/>-->
+                                <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                                <f:selectItem itemValue="xml" itemLabel="XML"/>
+                            </h:selectOneRadio>
+                            <ace:dataExporter id="dataExporter" 
+                                              label="Exportar Archivo" 
+                                              type="#{reporteCompras.formulario.pantalla}" 
+                                              target="tablaEmpleados" fileName="datos"/>
+                        </h:panelGrid>
+                        <h:panelGrid width="100%" style="margin-bottom: 20px;">
+
+                            <ace:dataTable id="tablaEmpleados"
+                                           value="#{reporteCompras.listaObligaciones}"
+                                           var="itemCompras"
+                                           paginator="true"
+                                           lazy="false"
+                                           resizableColumns="true"
+                                           rowIndexVar="row"
+                                           paginatorPosition="top"
+                                           rowsPerPageTemplate="15,20,25,50,100"
+                                           currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rows="15"
+                                           binding="#{reporteCompras.formulario.fila}"
+                                           scrollHeight="600"
+                                           scrollable="true">
+
+                                <ace:column  headerText="Proveedor"  style="text-align: left" >
+                                    <h:outputText  value="#{itemCompras.proveedor}"/>
+                                </ace:column>
+
+                                <!--                                <ace:column  headerText="Factura"  style="text-align: left" >
+                                                                    <h:outputText  value="#{itemCompras.proveedor}"/>
+                                                                </ace:column>-->
+
+                                <ace:column  headerText="Fecha Emisión"  style="text-align: left" >
+                                    <h:outputText  value="#{itemCompras.fechaInicio}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </ace:column>
+
+                                <ace:column  headerText="Retención"  style="text-align: left" >
+                                    <h:outputText  value="#{itemCompras.retencion}"/>
+                                </ace:column>
+
+                                <ace:column  headerText="Base Imponible 0" style="text-align: right">
+                                    <h:outputText  value="#{itemCompras.baseImponible0}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column> 
+                                <ace:column  headerText="Base Imponible IVA" style="text-align: right">
+                                    <h:outputText  value="#{itemCompras.baseImponibleIva}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column> 
+                                <ace:column  headerText="IVA" style="text-align: right">
+                                    <h:outputText  value="#{itemCompras.iva}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column> 
+
+                                <ace:column  headerText="Valor" style="text-align: right" >
+                                    <h:outputText  value="#{itemCompras.valor}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>  
+                            </ace:dataTable>
+                        </h:panelGrid>
+                    </ace:panel>
+                </h:panelGrid>
+                <ace:dialog 
+                    header="Exportar"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{reporteCompras.formularioReporte.mostrar}"
+                    visible="#{reporteCompras.formularioReporte.mostrar}">
+                    <h:panelGroup>
+                        <ace:dynamicResource fileName="Contratos.xls" id="pdf-botonMayor" label="Exportar a XLS"
+                                             mimeType="application/xls" resource="#{reporteCompras.reporte}" 
+                                             style="" type="button"/>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteCompras.formularioReporte.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <!--Poner  con include ya que vista demasiado Cargada;-->
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{reporteStockBodegas.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <h:panelGrid columns="4" >
+                        <h:outputLabel value="Bodega :" />
+                        <h:selectOneMenu  value="#{reporteStockBodegas.bodega}">
+                            <f:selectItems value="#{bodegasSfccbdmq.comboBodegasSuministros}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Familia :"  />
+                        <h:selectOneMenu value="#{reporteStockBodegas.familia}" >
+                            <f:selectItems value="#{codigosSfccbdmq.comboFamiliaSuministros}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Tipo :"  />
+                        <h:selectOneMenu value="#{reporteStockBodegas.tipo}" >
+                            <f:selectItems value="#{reporteStockBodegas.comboTipoFamiliaEspacio}"/>
+                            <ace:ajax execute="@all"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Suministro :"  />
+                        <h:selectOneMenu value="#{reporteStockBodegas.suministro}" >
+                            <f:selectItems value="#{reporteStockBodegas.comboSuministroTipo}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Desde:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{reporteStockBodegas.desde}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Hasta:"/>
+                        <ace:dateTimeEntry navigator="true" value="#{reporteStockBodegas.hasta}"
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{reporteStockBodegas.buscar()}"  />
+                            <ace:menuItem value="Hoja Elect." icon="ui-icon ui-icon-calculator" action="#{reporteStockBodegas.exportar()}"/>
+
+                        </ace:menuBar>
+                        <ace:dynamicResource fileName="Stock.pdf" id="pdf-buttonxx" label="Generar PDF"
+                                             mimeType="application/pdf" 
+                                             rendered="#{reporteStockBodegas.recurso!=null}"
+                                             resource="#{reporteStockBodegas.recurso}" 
+                                             style="" type="button"/>
+                        <ace:messages/>
+                        <ace:submitMonitor id="submitMonitorPanel"
+                                           for="panel"
+                                           blockUI="@all"
+                                           autoCenter="true"
+                                           activeLabel="Un Momento por favor"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{reporteStockBodegas.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{reporteStockBodegas.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla"
+                                       value="#{reporteStockBodegas.listaKardex}"
+                                       var="novedadItem"
+                                       binding="#{reporteStockBodegas.formulario.fila}"
+                                       scrollHeight="600"
+                                           scrollable="true">
+                            <ace:column style="text-align: left">
+                                <ace:menuButton id="menuButton" effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{reporteStockBodegas.traerMoviminetos(novedadItem.suministroEntidad, 1)}" value="Ver Ingresos" icon="ui-icon ui-icon-search"/>
+                                    <ace:menuItem action="#{reporteStockBodegas.traerMoviminetos(novedadItem.suministroEntidad, -1)}" value="Ver egresos" icon="ui-icon ui-icon-search"/>
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="Código"  style="text-align: left">
+                                <h:outputText value="#{novedadItem.suministroEntidad.codigobarras}"/>
+                            </ace:column>
+                            <ace:column  headerText="Suministro"  style="text-align: left">
+                                <h:outputText value="#{novedadItem.suministroEntidad.nombre}"/>
+                            </ace:column>
+                            <!--                            <ace:column  headerText="Unidad de medida"  style="text-align: left">
+                                                            <h:outputText value="#{novedadItem.suministroEntidad.unidad.equivalencia}"/>
+                                                        </ace:column>-->
+                            <ace:column style="text-align: right;background-color: #00ffff" headerText="Saldo ">
+                                <h:outputText value="#{novedadItem.saldoinicial}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right;background-color: #00ffff" headerText="Ingresos ">
+                                <h:outputText value="#{novedadItem.cantidadingreso}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <!--                            <ace:column style="text-align: right" headerText="Valor Ing. " style="background-color: #00ffff">
+                                                            <h:outputText value="#{novedadItem.costounitarioing}">
+                                                                <f:convertNumber pattern="###,##0.00"/>
+                                                            </h:outputText>
+                                                        </ace:column>-->
+                            <ace:column style="text-align: right;background-color: #00ffff" headerText="Egreso">
+                                <h:outputText value="#{novedadItem.cantidadegreso}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right;background-color: #00ffff" headerText="Stock Neto" >
+                                <h:outputText value="#{novedadItem.cantidadingreso-novedadItem.cantidadegreso}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right;background-color: #00ffff" headerText="Acumulado" >
+                                <h:outputText value="#{novedadItem.saldoinicial+novedadItem.cantidadingreso-novedadItem.cantidadegreso}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <!--                            <ace:column style="text-align: right" headerText="Costo egreso" style="background-color: #00ffff">
+                                                            <h:outputText value="#{novedadItem.costounitarioegreso}">
+                                                                <f:convertNumber pattern="###,##0.00"/>
+                                                            </h:outputText>
+                                                        </ace:column>-->
+
+                            <ace:column style="text-align: right" headerText="Saldo Inv.">
+                                <h:outputText value="#{novedadItem.saldoinicialinv}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right" headerText="Ingresos inv">
+                                <h:outputText value="#{novedadItem.cantidadingresoinv}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <!--                            <ace:column style="text-align: right" headerText="Valor Ing. Inv. ">
+                                                            <h:outputText value="#{novedadItem.costounitarioInving}">
+                                                                <f:convertNumber pattern="###,##0.00"/>
+                                                            </h:outputText>
+                                                        </ace:column>-->
+                            <ace:column style="text-align: right" headerText="Egreso Inv.">
+                                <h:outputText value="#{novedadItem.cantidadegresoinv}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right" headerText="Stock Neto">
+                                <h:outputText value="#{novedadItem.cantidadingresoinv-novedadItem.cantidadegresoinv}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column style="text-align: right" headerText="Acumulado">
+                                <h:outputText value="#{novedadItem.saldoinicialinv+novedadItem.cantidadingresoinv-novedadItem.cantidadegresoinv}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <!--                            <ace:column style="text-align: right" headerText="Costo egreso inv.">
+                                                            <h:outputText value="#{novedadItem.costounitarioInvegreso}">
+                                                                <f:convertNumber pattern="###,##0.00"/>
+                                                            </h:outputText>
+                                                        </ace:column>-->
+
+
+
+                        </ace:dataTable>
+                    </h:panelGrid>
+                    <ace:dialog 
+                        header="#{reporteStockBodegas.perfil.menu.texto}"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{reporteStockBodegas.formularioDetalle.mostrar}"
+                        visible="#{reporteStockBodegas.formularioDetalle.mostrar}">
+                        <h:panelGroup>
+                            <h:panelGrid columns="1">
+                                <ace:dataTable 
+                                    value="#{reporteStockBodegas.listaIngEgr}"
+                                    var="itemKardex"
+                                    lazy="false"
+                                    paginator="true"
+                                    resizableColumns="true"
+                                    rowIndexVar="row"
+                                    paginatorPosition="both"
+                                    rowsPerPageTemplate="10,15,30,50"
+                                    currentPageReportTemplate="{totalRecords} Registro(s) encontrado(s). Página(s): {currentPage} de {totalPages}"
+                                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                    rows="10"
+                                    style="width: 100%;"
+                                    >
+                                    <ace:column  headerText="Código"  style="text-align: left">
+                                        <h:outputText value="#{itemKardex.suministro.codigobarras}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Suministro"  style="text-align: left">
+                                        <h:outputText value="#{itemKardex.suministro.nombre}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Fuente/destino"  style="text-align: left">
+                                        <h:outputText value="#{itemKardex.cabecerainventario.proveedor.empresa.toString()}"/>
+                                        <h:outputText value="#{itemKardex.cabecerainventario.solicitante.entidad.toString()}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="Cantidad"  style="text-align: right">
+                                        <h:outputText value="#{itemKardex.cantidad}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Cantidad inversión"  style="text-align: right">
+                                        <h:outputText value="#{itemKardex.cantidadinversion}">
+                                            <f:convertNumber pattern="###,###,##0.00"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Costo Unitario"  style="text-align: right">
+                                        <h:outputText value="#{itemKardex.costo}">
+                                            <f:convertNumber pattern="###,###,##0.00000"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Costo Promedio "  style="text-align: right">
+                                        <h:outputText value="#{itemKardex.costopromedio}">
+                                            <f:convertNumber pattern="###,###,##0.00000"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Costo Promedio inv."  style="text-align: right">
+                                        <h:outputText value="#{itemKardex.costopinversion}">
+                                            <f:convertNumber pattern="###,###,##0.00000"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                    <ace:column  headerText="Lote"  style="text-align: left">
+                                        <h:outputText value="#{itemKardex.lote.lote}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="F. caduca"  style="text-align: left">
+                                        <h:outputText value="#{itemKardex.lote.fechaCaduca}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </ace:column>
+                                </ace:dataTable>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{reporteStockBodegas.formularioDetalle.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </ace:dialog>
+                    <ace:dialog 
+                        header="Exportar"
+                        closable="false"
+                        modal="true"
+                        draggable="true"
+                        showEffect="clip"
+                        hideEffect="fade"
+                        rendered="#{reporteStockBodegas.formularioReporte.mostrar}"
+                        visible="#{reporteStockBodegas.formularioReporte.mostrar}">
+                        <h:panelGroup>
+                            <ace:dynamicResource fileName="Kardex.xls" id="xsl-boton" label="Exportar a XLS"
+                                                 mimeType="application/xls" resource="#{reporteStockBodegas.reporteXls}" 
+                                                 style="" type="button"
+                                                 rendered="#{reporteStockBodegas.reporteXls!=null}"/>
+
+                            <h:panelGrid columns="1" width="100%">
+                                <ace:menuBar autoSubmenuDisplay="true" >
+
+                                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                  action="#{reporteStockBodegas.formularioReporte.cancelar()}"/>
+                                </ace:menuBar>
+                                <ace:messages />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </ace:dialog>
+                </ace:panel>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

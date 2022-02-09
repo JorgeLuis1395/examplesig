@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+    <h:head>
+
+    </h:head>
+    <h:body styleClass="ice-skin-xp">
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{horariosxEmpleado.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="false"  >
+                    <ace:panel header="Parámetros de Búsqueda">
+                        <ui:include src="../BuscarSoloEmpleadosActivos.xhtml"/>
+                        <h:panelGrid columns="2">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{horariosxEmpleado.buscar()}"/>
+                                <ace:menuItem value="Buscar Todos" icon="ui-icon ui-icon-search"  action="#{horariosxEmpleado.buscarTodos()}"/>
+                                <ace:menuItem value="Nuevo Todos" icon="ui-icon ui-icon-document" action="#{horariosxEmpleado.nuevoTodos()}"/>
+                                <ace:menuItem value="Nuevo " icon="ui-icon ui-icon-document" action="#{horariosxEmpleado.nuevo()}"/>
+                            </ace:menuBar>
+                        </h:panelGrid>
+                        <ace:messages/>
+                    </ace:panel> 
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                   for="panel"
+                                   blockUI="panel"
+                                   autoCenter="true"
+                                   activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Búsqueda"
+                    closable="false"
+                    toggleable="false"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{horariosxEmpleado.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{horariosxEmpleado.formulario.pantalla}" 
+                                          target="horarioItems" fileName="datos"/>
+                    </h:panelGrid>
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="horarioItems" 
+                                       value="#{horariosxEmpleado.listaHorarios}"
+                                       var="horarioItem"
+                                       paginator="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="5,10,15,50"
+
+                                       paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="5"
+                                       binding="#{horariosxEmpleado.formulario.fila}">
+                            <ace:row condition="group" groupBy="#{horarioItem.nombre}" pos="before" styleClass="titulo">
+                                <ace:column colspan="8">
+                                    #{horarioItem.nombre} 
+                                </ace:column>
+                            </ace:row>
+
+                            <ace:column  style="text-align: left"  >
+                                <ace:menuButton  effect="slide" effectDuration="200" value="...">
+                                    <ace:menuItem value="Editar" icon="ui-icon ui-icon-pencil" action="#{horariosxEmpleado.modifica(horarioItem)}" />
+                                    <ace:menuItem value="Borrar" icon="ui-icon ui-icon-trash" action="#{horariosxEmpleado.borra(horarioItem)}" />
+                                </ace:menuButton>
+                            </ace:column>
+
+
+                            <ace:column  headerText="Descripción"  style="text-align: left">
+                                <h:outputText value="#{horarioItem.nombre}"/>
+                            </ace:column>
+
+                            <ace:column  headerText="Hora" style="text-align: left">
+                                <h:outputText  value="#{horarioItem.hora}">
+                                    <f:convertDateTime pattern="HH:mm"/>
+                                </h:outputText>
+                            </ace:column>
+
+                            <ace:column headerText="Ingreso" style="text-align: left">
+                                <h:graphicImage url="../resources/images/si.png" rendered="#{horarioItem.ingreso}"/>
+                                <h:graphicImage url="../resources/images/no.png" rendered="#{!horarioItem.ingreso}"/>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{horariosxEmpleado.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    rendered="#{horariosxEmpleado.formulario.mostrar}"
+                    visible="#{horariosxEmpleado.formulario.mostrar}">
+                    <ace:tabSet style="clear:both;">
+                        <ace:tabPane >
+                            <f:facet name="label">Inf. General</f:facet>
+<!--                            <ui:include src="../BuscarOrganigrama.xhtml"/>-->
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Tipo : "/>
+                                <h:selectOneMenu value="#{horariosxEmpleado.operativo}">
+                                    <f:selectItem itemLabel="Selecccione uno" itemValue="0"/>
+                                    <f:selectItem itemLabel="Operativos" itemValue="1"/>
+                                    <f:selectItem itemLabel="Administrativos" itemValue="2"/>
+                                    <f:selectItem itemLabel="CEMAC" itemValue="3"/>
+                                </h:selectOneMenu>
+                                <h:outputLabel value="Descripción:" for="nombre" />
+                                <h:inputTextarea cols="60" rows="4"  value="#{horariosxEmpleado.horario.nombre}" title="Descripción" />
+                                <h:outputLabel value="Hora:" />
+                                <ace:dateTimeEntry navigator="true" value="#{horariosxEmpleado.horario.hora}" 
+                                                   popupIcon="ui-icon ui-icon-calendar"    renderAsPopup="true" 
+                                                   pattern="HH:mm" label="HH:mm" labelPosition="infield"  
+                                                   timeOnly="true">
+                                    <f:convertDateTime pattern="HH:mm" />
+                                </ace:dateTimeEntry>
+                                <h:outputLabel value="Es Ingreso?:" />
+                                <ace:checkboxButton value="#{horariosxEmpleado.horario.ingreso}"/>
+                            </h:panelGrid>
+
+                        </ace:tabPane>
+                    </ace:tabSet>
+                    <ace:menuBar autoSubmenuDisplay="true" >
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{horariosxEmpleado.insertar()}" rendered="#{horariosxEmpleado.formulario.nuevo}" />
+                        <ace:menuItem value="Grabar Todos" icon="ui-icon ui-icon-disk"  action="#{horariosxEmpleado.insertarTodos()}" rendered="#{horariosxEmpleado.formulario.nuevo}" />
+                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  action="#{horariosxEmpleado.grabar()}" rendered="#{horariosxEmpleado.formulario.modificar}" />
+                        <ace:menuItem value="Está Seguro de borrar el registro?" icon="ui-icon ui-icon-trash" action="#{horariosxEmpleado.eliminar()}" rendered="#{horariosxEmpleado.formulario.borrar}" />
+                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close"  action="#{horariosxEmpleado.formulario.cancelar()}" />
+                    </ace:menuBar>
+                    <ace:messages/>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+    </h:body>
+</html>

@@ -1,0 +1,215 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : BuscarEmpleado
+    Created on : 04/10/2012, 05:32:47 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      >
+
+    <ace:dialog 
+        header="Detalle de Obligación"
+        closable="false"
+        modal="true"
+        draggable="true"
+        showEffect="clip"
+        hideEffect="fade"
+        rendered="#{obligacionesSfccbdmq.formularioDetalle.mostrar}"
+        visible="#{obligacionesSfccbdmq.formularioDetalle.mostrar}">
+        <h:panelGroup>
+            <h:panelGrid columns="1">
+                <h:outputLabel  value="Referencia :"/>
+                <h:inputTextarea value="#{obligacionesSfccbdmq.detalle.referencia}" rows="4" cols="60"/>
+            </h:panelGrid>
+            <h:panelGrid columns="2">
+                <h:outputLabel  value="Compromiso :"/>
+                <h:selectOneMenu value="#{obligacionesSfccbdmq.compromiso}" 
+                                 disabled="#{obligacionesSfccbdmq.formularioDetalle.modificar}">
+                    <f:selectItems value="#{obligacionesSfccbdmq.comboCompromisos}"/>
+                    <ace:ajax execute="@all"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="Partida Presupuestaria :"/>
+                <h:selectOneMenu value="#{obligacionesSfccbdmq.detalle.detallecompromiso}"  
+                                 rendered="#{obligacionesSfccbdmq.formularioDetalle.nuevo}">
+                    <f:selectItems value="#{obligacionesSfccbdmq.comboCuentasPresupuesto}"/>
+                    <ace:ajax execute="@all"/>
+                </h:selectOneMenu>
+                <h:outputText value="#{obligacionesSfccbdmq.detalle.detallecompromiso.toString()}" rendered="#{obligacionesSfccbdmq.formularioDetalle.modificar}"/>
+            </h:panelGrid>
+            <h:panelGrid columns="4">
+                <h:outputLabel  value="Valor comprometido:"/>
+                <h:outputText  value="#{obligacionesSfccbdmq.detalle.detallecompromiso.valor}">
+                    <f:convertNumber pattern="###,###,##0.00"/>
+                </h:outputText>
+                <h:outputLabel  value="Saldo del compromiso:"/>
+                <h:outputText  value="#{obligacionesSfccbdmq.detalle.detallecompromiso.saldo}">
+                    <f:convertNumber pattern="###,###,##0.00"/>
+                </h:outputText>
+            </h:panelGrid>
+            <h:panelGrid columns="2">
+                <h:outputLabel  value="Cuenta contable :"/>
+                <h:selectOneMenu value="#{obligacionesSfccbdmq.detalle.idcuenta}">
+                    <f:selectItems value="#{obligacionesSfccbdmq.comboCuentas}"/>
+                    <ace:ajax execute="@all"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="Bien o Servicios :"/>
+                <h:selectBooleanCheckbox value="#{obligacionesSfccbdmq.detalle.bien}">
+                    <ace:ajax execute="@all"/>
+                </h:selectBooleanCheckbox>
+                <h:outputLabel  value="Prima y Descuentos :"/>
+                <h:selectBooleanCheckbox value="#{obligacionesSfccbdmq.soloRetencion}" >
+                    <ace:ajax execute="@all"/>
+                </h:selectBooleanCheckbox>
+
+                <h:outputLabel  value="Base imponible :" rendered="#{obligacionesSfccbdmq.soloRetencion}"/>
+                <h:inputText value="#{obligacionesSfccbdmq.detalle.valorprima}" rendered="#{obligacionesSfccbdmq.soloRetencion}"/>
+                <h:outputLabel  value="Base Imponible :" rendered="#{!obligacionesSfccbdmq.soloRetencion}"/>
+                <h:outputLabel  value="Valor Presupuestado:" rendered="#{obligacionesSfccbdmq.soloRetencion}"/>
+                <h:inputText value="#{obligacionesSfccbdmq.detalle.valor}">
+                    <!--<f:convertNumber maxFractionDigits="2" currencySymbol=","/>-->
+                </h:inputText>
+
+                <h:outputLabel  value="Incluye Impuestos? :"/>
+                <h:selectBooleanCheckbox value="#{obligacionesSfccbdmq.iva}">
+                    <ace:ajax execute="@all"/>
+                </h:selectBooleanCheckbox>
+                <h:outputLabel  value="Retención :"/>
+                <h:selectOneMenu value="#{obligacionesSfccbdmq.detalle.retencion}" >
+                    <f:selectItems value="#{obligacionesSfccbdmq.comboRetenciones}"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="Base imponible impuesto:" />
+                <h:inputText value="#{obligacionesSfccbdmq.detalle.baseimponibleimpuesto}"/>
+                <h:outputLabel  value="Impuesto :"/>
+                <h:selectOneMenu value="#{obligacionesSfccbdmq.detalle.impuesto}" >
+                    <f:selectItems value="#{impuestosSfccbdmq.comboImpuestos}"/>
+                </h:selectOneMenu>
+            </h:panelGrid>
+            <h:panelGrid columns="2">
+                <h:outputLabel  value="Ret. sobre Impuesto :"/>
+                <h:selectOneMenu value="#{obligacionesSfccbdmq.detalle.retimpuesto}" >
+                    <f:selectItems value="#{obligacionesSfccbdmq.comboRetencionesImpuestos}"/>
+                </h:selectOneMenu>
+            </h:panelGrid>
+            <h:panelGrid columns="1" width="100%">
+                <ace:menuBar autoSubmenuDisplay="true" >
+                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{obligacionesSfccbdmq.formularioDetalle.nuevo}" 
+                                  action="#{obligacionesSfccbdmq.insertarDetalle()}"/>
+                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                  action="#{obligacionesSfccbdmq.grabarDetalle()}" 
+                                  rendered="#{obligacionesSfccbdmq.formularioDetalle.modificar}" />
+                    <ace:menuItem action="#{obligacionesSfccbdmq.borrarDetalle()}" 
+                                  value="Esta seguro de Borrar el registro?" 
+                                  rendered="#{obligacionesSfccbdmq.formularioDetalle.borrar}"/>
+
+                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                  action="#{obligacionesSfccbdmq.formularioDetalle.cancelar()}"/>
+                </ace:menuBar>
+                <ace:messages />
+            </h:panelGrid>
+        </h:panelGroup>
+    </ace:dialog>
+    <ace:dialog 
+        header="Detalle de Obligación"
+        closable="false"
+        modal="true"
+        draggable="true"
+        showEffect="clip"
+        hideEffect="fade"
+        rendered="#{obligacionesSfccbdmq.formularioDetalleCuenta.mostrar}"
+        visible="#{obligacionesSfccbdmq.formularioDetalleCuenta.mostrar}">
+        <h:panelGroup>
+            <h:panelGrid columns="1">
+                <h:outputLabel  value="Referencia :"/>
+                <h:inputTextarea value="#{obligacionesSfccbdmq.detalle.referencia}" rows="4" cols="60"/>
+            </h:panelGrid>
+
+            <h:panelGrid columns="2">
+                <h:outputLabel  value="Cuenta proveedor :"/>
+                <h:selectOneMenu value="#{obligacionesSfccbdmq.cuentaProveedor}" >
+                    <f:selectItems value="#{obligacionesSfccbdmq.comboCuentasProveedor}"/>
+                    <ace:ajax execute="@all"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="Cuenta contable :"/>
+                <h:selectOneMenu value="#{obligacionesSfccbdmq.detalle.idcuenta}">
+                    <f:selectItems value="#{obligacionesSfccbdmq.comboCuentasDetalle}"/>
+                    <ace:ajax execute="@all"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="Auxiliar Empleado? :"/>
+                <h:selectBooleanCheckbox value="#{obligacionesSfccbdmq.empleado}">
+                    <ace:ajax execute="@all"/>
+                </h:selectBooleanCheckbox>
+            </h:panelGrid>
+            <h:panelGrid columns="1" rendered="#{obligacionesSfccbdmq.empleado}">
+                <ui:include src="../BuscarUsuario.xhtml" />
+            </h:panelGrid>
+            <h:panelGrid columns="3" width="100%">
+                <h:outputLabel  value="Subir Archivo:"/>
+                <ace:fileEntry id="file-entry" 
+
+                               maxFileCount="1" 
+                               maxFileCountMessage="Máximo un archivo" 
+                               fileEntryListener="#{obligacionesSfccbdmq.cuentasListener}" 
+                               maxFileSize="6291456" 
+                               maxFileSizeMessage="Tamaño muy grande." 
+                               maxTotalSize="18874368" 
+                               maxTotalSizeMessage="Total del tamaño muy grande." 
+                               useOriginalFilename="true" 
+                               useSessionSubdir="true"/>
+                <h:commandButton type="submit" value="Cargar datos"/>
+            </h:panelGrid>
+            <h:panelGrid columns="2">
+                <h:outputLabel  value="Bien o Servicios :"/>
+                <h:selectBooleanCheckbox value="#{obligacionesSfccbdmq.detalle.bien}" >
+                    <ace:ajax execute="@all"/>
+                </h:selectBooleanCheckbox>
+                <h:outputLabel  value="Centro de Costo :" rendered="#{obligacionesSfccbdmq.detalle.idcuenta.ccosto}"/>
+                <h:selectOneMenu value="#{obligacionesSfccbdmq.detalle.cc}" rendered="#{obligacionesSfccbdmq.detalle.idcuenta.ccosto}">
+                    <f:selectItems value="#{ccostoSfccbdmq.comboCcostoStr}"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="Base Imponible :"/>
+                <h:inputText value="#{obligacionesSfccbdmq.detalle.valor}"/>
+                <h:outputLabel  value="Incluye Impuestos? :"/>
+                <h:selectBooleanCheckbox value="#{obligacionesSfccbdmq.iva}">
+                    <ace:ajax execute="@all"/>
+                </h:selectBooleanCheckbox>
+
+                <h:outputLabel  value="Retención :"/>
+                <h:selectOneMenu value="#{obligacionesSfccbdmq.detalle.retencion}" >
+                    <f:selectItems value="#{obligacionesSfccbdmq.comboRetenciones}"/>
+                </h:selectOneMenu>
+                <h:outputLabel  value="Impuesto :"/>
+                <h:selectOneMenu value="#{obligacionesSfccbdmq.detalle.impuesto}" >
+                    <f:selectItems value="#{impuestosSfccbdmq.comboImpuestos}"/>
+                </h:selectOneMenu>
+            </h:panelGrid>
+            <h:panelGrid columns="2">
+                <h:outputLabel  value="Ret. sobre Impuesto :"/>
+                <h:selectOneMenu value="#{obligacionesSfccbdmq.detalle.retimpuesto}" >
+                    <f:selectItems value="#{obligacionesSfccbdmq.comboRetencionesImpuestos}"/>
+                </h:selectOneMenu>
+            </h:panelGrid>
+            <h:panelGrid columns="1" width="100%">
+                <ace:menuBar autoSubmenuDisplay="true" >
+                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{obligacionesSfccbdmq.formularioDetalleCuenta.nuevo}" 
+                                  action="#{obligacionesSfccbdmq.insertarDetalleCuenta()}"/>
+                    <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                  action="#{obligacionesSfccbdmq.grabarDetalleCuenta()}" 
+                                  rendered="#{obligacionesSfccbdmq.formularioDetalleCuenta.modificar}" />
+                    <ace:menuItem action="#{obligacionesSfccbdmq.borrarDetalleCuenta()}" 
+                                  value="Esta seguro de Borrar el registro?" 
+                                  rendered="#{obligacionesSfccbdmq.formularioDetalleCuenta.borrar}"/>
+
+                    <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                  action="#{obligacionesSfccbdmq.formularioDetalleCuenta.cancelar()}"/>
+                </ace:menuBar>
+                <ace:messages />
+            </h:panelGrid>
+        </h:panelGroup>
+    </ace:dialog>
+</html>

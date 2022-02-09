@@ -1,0 +1,473 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--
+    Document   : CodigosVista
+    Created on : Sep 20, 2011, 3:41:19 PM
+    Author     : edwin
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+
+    </h:head>
+    <h:body  >
+
+        <ui:composition template="../plantillas/plantillaModulos.xhtml">
+            <!-- Aqui va todo el codigo de la pagina -->
+            <ui:define name="content">
+                <ace:panel id="panel"
+                           header="#{ingresosTesoreriaSfccbdmq.perfil.menu.texto}"
+                           closable="false"
+                           toggleable="true"
+                           >
+
+
+
+                    <h:panelGrid columns="5" width="100%">
+                        <h:outputLabel value="Fecha Desde:"/>
+                        <ace:dateTimeEntry navigator="true"  value="#{ingresosTesoreriaSfccbdmq.desde}" 
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                        <h:outputLabel value="Hasta:" />
+                        <ace:dateTimeEntry navigator="true"  value="#{ingresosTesoreriaSfccbdmq.hasta}" 
+                                           popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                           pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </ace:dateTimeEntry>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <h:outputLabel value="Referencia:"  />
+                        <h:inputTextarea cols="60" rows="4" value="#{ingresosTesoreriaSfccbdmq.referencia}" title="Referencia" />
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" width="100%">
+                        <ace:menuBar autoSubmenuDisplay="true" >
+
+                            <ace:menuItem value="Buscar" icon="ui-icon ui-icon-search"  action="#{ingresosTesoreriaSfccbdmq.buscar()}"/>
+                            <ace:menuItem value="Nuevo" icon="ui-icon ui-icon-document" action="#{ingresosTesoreriaSfccbdmq.crear()}"/>
+                        </ace:menuBar>
+                    </h:panelGrid>
+
+                </ace:panel>
+                <ace:submitMonitor id="submitMonitorPanel"
+                                   for="panel"
+                                   blockUI="panel"
+                                   autoCenter="true"
+                                   activeLabel="Un Momento por favor"/>
+                <ace:panel 
+                    header="Resultado Bùsqueda"
+                    closable="false"
+                    toggleable="true"
+                    >
+                    <h:panelGrid columns="3" styleClass="centeredPanelGrid">
+                        <h:outputLabel  value="Exportar a:"/>
+                        <h:selectOneRadio  value="#{ingresosTesoreriaSfccbdmq.formulario.pantalla}" required="true">
+                            <f:ajax disabled="false"/>
+                            <f:selectItem itemValue="csv" itemLabel="CSV"/>
+                            <f:selectItem itemValue="pdf" itemLabel="PDF"/>
+                            <f:selectItem itemValue="xls" itemLabel="XLS"/>
+                            <f:selectItem itemValue="xml" itemLabel="XML"/>
+                        </h:selectOneRadio>
+                        <ace:dataExporter id="dataExporter" 
+                                          label="Exportar Archivo" 
+                                          type="#{ingresosTesoreriaSfccbdmq.formulario.pantalla}" 
+                                          target="tabla" fileName="datos"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid width="100%">
+                        <ace:dataTable id="tabla" 
+                                       value="#{ingresosTesoreriaSfccbdmq.ingresos}"
+                                       var="item"
+                                       paginator="true"
+                                       lazy="true"
+                                       resizableColumns="true"
+                                       rowIndexVar="row"
+                                       paginatorPosition="both"
+                                       rowsPerPageTemplate="15,20,25,50,100"
+                                       currentPageReportTemplate="Registro {startRecord}/{totalRecords} Página {currentPage}/{totalPages} "
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}  {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rows="15"
+                                       binding="#{ingresosTesoreriaSfccbdmq.formulario.fila}">
+                            <ace:column  headerText="Registro" style="text-align: right">
+                                <h:outputText value="#{row+1}"/>
+                            </ace:column>
+                            <ace:column style="text-align: left">
+                                <ace:menuButton  effect="slide" effectDuration="200" value="..." >
+                                    <ace:menuItem action="#{ingresosTesoreriaSfccbdmq.contabiliza(item)}" value="Contabilizar" icon="ui-icon ui-icon-note" rendered="#{item.contabilizar==null}"/>
+                                    <ace:menuItem action="#{ingresosTesoreriaSfccbdmq.aprobarIngreso(item)}" value="Aprobar" icon="ui-icon ui-icon-note" rendered="#{item.aprobar==null and item.contabilizar!=null}"/>
+                                    <ace:menuItem action="#{ingresosTesoreriaSfccbdmq.modificar(item)}" value="Editar" icon="ui-icon ui-icon-pencil" rendered="#{item.contabilizar==null}"/>
+                                    <ace:menuItem action="#{ingresosTesoreriaSfccbdmq.eliminar(item)}" value="Borrar" icon="ui-icon ui-icon-trash" />
+                                    <ace:menuItem action="#{ingresosTesoreriaSfccbdmq.imprimirPresupuestario(item)}" value="Imprimir Contabilización" icon="ui-icon ui-icon-print" />
+                                    <ace:menuItem action="#{ingresosTesoreriaSfccbdmq.imprimirComprobante(item)}" value="Imprimir Comprobante" icon="ui-icon ui-icon-print" />
+                                </ace:menuButton>
+                            </ace:column> 
+                            <ace:column  headerText="Clientes"  style="text-align: left">
+                                <h:outputText  value="#{item.cliente.empresa.toString()}"/>
+                            </ace:column>  
+                            <ace:column  headerText="Referencia"  style="text-align: left">
+                                <h:outputText  value="#{item.observaciones}"/>
+                            </ace:column>  
+                            <ace:column  headerText="Partida"  style="text-align: left">
+                                <h:outputText  value="#{item.asigancion.clasificador.toString()}"/>
+                            </ace:column>  
+                            <ace:column  headerText="Fuente"  style="text-align: left">
+                                <h:outputText  value="#{item.asigancion.fuente.toString()}"/>
+                            </ace:column>
+                            <c:forEach var="itemProducto" items="#{proyectosSfccbdmq.titulos}">
+                                <ace:column  headerText="#{itemProducto.titulo1}"  style="text-align: left">
+                                    <h:outputText  value="#{proyectosSfccbdmq.dividir(itemProducto, item.asigancion.proyecto)}"/>
+                                </ace:column>
+                            </c:forEach>
+                            <ace:column  headerText="Producto"  style="text-align: left">
+                                <h:outputText  value="#{item.asigancion.proyecto.codigo}"/>
+                            </ace:column>
+                            <ace:column  headerText="Valores"  style="text-align: right">
+                                <h:outputText  value="#{item.valor}">
+                                    <f:convertNumber pattern="###,###,##0.00"/>
+                                </h:outputText>
+                            </ace:column>
+                            <ace:column  headerText="F. Ingreso"  style="text-align: left">
+                                <h:outputText  value="#{item.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </ace:column>
+                        </ace:dataTable>
+                    </h:panelGrid>
+                </ace:panel>
+                <ace:dialog 
+                    header="#{ingresosTesoreriaSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{ingresosTesoreriaSfccbdmq.formulario.mostrar}"
+                    visible="#{ingresosTesoreriaSfccbdmq.formulario.mostrar}">
+                    <h:panelGroup>
+                        <ui:include src="../BuscarCliente.xhtml"/>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Proyecto:" />
+                            <h:selectOneMenu value="#{ingresosTesoreriaSfccbdmq.proyecto}" title="Proyecto">
+                                <f:selectItems value="#{ingresosTesoreriaSfccbdmq.comboProyectos}"/>
+                            </h:selectOneMenu>
+
+                            <h:outputLabel value="Partida:" />
+                            <h:selectOneMenu value="#{ingresosTesoreriaSfccbdmq.clasificador}" title="Partida">
+                                <f:selectItems value="#{ingresosTesoreriaSfccbdmq.comboClasificadores}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+
+                            <h:outputLabel value="Fuente:" />
+                            <h:selectOneMenu value="#{ingresosTesoreriaSfccbdmq.fuente}" title="Fuente">
+                                <f:selectItems value="#{codigosSfccbdmq.comboFuenteFin}"/>
+                                <ace:ajax execute="@all"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Cuenta:" />
+                            <h:selectOneMenu value="#{ingresosTesoreriaSfccbdmq.ingreso.cuenta}" title="Cuenta">
+                                <f:selectItems value="#{ingresosTesoreriaSfccbdmq.comboCuentas}"/>
+                            </h:selectOneMenu>
+                            <h:outputText value="Tipo de Movimiento:"/>
+                            <h:selectOneMenu value="#{ingresosTesoreriaSfccbdmq.ingreso.tipo}" title="Tipo de Movimiento">
+                                <f:selectItems value="#{tipoMovBancosSfccbdmq.comboIngresosBancos}"/>
+                            </h:selectOneMenu>
+                            <h:outputLabel value="Referencia:" />
+                            <h:inputTextarea cols="60" rows="4" value="#{ingresosTesoreriaSfccbdmq.ingreso.observaciones}" title="Referencia" />
+                            <h:outputLabel value="Fecha emision:" />
+                            <ace:dateTimeEntry navigator="true"  value="#{ingresosTesoreriaSfccbdmq.ingreso.fecha}" 
+                                               popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                               pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </ace:dateTimeEntry>
+                            <h:outputLabel value="Valor:" />
+                            <h:inputText  value="#{ingresosTesoreriaSfccbdmq.ingreso.valor}" title="Valor" />
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" rendered="#{ingresosTesoreriaSfccbdmq.formulario.nuevo}" 
+                                              action="#{ingresosTesoreriaSfccbdmq.insertar()}"/>
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk" 
+                                              action="#{ingresosTesoreriaSfccbdmq.grabar()}" 
+                                              rendered="#{ingresosTesoreriaSfccbdmq.formulario.modificar}" />
+                                <ace:menuItem action="#{ingresosTesoreriaSfccbdmq.borrar()}" 
+                                              value="Esta seguro de Borrar el registro?" 
+                                              rendered="#{ingresosTesoreriaSfccbdmq.formulario.borrar}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{ingresosTesoreriaSfccbdmq.formulario.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                            <!--<h:messages style="color: red;font-style: italic;font-weight: bold"/>--> 
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <!--para contabilizar-->
+                <ace:dialog 
+                    header="#{ingresosTesoreriaSfccbdmq.perfil.menu.texto}"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{ingresosTesoreriaSfccbdmq.formularioContabilizar.mostrar}"
+                    visible="#{ingresosTesoreriaSfccbdmq.formularioContabilizar.mostrar}">
+                    <ace:tabSet style="clear:both;" clientSide="true">
+                        <ace:tabPane label="Ingreso">
+                            <h:panelGroup>
+                                <h:panelGrid columns="2">
+
+                                    <h:outputText value="Valor:"/>
+                                    <h:inputText value="#{ingresosTesoreriaSfccbdmq.kardex.valor}">
+                                        <ace:ajax execute="@all"/>
+                                    </h:inputText>
+                                    <h:outputLabel value="Fecha emision:" />
+                                    <ace:dateTimeEntry navigator="true"  value="#{ingresosTesoreriaSfccbdmq.kardex.fechamov}" 
+                                                       popupIcon="ui-icon ui-icon-calendar" renderAsPopup="true" 
+                                                       pattern="dd/MM/yyyy" label="dd/MM/yyyy" labelPosition="infield">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        <ace:ajax execute="@all"/>
+                                    </ace:dateTimeEntry>
+        <!--                                    <h:outputText value="#{ingresosTesoreriaSfccbdmq.kardex.valor}" title="Valor">
+                                                <f:convertNumber pattern="###,###,##0.00"/>
+                                            </h:outputText>-->
+                                    <h:outputText value="Cliente:"/>
+                                    <h:outputText value="#{ingresosTesoreriaSfccbdmq.ingreso.cliente.toString()}" title="Beneficiario"/>
+                                    <h:outputText value="No Documento : "/>
+                                    <h:inputText value="#{ingresosTesoreriaSfccbdmq.kardex.documento}" title="No Documento">
+                                        <ace:ajax execute="@all"/>
+                                    </h:inputText>
+                                    <h:outputText value="Observaciones:"/>
+                                    <h:outputText value="#{ingresosTesoreriaSfccbdmq.ingreso.observaciones}" title="Observaciones"/>
+                                    <h:outputText value="Banco:"/>
+                                    <h:selectOneMenu value="#{ingresosTesoreriaSfccbdmq.kardex.banco}" title="Banco">
+                                        <f:selectItems value="#{bancosSfccbdmq.comboBancos}"/>
+                                        <ace:ajax execute="@all"/>
+                                    </h:selectOneMenu>
+                                </h:panelGrid>
+                                <h:panelGrid columns="1" width="100%">
+                                    <ace:menuBar autoSubmenuDisplay="true" >
+                                        <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                                      action="#{ingresosTesoreriaSfccbdmq.grabarKardex()}"/>
+
+                                        <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                                      action="#{ingresosTesoreriaSfccbdmq.formularioContabilizar.cancelar()}"/>
+                                    </ace:menuBar>
+                                    <ace:messages />
+                                </h:panelGrid>
+                            </h:panelGroup>
+                        </ace:tabPane>
+                        <ace:tabPane label="Previsualización del Asiento">
+                            <ace:dataTable 
+                                value="#{ingresosTesoreriaSfccbdmq.renglonesKardex}"
+                                var="itemSegundo"
+                                paginator="false"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="both"
+                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                >
+
+                                <ace:column  headerText="Cuenta"  style="text-align: left">
+                                    <h:outputText  value="#{itemSegundo.cuenta}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nombre"  style="text-align: left">
+                                    <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemSegundo.cuenta).nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Referencia"  style="text-align: left">
+                                    <h:outputText  value="#{itemSegundo.referencia}"/>
+                                </ace:column>
+                                <ace:column  headerText="Débitos" style="text-align: right">
+                                    <h:outputText  value="#{itemSegundo.valor}" rendered="#{asientosSfccbdmq.isCredito(itemSegundo.valor)}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Créditos" style="text-align: right">
+                                    <h:outputText  value="#{itemSegundo.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemSegundo.valor)}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                            </ace:dataTable>
+                        </ace:tabPane>
+                    </ace:tabSet>
+                </ace:dialog>
+                <!--Previsualizar Asiento-->
+                <ace:dialog 
+                    header="Previsualizar Asiento contable"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{ingresosTesoreriaSfccbdmq.formularioPrimera.mostrar}"
+                    visible="#{ingresosTesoreriaSfccbdmq.formularioPrimera.mostrar}">
+                    <h:panelGroup>
+
+                        <!--<img src="../resources/images/logo.png" width="91" height="45" alt="logo"/>-->
+                        <h:panelGrid  width="90%" columns="2" style="text-align: right">
+                            <h:outputText value="Usuario :"/>
+                            <h:outputText value="#{parametrosSfccbdmq.logueado.userid}"/>
+                            <h:outputText value="Fecha :"/>
+                            <h:outputText value="#{parametrosSfccbdmq.fechaActual}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                            </h:outputText>
+                        </h:panelGrid>
+                        <h:panelGrid  width="90%" columns="1" style="text-align: center">
+                            <h3>Comprobante de Ingreso No: #{ingresosTesoreriaSfccbdmq.ingreso.id}</h3>
+                        </h:panelGrid>
+                        <h:panelGrid  width="90%" columns="1" style="text-align: right">
+                            <h3>Valor : #{ingresosTesoreriaSfccbdmq.valorStr}</h3>
+                        </h:panelGrid>
+                        <h:panelGrid  width="90%" columns="2" style="text-align: left">
+                            <h:outputLabel value="No documento :" />
+                            <h:outputLabel value="#{ingresosTesoreriaSfccbdmq.kardex.egreso}"/>
+                            <h:outputLabel value="Partida :" />
+                            <h:outputLabel value="#{ingresosTesoreriaSfccbdmq.ingreso.asigancion.clasificador.toString()}"/>
+                            <h:outputLabel value="Fuente :" />
+                            <h:outputLabel value="#{ingresosTesoreriaSfccbdmq.ingreso.asigancion.fuente.toString()}"/>
+                            <h:outputLabel value="Proyecto :" />
+                            <h:outputLabel value="#{ingresosTesoreriaSfccbdmq.ingreso.asigancion.proyecto.toString()}"/>
+                            <h:outputLabel value="La suma de :" />
+                            <h:outputLabel value="#{ingresosTesoreriaSfccbdmq.cuantoStr}"/>
+                            <h:outputLabel value="Fecha de emisión:" />
+                            <h:outputLabel value="#{ingresosTesoreriaSfccbdmq.ingreso.fecha}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputLabel>
+
+                        </h:panelGrid>
+
+                        <h:panelGrid  width="90%" columns="2" style="text-align: left" rendered="#{ingresosTesoreriaSfccbdmq.kardex!=null}">
+                            <h:outputLabel value="Banco:" />
+                            <h:outputLabel value="#{ingresosTesoreriaSfccbdmq.kardex.banco.nombre}"/>
+                            <h:outputLabel value="Cta No:" />
+                            <h:outputLabel value="#{ingresosTesoreriaSfccbdmq.kardex.banco.numerocuenta}"/>
+                            <h:outputLabel value="Cheque No:" rendered="#{ingresosTesoreriaSfccbdmq.kardex.formapago.parametros=='C'}"/>
+                            <h:outputLabel value="#{ingresosTesoreriaSfccbdmq.kardex.documento}" rendered="#{ingresosTesoreriaSfccbdmq.kardex.formapago.parametros=='C'}"/>
+                        </h:panelGrid>
+                        <h:panelGrid  width="90%" columns="1" style="text-align: left" rendered="#{ingresosTesoreriaSfccbdmq.kardex!=null}">
+                            <h:outputLabel value="No Documento :" />
+                            <h:outputLabel value="#{ingresosTesoreriaSfccbdmq.kardex.documento}"/>
+                        </h:panelGrid>
+
+                        <h:panelGrid  width="90%" columns="1" style="text-align: left" rendered="#{ingresosTesoreriaSfccbdmq.kardex!=null}">
+                            <h:outputLabel value="Observaciones:" />
+                            <p>#{ingresosTesoreriaSfccbdmq.kardex.observaciones}</p>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:dataTable 
+                                value="#{ingresosTesoreriaSfccbdmq.renglones}"
+                                var="itemPrimero"
+                                paginator="false"
+                                lazy="false"
+                                resizableColumns="true"
+                                rowIndexVar="row"
+                                paginatorPosition="both"
+                                rowsPerPageTemplate="5,10,15,30,50,100"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                >
+
+                                <ace:column  headerText="Cuenta"  style="text-align: left">
+                                    <h:outputText  value="#{itemPrimero.cuenta}"/>
+                                </ace:column>
+                                <ace:column  headerText="Nombre"  style="text-align: left">
+                                    <h:outputText  value="#{cuentasSfccbdmq.traerCodigo(itemPrimero.cuenta).nombre}"/>
+                                </ace:column>
+                                <ace:column  headerText="Referencia"  style="text-align: left">
+                                    <h:outputText  value="#{itemPrimero.referencia}"/>
+                                </ace:column>
+                                <ace:column  headerText="Débitos" style="text-align: right">
+                                    <h:outputText  value="#{itemPrimero.valor}" rendered="#{asientosSfccbdmq.isCredito(itemPrimero.valor)}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+                                <ace:column  headerText="Créditos" style="text-align: right">
+                                    <h:outputText  value="#{itemPrimero.valor*-1}" rendered="#{asientosSfccbdmq.isDebito(itemPrimero.valor)}">
+                                        <f:convertNumber pattern="###,###,##0.00"/>
+                                    </h:outputText>
+                                </ace:column>
+
+
+
+                            </ace:dataTable>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Grabar" icon="ui-icon ui-icon-disk"  
+                                              action="#{ingresosTesoreriaSfccbdmq.contabilizar()}"/>
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{ingresosTesoreriaSfccbdmq.formularioPrimera.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <!--Imprimir-->
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{ingresosTesoreriaSfccbdmq.formularioImprimir.mostrar}"
+                    visible="#{ingresosTesoreriaSfccbdmq.formularioImprimir.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="1">
+                            <ace:dynamicResource fileName="Ingreso.xls" id="xls-button" label="Recibo de Ingreso"
+                                                 mimeType="application/pdf" resource="#{ingresosTesoreriaSfccbdmq.reporteRecibo}" 
+                                                 style="" type="button" rendered="#{ingresosTesoreriaSfccbdmq.reporteRecibo!=null}"/>
+                            <ace:dynamicResource fileName="ComprobanteIngreso.pdf" id="pdf-button1" label="Comprobante de Ingreso"
+                                                 mimeType="application/pdf" resource="#{ingresosTesoreriaSfccbdmq.reporteComprobante}" 
+                                                 style="" type="button" rendered="#{ingresosTesoreriaSfccbdmq.reporteComprobante!=null}"/>
+
+                        </h:panelGrid>
+                        <ui:include src="imprimirIngreso.xhtml" />
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{ingresosTesoreriaSfccbdmq.formularioImprimir.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+                <ace:dialog 
+                    header="Imprimir"
+                    closable="false"
+                    modal="true"
+                    draggable="true"
+                    showEffect="clip"
+                    hideEffect="fade"
+                    rendered="#{ingresosTesoreriaSfccbdmq.formularioImprimirPresupuesto.mostrar}"
+                    visible="#{ingresosTesoreriaSfccbdmq.formularioImprimirPresupuesto.mostrar}">
+                    <h:panelGroup>
+                        <h:panelGrid columns="1">
+                            <ace:dynamicResource fileName="IngresoPresupuestario.pdf" id="pdf-button" label="Ingreso Presupuestario"
+                                                 mimeType="application/pdf" resource="#{ingresosTesoreriaSfccbdmq.reporteIngreso}" 
+                                                 style="" type="button" rendered="#{ingresosTesoreriaSfccbdmq.reporteIngreso!=null}"/>
+                        </h:panelGrid>
+                        <ui:include src="imprimirIngresoPresupuestario.xhtml" />
+
+                        <h:panelGrid columns="1" width="100%">
+                            <ace:menuBar autoSubmenuDisplay="true" >
+
+                                <ace:menuItem value="Salir" icon="ui-icon ui-icon-close" 
+                                              action="#{ingresosTesoreriaSfccbdmq.formularioImprimirPresupuesto.cancelar()}"/>
+                            </ace:menuBar>
+                            <ace:messages />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </ace:dialog>
+            </ui:define>
+            <!-- Fin -->
+        </ui:composition>
+
+    </h:body>
+
+</html>
